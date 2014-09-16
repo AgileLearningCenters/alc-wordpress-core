@@ -1,0 +1,27 @@
+Plugin Name: Pretty Plugins
+Author: WPMUDEV
+Lead developer: Maniu
+
+== Changelog ==
+
+= 1.0.4 =
+* Fixed remaining styling issue for images
+
+= 1.0.3 =
+* Added compatibility with WordPress 3.9
+
+= 1.0.2 =
+* Fixed links path when using SSL
+* Fixed styling problems
+* Fixed edit settings appearing for different plugin types then standard
+* Fixed incomparability with Prosites advertisements module that allowed activation of not allowed plugins
+
+= 1.0.1 =
+* Added MP6 support
+* Fixed backslash problem for text in settings
+
+= 1.0.0 =
+* Initial Release
+
+
+327416-1406146453-ai

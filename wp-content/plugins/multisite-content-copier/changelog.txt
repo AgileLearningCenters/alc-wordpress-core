@@ -1,0 +1,91 @@
+Plugin Name: Multisite Content Copier
+Author: WPMUDEV
+Requires at least: 3.6
+Tested up to: 3.9.1
+
+Change Log:
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+
+1.2.6 - 2014-07-08
+----------------------------------------------------------------------
+- Fixed: Hierachies were not preserved in some cases
+
+1.2.5 - 2014-05-29
+----------------------------------------------------------------------
+- Fixed: plugin didn't let the user to go to next step in plugins list
+
+1.2.4 - 2014-05-01
+----------------------------------------------------------------------
+- Embbeds were being stripped in  the copy
+
+1.2.3 - 2014-04-16
+----------------------------------------------------------------------
+- Added activation function
+- Tables were not being created in some cases
+
+1.2.2 - 2014-04-02
+----------------------------------------------------------------------
+- Improved admin styles
+- Disable "Next" button if there are no items selected
+- Fixed: Plugin was not allowing to copy to main site
+- Fixed: Sites counts not working properly on Groups page
+- Removing Non existant blogs from blog-groups relationships on upgrade
+- Fixed: Posts parents could be copied twice in some cases
+
+1.2.1 - 2014-03-17
+----------------------------------------------------------------------
+- Fixed error when copying to blogs groups from post box.
+
+1.2- 2014-03-13
+----------------------------------------------------------------------
+- Fixed NextGen incompatibility
+- Added searching and sorting feature in blogs groups lists
+- Code improvements: Better abstraction
+- API updated with backward compatibility
+
+
+1.1 - 2014-02-24
+----------------------------------------------------------------------
+- Improved wizard performance and reliability
+- Added new filters
+- Added 3.8 icon
+- Copying content to main site is now allowed
+- Improved admin styles
+- Added taxonomies filtering in posts/pages/CPTs lists
+- Added role column to users list
+- Added a default role when copying users.
+
+1.0.4 - 2013-12-17
+----------------------------------------------------------------------
+- Fixed error while copying terms
+- Added Woocommerce integration
+- Improved few styles
+- Improved items selection accesibility
+- Adding copy terms feature for Custom Post Types.
+- Actions/Filters added
+- Added Custom Post Type slug selection feature.
+- More minor improvements/fixes.
+
+1.0.3 - 2013-11-28
+----------------------------------------------------------------------
+- Fixed: Javascript incompatibilities with Explorer/Firefox.
+- Fixed: Users could go to step 4 without selecting items.
+
+1.0.2 - 2013-11-26
+----------------------------------------------------------------------
+- Fixed: on step 3 when selection items the page reloads and gives an error.
+
+1.0.1 - 2013-11-22
+----------------------------------------------------------------------
+- Added meta box for Custom Post Types and pages
+- Fixed bug: Copying images when the post has no images was copying all images uploaded of the month.
+- Fixed: When copying to all blogs, main site was included
+- Copying transient was saved network wide, now is site wide
+
+1.0.0 - 2013-11-20
+----------------------------------------------------------------------
+- Initial Release.
+
+
+327416-1406146337-ai

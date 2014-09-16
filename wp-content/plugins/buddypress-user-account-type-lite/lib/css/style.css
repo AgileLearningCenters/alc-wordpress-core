@@ -1,0 +1,28 @@
+#buat_setting_page_wraper form input[type='text'],#buat_setting_page_wraper form select {
+    min-width: 150px;
+}
+
+#buat_hidden_fields {
+    display: none;
+}
+
+#buatp_pro {
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #555;
+    margin-left: -10%;
+    margin-right: 25%;
+}
+
+#get_the_pro {
+    text-decoration: none;
+    background: #BE3615;
+    padding: 10px;
+    width: 200px;
+    text-align: center;
+    border: 2px solid #A42D19;
+    color: #fff;
+    display: block;
+    border-radius: 5px; 
+    margin: auto;
+}
