@@ -1,0 +1,3 @@
+[submodule "wp-content/themes/alc-wp-theme-network"]
+	path = wp-content/themes/alc-wp-theme-network
+	url = git@github.com:AgileLearningCenters/alc-wp-theme-network.git
