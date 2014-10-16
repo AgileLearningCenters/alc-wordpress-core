@@ -6,6 +6,9 @@ wp-content/uploads/*
 sitemap.*
 wp-config.php
 
+# We ignore this useful (and dangerous) script for setting up local environment, you can get it from: https://github.com/interconnectit/Search-Replace-DB.git
+search-replace-db/
+
 # Hidden system files
 *.DS_Store
 *[Tt]humbs.db
