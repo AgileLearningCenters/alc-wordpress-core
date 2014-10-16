@@ -613,7 +613,7 @@ if ( !class_exists('WPMUDEV_Dashboard_Notice3') ) {
 
 			if ( current_user_can('update_plugins') ) {
 				echo '<tr class="plugin-update-tr"><td colspan="3" class="plugin-update colspanchange"><div class="update-message wpmu-update-row">';
-				printf( 'There is a new version of %1$s available on WPMU DEV. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a> or <a href="%5$s">%6$s</a> to update.', $plugin_name, esc_url($info_url), esc_attr($plugin_name), $version, esc_url($action_url), $message );	  										 			  
+				printf( 'There is a new version of %1$s available on WPMU DEV. <a href="%2$s" class="thickbox" title="%3$s">View version %4$s details</a> or <a href="%5$s">%6$s</a> to update.', $plugin_name, esc_url($info_url), esc_attr($plugin_name), $version, esc_url($action_url), $message );
 				echo '</div></td></tr>';
 			}
 		}

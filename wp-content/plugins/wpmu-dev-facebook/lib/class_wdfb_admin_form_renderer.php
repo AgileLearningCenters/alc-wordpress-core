@@ -75,7 +75,7 @@ class Wdfb_AdminFormRenderer {
 		     '<a href="#" class="wdfb_grant_perms" data-wdfb_locale="' . wdfb_get_locale() . '" data-wdfb_perms="' . esc_attr( Wdfb_Permissions::get_permissions() ) . '">' . __( 'Grant extended permissions', 'wdfb' ) . '</a>' .
 		     '</p>' .
 		     '<p>' .
-		     '<input type="button" class="button" id="wdfb-refresh_access_token" data-wdfb_perms="' . esc_attr( Wdfb_Permissions::get_permissions() ) . '" value="' . esc_attr( __( 'Refresh user access token', 'wdfb' ) ) . '" />' .
+		     '<input type="button" class="button" id="wdfb-refresh_access_token" data-wdfb_perms="' . esc_attr( Wdfb_Permissions::get_permissions() ) . '" value="' . esc_attr( __( 'Reset auth tokens', 'wdfb' ) ) . '" />' .
 		     '&nbsp;' .
 		     '<input type="button" class="button" id="wdfb-remap_user" data-wdfb_perms="' . esc_attr( Wdfb_Permissions::get_permissions() ) . '" value="' . esc_attr( $remap_string ) . '" />' .
 		     '</p>' .
@@ -87,17 +87,14 @@ class Wdfb_AdminFormRenderer {
 		$opts                    = $this->_get_option( 'wdfb_grant' );
 		$opts                    = is_array( $opts ) ? $opts : array();
 		$use_minimal_permissions = isset( $opts['use_minimal_permissions'] ) ? $opts['use_minimal_permissions'] : false;
-		echo '<div class="updated below-h2">' .
-		     '<p>' . __( '<b>Note:</b> Allowing any of the additional functionality listed here will require additional Facebook privileges to be granted to your app.', 'wdfb' ) . '</p>' .
-		     '<p>' . __( 'Please, remember to re-grant the extended permissions once you made your changes here', 'wdfb' ) . '</p>' .
-		     '</div>';
-
-		echo '<hr />';
 		echo '' .
 		     $this->_create_checkbox( 'grant', 'use_minimal_permissions', $use_minimal_permissions ) .
 		     '&nbsp;' .
 		     '<label for="use_minimal_permissions">' . __( 'Use minimal possible permission set', 'wdfb' ) . '</label>' .
 		     '<br />';
+		echo '<div class="updated below-h2">' .
+		     '<p>' . __( '<b>Note:</b> Please, remember to re-grant the extended permissions once you made your changes here', 'wdfb' ) . '</p>' .
+		     '</div>';
 	}
 
 	function cache_operations() {
@@ -403,10 +400,11 @@ class Wdfb_AdminFormRenderer {
 
 	function create_button_position_box() {
 		$opt       = $this->_get_option( 'wdfb_button' );
-		$positions = array( 'top'    => __( 'Before', 'wdfb' ),
-		                    'bottom' => __( 'After', 'wdfb' ),
-		                    'both'   => __( 'Before and after', 'wdfb' ),
-		                    'manual' => __( 'Manual, use shortcodes in ', 'wdfb' )
+		$positions = array(
+			'top'    => __( 'Before', 'wdfb' ),
+			'bottom' => __( 'After', 'wdfb' ),
+			'both'   => __( 'Before and after', 'wdfb' ),
+			'manual' => __( 'Manual, use shortcodes in ', 'wdfb' )
 		);
 
 		foreach ( $positions as $pos => $label ) {
@@ -424,17 +422,17 @@ class Wdfb_AdminFormRenderer {
 
 		echo '<tr>';
 		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="standard" ' . ( ( $opt['button_appearance'] == "standard" ) ? 'checked="checked"' : '' ) . ' /></td>';
-		echo '<td valign="top"><iframe src="http://www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:25px;" allowTransparency="true"></iframe></td>';
+		echo '<td valign="top"><iframe src="' . WDFB_PROTOCOL . 'www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:25px;" allowTransparency="true"></iframe></td>';
 		echo '</tr>';
 
 		echo '<tr>';
 		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="button_count" ' . ( ( $opt['button_appearance'] == "button_count" ) ? 'checked="checked"' : '' ) . ' /></td>';
-		echo '<td valign="top"><iframe src="http://www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe></td>';
+		echo '<td valign="top"><iframe src="' . WDFB_PROTOCOL . 'www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe></td>';
 		echo '</tr>';
 
 		echo '<tr>';
 		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="box_count" ' . ( ( $opt['button_appearance'] == "box_count" ) ? 'checked="checked"' : '' ) . ' /></td>';
-		echo '<td valign="top"><iframe src="http://www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=box_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=65" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:65px;" allowTransparency="true"></iframe></td>';
+		echo '<td valign="top"><iframe src="' . WDFB_PROTOCOL . 'www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=box_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=65" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:65px;" allowTransparency="true"></iframe></td>';
 		echo '</tr>';
 
 		echo "</table>";
@@ -707,6 +705,66 @@ class Wdfb_AdminFormRenderer {
 		echo '<div><small>' . __( 'Enabling this will add a new column that shows if the post has already been published on Facebook to your post management pages.', 'wdfb' ) . '</small></div>';
 	}
 
+	function sortByOrder($a, $b) {
+		return $a['width'] - $b['width'];
+	}
+
+	function image_size_autopost_facebook() {
+		//Get all registered image sizes
+		$sizes = $this->get_image_sizes();
+
+		uasort($sizes, array( $this, 'sortByOrder') );
+		$opt = $this->_get_option( 'wdfb_autopost' );
+		$opt['image_size'] = empty( $opt['image_size'] ) ? ( !empty($sizes['large']) ? 'large' : 'full' ) : $opt['image_size'];
+		?>
+		<select name="wdfb_autopost[image_size]"><?php
+			foreach( $sizes as $size=>$details ){
+				$selected = ( $size == @$opt['image_size'] ) ? ' selected="selected"' : ''; ?>
+				<option value="<?php echo $size; ?>" <?php echo $selected; ?> ><?php echo ucfirst( $size ) . ' - ' . $details['width'] . 'x' . $details['height']; ?></option><?php
+			}?>
+	   </select><?php
+	}
+	function get_image_sizes( $size = '' ) {
+
+		global $_wp_additional_image_sizes;
+
+		$sizes = array();
+		$get_intermediate_image_sizes = get_intermediate_image_sizes();
+
+		// Create the full array with sizes and crop info
+		foreach( $get_intermediate_image_sizes as $_size ) {
+
+			if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+
+				$sizes[ $_size ]['width'] = get_option( $_size . '_size_w' );
+				$sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
+				$sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
+
+			} elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
+
+				$sizes[ $_size ] = array(
+					'width' => $_wp_additional_image_sizes[ $_size ]['width'],
+					'height' => $_wp_additional_image_sizes[ $_size ]['height'],
+					'crop' =>  $_wp_additional_image_sizes[ $_size ]['crop']
+				);
+
+			}
+
+		}
+
+		// Get only 1 size if found
+		if ( $size ) {
+
+			if( isset( $sizes[ $size ] ) ) {
+				return $sizes[ $size ];
+			} else {
+				return false;
+			}
+
+		}
+
+		return $sizes;
+	}
 	function create_autopost_map_box() {
 		$post_types   = get_post_types( array( 'public' => true ), 'objects' );
 		$fb_locations = array(

@@ -700,7 +700,6 @@ class Wdfb_Model {
 			else $this->log->notice("Unable to post to Facebook as page.");
 		}
 		*/
-
 		try {
 			$ret = $this->fb->api( '/' . $fid . '/' . $type . '/', 'POST', $post );
 		} catch ( Exception $e ) {
@@ -739,13 +738,14 @@ class Wdfb_Model {
 			for ( $i = 0; $i < $limit; $i += $page_size ) {
 				$batch[] = json_encode( array(
 					'method'       => 'GET',
-					'relative_url' => "/{$for}/events/?access_token=$token&limit={$page_size}&offset={$i}&fields=id,name,description,start_time,end_time,location,venue,picture,ticket_uri,owner,privacy"
+					'relative_url' => "/{$for}/events/?limit={$page_size}&offset={$i}&fields=id,name,description,start_time,end_time,location,venue,picture,ticket_uri,owner,privacy"
 				) );
 			}
 			try {
-				$res = $this->fb->api( '/', 'POST', array( 'batch'        => '[' . implode( ',', $batch ) . ']',
-				                                           'access_token' => $token
-					) );
+				$res = $this->fb->api( '/', 'POST', array(
+					'batch'        => '[' . implode( ',', $batch ) . ']',
+					'access_token' => $token
+				) );
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 
@@ -768,6 +768,7 @@ class Wdfb_Model {
 			} catch ( Exception $e ) {
 				return false;
 			}
+
 			return $res;
 		}
 
@@ -830,17 +831,18 @@ class Wdfb_Model {
 
 		$fid   = $this->get_current_user_fb_id();
 		$token = $this->get_user_api_token( $fid );
+
 		if ( $limit && $limit > $page_size ) {
 			$limit = $limit > $max_limit ? $max_limit : $limit;
 			$batch = array();
 			for ( $i = 0; $i < $limit; $i += $page_size ) {
 				$batch[] = json_encode( array(
 					'method'       => 'GET',
-					'relative_url' => "/{$aid}/photos/?access_token=$token&limit={$page_size}&offset={$i}&fields=created_time,height,icon,id,images,link,name,picture,source,updated_time,width"
+					'relative_url' => "/{$aid}/photos/?limit={$page_size}&offset={$i}&fields=created_time,height,icon,id,images,link,name,picture,source,updated_time,width"
 				) );
 			}
 			try {
-				$res = $this->fb->api( '/', 'POST', array( 'batch' => '[' . implode( ',', $batch ) . ']' ) );
+				$res = $this->fb->api( '/', 'POST', array( 'access_token' => $token, 'batch' => '[' . implode( ',', $batch ) . ']' ) );
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 
@@ -858,7 +860,7 @@ class Wdfb_Model {
 
 			return array( 'data' => $return );
 		} else {
-			$limit = $limit ? '?limit=' . $limit : '';
+			$limit = $limit ? '?limit=' . $limit . '&access_token=' . $token : '?access_token=' . $token;
 			try {
 				$res = $this->fb->api( '/' . $aid . '/photos/' . $limit );
 			} catch ( Exception $e ) {
@@ -878,10 +880,7 @@ class Wdfb_Model {
 		$limit = $limit ? '?limit=' . $limit : '';
 
 		$tokens = $this->data->get_option( 'wdfb_api', 'auth_tokens' );
-		$token  = ! empty( $tokens[ $uid ] )
-			? $tokens[ $uid ]
-			: reset( $tokens ) // Use any token, if there's no token we need
-		;
+		$token  = ! empty( $tokens[ $uid ] ) ? $tokens[ $uid ] : reset( $tokens ); // Use any token, if there's no token we need
 
 		$old_token = $this->fb->getAccessToken();
 		$this->fb->setAccessToken( $token );
@@ -902,18 +901,19 @@ class Wdfb_Model {
 	function get_item_comments( $for ) {
 		$uid = $this->get_current_user_fb_id();
 
-		$tokens = $this->data->get_option( 'wdfb_api', 'auth_tokens' );
-		$token  = isset( $tokens[ $uid ] ) ? $tokens[ $uid ] : false;
-
+		$tokens    = $this->data->get_option( 'wdfb_api', 'auth_tokens' );
+		$token     = isset( $tokens[ $uid ] ) ? $tokens[ $uid ] : false;
 		$page_size = $this->_batch_page_size;
 		$max_limit = apply_filters( 'wdfb-comments-max_comments_limit',
 			( defined( 'WDFB_COMMENTS_MAX_COMMENTS_LIMIT' ) && WDFB_COMMENTS_MAX_COMMENTS_LIMIT ? WDFB_COMMENTS_MAX_COMMENTS_LIMIT : 200 )
 		);
-
 		if ( $max_limit < $page_size ) {
 			$token = $token ? "?auth_token={$token}" : '';
 			try {
 				$res = $this->fb->api( '/' . $for . '/comments/' . $token );
+				echo "<pre>";
+				print_r($res);
+				echo "</pre>";exit;
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 
@@ -922,16 +922,15 @@ class Wdfb_Model {
 
 			return $res;
 		} else {
-			$token = $token ? "&auth_token={$token}" : '';
 			$batch = array();
 			for ( $i = 0; $i < $max_limit; $i += $page_size ) {
 				$batch[] = json_encode( array(
 					'method'       => 'GET',
-					'relative_url' => "/{$for}/comments/?limit={$page_size}&offset={$i}{$token}"
+					'relative_url' => "/{$for}/comments/?limit={$page_size}&offset={$i}"
 				) );
 			}
 			try {
-				$res = $this->fb->api( '/', 'POST', array( 'batch' => '[' . implode( ',', $batch ) . ']' ) );
+				$res = $this->fb->api( '/', 'POST', array( 'access_token' => $token, 'batch' => '[' . implode( ',', $batch ) . ']' ) );
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 

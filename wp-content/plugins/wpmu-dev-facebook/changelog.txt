@@ -1,9 +1,31 @@
 Plugin Name: Ultimate Facebook
 Author: Ve Bailovity (Incsub)
+Contributor: Umesh Kumar
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+2.7.6 - 2014-09-8 - Umesh Kumar
+- New:  Added support for importing emoji's in Facebook comments
+- New: Support for bigger images in Autoposting
+- Updated: Facebook SDK, notification for captcha error on registration page
+- Updated: Refresh auth tokens code to allow changes in API and user details
+- Fixed: Select album for Album widgets
+- Fixed: Color Scheme setting for comments
+
+2.7.5 - 2014-07-30 - Umesh Kumar
+- Fixed: Facebook incorrect album id
+
+2.7.4 - 2014-07-30 - Umesh Kumar
+- Fixed: Facebook login form not hooked in wp_login_form
+
+2.7.3 - 2014-07-30 - Umesh Kumar
+
+- Added:    'wdfb_show_comment_form' Filter to turn off facebook comment form for a specific post id
+- Fixed:    Album Shortcode
+- Fixed:    Facebook comment form not displayed if Override WordPress Settings is enabled
+- Improved: Registration Page template ( Added hooks before and after facebook registration form )
+
 2.7.2 - 2014-06-20 - Umesh Kumar
 - Added: Read Events from Facebook shortcode and widget
 
@@ -33,7 +55,7 @@ Change Log:
 ----------------------------------------------------------------------
 - Settings for archive pages buttons.
 - Support for events limiting.
-- Fix for redirection issues with certaing parameters.
+- Fix for redirection issues with certain parameters.
 
 2.6.4 - 2013-04-29
 ----------------------------------------------------------------------
@@ -374,4 +396,4 @@ Change Log:
 - Added date threshold parameter for Facebook Events widget.
 
 
-327416-1405309933-ai
+327416-1413422153-au
