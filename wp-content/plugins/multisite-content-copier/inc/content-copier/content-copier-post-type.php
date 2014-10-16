@@ -54,6 +54,20 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 
 		$this->remap_parents();
 
+		/**
+		 * Fired after posts are copied in destination blog
+		 *
+		 * @param Array $posts_created {
+		 * 		List of Posts that have been copied with the following relationship:
+		 *
+		 * 		source_post_id_1 => new_post_id_1,
+		 * 		source_post_id_2 => new_post_id_2,
+		 * 		...
+		 * }
+		 * @param Integer $orig_blog_id Source blog ID
+		 */
+		do_action( 'mcc_copy_posts', $this->posts_created, $this->orig_blog_id );
+
 		return $this->posts_created;
 	}
 
@@ -147,10 +161,12 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 		if ( $this->args['copy_comments'] )
 			$this->copy_comments( $item_id, $new_item_id );
 
+
+
 		add_filter('content_save_pre', 'wp_filter_post_kses');
         add_filter('content_filtered_save_pre', 'wp_filter_post_kses');
 
-		return  $new_item_id;
+		return $new_item_id;
 	}
 
 	/**
@@ -174,18 +190,6 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 		// Insert post in the new blog ( we should be currently on it)
 		$postarr = $this->get_postarr( $orig_post );
 
-		// Are we updating the post
-//		if ( $this->args[0updating'] ) {
-//
-//			$model = mcc_get_model();
-//			//$child_id = $model->get_synced_child( $item_id, $this->orig_blog_id );
-//
-//			if ( ! empty( $child_id ) )
-//				$postarr['ID'] = absint( $child_id );
-//		}
-
-
-
 		$new_item_id = wp_insert_post( $postarr );
 
 
@@ -200,22 +204,6 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 			 */
 			do_action( 'mcc_copy_post', $this->orig_blog_id, $item_id, $new_item_id );
 
-			// Do we have to sync the post for the future?
-//			if ( $this->sync ) {
-//				$model = mcc_get_model();
-//				$dest_post = array(
-//					array(
-//						'blog_id' => get_current_blog_id(),
-//						'post_id' => $new_item_id
-//					)
-//				);
-//
-//				$settings = array(
-//					'class' => get_class( $this ),
-//					'copy_images' => $this->args['copy_images']
-//				);
-//				$model->add_synced_content( $item_id, $this->orig_blog_id, $dest_post, $settings );
-//			}
 
 			// Insert post meta
 			foreach ( $orig_post_meta as $post_meta ) {
@@ -233,6 +221,15 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 				 */
 				do_action( 'mcc_copy_post_meta', $this->orig_blog_id, $item_id, $new_item_id, $post_meta->meta_key, $unserialized_meta_value );
 			}
+
+			// Set post format
+			switch_to_blog( $this->orig_blog_id );
+			$post_format = get_post_format( $item_id );
+			restore_current_blog();
+
+			if ( $post_format === false )
+				$post_format = '';
+			set_post_format( $new_item_id, $post_format );
 		}
 
 		return $new_item_id;
@@ -400,88 +397,7 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 
 	}
 
-	public static function copy_single_image( $source_blog_id, $attachment_id ) {
-		$current_blog_id = get_current_blog_id();
-		switch_to_blog( $source_blog_id );
-		$image = get_post( $attachment_id );
 
-		if ( $image && 'attachment' == get_post_type( $image ) ) {
-			$dir = get_attached_file( $image->ID );
-			$metadata = wp_get_attachment_metadata( $image->ID );
-
-			$image->path = $dir;
-			$image->metadata = $metadata;
-
-			switch_to_blog( $current_blog_id );
-
-			// Now uploading the files
-			$upload_dir = wp_upload_dir();
-
-			$info = pathinfo( $image->path );
-			$file_name =  $info['basename'];
-
-			$results = self::copy_attachment_element( $image, $file_name, $upload_dir );
-
-			if ( false !== $results ) {
-				$attachment_id = $results['attach_id'];
-				switch_to_blog( $current_blog_id );
-				return $attachment_id;
-			}
-		}
-		switch_to_blog( $current_blog_id );
-		return false;
-	}
-
-
-	public static function copy_attachment_element( $image, $file_name, $upload_dir, $parent_item_id = 0 ) {
-		$new_file_name = wp_unique_filename( $upload_dir['path'], $file_name );
-		$new_file = $upload_dir['path'] . "/$new_file_name";
-
-		if ( @copy( $image->path, $new_file ) ) {
-
-			// Set correct file permissions
-			$stat = stat( dirname( $new_file ));
-			$perms = $stat['mode'] & 0000666;
-			@ chmod( $new_file, $perms );
-
-			// Compute the URL
-			$url = $upload_dir['url'] . "/$new_file_name";
-
-			if ( is_multisite() )
-				delete_transient( 'dirsize_cache' );
-
-			$results = array( 'file' => $new_file, 'url' => $url );
-
-			$wp_filetype = wp_check_filetype( basename( $new_file ), null );
-
-			// Inserting new attachment
-			$attachment = array(
-				'guid' => $upload_dir['url'] . '/' . basename( $new_file ),
-				'post_mime_type' => $wp_filetype['type'],
-				'post_title' => $image->post_title,
-				'post_content' => '',
-				'post_status' => 'inherit'
-			);
-			$attach_id = wp_insert_attachment( $attachment, $new_file, $parent_item_id );
-
-			// you must first include the image.php file
-			// for the function wp_generate_attachment_metadata() to work
-			require_once( ABSPATH . 'wp-admin/includes/image.php' );
-
-			// Generating metadata
-			$attach_data = wp_generate_attachment_metadata( $attach_id, $new_file );
-			wp_update_attachment_metadata( $attach_id, $attach_data );
-
-			return array(
-				'attachment' => $attachment,
-				'attach_id' => $attach_id,
-				'attach_data' => $attach_data
-			);
-
-		}
-
-		return false;
-	}
 
 	/**
 	 * Copy images to the new blog
@@ -494,6 +410,9 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 
 		// Get all medai in the post
 		$all_media = $this->get_all_media_in_post( $post_id );
+		$orig_post = get_blog_post( $this->orig_blog_id, $post_id );
+		$new_post = get_post( $new_post_id );
+		$new_post_content = $new_post->post_content;
 
 		/**
 		 * Filter the media extracted from the source Post
@@ -511,122 +430,104 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 		$images_as_attachments = $all_media['attachments'];
 		$images_as_no_attachments = $all_media['no_attachments'];
 
-		switch_to_blog( $this->orig_blog_id );
 
-		// Just adding some custom properties
 		foreach ( $images_as_attachments as $key => $image ) {
 
-			$dir = get_attached_file( $image->ID );
-
-			// The path of the file
-			$images_as_attachments[ $key ]->path = $dir;
+			switch_to_blog( $this->orig_blog_id );
+			$image_alt_text = get_post_meta( $image->ID, '_wp_attachment_image_alt', true );
+			$metadata = wp_get_attachment_metadata( $image->ID );
 
 			// Is the image a thumbnail?
-			if ( empty( $image->is_thumbnail ) )
-				$images_as_attachments[ $key ]->is_thumbnail = false;
+			$is_thumbnail = false;
+			if ( ! empty( $image->is_thumbnail ) )
+				$is_thumbnail = true;
+			restore_current_blog();
 
-			// Now the images metadata (sizes)
-			$metadata = wp_get_attachment_metadata( $image->ID );
-			$images_as_attachments[ $key ]->metadata = $metadata;
+			$new_attachment = (array)$image;
+            unset( $new_attachment['ID'] );
+            unset( $new_attachment['guid'] );
 
-		}
+			$upload = $this->fetch_remote_file( $image->guid );
 
-		// When switching between blogs, wp_upload_dir function does not properly works
-		add_filter( 'upload_dir', array( &$this, 'set_correct_upload_url' ) );
-		$orig_upload_dir = wp_upload_dir();
-		remove_filter( 'upload_dir', array( &$this, 'set_correct_upload_url' ) );
+			if ( is_wp_error( $upload ) )
+                continue;
 
-		$orig_upload_basedir = $orig_upload_dir['basedir'];
-		$orig_upload_baseurl = $orig_upload_dir['baseurl'];
-		restore_current_blog();
+            if ( $info = wp_check_filetype( $upload['file'] ) )
+                $new_attachment['post_mime_type'] = $info['type'];
+            else
+                continue;
 
-		// Now uploading the files
-		$upload_dir = wp_upload_dir();
+            $new_attachment['post_parent'] = $new_post_id;
 
-		$tmp_upload_dir = $upload_dir['basedir'];
+            $new_attachment['guid'] = $upload['url'];
 
-		// We'll need to change the images URLs in the post content
-		$new_post = get_post( $new_post_id );
-		$new_post_content = $new_post->post_content;
+            require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
-		foreach ( $images_as_attachments as $image ) {
+            // Generate the new attachment
+            $new_attachment_id = wp_insert_attachment( $new_attachment, $upload['file'] );
+            wp_update_attachment_metadata( $new_attachment_id, wp_generate_attachment_metadata( $new_attachment_id, $upload['file'] ) );
 
-			$info = pathinfo( $image->path );
-			$file_name =  $info['basename'];
+            // Update alt text
+            update_post_meta( $new_attachment_id, '_wp_attachment_image_alt', $image_alt_text );
 
-			$results = self::copy_attachment_element( $image, $file_name, $upload_dir, $new_post_id );
+            if ( $is_thumbnail )
+            	set_post_thumbnail( $new_post_id, $new_attachment_id );
 
-			if ( false !== $results ) {
-				extract( $results );
-				// If the image is a thumbnail we'll need to update the post meta
-				if ( $image->is_thumbnail ) {
-					set_post_thumbnail( $new_post_id, $attach_id );
-				}
-				else {
+            // First we try with the plain file
+			$new_post_content = str_replace( $image->guid, $new_attachment['guid'], $new_post_content );
 
-					// First we try with the plain file
-					$new_post_content = str_replace( $image->guid, $attachment['guid'], $new_post_content );
+			$parts = pathinfo( $image->guid );
+			$name = basename( $parts['basename'], ".{$parts['extension']}" );
+			$parts_new = pathinfo( $upload['url'] );
+			$name_new = basename( $parts_new['basename'], ".{$parts_new['extension']}" );
 
-					// Now with the other sizes
-					if ( ! empty( $attach_data['sizes'] ) ) {
-						foreach ( $attach_data['sizes'] as $key => $attach_size ) {
-							if ( isset( $image->metadata['sizes'][ $key ] ) ) {
-								$old_url = dirname( $image->guid ) . '/' . $image->metadata['sizes'][ $key ]['file'];
-								$new_post_content = str_replace( $old_url, dirname( $attachment['guid'] ) . '/' . $attach_size['file'], $new_post_content );
-							}
-						}
-					}
+			$from_url = $parts['dirname'] . '/' . $name;
+ 			$to_url = $parts_new['dirname'] . '/' . $name_new;
 
-
-				}
-			}
+			// Now with the other sizes
+			$new_post_content = str_replace( $from_url, $to_url, $new_post_content );
 
 
 		}
+
 
 		foreach ( $images_as_no_attachments as $image ) {
 
-			$network_url = get_site_option( 'siteurl' );
-			$orig_blog_details = get_blog_details( $this->orig_blog_id );
-			$orig_blog_path = $orig_blog_details->siteurl;
-			$orig_alt_upload_basedir = str_replace( $orig_blog_path, $network_url, $orig_upload_baseurl );
+			$new_attachment = array(
+                'post_status' => 'publish'
+            );
 
-			// Source dirs info
-			$orig_file = $orig_upload_basedir . '/' . dirname( $image['orig_upload_file'] ) . '/' . basename( $image['orig_src'] );
-			$orig_base_file = $orig_upload_basedir . '/' . $image['orig_upload_file'];
+            $upload = $this->fetch_remote_file( $image['orig_src'] );
 
-			// Source src info
-			$orig_url_file = $orig_upload_baseurl . '/' . dirname( $image['orig_upload_file'] ) . '/' . basename( $image['orig_src'] );
-			$orig_url_base_file = $orig_upload_baseurl . '/' . $image['orig_upload_file'];
+            if ( is_wp_error( $upload ) )
+                continue;
 
-			$orig_alt_url_file = $orig_alt_upload_basedir . '/' . dirname( $image['orig_upload_file'] ) . '/' . basename( $image['orig_src'] );	  	     		     					
-			$orig_alt_url_base_file = $orig_alt_upload_basedir . '/' . $image['orig_upload_file'];
+            if ( $info = wp_check_filetype( $upload['file'] ) )
+                $new_attachment['post_mime_type'] = $info['type'];
+            else
+                continue;
 
+            $new_attachment['post_parent'] = $new_post_id;
 
-			// New filenames
-			$new_file_name = basename( $image['orig_src'] );
-			$new_base_file_name = basename( $image['orig_upload_file'] );
+            $new_attachment['guid'] = $upload['url'];
 
-			// Destination dirs info
-			$dest_file = $upload_dir['path'] . '/' . $new_file_name;
-			$dest_base_file = $upload_dir['path'] . '/' . $new_base_file_name;
+            // Generate the new attachment
+            $new_attachment_id = wp_insert_attachment( $new_attachment, $upload['file'] );
+            wp_update_attachment_metadata( $new_attachment_id, wp_generate_attachment_metadata( $new_attachment_id, $upload['file'] ) );
 
-			// Destination src info
-			$dest_url_file = $upload_dir['baseurl'] . $upload_dir['subdir'] . '/' . basename( $image['orig_src'] );
-			$dest_url_base_file = $upload_dir['baseurl'] . $upload_dir['subdir'] . '/' . basename( $image['orig_upload_file'] );
+            // First we try with the plain file
+			$new_post_content = str_replace( $image['orig_src'], $new_attachment['guid'], $new_post_content );
 
-			// Copying the file with width and height in its name
-			if ( @copy( $orig_file, $dest_file ) ) {
-				$new_post_content = str_replace( $orig_url_file, $dest_url_file, $new_post_content );
-				$new_post_content = str_replace( $orig_alt_url_file, $dest_url_file, $new_post_content );
-			}
+			$parts = pathinfo( $image['orig_src'] );
+			$name = basename( $parts['basename'], ".{$parts['extension']}" );
+			$parts_new = pathinfo( $upload['url'] );
+			$name_new = basename( $parts_new['basename'], ".{$parts_new['extension']}" );
 
-			// Copying the base file
-			if ( @copy( $orig_base_file, $dest_base_file ) ) {
-				$new_post_content = str_replace( $orig_url_base_file, $dest_url_base_file, $new_post_content );
-				$new_post_content = str_replace( $orig_alt_url_base_file, $dest_url_base_file, $new_post_content );
-			}
+			$from_url = $parts['dirname'] . '/' . $name;
+ 			$to_url = $parts_new['dirname'] . '/' . $name_new;
 
+			// Now with the other sizes
+			$new_post_content = str_replace( $from_url, $to_url, $new_post_content );
 
 		}
 
@@ -636,6 +537,57 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 		$post_id = wp_insert_post( $new_post );
 
 	}
+
+	/**
+     * Fetch an image and download it. Then create a new empty file for  it
+     * that can be filled later
+     *
+     * Code based on WordPress Importer plugin
+     *
+     * @return WP_Error/Array Image properties/Error
+     */
+    public function fetch_remote_file( $url )  {
+        $file_name = basename( $url );
+
+        $upload = wp_upload_bits( $file_name, null, 0 );
+
+        if ( $upload['error'] )
+            return new WP_Error( 'upload_dir_error', $upload['error'] );
+
+        $headers = wp_get_http( $url, $upload['file'] );
+
+        // request failed
+        if ( ! $headers ) {
+            @unlink( $upload['file'] );
+            return new WP_Error( 'import_file_error', sprintf( __('Remote server did not respond for file: %s', WPMUDEV_COPIER_LANG_DOMAIN ), $url ) );
+        }
+
+        // make sure the fetch was successful
+        if ( $headers['response'] != '200' ) {
+            @unlink( $upload['file'] );
+            return new WP_Error( 'import_file_error', sprintf( __('Remote server returned error response %1$d %2$s', WPMUDEV_COPIER_LANG_DOMAIN ), esc_html($headers['response']), get_status_header_desc($headers['response']) ) );
+        }
+
+        $filesize = filesize( $upload['file'] );
+
+        if ( isset( $headers['content-length'] ) && $filesize != $headers['content-length'] ) {
+            @unlink( $upload['file'] );
+            return new WP_Error( 'import_file_error', __('Remote file is incorrect size', WPMUDEV_COPIER_LANG_DOMAIN ) );
+        }
+
+        if ( 0 == $filesize ) {
+            @unlink( $upload['file'] );
+            return new WP_Error( 'import_file_error', __('Zero size file downloaded', WPMUDEV_COPIER_LANG_DOMAIN ) );
+        }
+
+        $max_size = (int) apply_filters( 'mcc_attachment_size_limit', 0 );
+        if ( ! empty( $max_size ) && $filesize > $max_size ) {
+            @unlink( $upload['file'] );
+            return new WP_Error( 'import_file_error', sprintf(__('Remote file is too large, limit is %s', WPMUDEV_COPIER_LANG_DOMAIN ), size_format($max_size) ) );
+        }
+
+        return $upload;
+    }
 
 	/**
 	 * When switching between blogs wp_upload_dir()
@@ -906,6 +858,10 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 	protected function get_orig_blog_post_taxonomies( $item_id ) {
 		switch_to_blog( $this->orig_blog_id );
 		$post_taxonomies = get_object_taxonomies( get_post_type( $item_id ), 'names' );
+		$post_format_key = array_search( 'post_format', $post_taxonomies );
+		if ( false !==  $post_format_key ) {
+			unset( $post_taxonomies[ $post_format_key ] );
+		}
 		restore_current_blog();
 
 		return $post_taxonomies;
