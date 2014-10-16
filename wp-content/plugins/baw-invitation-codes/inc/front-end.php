@@ -1,53 +1,49 @@
 <?php
-function bpeic_register_form_add_field()
+
+load_plugin_textdomain( 'baweic', 'false', dirname( plugin_basename( ___FILE___ ) ) . '/lang/' );
+
+function baweic_register_form_add_field()
 { 
-	global $bpeic_fields, $allowedposttags;
+	global $baweic_fields, $allowedposttags;
 ?>
 	<p>
-		<label><?php _e( 'Invitation Code', 'bpeic' ); ?></label>
-<?php do_action( 'bp_invitation_code_errors' ); ?>
-		<input name="invitation_code" tabindex="30" type="text" value="<?php
-    echo empty($_POST['invitation_code'])?'':$_POST['invitation_code']; ?>" class="input" id="invitation_code" style="text-transform: uppercase" />
-		<?php if( !empty( $bpeic_fields['link'] ) && $bpeic_fields['link']=='on' ): ?>
-		<p class="invite-instructions"><?php echo !empty( $bpeic_fields['text_link'] ) ? wp_kses_post( $bpeic_fields['text_link'], $allowedposttags ) : ''; ?></p>
+		<label><span title="Powered by Easy Invitation Codes : http://baw.li/eic"><?php _e( 'Invitation Code', 'baweic' ); ?>*</span><br />
+		<!--// Get this plugin : http://baw.li/eic "BAW Easy Invitation Codes" , thank you. //-->
+		<input name="invitation_code" tabindex="30" type="text" class="input" id="invitation_code" style="text-transform: uppercase" /></label>
+		<?php if( !empty( $baweic_fields['link'] ) && $baweic_fields['link']=='on' ): ?>
+		<span style="font-style: italic; position: relative; top: -15px;"><?php echo !empty( $baweic_fields['text_link'] ) ? wp_kses_post( $baweic_fields['text_link'], $allowedposttags ) : ''; ?></span>
 		<?php endif; ?>
 	</p>
  <?php
 }
-add_action( 'register_form', 'bpeic_register_form_add_field' );
+add_action( 'register_form', 'baweic_register_form_add_field' );
 
-function bpeic_registration_errors( )
+function baweic_registration_errors( $errors, $sanitized_user_login, $user_email )
 {
-global $bp, $bpeic_options;
- 
+	if( count( $errors->errors )>0 )
+		return $errors;
+	global $baweic_options;
 	$invitation_code = isset( $_POST['invitation_code'] ) ? strtoupper( $_POST['invitation_code'] ) : '';
-	if( !array_key_exists( $invitation_code, $bpeic_options['codes'] ) ) {
-		  $bp->signup->errors['invitation_code'] = 'The code you entered is not valid.';
+	if( !array_key_exists( $invitation_code, $baweic_options['codes'] ) ) {
+		add_action( 'login_head', 'wp_shake_js', 12 );
+		return new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: Wrong Invitation Code.', 'baweic' ) );
+	}elseif( isset( $baweic_options['codes'][$invitation_code] ) && $baweic_options['codes'][$invitation_code]['leftcount']==0 ){
+		add_action( 'login_head', 'wp_shake_js', 12 );
+		return new WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: This Invitation Code is over.', 'baweic' ) );
+	}else{
+		$baweic_options['codes'][$invitation_code]['leftcount']--;
+		$baweic_options['codes'][$invitation_code]['users'][] = $sanitized_user_login;
+		update_option( 'baweic_options', $baweic_options );
 	}
-elseif ( isset( $bpeic_options['codes'][$invitation_code] ) && $bpeic_options['codes'][$invitation_code]['leftcount']==0 ){
-		  $bp->signup->errors['invitation_code'] = 'This Invite Code has already been used.';
-
-	}
+	return $errors;
 }
+add_filter( 'registration_errors', 'baweic_registration_errors', 999, 3 ); 
 
-function invite_code_update() {
-
-//Update the Coupon Codes on successful registrations
-
-global $bp, $bpeic_options;
-
-                $invitation_code = isset( $_POST['invitation_code'] ) ? strtoupper( $_POST['invitation_code'] ) : '';
-		$bpeic_options['codes'][$invitation_code]['leftcount']--;
-		$bpeic_options['codes'][$invitation_code]['users'][] = $_POST['signup_username'];
-		update_option( 'bpeic_options', $bpeic_options );
-	
-}
-
-function bpeic_login_footer()
+function baweic_login_footer()
 {
-	global $bpeic_options;
+	global $baweic_options;
 	$invitation_code = isset( $_POST['invitation_code'] ) ? strtoupper( $_POST['invitation_code'] ) : '';
-	if( !array_key_exists( $invitation_code, $bpeic_options['codes'] ) ):
+	if( !array_key_exists( $invitation_code, $baweic_options['codes'] ) ):
 		?>
 		<script type="text/javascript">
 			try{document.getElementById('invitation_code').focus();}catch(e){}
@@ -55,28 +51,4 @@ function bpeic_login_footer()
 		<?php 
 	endif;
 }
-add_action( 'login_footer', 'bpeic_login_footer' );
-
-function registration_add_code_invite(){ ?>
-
-    <div class="register-section" id="profile-details-section">
-   <h4><?php _e( 'Invite Code', 'buddypress' ); ?></h4>
-    <?php 
-    do_action('register_form'); ?>
-</div>
-<?php
- }
-function add_invite_style() {
-?>
-<style> .invite-instructions {
-color: #888;
-margin: 15px 0 5px;
-font-size: 12px;
-} </style>
-<?php
-}
-
-add_action('bp_after_account_details_fields', 'registration_add_code_invite',20);
-add_action('bp_before_registration_confirmed', 'invite_code_update', 20);
-add_action('bp_signup_validate', 'bpeic_registration_errors');
-add_action('wp_head', 'add_invite_style');
+add_action( 'login_footer', 'baweic_login_footer' );
