@@ -3,7 +3,7 @@
 Plugin Name: Multisite Theme Manager
 Plugin URI: http://premium.wpmudev.org/multisite-theme-manager/
 Description: Take control of the theme admin page for your multisite network. Categorize your themes into groups, modify the name, description, and screenshot used for themes.
-Version: 1.0.0.2
+Version: 1.0.0.3
 Network: true
 Text Domain: wmd_multisitethememanager
 Author: WPMU DEV
@@ -69,13 +69,13 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 
 			register_activation_hook($this->plugin_main_file, array($this, 'do_activation'));
 
+			add_action('init', array($this,'init'));
+
 			//if in setup mode, disable everything for other sites then main.
 			if( isset($this->options['setup_mode']) && ($this->options['setup_mode'] == 0 || ($this->blog_id == 1 && $this->options['setup_mode'] == 1)) ) {
 				add_action('plugins_loaded', array($this,'plugins_loaded'));
 
 				add_action('admin_enqueue_scripts', array($this,'register_scripts_styles_admin'), 11);
-
-				add_action('init', array($this,'init'));
 
 				add_action('admin_menu', array($this,'admin_page'), 20);
 				add_action('network_admin_menu', array($this,'network_admin_page'), 20);
@@ -124,7 +124,7 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 		$this->default_options = array(
 			'setup_mode' => '1',
 			'theme' => 'standard/3-eight',
-			'themes_options' => array('author_link' => '1', 'custom_link' => '1', 'tags' => '1', 'version' => '1'),
+			'themes_options' => array('author_link' => '1', 'author_link_target' => '', 'custom_link' => '1', 'custom_link_target' => '', 'tags' => '1', 'version' => '1'),
 			'themes_auto_screenshots_by_name' => '0',
 			'themes_page_title' => __('Themes', 'wmd_multisitethememanager'),
 			'themes_page_description' => '',
@@ -132,7 +132,7 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 		);
 
 		//load options
-		$this->options = get_site_option('wmd_prettythemes_options');
+		$this->options = get_site_option('wmd_prettythemes_options', $this->default_options);
     }
 
     function do_activation() {
@@ -228,7 +228,10 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 		}
 
 		//Redirect old themes page to new if parameter is not set
-		if(!is_network_admin() && !$action && $default != 1 && $page === 0 && $pagenow == 'themes.php') {
+		if(
+			(isset($this->options['setup_mode']) && ($this->options['setup_mode'] == 0 || ($this->blog_id == 1 && $this->options['setup_mode'] == 1))) &&
+			(!is_network_admin() && !$action && $default != 1 && $page === 0 && $pagenow == 'themes.php')
+		) {
 			wp_redirect( add_query_arg(array('page' => 'multisite-theme-manager.php')) );
 			exit();
 		}
@@ -359,7 +362,7 @@ class WMD_PrettyThemes extends WMD_PrettyThemes_Functions {
 	function admin_body_class($classes) {
 		global $pagenow;
 
-		if(!is_network_admin() && $pagenow == 'themes.php')
+		if(!is_network_admin() && $pagenow == 'themes.php' && $_GET['page'] == 'multisite-theme-manager.php')
 			return ($classes) ? $classes.' themes-php' : 'themes-php';
 	}
 

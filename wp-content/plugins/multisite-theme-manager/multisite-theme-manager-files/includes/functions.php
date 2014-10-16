@@ -102,7 +102,13 @@ class WMD_PrettyThemes_Functions {
 		if(!isset($this->themes_categories) || !is_array($this->themes_categories))
 			$this->themes_categories = array();
 
-		$categories = array_merge($this->themes_categories_config, $this->themes_categories);
+		//remove categories with same label
+		$unique_config_categories = array();
+		foreach ($this->themes_categories_config as $key => $value)
+			if(!in_array($value, $this->themes_categories) )
+				$unique_config_categories[$key] = $value;
+
+		$categories = array_merge($unique_config_categories, $this->themes_categories);
 		asort($categories);
 
 		return $categories;
@@ -141,8 +147,8 @@ class WMD_PrettyThemes_Functions {
 
 	function get_validated_options($input) {
 		if(is_array($input)) {
-			foreach (array('author_link', 'custom_link', 'tags', 'version') as $type) {
-				if(isset($input['themes_options'][$type]))
+			foreach (array('author_link', 'custom_link', 'author_link_target', 'custom_link_target', 'tags', 'version') as $type) {
+				if(isset($input['themes_options'][$type]) && $input['themes_options'][$type])
 					$this->options['themes_options'][$type] = '1';
 				else
 					$this->options['themes_options'][$type] = '0';
@@ -155,7 +161,7 @@ class WMD_PrettyThemes_Functions {
 			else
 				$this->options['theme'] = 'standard/quick-sand';
 
-			$standard_options = array('themes_link_label' => 'strip_tags', 'themes_page_title' => 'strip_tags', 'themes_page_description' => '', 'themes_auto_screenshots' => '', 'setup_mode' => '', 'themes_hide_descriptions' => '', 'themes_auto_screenshots_by_name' => '');
+			$standard_options = array('themes_link_label' => 'strip_tags', 'themes_page_title' => 'strip_tags', 'themes_page_description' => '', 'themes_auto_screenshots' => '', 'setup_mode' => '', 'themes_hide_descriptions' => '', 'themes_auto_screenshots_by_name' => '', 'author_link_target' => '', 'custom_link_target' => '');
 			foreach ($standard_options as $option => $action) {
 				if(isset($input[$option])) {
 					if($action == 'strip_tags')
@@ -214,6 +220,9 @@ class WMD_PrettyThemes_Functions {
 
 			//lets check if there is custom data to apply
 
+			$target = (isset($this->options['themes_options']['author_link_target']) && $this->options['themes_options']['author_link_target']) ? ' target="_blank"' : '';
+			$theme['authorAndUri'] = str_replace('<a href=', '<a'.$target.' href=', $theme['authorAndUri']);
+
 			if(!isset($themes_custom_data[$theme['id']])) {
 				$themes[$key] = $theme;
 				continue;
@@ -236,15 +245,22 @@ class WMD_PrettyThemes_Functions {
 			}
 
 			$link_label = (isset($theme_custom_data['CustomLinkLabel']) && $theme_custom_data['CustomLinkLabel']) ? $theme_custom_data['CustomLinkLabel'] : $this->options['themes_link_label'];
-			$theme['customLinkAndUri'] = (isset($this->options['themes_options']['custom_link']) && isset($theme_custom_data['CustomLink']) && $this->options['themes_options']['custom_link'] && $link_label) ? '<a href="'.$theme_custom_data['CustomLink'].'">'.stripslashes($link_label).'</a>' : false;
+			$target = (isset($this->options['themes_options']['custom_link_target']) && $this->options['themes_options']['custom_link_target']) ? ' target="_blank"' : '';
+			$theme['customLinkAndUri'] = (isset($this->options['themes_options']['custom_link']) && isset($theme_custom_data['CustomLink']) && $this->options['themes_options']['custom_link'] && $link_label) ? '<a'.$target.' href="'.$theme_custom_data['CustomLink'].'">'.stripslashes($link_label).'</a>' : false;
 
 			if(isset($theme_custom_data['Categories']) && count($theme_custom_data['Categories']) > 0) {
 				$categories = $categories_keys = array();
 				foreach ($theme_custom_data['Categories'] as $theme_category_key) {
-					$categories[] = $themes_categories[$theme_category_key];
-					$categories_keys[] = $theme_category_key;
-					$theme['categories'] = implode(', ', $categories);
-					$theme['categories_keys'] = $categories_keys;
+					//check if its missing because we wanted to remove duplicated categories from config
+					if(!isset($themes_categories[$theme_category_key]))
+						$theme_category_key = array_search($this->themes_categories_config[$theme_category_key], $this->themes_categories);
+
+					if(isset($themes_categories[$theme_category_key])) {
+						$categories[] = $themes_categories[$theme_category_key];
+						$categories_keys[] = $theme_category_key;
+						$theme['categories'] = implode(', ', $categories);
+						$theme['categories_keys'] = $categories_keys;
+					}
 				}
 			}
 

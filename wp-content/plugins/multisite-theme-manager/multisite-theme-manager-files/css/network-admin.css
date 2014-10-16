@@ -4,7 +4,7 @@ table.plugins {
 table.plugins .theme-image {
 	width: 100px;
 	height: 75px;
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAALElEQVQYGWO8d+/efwYkoKioiMRjYGBC4WHhUK6A8T8QIJt8//59ZC493AAAQssKpBK4F5AAAAAASUVORK5CYII=');
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAALElEQVQYGWO8d+/efwYkoKioiMRjYGBC4WHhUK6A8T8QIJt8//59ZC493AAAQssKpBK4F5AAAAAASUVORK5CYII=');	  	  				 		 	 	 	  
 	background-position: center center;
 }
 .edit-category-save-button, .add-category-button {
@@ -55,4 +55,4 @@ table.plugins .theme-image {
 }
 
 
-/* 327416-1406146571-ai */
+/* 327416-1413422151-au */
