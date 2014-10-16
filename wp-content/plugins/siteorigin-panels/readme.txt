@@ -2,7 +2,7 @@
 Contributors: gpriday
 Tags: page builder, responsive, widget, widgets, builder, page, admin, gallery, content, cms, pages, post, css, layout, grid
 Requires at least: 3.7
-Tested up to: 3.9
+Tested up to: 4.0
 Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
@@ -56,8 +56,6 @@ Most standard widgets work with Page Builder, but here are some of our favorites
 * [Black Studio TinyMCE](http://wordpress.org/plugins/black-studio-tinymce-widget/) for a visual content editing widget.
 * [Meta Slider](http://wordpress.org/plugins/ml-slider/) for a responsive slider widget.
 
-[Contact me](mailto:greg@siteorigin.com) if you've created a widget that would work well with Page Builder so I can add it to our recommended plugins list. Your plugin will also be recommended within Page Builder itself.
-
 == Installation ==
 
 1. Upload and install Page Builder in the same way you'd install any other plugin.
@@ -91,6 +89,20 @@ Page Builder is actively developed and updated, so generally I'd recommend that 
 I've tried to ensure that Page Builder is compatible with most plugin widgets. It's best to just download Page Builder and test for yourself.
 
 == Changelog ==
+
+= 1.5.3 =
+* Fixed post loop widget issue.
+* Fixed settings issue.
+
+= 1.5.2 =
+* Changed to custom settings system to fix a few settings bugs.
+* Added option to display more link in post loop widget.
+* Fixed SSL in widget images.
+
+= 1.5.1 =
+* Compatibility with WordPress 4.0 - needed to change how tabs function.
+* Compatibility with Black Studio TinyMCE Widget 2.0.
+* Namespaced Tooltip to avoid conflicts.
 
 = 1.5 =
 * Increased size of widget dialog boxes.

@@ -304,8 +304,12 @@ class SiteOrigin_Panels_Widgets_PostLoop extends WP_Widget{
 			echo $args['before_title'] . $instance['title'] . $args['after_title'];
 		}
 
+		add_filter( 'siteorigin_panels_filter_content_enabled', array( 'SiteOrigin_Panels_Widgets_PostLoop', 'remove_content_filter' ) );
+
+		global $more; $old_more = $more; $more = empty($instance['more']);
+
 		if(strpos('/'.$instance['template'], '/content') !== false) {
-			while(have_posts()) {
+			while( have_posts() ) {
 				the_post();
 				locate_template($instance['template'], true, false);
 			}
@@ -314,10 +318,20 @@ class SiteOrigin_Panels_Widgets_PostLoop extends WP_Widget{
 			locate_template($instance['template'], true, false);
 		}
 
+		$more = $old_more;
+		remove_filter( 'siteorigin_panels_filter_content_enabled', array( 'SiteOrigin_Panels_Widgets_PostLoop', 'remove_content_filter' ) );
+
 		echo $args['after_widget'];
 
 		// Reset everything
 		wp_reset_query();
+	}
+
+	/**
+	 * @return bool
+	 */
+	static function remove_content_filter(){
+		return false;
 	}
 
 	/**
@@ -328,6 +342,7 @@ class SiteOrigin_Panels_Widgets_PostLoop extends WP_Widget{
 	 * @return array
 	 */
 	function update($new, $old){
+		$new['more'] = !empty( $new['more'] );
 		return $new;
 	}
 
@@ -384,6 +399,7 @@ class SiteOrigin_Panels_Widgets_PostLoop extends WP_Widget{
 			'sticky' => '',
 
 			'additional' => '',
+			'more' => false,
 		));
 
 		$templates = $this->get_loop_templates();
@@ -469,10 +485,17 @@ class SiteOrigin_Panels_Widgets_PostLoop extends WP_Widget{
 		</p>
 
 		<p>
+			<label for="<?php echo $this->get_field_id('more') ?>"><?php _e('More Link ', 'siteorigin-panels') ?></label>
+			<input type="checkbox" class="widefat" id="<?php echo $this->get_field_id( 'more' ) ?>" name="<?php echo $this->get_field_name( 'more' ) ?>" <?php checked( $instance['more'] ) ?> /><br/>
+			<small><?php _e('If the template supports it, cut posts and display the more link.', 'siteorigin-panels') ?></small>
+		</p>
+
+		<p>
 			<label for="<?php echo $this->get_field_id('additional') ?>"><?php _e('Additional ', 'siteorigin-panels') ?></label>
 			<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'additional' ) ?>" name="<?php echo $this->get_field_name( 'additional' ) ?>" value="<?php echo esc_attr($instance['additional']) ?>" />
 			<small><?php printf(__('Additional query arguments. See <a href="%s" target="_blank">query_posts</a>.', 'siteorigin-panels'), 'http://codex.wordpress.org/Function_Reference/query_posts') ?></small>
 		</p>
+
 	<?php
 	}
 }

@@ -16,6 +16,9 @@ $layouts = apply_filters( 'siteorigin_panels_prebuilt_layouts', array() );
 		<?php if(!empty($layouts)) : ?>
 			<button class="prebuilt-set" data-tooltip="<?php esc_attr_e('Prebuilt Layouts','siteorigin-panels') ?>"><?php _e('Prebuilt Layouts', 'siteorigin-panels') ?></button>
 		<?php endif; ?>
+
+		<a href="#" class="switch-to-standard"><?php _e('Switch to Editor', 'siteorigin-panels') ?></a>
+
 		<div class="clear"></div>
 	</div>
 	
