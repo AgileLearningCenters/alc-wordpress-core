@@ -290,7 +290,7 @@ var wpmudev = {
 		$validation
 			.removeClass("error")
 			.addClass("ok")
-			.html('<span class="icon-ok"></span>')
+			.html('<span class="wdvicon-ok"></span>')
 			.show()
 		;
 	},
@@ -301,7 +301,7 @@ var wpmudev = {
 		$validation
 			.removeClass("ok")
 			.addClass("error")
-			.html('<span class="icon-remove-sign"></span>' + text)
+			.html('<span class="wdvicon-on-remove-sign"></span>' + text)
 			.show()
 		;
 	},

@@ -8,9 +8,9 @@
 							<figcaption><?php echo $profile['profile']['title']; ?></figcaption>
 					 </figure>
 					<?php if (!$this->current_user_has_dev_gravatar()) { // Ooooh this is a mystery man! ?>
-						<b><a href="https://en.gravatar.com/site/signup/" class="grav-link" target="_blank"><i class="icon-user"></i>&nbsp;&nbsp;<?php _e('Get a gravatar now!', 'wpmudev'); ?></a></b>
+						<b><a href="https://en.gravatar.com/site/signup/" class="grav-link" target="_blank"><i class="wdvicon-user"></i>&nbsp;&nbsp;<?php _e('Get a gravatar now!', 'wpmudev'); ?></a></b>
 					<?php } else { // Regular gravatar (some sort of actual image) carry on ?>
-						<a href="https://en.gravatar.com/site/login/" class="grav-link" target="_blank"><i class="icon-user"></i>&nbsp;&nbsp;<?php _e('Change Gravatar', 'wpmudev'); ?></a>
+						<a href="https://en.gravatar.com/site/login/" class="grav-link" target="_blank"><i class="wdvicon-user"></i>&nbsp;&nbsp;<?php _e('Change Gravatar', 'wpmudev'); ?></a>
 					<?php } ?>
 					</section>
 					<section class="profile-reputation">
@@ -18,7 +18,7 @@
 						<small><?php printf(__('member since %s', 'wpmudev'), date_i18n(get_option('date_format'), $profile['profile']['member_since'])); ?></small>
 						<h1 class="rep">
 							<strong><?php _e('Your reputation', 'wpmudev'); ?></strong>
-							<span class="tooltip"><i class="icon-question-sign"></i>
+							<span class="tooltip"><i class="wdvicon-question-sign"></i>
 							<section>
 								<?php _e('Help other members, participate in discussions, complete translations, post useful tips/tricks/ideas, and earn a free annual or lifetime membership!', 'wpmudev'); ?>
 							</section>
@@ -100,7 +100,7 @@
 				<?php if ($count >= 5) break; $count++ ?>
 				<?php } ?>
 			</table>
-			<a href="http://premium.wpmudev.org/profile/private/" target="_blank" class="wpmu-button icon"><i class="icon-list icon-large"></i> <?php _e('VIEW ALL ACTIVITY', 'wpmudev'); ?></a>
+			<a href="http://premium.wpmudev.org/profile/private/" target="_blank" class="wpmu-button icon"><i class="wdvicon-list wdvicon-large"></i> <?php _e('VIEW ALL ACTIVITY', 'wpmudev'); ?></a>
 		</section>
 	</section>
 
@@ -118,10 +118,10 @@
 		<!-- VISUAL BACKDROP -->
 		<section id="dash-main-content" class="grid_container">
 			<section class="support-column col-02">
-				<h1><i class="icon-question-sign"></i><?php _e('Support', 'wpmudev'); ?></h1>
+				<h1><i class="wdvicon-question-sign"></i><?php _e('Support', 'wpmudev'); ?></h1>
 				<hr />
-				<input type="text" class="dash-search" id="forum-search-q" placeholder="<?php _e('Search support', 'wpmudev'); ?>" /><a id="forum-search-go" href="#" class="column-search"><i class="icon-search"></i></a>
-				<a href="admin.php?page=wpmudev-support" class="wpmu-button icon big"><span class="btn-txt"><strong><?php _e('Q&A', 'wpmudev'); ?><i class="icon-play-circle icon-larger"></i></strong><small><?php _e('Ask a question', 'wpmudev'); ?></small></span></a>
+				<input type="text" class="dash-search" id="forum-search-q" placeholder="<?php _e('Search support', 'wpmudev'); ?>" /><a id="forum-search-go" href="#" class="column-search"><i class="wdvicon-search"></i></a>
+				<a href="admin.php?page=wpmudev-support" class="wpmu-button icon big"><span class="btn-txt"><strong><?php _e('Q&A', 'wpmudev'); ?><i class="wdvicon-play-circle wdvicon-larger"></i></strong><small><?php _e('Ask a question', 'wpmudev'); ?></small></span></a>
 				<section class="recent-activity-widget">
 					<ul>
 						<li class="accordion-title">
@@ -130,7 +130,7 @@
 							<?php $count = 1; if (isset($profile['forum']['support_threads'])) foreach ($profile['forum']['support_threads'] as $thread) { ?>
 								<li>
 									<?php if ($thread['status'] == 'resolved') { ?>
-									<i class="icon-ok-sign icon-large resolved" title="<?php _e('Resolved', 'wpmudev'); ?>"></i>
+									<i class="wdvicon-ok-sign wdvicon-large resolved" title="<?php _e('Resolved', 'wpmudev'); ?>"></i>
 									<?php } else { ?>
 
 									<?php } ?>
@@ -149,9 +149,9 @@
 			</section> <!-- /SUPPORT COLUMN -->
 
 			<section class="products-column col-02" >
-				<h1><i class="icon-th"></i><?php _e('Products', 'wpmudev'); ?></h1>
+				<h1><i class="wdvicon-th"></i><?php _e('Products', 'wpmudev'); ?></h1>
 				<hr />
-				<input type="text" id="suggestive-dash-search" class="dash-search" placeholder="<?php _e('Search products', 'wpmudev'); ?>" /><a href="#" id="project-search-go" class="column-search"><i class="icon-search"></i></a>
+				<input type="text" id="suggestive-dash-search" class="dash-search" placeholder="<?php _e('Search products', 'wpmudev'); ?>" /><a href="#" id="project-search-go" class="column-search"><i class="wdvicon-search"></i></a>
 				<!-- plugin / theme foldout on main dash -->
 				<section class="product-foldout">
 					<ul>
@@ -175,7 +175,7 @@
 												<li>
 													<div>
 														<h5><?php echo trim(stripslashes($projects[$item]['name'])); ?></h5>
-														<a href="#" class="hover-to-expand"><i class="icon-play-circle icon-larger"></i>&nbsp;&nbsp;<?php _e('hover for more', 'wpmudev'); ?></a>
+														<a href="#" class="hover-to-expand"><i class="wdvicon-play-circle wdvicon-larger"></i>&nbsp;&nbsp;<?php _e('hover for more', 'wpmudev'); ?></a>
 													</div>
 													<div class="expanded-content">
 														<span>
@@ -201,7 +201,7 @@
 					</ul>
 				</section>
 				<!-- plugin / theme foldout on main dash -->
-				<a href="admin.php?page=wpmudev-plugins" class="wpmu-button icon big"><i class="icon-play-circle icon-larger"></i><strong><?php _e('All plugins', 'wpmudev'); ?></strong></a>
+				<a href="admin.php?page=wpmudev-plugins" class="wpmu-button icon big"><i class="wdvicon-play-circle wdvicon-larger"></i><strong><?php _e('All plugins', 'wpmudev'); ?></strong></a>
 
 				<!-- plugin / theme foldout on main dash -->
 				<section class="product-foldout">
@@ -211,7 +211,7 @@
 							<ul class="hover-to-expand">
 								<?php
 								$data = $this->get_updates();
-								$local_projects = get_site_option('wdp_un_local_projects');
+								$local_projects = get_site_option('wdp_un_local_projects');	  								 		 				
 								if ( is_array( $data ) ) {
 									$list = $data['latest_themes'];
 									$projects = $data['projects'];
@@ -228,7 +228,7 @@
 												<li>
 													<div>
 														<h5><?php echo trim(stripslashes($projects[$item]['name'])); ?></h5>
-														<a href="" class="hover-to-expand"><i class="icon-play-circle icon-larger"></i>&nbsp;&nbsp;<?php _e('hover for more', 'wpmudev'); ?></a>
+														<a href="" class="hover-to-expand"><i class="wdvicon-play-circle wdvicon-larger"></i>&nbsp;&nbsp;<?php _e('hover for more', 'wpmudev'); ?></a>
 													</div>
 													<div class="expanded-content">
 														<span>
@@ -254,11 +254,11 @@
 					</ul>
 				</section>
 				<!-- plugin / theme foldout on main dash -->
-				<a href="admin.php?page=wpmudev-themes" class="wpmu-button icon big"><i class="icon-play-circle icon-larger"></i><strong><?php _e('All themes', 'wpmudev'); ?></strong></a>
+				<a href="admin.php?page=wpmudev-themes" class="wpmu-button icon big"><i class="wdvicon-play-circle wdvicon-larger"></i><strong><?php _e('All themes', 'wpmudev'); ?></strong></a>
 			</section> <!-- /PRODUCTS COLUMN -->
 
 			<section class="community-column col-02" >
-				<h1><i class="icon-comments"></i><?php _e('Community', 'wpmudev'); ?></h1>
+				<h1><i class="wdvicon-comments"></i><?php _e('Community', 'wpmudev'); ?></h1>
 				<hr />
 				<i class="community-quote"><?php _e('Help other members and earn reputation points. Swap points for <a href="http://premium.wpmudev.org/earn-your-wpmudev-membership/" target="_blank">free annual and lifetime memberships</a>.', 'wpmudev'); ?></i>
 				<h3><?php _e('Latest community topics:', 'wpmudev'); ?></h3>

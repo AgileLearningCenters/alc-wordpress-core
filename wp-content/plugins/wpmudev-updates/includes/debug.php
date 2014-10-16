@@ -1,9 +1,11 @@
 <?php
+
 /*
 Creates debug output on current environment.
 
 Adapted from Query Monitor plugin, Copyright 2013 John Blackbourn, https://github.com/johnbillion/QueryMonitor
 */
+
 class WPMUDEV_Debug {
 
 	public $data;
@@ -65,8 +67,9 @@ class WPMUDEV_Debug {
 		foreach ( $constants as $level ) {
 			if ( defined( $level ) ) {
 				$c = constant( $level );
-				if ( $error_reporting & $c )
-					$levels[$c] = $level;
+				if ( $error_reporting & $c ) {
+					$levels[ $c ] = $level;
+				}
 			}
 		}
 
@@ -74,26 +77,27 @@ class WPMUDEV_Debug {
 	}
 
 	public static function format_constant( $constant ) {
-		if ( !defined( $constant ) ) {
+		if ( ! defined( $constant ) ) {
 			return 'undefined';
-		} else if ( !is_bool( $constant ) ) {
-			return constant($constant);
-		} else if ( !constant( $constant ) )
+		} else if ( ! is_bool( $constant ) ) {
+			return constant( $constant );
+		} else if ( ! constant( $constant ) ) {
 			return 'false';
-		else
+		} else {
 			return 'true';
+		}
 	}
 
 	function process() {
 		global $wp_version, $wpdb, $wpmudev_un;
 
 		$mysql_vars = array(
-			'key_buffer_size'    => true,  # Key cache size limit
+			'key_buffer_size'    => true, # Key cache size limit
 			'max_allowed_packet' => false, # Individual query size limit
 			'max_connections'    => false, # Max number of client connections
-			'query_cache_limit'  => true,  # Individual query cache size limit
-			'query_cache_size'   => true,  # Total cache size limit
-			'query_cache_type'   => 'ON'   # Query cache on or off
+			'query_cache_limit'  => true, # Individual query cache size limit
+			'query_cache_size'   => true, # Total cache size limit
+			'query_cache_type'   => 'ON' # Query cache on or off
 		);
 
 		$variables = $wpdb->get_results( "
@@ -120,8 +124,9 @@ class WPMUDEV_Debug {
 
 		$this->data['php']['version'] = phpversion();
 
-		foreach ( $this->php_vars as $setting )
-			$this->data['php']['variables'][$setting] = @ini_get( $setting );
+		foreach ( $this->php_vars as $setting ) {
+			$this->data['php']['variables'][ $setting ] = @ini_get( $setting );
+		}
 
 		$this->data['php']['extensions'] = get_loaded_extensions();
 		natcasesort( $this->data['php']['extensions'] );
@@ -130,35 +135,36 @@ class WPMUDEV_Debug {
 
 		# @TODO put WP's other debugging constants in here, eg. SCRIPT_DEBUG
 		$this->data['wp'] = array(
-			'Version'      => $wp_version,
-			'ABSPATH' => self::format_constant( 'ABSPATH' ),
-			'WP_CONTENT_DIR' => self::format_constant( 'WP_CONTENT_DIR' ),
-			'WP_PLUGINS_DIR' => self::format_constant( 'WP_PLUGINS_DIR' ),
-			'SUNRISE' => self::format_constant( 'SUNRISE' ),
-			'UPLOADBLOGSDIR' => self::format_constant( 'UPLOADBLOGSDIR' ),
-			'UPLOADS' => self::format_constant( 'UPLOADS' ),
-			'SUBDOMAIN_INSTALL' => self::format_constant( 'SUBDOMAIN_INSTALL' ),
-			'DOMAIN_CURRENT_SITE' => self::format_constant( 'DOMAIN_CURRENT_SITE' ),
-			'PATH_CURRENT_SITE' => self::format_constant( 'PATH_CURRENT_SITE' ),
-			'SITE_ID_CURRENT_SITE' => self::format_constant( 'SITE_ID_CURRENT_SITE' ),
-			'BLOGID_CURRENT_SITE' => self::format_constant( 'BLOGID_CURRENT_SITE' ),
-			'COOKIE_DOMAIN' => self::format_constant( 'COOKIE_DOMAIN' ),
-			'COOKIEPATH' => self::format_constant( 'COOKIEPATH' ),
-			'SITECOOKIEPATH' => self::format_constant( 'SITECOOKIEPATH' ),
-			'DISABLE_WP_CRON' => self::format_constant( 'DISABLE_WP_CRON' ),
-			'ALTERNATE_WP_CRON' => self::format_constant( 'ALTERNATE_WP_CRON' ),
-			'DISALLOW_FILE_MODS' => self::format_constant( 'DISALLOW_FILE_MODS' ),
+			'Version'                => $wp_version,
+			'ABSPATH'                => self::format_constant( 'ABSPATH' ),
+			'WP_CONTENT_DIR'         => self::format_constant( 'WP_CONTENT_DIR' ),
+			'WP_PLUGINS_DIR'         => self::format_constant( 'WP_PLUGINS_DIR' ),
+			'SUNRISE'                => self::format_constant( 'SUNRISE' ),
+			'UPLOADBLOGSDIR'         => self::format_constant( 'UPLOADBLOGSDIR' ),
+			'UPLOADS'                => self::format_constant( 'UPLOADS' ),
+			'SUBDOMAIN_INSTALL'      => self::format_constant( 'SUBDOMAIN_INSTALL' ),
+			'DOMAIN_CURRENT_SITE'    => self::format_constant( 'DOMAIN_CURRENT_SITE' ),
+			'PATH_CURRENT_SITE'      => self::format_constant( 'PATH_CURRENT_SITE' ),
+			'SITE_ID_CURRENT_SITE'   => self::format_constant( 'SITE_ID_CURRENT_SITE' ),
+			'BLOGID_CURRENT_SITE'    => self::format_constant( 'BLOGID_CURRENT_SITE' ),
+			'COOKIE_DOMAIN'          => self::format_constant( 'COOKIE_DOMAIN' ),
+			'COOKIEPATH'             => self::format_constant( 'COOKIEPATH' ),
+			'SITECOOKIEPATH'         => self::format_constant( 'SITECOOKIEPATH' ),
+			'DISABLE_WP_CRON'        => self::format_constant( 'DISABLE_WP_CRON' ),
+			'ALTERNATE_WP_CRON'      => self::format_constant( 'ALTERNATE_WP_CRON' ),
+			'DISALLOW_FILE_MODS'     => self::format_constant( 'DISALLOW_FILE_MODS' ),
 			'WP_HTTP_BLOCK_EXTERNAL' => self::format_constant( 'WP_HTTP_BLOCK_EXTERNAL' ),
-			'WP_ACCESSIBLE_HOSTS' => self::format_constant( 'WP_ACCESSIBLE_HOSTS' ),
+			'WP_ACCESSIBLE_HOSTS'    => self::format_constant( 'WP_ACCESSIBLE_HOSTS' ),
 		);
 
 		$server = explode( ' ', $_SERVER['SERVER_SOFTWARE'] );
 		$server = explode( '/', reset( $server ) );
 
-		if ( isset( $server[1] ) )
+		if ( isset( $server[1] ) ) {
 			$server_version = $server[1];
-		else
+		} else {
 			$server_version = 'Unknown';
+		}
 
 		$this->data['server'] = array(
 			'name'    => $server[0],
@@ -167,22 +173,22 @@ class WPMUDEV_Debug {
 			'host'    => @php_uname( 'n' )
 		);
 
-		$remote_get = wp_remote_get($wpmudev_un->server_url);
-		$remote_post = wp_remote_post($wpmudev_un->server_url);
-		$remote_paypal = wp_remote_post("https://api-3t.paypal.com/nvp", array('body'=>'"METHOD=SetExpressCheckout&VERSION=63.0&USER=xxxxx&PWD=xxxxx&SIGNATURE=xxxxx'));
-		$this->data['remote']['WPMU DEV: GET'] = is_wp_error($remote_get) ? $remote_get->get_error_message() : wp_remote_retrieve_response_message($remote_get);
-		$this->data['remote']['WPMU DEV: POST'] = is_wp_error($remote_post) ? $remote_post->get_error_message() : wp_remote_retrieve_response_message($remote_post);
-		$this->data['remote']['PayPal API: POST'] = is_wp_error($remote_paypal) ? $remote_paypal->get_error_message() : wp_remote_retrieve_response_message($remote_paypal);
+		$remote_get                               = wp_remote_get( $wpmudev_un->server_url );
+		$remote_post                              = wp_remote_post( $wpmudev_un->server_url );
+		$remote_paypal                            = wp_remote_post( "https://api-3t.paypal.com/nvp", array( 'body' => '"METHOD=SetExpressCheckout&VERSION=63.0&USER=xxxxx&PWD=xxxxx&SIGNATURE=xxxxx' ) );
+		$this->data['remote']['WPMU DEV: GET']    = is_wp_error( $remote_get ) ? $remote_get->get_error_message() : wp_remote_retrieve_response_message( $remote_get );
+		$this->data['remote']['WPMU DEV: POST']   = is_wp_error( $remote_post ) ? $remote_post->get_error_message() : wp_remote_retrieve_response_message( $remote_post );
+		$this->data['remote']['PayPal API: POST'] = is_wp_error( $remote_paypal ) ? $remote_paypal->get_error_message() : wp_remote_retrieve_response_message( $remote_paypal );
 	}
 
 	function output_html() {
 
 		echo '<table class="form-table widefat wpmudev-debug">';
 		echo '<thead>';
-			echo '<tr>';
-				echo '<th>' . __( 'Environment', 'wpmudev' ) . '</th>';
-				echo '<th>' . __( 'Configuration Details', 'wpmudev' ) . '</th>';
-			echo '</tr>';
+		echo '<tr>';
+		echo '<th>' . __( 'Environment', 'wpmudev' ) . '</th>';
+		echo '<th>' . __( 'Configuration Details', 'wpmudev' ) . '</th>';
+		echo '</tr>';
 		echo '</thead>';
 		echo '<tbody>';
 
@@ -190,32 +196,32 @@ class WPMUDEV_Debug {
 		        <th scope="row">PHP</th>
 		        <td>';
 
-			echo '<table>';
-				echo '<tr>';
-				echo '<td>Version</td>';
-				echo "<td>{$this->data['php']['version']}</td>";
-				echo '</tr>';
+		echo '<table>';
+		echo '<tr>';
+		echo '<td>Version</td>';
+		echo "<td>{$this->data['php']['version']}</td>";
+		echo '</tr>';
 
-				foreach ( $this->data['php']['variables'] as $key => $val ) {
-					echo '<tr>';
-					echo "<td>{$key}</td>";
-					echo "<td>{$val}</td>";
-					echo '</tr>';
-				}
+		foreach ( $this->data['php']['variables'] as $key => $val ) {
+			echo '<tr>';
+			echo "<td>{$key}</td>";
+			echo "<td>{$val}</td>";
+			echo '</tr>';
+		}
 
-				$error_levels = implode( '<br/>', self::get_error_levels( $this->data['php']['error_reporting'] ) );
-				echo '<tr>';
-				echo '<td>error_reporting</td>';
-				echo "<td>{$this->data['php']['error_reporting']}<br><span class='qm-info'>{$error_levels}</span></td>";
-				echo '</tr>';
+		$error_levels = implode( '<br/>', self::get_error_levels( $this->data['php']['error_reporting'] ) );
+		echo '<tr>';
+		echo '<td>error_reporting</td>';
+		echo "<td>{$this->data['php']['error_reporting']}<br><span class='qm-info'>{$error_levels}</span></td>";
+		echo '</tr>';
 
-				$extensions = implode( ', ', $this->data['php']['extensions'] );
-				echo '<tr>';
-				echo '<td>Extensions</td>';
-				echo "<td><span class='qm-info'>{$extensions}</span></td>";
-				echo '</tr>';
+		$extensions = implode( ', ', $this->data['php']['extensions'] );
+		echo '<tr>';
+		echo '<td>Extensions</td>';
+		echo "<td><span class='qm-info'>{$extensions}</span></td>";
+		echo '</tr>';
 
-			echo '</table>';
+		echo '</table>';
 
 		echo '</td></tr>';
 
@@ -225,36 +231,37 @@ class WPMUDEV_Debug {
 		        <th scope="row">MySQL</th>
 		        <td>';
 
-				echo '<table>';
-					echo '<tr>';
-					echo '<td>Version</td>';
-					echo '<td>' . $this->data['db']['version'] . '</td>';
-					echo '</tr>';
+			echo '<table>';
+			echo '<tr>';
+			echo '<td>Version</td>';
+			echo '<td>' . $this->data['db']['version'] . '</td>';
+			echo '</tr>';
 
-					echo '<tr>';
-					echo '<td>Driver</td>';
-					echo '<td>' . $this->data['db']['driver'] . '</td>';
-					echo '</tr>';
+			echo '<tr>';
+			echo '<td>Driver</td>';
+			echo '<td>' . $this->data['db']['driver'] . '</td>';
+			echo '</tr>';
 
-					foreach ( $this->data['db']['variables'] as $setting ) {
+			foreach ( $this->data['db']['variables'] as $setting ) {
 
-						$key = $setting->Variable_name;
-						$val = $setting->Value;
+				$key = $setting->Variable_name;
+				$val = $setting->Value;
 
-						if ( is_numeric( $val ) and ( $val >= ( 1024*1024 ) ) )
-							$val = size_format( $val );
+				if ( is_numeric( $val ) and ( $val >= ( 1024 * 1024 ) ) ) {
+					$val = size_format( $val );
+				}
 
-						echo "<tr>";
+				echo "<tr>";
 
-						$key = esc_html( $key );
-						$val = esc_html( $val );
+				$key = esc_html( $key );
+				$val = esc_html( $val );
 
-						echo "<td>{$key}</td>";
-						echo "<td>{$val}</td>";
+				echo "<td>{$key}</td>";
+				echo "<td>{$val}</td>";
 
-						echo '</tr>';
-					}
-				echo '</table>';
+				echo '</tr>';
+			}
+			echo '</table>';
 
 			echo '</td></tr>';
 		}
@@ -263,55 +270,55 @@ class WPMUDEV_Debug {
 		echo '<tr valign="top">
 		        <th scope="row">WordPress</th>
 		        <td>';
-			echo '<table>';
-				foreach ( $this->data['wp'] as $key => $val ) {
-					echo "<tr>";
-					echo "<td>{$key}</td>";
-					echo "<td>{$val}</td>";
-					echo '</tr>';
-				}
-			echo '</table>';
+		echo '<table>';
+		foreach ( $this->data['wp'] as $key => $val ) {
+			echo "<tr>";
+			echo "<td>{$key}</td>";
+			echo "<td>{$val}</td>";
+			echo '</tr>';
+		}
+		echo '</table>';
 		echo '</td></tr>';
 
 
 		echo '<tr valign="top">
 		        <th scope="row">' . __( 'Web Server', 'wpmudev' ) . '</th>
 		        <td>';
-			echo '<table>';
-				echo '<tr>';
-				echo '<td>Software</td>';
-				echo "<td>{$this->data['server']['name']}</td>";
-				echo '</tr>';
+		echo '<table>';
+		echo '<tr>';
+		echo '<td>Software</td>';
+		echo "<td>{$this->data['server']['name']}</td>";
+		echo '</tr>';
 
-				echo '<tr>';
-				echo '<td>Version</td>';
-				echo "<td>{$this->data['server']['version']}</td>";
-				echo '</tr>';
+		echo '<tr>';
+		echo '<td>Version</td>';
+		echo "<td>{$this->data['server']['version']}</td>";
+		echo '</tr>';
 
-				echo '<tr>';
-				echo '<td>Address</td>';
-				echo "<td>{$this->data['server']['address']}</td>";
-				echo '</tr>';
+		echo '<tr>';
+		echo '<td>Address</td>';
+		echo "<td>{$this->data['server']['address']}</td>";
+		echo '</tr>';
 
-				echo '<tr>';
-				echo '<td>Host</td>';
-				echo "<td>{$this->data['server']['host']}</td>";
-				echo '</tr>';
-			echo '</table>';
+		echo '<tr>';
+		echo '<td>Host</td>';
+		echo "<td>{$this->data['server']['host']}</td>";
+		echo '</tr>';
+		echo '</table>';
 		echo '</td></tr>';
 
 
 		echo '<tr valign="top">
 		        <th scope="row">' . __( 'Remote HTTP Requests', 'wpmudev' ) . '</th>
 		        <td>';
-			echo '<table>';
-				foreach ( $this->data['remote'] as $key => $val ) {
-					echo "<tr>";
-					echo "<td>{$key}</td>";
-					echo "<td>{$val}</td>";
-					echo '</tr>';
-				}
-			echo '</table>';
+		echo '<table>';
+		foreach ( $this->data['remote'] as $key => $val ) {
+			echo "<tr>";
+			echo "<td>{$key}</td>";
+			echo "<td>{$val}</td>";
+			echo '</tr>';
+		}
+		echo '</table>';
 		echo '</td></tr>';
 
 

@@ -48,11 +48,11 @@ echo implode( "\n", $tabhtml );
 
 <?php
 if ( $this->get_apikey() && $this->allowed_user() && ($data['membership'] == 'full' || is_numeric($data['membership'])) && isset($data['downloads']) && $data['downloads'] != 'enabled' ) {
-	?><div class="info_error"><p><i class="icon-info-sign"></i>&nbsp;<?php _e('This site is not enabled for automatic updates. You may <a href="http://premium.wpmudev.org/wp-admin/profile.php?page=wdpun">change which sites are enabled or upgrade to a higher membership level here &raquo;</a>', 'wpmudev'); ?></p></div><?php
+	?><div class="info_error"><p><i class="wdvicon-info-sign"></i>&nbsp;<?php _e('This site is not enabled for automatic updates. You may <a href="http://premium.wpmudev.org/wp-admin/profile.php?page=wdpun">change which sites are enabled or upgrade to a higher membership level here &raquo;</a>', 'wpmudev'); ?></p></div><?php
 	$allow_auto = false;
 }
 if (!$this->get_apikey()) { ?>
-	<div class="info_error"><p><i class="icon-info-sign"></i>&nbsp;<?php printf(__('Please <a href="%s">register or enter your details</a> to enable automatic updates.', 'wpmudev'), $this->dashboard_url); ?></p></div>
+	<div class="info_error"><p><i class="wdvicon-info-sign"></i>&nbsp;<?php printf(__('Please <a href="%s">register or enter your details</a> to enable automatic updates.', 'wpmudev'), $this->dashboard_url); ?></p></div>
 <?php }
 
 switch( $tab ) {
@@ -135,17 +135,17 @@ switch( $tab ) {
 				$remote_version = $project['remote_version'];
 
 				if ( $project['autoupdate'] && $project['type'] == 'plugin' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
 					$form_fields[] = '<input type="hidden" value="'.$project['filename'].'" name="checked[]">';
 				} else if ( $project['autoupdate'] && $project['type'] == 'theme' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
 					$form_fields[] = '<input type="hidden" value="'.$project['filename'].'" name="checked[]">';
 				} else if ($this->user_can_install($project_id)) {
-					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='icon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='wdvicon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
 				} else if (!$this->get_apikey()) { //no api key yet
-					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='icon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='wdvicon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
 				} else {
-					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='icon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='wdvicon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
 				}
 
 				$upgrade_button = (version_compare($remote_version, $local_version, '>')) ? $upgrade_button_code : '';
@@ -163,22 +163,22 @@ switch( $tab ) {
 					else
 						$config_url = empty($project['wp_config_url']) ? false : admin_url($project['wp_config_url']);
 				}
-				if ($config_url) $config_url = '<br /><a href="' . esc_url($config_url) . '"><i class="icon-cog"></i> ' . __('Configure', 'wpmudev') . '</a>';
+				if ($config_url) $config_url = '<br /><a href="' . esc_url($config_url) . '"><i class="wdvicon-cog"></i> ' . __('Configure', 'wpmudev') . '</a>';
 
 				$screenshot = $project['thumbnail'];
 
 				//=========================================================//
 				$rows .= "<tr class='wdv-update " . $class . "'>";
 				$rows .= "<td style='vertical-align:middle'><img src='$screenshot' width='100' height='60' style='float:left; padding: 5px' /></a><strong><a href='{$this->server_url}?action=description&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Details', 'wpmudev'), $project['name'] ) . "'>{$project['name']}</a></strong><br />{$project['description']}</td>";
-				$rows .= "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='icon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='icon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a>$config_url</td>";
+				$rows .= "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='wdvicon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='wdvicon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a>$config_url</td>";
 				$rows .= "<td style='vertical-align:middle'><strong>" . $local_version . "</strong></td>";
 				$rows .= "<td style='vertical-align:middle'><strong><a href='{$this->server_url}?action=details&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('View version %s details', 'wpmudev'), $remote_version ) . "'>{$remote_version}</a></strong></td>";
 				$rows .= "<td style='vertical-align:middle'>" . $upgrade_button . "</td>";
 				$rows .= "</tr>";
 				$rows .= "<tr class='wdv-changelog'><td colspan='5'>";
-				$rows .= "<div class='wdv-view-link'><a href='#'>" . __('View Changes', 'wpmudev') . " <i class='icon-chevron-down'></i></a></div>";
+				$rows .= "<div class='wdv-view-link'><a href='#'>" . __('View Changes', 'wpmudev') . " <i class='wdvicon-chevron-down'></i></a></div>";
 				$rows .= "<div class='wdv-changelog-drop'>" . $project['changelog'];
-				$rows .= "<div class='wdv-close-link'><a href='#'>" . __('Close', 'wpmudev') . " <i class='icon-chevron-up'></a></div>";
+				$rows .= "<div class='wdv-close-link'><a href='#'>" . __('Close', 'wpmudev') . " <i class='wdvicon-chevron-up'></a></div>";
 				$rows .= "</div></td></tr>";
 				$class = ('alternate' == $class) ? '' : 'alternate';
 				//=========================================================//
@@ -191,7 +191,7 @@ switch( $tab ) {
 		if (count($form_fields) >= 2) {
 			echo implode("\n", $form_fields);
 			wp_nonce_field('upgrade-core');
-			echo "<a href='#' class='button-secondary upgrade-all'><i class='icon-upload-alt'></i> ".__('Update All Plugins', 'wpmudev')."</a>";
+			echo "<a href='#' class='button-secondary upgrade-all'><i class='wdvicon-upload-alt'></i> ".__('Update All Plugins', 'wpmudev')."</a>";
 		}
 		echo '</h3>';
 
@@ -223,17 +223,17 @@ switch( $tab ) {
 				$remote_version = $project['remote_version'];
 
 				if ( $project['autoupdate'] && $project['type'] == 'plugin' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
 					$form_fields[] = '<input type="hidden" value="'.$project['filename'].'" name="checked[]">';
 				} else if ( $project['autoupdate'] && $project['type'] == 'theme' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev').'</a>';
 					$form_fields[] = '<input type="hidden" value="'.$project['filename'].'" name="checked[]">';
 				} else if ($this->user_can_install($project_id)) {
-					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='icon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='wdvicon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
 				} else if (!$this->get_apikey()) { //no api key yet
-					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='icon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='wdvicon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
 				} else {
-					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='icon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='wdvicon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
 				}
 
 				$upgrade_button = (version_compare($remote_version, $local_version, '>')) ? $upgrade_button_code : '';
@@ -243,15 +243,15 @@ switch( $tab ) {
 				//=========================================================//
 				$rows .= "<tr class='wdv-update " . $class . "'>";
 				$rows .= "<td style='vertical-align:middle'><img src='$screenshot' width='100' height='60' style='float:left; padding: 5px' /></a><strong><a href='{$this->server_url}?action=description&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Details', 'wpmudev'), $project['name'] ) . "'>{$project['name']}</a></strong><br />{$project['description']}</td>";
-				$rows .= "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='icon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='icon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a></td>";
+				$rows .= "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='wdvicon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='wdvicon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a></td>";
 				$rows .= "<td style='vertical-align:middle'><strong>" . $local_version . "</strong></td>";
 				$rows .= "<td style='vertical-align:middle'><strong><a href='{$this->server_url}?action=details&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('View version %s details', 'wpmudev'), $remote_version ) . "'>{$remote_version}</a></strong></td>";
 				$rows .= "<td style='vertical-align:middle'>" . $upgrade_button . "</td>";
 				$rows .= "</tr>";
 				$rows .= "<tr class='wdv-changelog'><td colspan='5'>";
-				$rows .= "<div class='wdv-view-link'><a href='#'>" . __('View Changes', 'wpmudev') . " <i class='icon-chevron-down'></i></a></div>";
+				$rows .= "<div class='wdv-view-link'><a href='#'>" . __('View Changes', 'wpmudev') . " <i class='wdvicon-chevron-down'></i></a></div>";
 				$rows .= "<div class='wdv-changelog-drop'>" . $project['changelog'];
-				$rows .= "<div class='wdv-close-link'><a href='#'>" . __('Close', 'wpmudev') . " <i class='icon-chevron-up'></a></div>";
+				$rows .= "<div class='wdv-close-link'><a href='#'>" . __('Close', 'wpmudev') . " <i class='wdvicon-chevron-up'></a></div>";
 				$rows .= "</div></td></tr>";
 				$class = ('alternate' == $class) ? '' : 'alternate';
 				//=========================================================//
@@ -264,7 +264,7 @@ switch( $tab ) {
 		if (count($form_fields) >= 2) {
 			echo implode("\n", $form_fields);
 			wp_nonce_field('upgrade-core');
-			echo "<a href='#' class='button-secondary upgrade-all'><i class='icon-upload-alt'></i> ".__('Update All Themes', 'wpmudev')."</a>";
+			echo "<a href='#' class='button-secondary upgrade-all'><i class='wdvicon-upload-alt'></i> ".__('Update All Themes', 'wpmudev')."</a>";
 		}
 		echo '</h3>';
 
@@ -285,7 +285,7 @@ switch( $tab ) {
 		</tbody></table>
 		</form>
 
-		<p><?php _e('Please note that all data is updated every 12 hours.', 'wpmudev') ?> <?php _e('Last updated:', 'wpmudev'); ?> <?php echo get_date_from_gmt(date('Y-m-d H:i:s', $last_run), get_option('date_format') . ' ' . get_option('time_format')); ?> - <a id="refresh-link" href="<?php echo $this->updates_url; ?>&action=update"><i class='icon-refresh'></i> <?php _e('Update Now', 'wpmudev'); ?></a></p>
+		<p><?php _e('Please note that all data is updated every 12 hours.', 'wpmudev') ?> <?php _e('Last updated:', 'wpmudev'); ?> <?php echo get_date_from_gmt(date('Y-m-d H:i:s', $last_run), get_option('date_format') . ' ' . get_option('time_format')); ?> - <a id="refresh-link" href="<?php echo $this->updates_url; ?>&action=update"><i class='wdvicon-refresh'></i> <?php _e('Update Now', 'wpmudev'); ?></a></p>
 		<?php
 		break;
 
@@ -368,15 +368,15 @@ switch( $tab ) {
 				$check = (version_compare($remote_version, $local_version, '>')) ? "style='background-color:#EFF7FF;'" : '';
 
 				if ( $project['autoupdate'] && $project['type'] == 'plugin' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
 				} else if ( $project['autoupdate'] && $project['type'] == 'theme' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
 				} else if ($this->user_can_install($project_id)) {
-					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='icon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='wdvicon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
 				} else if (!$this->get_apikey()) { //no api key yet
-					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='icon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='wdvicon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
 				} else {
-					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='icon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='wdvicon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
 				}
 
 				$upgrade_button = (version_compare($remote_version, $local_version, '>')) ? $upgrade_button_code : '';
@@ -394,14 +394,14 @@ switch( $tab ) {
 					else
 						$config_url = empty($project['wp_config_url']) ? false : admin_url($project['wp_config_url']);
 				}
-				if ($config_url) $config_url = '<br /><a href="' . esc_url($config_url) . '"><i class="icon-cog"></i> ' . __('Configure', 'wpmudev') . '</a>';
+				if ($config_url) $config_url = '<br /><a href="' . esc_url($config_url) . '"><i class="wdvicon-cog"></i> ' . __('Configure', 'wpmudev') . '</a>';
 
 				$screenshot = $project['thumbnail'];
 
 				//=========================================================//
 				echo "<tr class='wdv-installed " . $class . "' " . $check . " >";
 				echo "<td style='vertical-align:middle'><img src='$screenshot' width='70' height='45' style='float:left; padding: 5px' /></a><strong><a href='{$this->server_url}?action=description&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Details', 'wpmudev'), $project['name'] ) . "'>{$project['name']}</a></strong><br />{$project['description']}</td>";
-				echo "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='icon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='icon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a>$config_url</td>";
+				echo "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='wdvicon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='wdvicon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a>$config_url</td>";
 				echo "<td style='vertical-align:middle'><strong>" . $local_version . "</strong></td>";
 				echo "<td style='vertical-align:middle'><strong><a href='{$this->server_url}?action=details&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('View version %s details', 'wpmudev'), $remote_version ) . "'>{$remote_version}</a></strong></td>";
 				echo "<td style='vertical-align:middle'>" . $upgrade_button . "</td>";
@@ -438,15 +438,15 @@ switch( $tab ) {
 				$check = (version_compare($remote_version, $local_version, '>')) ? "style='background-color:#EFF7FF;'" : '';
 
 				if ( $project['autoupdate'] && $project['type'] == 'plugin' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-plugin&plugin=') . $project['filename'], 'upgrade-plugin_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
 				} else if ( $project['autoupdate'] && $project['type'] == 'theme' && $this->user_can_install($project_id) ) {
-					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='icon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . wp_nonce_url( $this->self_admin_url('update.php?action=upgrade-theme&theme=') . $project['filename'], 'upgrade-theme_' . $project['filename']) . "' class='button-secondary'><i class='wdvicon-upload-alt'></i> ".__('Auto Update', 'wpmudev')."</a>";
 				} else if ($this->user_can_install($project_id)) {
-					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='icon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . esc_url($project['url']) . "' class='button-secondary' target='_blank'><i class='wdvicon-download-alt'></i> ".__('Download Update', 'wpmudev')."</a>";
 				} else if (!$this->get_apikey()) { //no api key yet
-					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='icon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . $this->dashboard_url . "' title='" . __('Setup your WPMU DEV account to update', 'wpmudev') . "' class='button-secondary'><i class='wdvicon-pencil'></i> ".__('Configure to Update', 'wpmudev')."</a>";
 				} else {
-					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='icon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
+					$upgrade_button_code = "<a href='" . apply_filters('wpmudev_project_upgrade_url', esc_url('https://premium.wpmudev.org/wp-login.php?redirect_to=' . urlencode($project['url']) . '#signup'), $project_id) . "' class='button-secondary' target='_blank'><i class='wdvicon-arrow-up'></i> ".__('Upgrade to Update', 'wpmudev')."</a>";
 				}
 
 				$upgrade_button = (version_compare($remote_version, $local_version, '>')) ? $upgrade_button_code : '';
@@ -456,7 +456,7 @@ switch( $tab ) {
 				//=========================================================//
 				echo "<tr class='wdv-installed " . $class . "' " . $check . " >";
 				echo "<td style='vertical-align:middle'><img src='$screenshot' width='70' height='45' style='float:left; padding: 5px' /></a><strong><a href='{$this->server_url}?action=description&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Details', 'wpmudev'), $project['name'] ) . "'>{$project['name']}</a></strong><br />{$project['description']}</td>";
-				echo "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='icon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='icon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a></td>";
+				echo "<td class='wdv-links' style='vertical-align:middle;width:200px;'><a href='{$this->server_url}?action=help&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('%s Installation & Use Instructions', 'wpmudev'), $project['name'] ) . "'><i class='wdvicon-info-sign'></i> " . __('Installation & Use Instructions', 'wpmudev') . "</a><br /><a target='_blank' href='{$project['support_url']}'><i class='wdvicon-question-sign'></i> " . __('Get Support', 'wpmudev') . "</a></td>";
 				echo "<td style='vertical-align:middle'><strong>" . $local_version . "</strong></td>";
 				echo "<td style='vertical-align:middle'><strong><a href='{$this->server_url}?action=details&id={$project_id}&TB_iframe=true&width=640&height=800' class='thickbox' title='" . sprintf( __('View version %s details', 'wpmudev'), $remote_version ) . "'>{$remote_version}</a></strong></td>";
 				echo "<td style='vertical-align:middle'>" . $upgrade_button . "</td>";

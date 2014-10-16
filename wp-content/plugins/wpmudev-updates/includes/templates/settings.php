@@ -26,11 +26,11 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 ?>
 <hr class="section-head-divider" />
 <div class="wrap grid_container wpmudev-dash">
-<h1 class="section-header"><i class="icon-cogs"></i><?php _e('Manage', 'wpmudev') ?></h1>
+<h1 class="section-header"><i class="wdvicon-cogs"></i><?php _e('Manage', 'wpmudev') ?></h1>
 
 <?php if ( $users = $this->get_allowed_users() ) { ?>
 <div id="allowed-users"><?php echo $users; ?></div>
-<span class="tooltip" id="allowed-users-tooltip"><i class="icon-info-sign icon-large"></i>
+<span class="tooltip" id="allowed-users-tooltip"><i class="wdvicon-info-sign wdvicon-large"></i>
 	<section>
 		<?php _e('To change which users can have access to the WPMU DEV Dashboard, place this line in your wp-config.php file with the desired userids:', 'wpmudev'); ?>
 		<br /><code>define('WPMUDEV_LIMIT_TO_USER', '<?php echo $current_user->ID; ?>');</code> <?php _e('or', 'wpmudev') ?>
@@ -49,12 +49,12 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 		<span class="description">
 			<?php echo $this->get_apikey(); ?>
 			<small>
-				&nbsp;&nbsp;<a href="<?php echo $this->dashboard_url; ?>&clear_key=1" title="<?php _e('Change your API key', 'wpmudev') ?>"><?php _e('EDIT', 'wpmudev') ?> <i class="icon-pencil icon-large"></i></a>
+				&nbsp;&nbsp;<a href="<?php echo $this->dashboard_url; ?>&clear_key=1" title="<?php _e('Change your API key', 'wpmudev') ?>"><?php _e('EDIT', 'wpmudev') ?> <i class="wdvicon-pencil wdvicon-large"></i></a>
 			</small>
 		</span>
 	</div>
 	<div id="subscription-info"><h3><?php echo $profile['profile']['subscription']; ?></h3></div>
-		<br /><a class="wpmu-button icon" href="<?php echo apply_filters('wpmudev_modify_url', 'https://premium.wpmudev.org/membership/'); ?>"><i class="icon-edit icon-large"></i><?php _e('MODIFY MEMBERSHIP', 'wpmudev') ?></a>
+		<br /><a class="wpmu-button icon" href="<?php echo apply_filters('wpmudev_modify_url', 'https://premium.wpmudev.org/membership/'); ?>"><i class="wdvicon-edit wdvicon-large"></i><?php _e('MODIFY MEMBERSHIP', 'wpmudev') ?></a>
 	</div>
 	<div class="clear"></div>
 	<?php } ?>
@@ -62,7 +62,7 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 	<?php if ( !$this->get_apikey() ) { ?>
 	<h3><?php _e('Please register or enter your details to get your API key and enable settings:', 'wpmudev') ?>
 		<small>
-			&nbsp;&nbsp;<a href="<?php echo $this->dashboard_url; ?>" title="<?php _e('Add your API key', 'wpmudev') ?>"><?php _e('ADD', 'wpmudev') ?> <i class="icon-pencil icon-large"></i></a>
+			&nbsp;&nbsp;<a href="<?php echo $this->dashboard_url; ?>" title="<?php _e('Add your API key', 'wpmudev') ?>"><?php _e('ADD', 'wpmudev') ?> <i class="wdvicon-pencil wdvicon-large"></i></a>
 		</small>
 	</h3>
 	<?php } ?>
@@ -74,7 +74,7 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 			<tbody>
 				<tr>
 					<td width="13.31%" class="option-label"><?php _e('Background<br />updates', 'wpmudev') ?>
-						<span class="tooltip"><i class="icon-info-sign"></i>
+						<span class="tooltip"><i class="wdvicon-info-sign"></i>
 							<section>
 								<?php _e('Allows WordPress to silently update WPMU DEV plugins and themes as they become available. Background automatic updates are an <strong>experimental</strong> feature that will only work if your <a href="http://codex.wordpress.org/Configuring_Automatic_Background_Updates">WordPress configuration</a> supports them.', 'wpmudev'); ?>
 							</section>

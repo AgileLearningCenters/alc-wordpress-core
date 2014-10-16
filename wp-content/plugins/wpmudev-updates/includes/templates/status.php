@@ -22,7 +22,7 @@ if ( isset($_POST['wpmudev_apikey']) ) {
 	}
 
 	if ( $result['membership'] == 'full' ) { //free member
-		update_site_option('wdp_un_hide_upgrades', $_POST['hide_upgrades']);	  								 		 				
+		update_site_option('wdp_un_hide_upgrades', $_POST['hide_upgrades']);
 		update_site_option('wdp_un_hide_notices', $_POST['hide_notices']);
 		update_site_option('wdp_un_hide_releases', $_POST['hide_releases']);
 	} else if ( is_numeric( $result['membership'] ) ) { //single

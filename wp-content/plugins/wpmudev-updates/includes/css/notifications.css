@@ -23,7 +23,7 @@ Work: http://lemonwi.se co-founder
 */
 
 @font-face {
-    font-family: 'FontAwesome';
+    font-family: 'FontAwesomeWdv';
     src: url('../fonts/fontawesome-webfont.eot');
     src: url('../fonts/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
     url('../fonts/fontawesome-webfont.woff') format('woff'),
@@ -35,55 +35,55 @@ Work: http://lemonwi.se co-founder
 }
   /*  Font Awesome styles
     ------------------------------------------------------- */
-[class^="icon-"]:before, [class*=" icon-"]:before {
-		font-family: FontAwesome;
+[class^="wdvicon-"]:before, [class*=" wdvicon-"]:before {
+		font-family: FontAwesomeWdv;
 		font-weight: normal;
 		font-style: normal;
 		display: inline-block;
 		text-decoration: inherit;
 }
-a [class^="icon-"], a [class*=" icon-"] {
+a [class^="wdvicon-"], a [class*=" wdvicon-"] {
 		display: inline-block;
 		text-decoration: inherit;
 }
 /* makes the font 33% larger relative to the icon container */
-.icon-large:before {
+.wdvicon-large:before {
 vertical-align: middle;
 font-size: 1.3333333333333333em;
 }
-.btn [class^="icon-"], .btn [class*=" icon-"] {
+.btn [class^="wdvicon-"], .btn [class*=" wdvicon-"] {
 		/* keeps button heights with and without icons the same */
 		line-height: .9em;
 }
-li [class^="icon-"], li [class*=" icon-"] {
+li [class^="wdvicon-"], li [class*=" wdvicon-"] {
 		display: inline-block;
 		width: 1.25em;
 		text-align: center;
 }
-li .icon-large[class^="icon-"], li .icon-large[class*=" icon-"] {
-		/* 1.5 increased font size for icon-large * 1.25 width */
+li .wdvicon-large[class^="wdvicon-"], li .wdvicon-large[class*=" wdvicon-"] {
+		/* 1.5 increased font size for wdvicon-large * 1.25 width */
 		width: 1.875em;
 }
-li[class^="icon-"], li[class*=" icon-"] {
+li[class^="wdvicon-"], li[class*=" wdvicon-"] {
 		margin-left: 0;
 		list-style-type: none;
 }
-li[class^="icon-"]:before, li[class*=" icon-"]:before {
+li[class^="wdvicon-"]:before, li[class*=" wdvicon-"]:before {
 		text-indent: -2em;
 		text-align: center;
 }
-li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
+li[class^="wdvicon-"].wdvicon-large:before, li[class*=" wdvicon-"].wdvicon-large:before {
 		text-indent: -1.3333333333333333em;
 }
 /*  Font Awesome uses the Unicode Private Use Area (PUA) to ensure screen
 		readers do not read off random characters that represent icons */
-.icon-download-alt:before       { content: "\f019"; }
-.icon-upload-alt:before         { content: "\f093"; }
-.icon-question-sign:before      { content: "\f059"; }
-.icon-info-sign:before          { content: "\f05a"; }
-.icon-pencil:before             { content: "\f040"; }
-.icon-share-alt:before          { content: "\f064"; }
-.icon-arrow-up:before           { content: "\f062"; }
+.wdvicon-download-alt:before       { content: "\f019"; }
+.wdvicon-upload-alt:before         { content: "\f093"; }
+.wdvicon-question-sign:before      { content: "\f059"; }
+.wdvicon-info-sign:before          { content: "\f05a"; }
+.wdvicon-pencil:before             { content: "\f040"; }
+.wdvicon-share-alt:before          { content: "\f064"; }
+.wdvicon-arrow-up:before           { content: "\f062"; }
 
 
 /* NEW RELEASE NOTIFICATION
@@ -282,7 +282,7 @@ div.dev-widget-content > div.squish { border:none; padding:0; }
 .wpmu-button.disabled, .wpmu-button.button-disabled {
   cursor: not-allowed;
   opacity: 0.5;
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y5ZjlmOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNGY0ZjQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y5ZjlmOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNGY0ZjQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);	  								 		 				
   background-image: -moz-linear-gradient(top, rgba(249,249,249,1) 0%, rgba(244,244,244,1) 100%);
   background-image: -o-linear-gradient(top, rgba(249,249,249,1) 0%,rgba(244,244,244,1) 100%);
   background-image: -webkit-linear-gradient(top, rgba(249,249,249,1) 0%,rgba(244,244,244,1) 100%);
@@ -299,4 +299,4 @@ a.quick-link { background-color: #BDCEDB; font-size: 13px; font-weight: bold; pa
 #wdv-release-buttons { margin: 0 0 0 206px; overflow: hidden; clear: none; }
 
 
-/* 327416-1405305091 */
+/* 327416-1413422157-au */

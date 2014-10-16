@@ -68,6 +68,7 @@ var devlistings = {
 		var $button = $me.parents('li').find('div.install_wrap span.target'),
 			is_action_link = false
 		;
+		var id = $item.attr("data-project_id");
 		if (!$button.find("a,span").length) { // Project is installed, port the action links
 			$button = $item.find(".action_links a");
 			is_action_link = true;
@@ -84,7 +85,6 @@ var devlistings = {
 		}
 
 		$first.before($_details);
-		var id = $item.attr("data-project_id");
 		
 		$(".listing-details-wrapper #listing-title").html($title);
 		$(".listing-details-wrapper #listing-excerpt").html($excerpt);
@@ -99,6 +99,7 @@ var devlistings = {
 		$(".listing-details-wrapper #listing-install")
 			.empty()
 			.append($button.clone(true))
+			.attr("data-project_id", id)
 		;
 		var screenshotHtml = '';
 		var screenArray = project_screenshots[id];
@@ -327,7 +328,7 @@ var devlistings = {
 		var text = $me.text();
 		var link = $me.attr("href");
 		var $target = $me.parents('span.target');
-		
+
 		$me.html('<img src="' + loading_spinner + '" /> ' + $me.attr("data-downloading"));
 		$('<div />').load(link + " #wpbody-content", function (download_html) {
 			var $url = $(download_html).find('a[href*="action=activate"]:first');
@@ -342,9 +343,19 @@ var devlistings = {
 			var $parent = $me.closest("li.listing-item"),
 				this_right_here = window.location.toString()
 			;
+			if (!$parent.length) { // Called from the popup
+				var $hub = $me.closest("#listing-install"),
+					project_id = false
+				;
+				if ($hub.length) {
+					project_id = $hub.attr("data-project_id"),
+					$parent = $('li.listing-item[data-project_id="' + project_id + '"]');
+				}
+			}
 			$('<div />').load(this_right_here, function (replacement_html) {
 				var $new_slide = $(replacement_html).find('li.listing-item[data-project_id="' + $parent.attr("data-project_id") + '"]');
 				$parent.replaceWith($new_slide);
+				$(".close-plugin-details").click();
 			});
 		});
 		return false;
@@ -389,9 +400,19 @@ var devlistings = {
 				var $parent = $me.closest("li.listing-item"),
 					this_right_here = window.location.toString()
 				;
+				if (!$parent.length) { // Called from the popup
+					var $hub = $me.closest("#listing-install"),
+						project_id = false
+					;
+					if ($hub.length) {
+						project_id = $hub.attr("data-project_id"),
+						$parent = $('li.listing-item[data-project_id="' + project_id + '"]');
+					}
+				}
 				$('<div />').load(this_right_here, function (replacement_html) {
 					var $new_slide = $(replacement_html).find('li.listing-item[data-project_id="' + $parent.attr("data-project_id") + '"]');
 					$parent.replaceWith($new_slide);
+					$(".close-plugin-details").click();
 				});
 
 			});

@@ -13,26 +13,26 @@ if ($default_name == 'admin')
 					<small><?php _e('to enable the power of the Dashboard', 'wpmudev') ?></small>
 				</legend>
 			<?php if (isset($_GET['api_error'])) {
-				?><div class="registered_error"><p><i class="icon-warning-sign icon-large"></i>&nbsp;&nbsp;&nbsp;<?php _e('Invalid Username or Password. Please try again.', 'wpmudev'); ?><br /><a href="http://premium.wpmudev.org/wp-login.php?action=lostpassword" target="_blank"><?php _e('Forgot your password?', 'wpmudev'); ?></a></p></div><?php
+				?><div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i>&nbsp;&nbsp;&nbsp;<?php _e('Invalid Username or Password. Please try again.', 'wpmudev'); ?><br /><a href="http://premium.wpmudev.org/wp-login.php?action=lostpassword" target="_blank"><?php _e('Forgot your password?', 'wpmudev'); ?></a></p></div><?php
 			} ?>
 			<?php if (isset($connection_error) && $connection_error) { ?>
-				<div class="registered_error"><p><i class="icon-warning-sign icon-large"></i> <?php printf(__('Your server had a problem connecting to WPMU DEV: "%s" Please try again.', 'wpmudev'), $this->api_error); ?><br><?php _e('If this problem continues, please contact your host and ask:', 'wpmudev'); ?><br><em><?php _e('"Is php on my server properly configured to be able to contact http://premium.wpmudev.org/wdp-un.php with a GET HTTP request via fsockopen or CURL?"', 'wpmudev'); ?></em></p></div>
+				<div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i> <?php printf(__('Your server had a problem connecting to WPMU DEV: "%s" Please try again.', 'wpmudev'), $this->api_error); ?><br><?php _e('If this problem continues, please contact your host and ask:', 'wpmudev'); ?><br><em><?php _e('"Is php on my server properly configured to be able to contact http://premium.wpmudev.org/wdp-un.php with a GET HTTP request via fsockopen or CURL?"', 'wpmudev'); ?></em></p></div>
 			<?php } else if (isset($key_valid) && !$key_valid) { ?>
-				<div class="registered_error"><p><i class="icon-warning-sign icon-large"></i> <?php _e('Your API Key was invalid. Please try again.', 'wpmudev'); ?></p></div>
+				<div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i> <?php _e('Your API Key was invalid. Please try again.', 'wpmudev'); ?></p></div>
 			<?php } ?>
 				<ol>
 					<li>
 						<div><label for="user_name1"><?php _e('Email/Username', 'wpmudev') ?></label></div>
 						<input type="text" name="username" id="user_name1" autocomplete="off" />
 						<!-- output line below if validation passed -->
-						<section class="validation"><span class="icon-ok"></span></section>
+						<section class="validation"><span class="wdvicon-ok"></span></section>
 					</li>
 					<li>
 						<div><label for="password1"><?php _e('Your password', 'wpmudev') ?></label></div>
 						<input type="password" name="password" id="password1" autocomplete="off" />
 						<input type="hidden" name="dashboard_url" value="<?php echo $this->dashboard_url; ?>" />
 						<!-- output line below if validation passed -->
-						<section class="validation"><span class="icon-ok"></span></section>
+						<section class="validation"><span class="wdvicon-ok"></span></section>
 					</li>
 					<li class="submit-data">
 						<div class="cta-wrap">
@@ -59,20 +59,20 @@ if ($default_name == 'admin')
 						if ($error == 'password') $err_message[] = __('Please enter a valid password with a minimum of 5 characters.', 'wpmudev');
 						if ($error == 'fail') $err_message[] = __('There was an unknown error. Couldn&#8217;t register you... Sorry!', 'wpmudev');
 					}
-					?><div class="registered_error"><p><i class="icon-warning-sign icon-large"></i>&nbsp;<?php echo implode('<br>', $err_message); ?></p></div><?php
+					?><div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i>&nbsp;<?php echo implode('<br>', $err_message); ?></p></div><?php
 				} ?>
 				<ol>
 					<li>
 						<div><label for="first_name"><?php _e('First name', 'wpmudev') ?></label></div>
 						<input type="text" name="first_name" id="first_name" value="<?php echo $default_name; ?>" data-default_error="<?php esc_attr_e(__('Please enter your First name or a Nickname.', 'wpmudev')); ?>" />
 						<!-- output line below if error validating -->
-						<section class="validation error"><span class="icon-remove-sign"></span><?php _e('Please enter your First name or a Nickname.', 'wpmudev') ?></section>
+						<section class="validation error"><span class="wdvicon-remove-sign"></span><?php _e('Please enter your First name or a Nickname.', 'wpmudev') ?></section>
 					</li>
 					<li>
 						<div><label for="email_addr"><?php _e('Your email', 'wpmudev') ?></label></div>
 						<input type="email" name="email" id="email_addr" value="<?php echo $current_user->user_email; ?>" />
 						<!-- output line below if validation passed -->
-						<section class="validation"><span class="icon-ok"></span></section>
+						<section class="validation"><span class="wdvicon-ok"></span></section>
 					</li>
 					<li>
 						<div><label for="password"><?php _e('Choose your password', 'wpmudev') ?></label></div>
@@ -80,7 +80,7 @@ if ($default_name == 'admin')
 						<input type="hidden" name="dashboard_url" value="<?php echo $this->dashboard_url; ?>" />
 						<input type="hidden" name="referrer" value="<?php echo apply_filters('wpmudev_registration_referrer', ''); ?>" />
 						<!-- output line below if validation passed -->
-						<section class="validation"><span class="icon-ok"></span></section>
+						<section class="validation"><span class="wdvicon-ok"></span></section>
 					</li>
 					<li class="submit-data">
 						<div class="cta-wrap">

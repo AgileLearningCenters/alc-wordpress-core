@@ -12,9 +12,9 @@
 					<h1><?php _e('Welcome', 'wpmudev'); ?> <strong><em><?php echo $profile['profile']['name']; ?></em></strong></h1>
 					<small><?php printf(__('member since %s', 'wpmudev'), date_i18n(get_option('date_format'), $profile['profile']['member_since'])); ?></small><br />
 					<?php if (!$this->current_user_has_dev_gravatar()) { // Ooooh this is a mystery man! ?>
-						<b><a href="https://en.gravatar.com/site/signup/" class="grav-link" target="_blank"><i class="icon-user"></i>&nbsp;&nbsp;<?php _e('Get a gravatar now!', 'wpmudev'); ?></a></b>
+						<b><a href="https://en.gravatar.com/site/signup/" class="grav-link" target="_blank"><i class="wdvicon-user"></i>&nbsp;&nbsp;<?php _e('Get a gravatar now!', 'wpmudev'); ?></a></b>
 					<?php } else { // Regular gravatar (some sort of actual image) carry on ?>
-						<a href="https://en.gravatar.com/site/login/" class="grav-link" target="_blank"><i class="icon-user"></i>&nbsp;&nbsp;<?php _e('Change Gravatar', 'wpmudev'); ?></a>
+						<a href="https://en.gravatar.com/site/login/" class="grav-link" target="_blank"><i class="wdvicon-user"></i>&nbsp;&nbsp;<?php _e('Change Gravatar', 'wpmudev'); ?></a>
 					<?php } ?>
 				</section>
 			</section>

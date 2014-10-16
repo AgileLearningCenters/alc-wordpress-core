@@ -12,9 +12,9 @@
 					<h1><?php _e('Welcome', 'wpmudev'); ?> <strong><em><?php echo $profile['profile']['name']; ?></em></strong></h1>
 					<small><?php printf(__('member since %s', 'wpmudev'), date_i18n(get_option('date_format'), $profile['profile']['member_since'])); ?></small><br />
 					<?php if (!$this->current_user_has_dev_gravatar()) { // Ooooh this is a mystery man! ?>
-						<b><a href="https://en.gravatar.com/site/signup/" class="grav-link" target="_blank"><i class="icon-user"></i>&nbsp;&nbsp;<?php _e('Get a gravatar now!', 'wpmudev'); ?></a></b>
+						<b><a href="https://en.gravatar.com/site/signup/" class="grav-link" target="_blank"><i class="wdvicon-user"></i>&nbsp;&nbsp;<?php _e('Get a gravatar now!', 'wpmudev'); ?></a></b>
 					<?php } else { // Regular gravatar (some sort of actual image) carry on ?>
-						<a href="https://en.gravatar.com/site/login/" class="grav-link" target="_blank"><i class="icon-user"></i>&nbsp;&nbsp;<?php _e('Change Gravatar', 'wpmudev'); ?></a>
+						<a href="https://en.gravatar.com/site/login/" class="grav-link" target="_blank"><i class="wdvicon-user"></i>&nbsp;&nbsp;<?php _e('Change Gravatar', 'wpmudev'); ?></a>
 					<?php } ?>
 				</section>
 			</section>
@@ -24,9 +24,9 @@
 			<a href="<?php echo esc_url($paid_project['url']);?>#usage"><img src="<?php echo esc_url($paid_project['thumbnail']);?>" width="224" height="124" /></a>
 			<h3><a target="_blank" href="<?php echo esc_url($paid_project['url']);?>#usage"><?php echo wp_strip_all_tags($paid_project['name']); ?></a></h3>
 		<?php if (isset($local_projects[$project['id']])) { ?>
-			<button class="wpmu-button small icon installed"><i class="icon-ok"></i> <?php _e('Installed', 'wpmudev'); ?></button>
+			<button class="wpmu-button small icon installed"><i class="wdvicon-ok"></i> <?php _e('Installed', 'wpmudev'); ?></button>
 		<?php } else if ($this->auto_install_url($paid_project_id)) { ?>
-			<button class="wpmu-button small icon" data-href="<?php echo esc_url($this->auto_install_url($paid_project_id)); ?>"><i class="icon-download-alt"></i> <?php _e('Install', 'wpmudev'); ?></button>
+			<button class="wpmu-button small icon" data-href="<?php echo esc_url($this->auto_install_url($paid_project_id)); ?>"><i class="wdvicon-download-alt"></i> <?php _e('Install', 'wpmudev'); ?></button>
 		<?php } else { ?>
 			<button class="wpmu-button small icon" data-href="<?php echo esc_url($paid_project['url']);?>"> <?php _e('Download', 'wpmudev'); ?></button>
 		<?php } ?>
