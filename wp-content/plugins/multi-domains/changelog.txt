@@ -1,3 +1,9 @@
+== 1.3.4.3 ==
+* Amended: sunrise inclusion
+
+== 1.3.4.2 ==
+* Changed how sunrise is maintained
+
 == 1.3.4.1 ==
 * Deprecated multi_domain::restore_current_site()
 * Fixed bug with outgoing emails on new site creation
@@ -148,4 +154,4 @@
 * Added instructions on the settings page.
 
 
-327416-1405305644-ai
+327416-1413422149-au
