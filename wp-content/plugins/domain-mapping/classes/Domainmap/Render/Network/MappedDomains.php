@@ -20,44 +20,54 @@
 // +----------------------------------------------------------------------+
 
 /**
- * Renders reseller API request log page.
+ * Main class for mapped domains tab.
  *
  * @category Domainmap
  * @package Render
- * @subpackage Network
+ * @subpackage MappedDomains
  *
- * @since 4.0.0
+ * @since 4.2.0
  */
-class Domainmap_Render_Network_Log extends Domainmap_Render_Network {
+class Domainmap_Render_Network_MappedDomains extends Domainmap_Render_Network {
 
-	/**
-	 * Renders page header.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @access protected
-	 */
-	protected function _render_header() {
-		parent::_render_header();
+    /**
+     * @var $table Domainmap_Table
+     */
+    public $table = "";
 
-		if ( filter_input( INPUT_GET, 'deleted', FILTER_VALIDATE_BOOLEAN ) ) :
-			echo '<div id="message" class="updated fade">', __( 'Log records were deleted.', 'domainmap' ), '</div>';
-		endif;
-	}
+    /**
+     * Renders tab content.
+     *
+     * @since 4.2.0
+     *
+     * @access protected
+     */
+    protected function _render_tab() {
+        $this->table->prepare_items();
+        ?>
+        <div id="domainmapping-mapped-domains-table">
+        <?php
+        $this->table->views();
+        $this->table->search_box(__("Search mapped domains", domain_map::Text_Domain), "mapped_domain");
+        $this->table->display();
+        ?>
+        </div>
+        <?php
+    }
 
-	/**
-	 * Renders tab content.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @access protected
-	 */
-	protected function _render_tab() {
-		$this->table->prepare_items();
-		echo '<div id="domainmapping-reseller-log-table">';
-			$this->table->views();
-			$this->table->display();
-		echo '</div>';
-	}
-
+    /**
+     * Renders template.
+     *
+     * @since 4.2.0
+     *
+     * @access protected
+     */
+    protected function _to_html() {
+        ?><form action="" method="post">
+        <?php if ( $this->_nonce_action ) : ?>
+            <?php wp_nonce_field( $this->_nonce_action ) ?>
+        <?php endif; ?>
+        <?php parent::_to_html() ?>
+        </form><?php
+    }
 }

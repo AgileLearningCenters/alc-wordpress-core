@@ -29,8 +29,8 @@
 class Domainmap_Plugin {
 
 	const NAME    = 'domainmap';
-	const VERSION = '4.1.4.2';
-	const SUNRISE = '1.0.3';
+	const VERSION = '4.2.0.1';
+	const SUNRISE = '1.0.3.1';
 
 	const ACTION_CHECK_DOMAIN_AVAILABILITY  = 'domainmapping_check_domain';
 	const ACTION_SHOW_REGISTRATION_FORM     = 'domainmapping_show_registration_form';
@@ -47,6 +47,9 @@ class Domainmap_Plugin {
 	const ACTION_CDSSO_LOGIN                = 'domainmapping_cdsso_login';
 	const ACTION_CDSSO_LOGOUT               = 'domainmapping_cdsso_logout';
 	const ACTION_CDSSO_PROPAGATE            = 'domainmapping_cdsso_propagate';
+	const ACTION_TOGGLE_SCHEME              = 'domainmapping_toggle_scheme';
+	const SCHEME_HTTP                       = 0;
+	const SCHEME_HTTPS                      = 1;
 
 	/**
 	 * Singletone instance of the plugin.
@@ -191,6 +194,8 @@ class Domainmap_Plugin {
 				$this->_options['map_reseller_log'] = Domainmap_Reseller::LOG_LEVEL_DISABLED;
 				$this->_options['map_crossautologin'] = 0;
 				$this->_options['map_verifydomain'] = 1;
+				$this->_options['map_force_admin_ssl'] = 0;
+				$this->_options['map_force_frontend_ssl'] = 0;
 				$this->_options['map_instructions'] = '';
 
 				update_site_option('domain_mapping', $this->_options);
@@ -259,7 +264,13 @@ class Domainmap_Plugin {
 	public function get_resellers() {
 		if ( is_null( $this->_resellers ) ) {
 			$this->_resellers = array();
-			$resellers = apply_filters( 'domainmapping_resellers', array() );
+            /**
+             * Filter domain mapping resellers
+             *
+             * @since 4.0.0
+             * @param array $resellers
+             */
+            $resellers = apply_filters( 'domainmapping_resellers', array() );
 			foreach ( $resellers as $reseller ) {
 				if ( is_object( $reseller ) && is_a( $reseller, 'Domainmap_Reseller' ) ) {
 					$this->_resellers[Domainmap_Reseller::encode_reseller_class( get_class( $reseller ) )] = $reseller;

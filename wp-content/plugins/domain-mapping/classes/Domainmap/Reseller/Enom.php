@@ -414,9 +414,10 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 	 *
 	 * @access public
 	 * @param string $tld The top level domain.
+	 * @param int $period Domain registration period.
 	 * @return float The price for the TLD.
 	 */
-	protected function _get_tld_price( $tld ) {
+	protected function _get_tld_price( $tld, $period ) {
 		$xml = $this->_exec_command( self::COMMAND_RETAIL_PRICE, array(
 			'tld'         => $tld,
 			'ProductType' => 10,
@@ -659,7 +660,13 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 
 		if ( $psts ) {
 			if ( $this->_get_gateway() == self::GATEWAY_PROSITES ) {
-				$locale = apply_filters( 'domainmap_locale', get_locale() );
+                /**
+                 * Filter domain mapping locale
+                 *
+                 * @since 4.0.0
+                 * @param string $locale the locale of the blog or from the 'locale' hook.
+                 */
+                $locale = apply_filters( 'domainmap_locale', get_locale() );
 				if ( !preg_match( '/^[a-z]{2}_[A-Z]{2}$/', $locale ) ) {
 					$locale = 'en_US';
 				}

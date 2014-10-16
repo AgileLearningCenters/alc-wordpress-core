@@ -20,44 +20,40 @@
 // +----------------------------------------------------------------------+
 
 /**
- * Renders reseller API request log page.
+ * Class that wraps Punycode class for easier use of it's public methods.
  *
  * @category Domainmap
- * @package Render
- * @subpackage Network
+ * @package Ponycode
  *
- * @since 4.0.0
+ * @since 4.2
  */
-class Domainmap_Render_Network_Log extends Domainmap_Render_Network {
+class Domainmap_Punycode {
 
-	/**
-	 * Renders page header.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @access protected
-	 */
-	protected function _render_header() {
-		parent::_render_header();
+    /**
+     * Decode a Punycode domain name to its Unicode counterpart
+     *
+     * @uses Punycode::decode
+     * @since 4.2
+     *
+     * @param $domain
+     * @return string decoded domain
+     */
+    public static function decode( $domain ){
+        $cls = new Punycode();
+        return $cls->decode( $domain );
+    }
 
-		if ( filter_input( INPUT_GET, 'deleted', FILTER_VALIDATE_BOOLEAN ) ) :
-			echo '<div id="message" class="updated fade">', __( 'Log records were deleted.', 'domainmap' ), '</div>';
-		endif;
-	}
-
-	/**
-	 * Renders tab content.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @access protected
-	 */
-	protected function _render_tab() {
-		$this->table->prepare_items();
-		echo '<div id="domainmapping-reseller-log-table">';
-			$this->table->views();
-			$this->table->display();
-		echo '</div>';
-	}
-
+    /**
+     * Encode a domain to its Punycode version
+     *
+     * @uses Punycode:encode
+     * @since 4.2
+     *
+     * @param $domain
+     * @return string
+     */
+    public static function encode( $domain ){
+        $cls = new Punycode();
+        return $cls->encode( $domain );
+    }
 }

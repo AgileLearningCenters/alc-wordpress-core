@@ -120,7 +120,7 @@ class Domainmap_Module_System extends Domainmap_Module {
 	}
 
 	/**
-	 * Performs upgrade plugin evnironment to up to date version.
+	 * Performs upgrade plugin environment to up to date version.
 	 *
 	 * @since 4.0.0
 	 *
@@ -145,9 +145,17 @@ class Domainmap_Module_System extends Domainmap_Module {
 		// add upgrade functions
 		$this->_add_filter( $filter, 'setup_database', 1 );
 		$this->_add_filter( $filter, 'upgrade_to_4_0_3', 10 );
+		$this->_add_filter( $filter, 'upgrade_to_4_2', 10 );
 
-		// upgrade database version to current plugin version
-		$db_version = apply_filters( $filter, $db_version );
+
+        /**
+         * Filter version number
+         *
+         * @since 4.0.0
+         * @param string $db_version plugin version number
+         */
+        $db_version = apply_filters( $filter, $db_version );
+        // upgrade database version to current plugin version
 		$db_version = version_compare( $db_version, Domainmap_Plugin::VERSION, '>=' )
 			? $db_version
 			: Domainmap_Plugin::VERSION;
@@ -243,4 +251,27 @@ class Domainmap_Module_System extends Domainmap_Module {
 		return $this_version;
 	}
 
+
+    /**
+     * Upgrades database to version 4.2
+     *
+     * @since 4.2
+     *
+     * @param string $current_version The current plugin version.
+     * @return string Upgraded version if the current version is less, otherwise current version.
+     */
+    public function upgrade_to_4_2( $current_version ) {
+        $this_version = '4.2';
+        if ( version_compare( $current_version, $this_version, '>=' ) ) {
+            return $current_version;
+        }
+
+        $this->_exec_queries( array(
+            $this->_alter_table( DOMAINMAP_TABLE_MAP, array(
+                'ADD COLUMN `scheme` TINYINT UNSIGNED NOT NULL DEFAULT 0  AFTER `active`',
+            ) ),
+        ) );
+
+        return $this_version;
+    }
 }

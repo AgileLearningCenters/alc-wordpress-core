@@ -100,9 +100,10 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 	 * @access public
 	 */
 	public function render_site_options_page() {
-		$reseller = $this->_plugin->get_reseller();
 
+		$reseller = $this->_plugin->get_reseller();
 		$tabs = array( 'mapping' => __( 'Map domain', 'domainmap' ) );
+
 		if ( $reseller && $reseller->is_valid() ) {
 			$tabs['purchase'] = __( 'Purchase domain', 'domainmap' );
 		}
@@ -202,6 +203,8 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 			$options['map_logindomain'] = filter_input( INPUT_POST, 'map_logindomain' );
 			$options['map_crossautologin'] = filter_input( INPUT_POST, 'map_crossautologin', FILTER_VALIDATE_BOOLEAN );
 			$options['map_verifydomain'] = filter_input( INPUT_POST, 'map_verifydomain', FILTER_VALIDATE_BOOLEAN );
+			$options['map_force_admin_ssl'] = filter_input( INPUT_POST, 'map_force_admin_ssl', FILTER_VALIDATE_BOOLEAN );
+			$options['map_force_frontend_ssl'] = filter_input( INPUT_POST, 'map_force_frontend_ssl', FILTER_VALIDATE_INT );
 			$options['map_instructions'] = current_user_can('unfiltered_html') ? filter_input( INPUT_POST, 'map_instructions' ) : wp_kses_post( filter_input( INPUT_POST, 'map_instructions' ) );
 
 			// update options
@@ -240,7 +243,6 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 				$options['map_reseller'] = $reseller;
 				$resellers[$reseller]->save_options( $options );
 			}
-
 			// save reseller API requests log level
 			$options['map_reseller_log'] = filter_input( INPUT_POST, 'map_reseller_log', FILTER_VALIDATE_INT, array(
 				'options' => array(
@@ -341,6 +343,7 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 			case 'reseller-api-log':
 				$this->_handle_log_actions( $nonce_action );
 				break;
+
 		}
 
 		// if noheader argument is passed, then redirect back to options page
@@ -364,6 +367,8 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 		$tabs = array(
 			'general-options'  => __( 'Mapping options', 'domainmap' ),
 			'reseller-options' => __( 'Reseller options', 'domainmap' ),
+//			'reseller-api-log' => __( 'API Log', 'domainmap' ),
+            'mapped-domains' => __( 'Mapped Domains', 'domainmap' ),
 		);
 
 		$reseller = $this->_plugin->get_reseller();
@@ -402,6 +407,12 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 					),
 				) );
 				break;
+            case 'mapped-domains':
+                $page = new Domainmap_Render_Network_MappedDomains( $tabs, $activetab, $nonce_action, $options );
+                $page->table = new Domainmap_Table_MappedDomains_Listing( array(
+                    'nonce_action' => $nonce_action,
+                ) );
+                break;
 		}
 
 		if ( $page ) {
@@ -428,12 +439,14 @@ class Domainmap_Module_Pages extends Domainmap_Module {
 		}
 
 		// enqueue scripts
+        wp_enqueue_script( 'jquery-effects-core' );
+        wp_enqueue_script( 'jquery-effects-highlight' );
 		wp_enqueue_script( 'domainmapping-admin' );
 
+
 		// enqueue styles
-		wp_enqueue_style( 'bootstrap-glyphs' );
-		wp_enqueue_style( 'google-font-lato' );
 		wp_enqueue_style( 'domainmapping-admin' );
 	}
+
 
 }

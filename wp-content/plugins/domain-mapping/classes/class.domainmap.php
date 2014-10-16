@@ -38,6 +38,14 @@ class domain_map {
 	// For caching swapped urls later on
 	var $swapped_url = array();
 
+    /**
+     * Text domain name used for translating strings
+     *
+     * @since 4.2.0
+     * @param string Text_Domain
+     */
+    const Text_Domain = "domainmap";
+
 	function __construct() {
 		global $wpdb, $dm_cookie_style_printed, $dm_logout, $dm_authenticated;
 
@@ -105,7 +113,6 @@ class domain_map {
 		if ( !$_blog_id ) {
 			$_blog_id = $blog_id;
 		}
-
 		switch ( $this->options['map_admindomain'] ) {
 			case 'user':
 				break;
@@ -591,8 +598,14 @@ class domain_map {
 		static $orig_urls = array();
 
 		if ( !isset( $orig_urls[$this->db->blogid] ) ) {
-			// get the original url
-			$orig_url = apply_filters( 'unswap_url', get_option( 'siteurl' ) );
+
+            /**
+             * Filter the original url
+             *
+             * @since 1.0.0
+             * @param string $orig_url the original url
+             */
+            $orig_url = apply_filters( 'unswap_url', get_option( 'siteurl' ) );
 			// switch the url to use the correct http or https and store the url in the cache
 			$orig_urls[$this->db->blogid] = is_ssl()
 				? str_replace( "http://", "https://", $orig_url )
@@ -602,8 +615,13 @@ class domain_map {
 			$orig_url = $orig_urls[$this->db->blogid];
 		}
 
-		// Get the new mapped url
-		$url = apply_filters( 'pre_option_siteurl', 'NA' );
+        /**
+         * Filter getting new mapped url
+         *
+         * @since 1.0.0
+         * @param string $url
+         */
+        $url = apply_filters( 'pre_option_siteurl', 'NA' );
 		if ( $url == 'NA' ) {
 			// If we don't have a mapped url then just return the content unchanged
 			return $post_content;
@@ -612,5 +630,53 @@ class domain_map {
 		// replace all the original urls with the new ones and then return the content
 		return str_replace( trailingslashit( $orig_url ), trailingslashit( $url ), $post_content );
 	}
+
+    /**
+     * Retrieves option from db
+     *
+     * @since 4.2.0
+     * @param $key string option name
+     * @param bool $default string default value to return when option is not set or is empty
+     * @return bool false if option not set or empty | mixed option value
+     */
+    protected function get_option( $key, $default = false ){
+        return isset( $this->options[$key] ) && !empty( $this->options[$key] ) ? $this->options[$key] : $default;
+    }
+
+
+    /**
+     * Return mapping dns config and status
+     *
+     * @since 4.2.0
+     *
+     * @param null $mapping
+     * @return array
+     */
+    function get_dns_config($mapping = null) {
+        if ($mapping == null) {
+            $mapping = (object) array('domain' => 'www.example.com', 'active' => 1);
+        }
+
+        $map_ipaddress = $this->get_option("map_ipaddress", __('IP not set by admin yet.', self::Text_Domain) );
+        $no_www_domain = preg_replace('/^www\./', '', $mapping->domain);
+
+        $records = array();
+        if ( strpos( $map_ipaddress, ',' ) ) {
+            // Multiple CNAME not supported, so assume A
+            $_records = preg_split(',', $map_ipaddress);
+            foreach ($_records as $record) {
+                $records[] = array('host' => $mapping->domain, 'type' => 'A', 'target' => $record);
+            }
+        } else {
+            if (ip2long($map_ipaddress) > 0) {
+                $rec_type = "A";
+            } else {
+                $rec_type = "CNAME";
+            }
+            $records[] = array('host' => $mapping->domain, 'type' => $rec_type, 'target' => $map_ipaddress);
+        }
+        return $records;
+    }
+
 
 }

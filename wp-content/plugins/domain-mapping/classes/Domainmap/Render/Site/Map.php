@@ -36,10 +36,9 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 	 * @since 4.0.3
 	 *
 	 * @static
-	 * @access protected
 	 * @return boolean TRUE if multi domains mapping enabled, otherwise FALSE.
 	 */
-	protected static function _is_multi_enabled() {
+	public static function _is_multi_enabled() {
 		return defined( 'DOMAINMAPPING_ALLOWMULTI' ) && filter_var( DOMAINMAPPING_ALLOWMULTI, FILTER_VALIDATE_BOOLEAN );
 	}
 
@@ -79,7 +78,8 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 	 * @access protected
 	 */
 	protected function _render_tab() {
-		$schema = defined( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN' ) && DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN && is_ssl() ? 'https' : 'http';
+
+		$schema = ( defined( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN' ) && DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN && is_ssl() ) ? 'https' : 'http';
 		$form_class = count( $this->domains ) > 0 && !self::_is_multi_enabled() ? ' domainmapping-form-hidden' : '';
 		$admin_ajax = esc_url( admin_url( 'admin-ajax.php' ) );
 
@@ -106,7 +106,7 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 						<span class="domainmapping-map-remove"><?php _e( 'Actions', 'domainmap' ) ?></span>
 					</li>
 					<?php foreach( $this->domains as $row ) : ?>
-						<?php self::render_mapping_row( $row, $schema ) ?>
+						<?php self::render_mapping_row( $row ) ?>
 					<?php endforeach; ?>
 					<li class="domainmapping-form">
 						<form id="domainmapping-front-mapping" action="<?php echo $admin_ajax ?>" method="post">
@@ -122,12 +122,16 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 						<form id="domainmapping-form-map-domain" action="<?php echo $admin_ajax ?>" method="post">
 							<?php wp_nonce_field( Domainmap_Plugin::ACTION_MAP_DOMAIN, 'nonce' ) ?>
 							<input type="hidden" name="action" value="<?php echo Domainmap_Plugin::ACTION_MAP_DOMAIN ?>">
-							<input type="text" class="domainmapping-input-prefix" readonly disabled value="<?php echo $schema ?>://">
+							<select type="text" name="scheme" class="domainmapping-input-prefix">
+                                <option value="0">http://</option>
+                                <option value="1">https://</option>
+                            </select>
 							<div class="domainmapping-controls-wrapper">
 								<input type="text" class="domainmapping-input-domain" autofocus name="domain">
 							</div>
 							<input type="text" class="domainmapping-input-sufix" readonly disabled value="/">
-							<button type="submit" class="button button-primary domainmapping-button"><i class="icon-globe icon-white"></i><?php _e( 'Map domain', 'domainmap' ) ?></button>
+							<button type="submit" class="button button-primary domainmapping-button dashicons-before dashicons-admin-site"><?php _e( 'Map domain', 'domainmap' ) ?></button>
+                          <i class="icon-globe icon-white"></i>
 							<div class="domainmapping-clear"></div>
 						</form>
 					</li>
@@ -151,21 +155,26 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 		global $current_site;
 
 		if ( !$schema ) {
-			$schema = defined( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN' ) && DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN && is_ssl() ? 'https' : 'http';;
+			$schema = Domainmap_Module::force_ssl_on_mapped_domain( $row->domain ) ? 'https' : 'http';;
 		}
 
 		$multi = self::_is_multi_enabled();
-		$admin_ajax = admin_url( 'admin-ajax.php' );
+		$admin_ajax =  admin_url( 'admin-ajax.php' ) ;
 
-		$remove_link = add_query_arg( array(
+		$remove_link = esc_url( add_query_arg( array(
 			'action' => Domainmap_Plugin::ACTION_UNMAP_DOMAIN,
 			'nonce'  => wp_create_nonce( Domainmap_Plugin::ACTION_UNMAP_DOMAIN ),
 			'domain' => $row->domain,
-		), $admin_ajax );
+		), $admin_ajax ) );
 
+      $toggle_scheme_link = esc_url( add_query_arg( array(
+          'action' => Domainmap_Plugin::ACTION_TOGGLE_SCHEME,
+          'nonce'  => wp_create_nonce( Domainmap_Plugin::ACTION_TOGGLE_SCHEME ),
+          'domain' => $row->domain,
+      ), $admin_ajax ) );
 		// if multi domains mapping enabled, then add ability to select primary domain
 		if ( $multi ) {
-			$primary_class = $row->is_primary == 1 ? 'icon-star' : 'icon-star-empty';
+			$primary_class = $row->is_primary == 1 ? 'dashicons-star-filled' : 'dashicons-star-empty';
 			$select_primary = esc_url( add_query_arg( array(
 				'action' => Domainmap_Plugin::ACTION_SELECT_PRIMARY_DOMAIN,
 				'nonce'  => wp_create_nonce( Domainmap_Plugin::ACTION_SELECT_PRIMARY_DOMAIN ),
@@ -176,22 +185,26 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 				'nonce'  => wp_create_nonce( Domainmap_Plugin::ACTION_DESELECT_PRIMARY_DOMAIN ),
 				'domain' => $row->domain,
 			), $admin_ajax ) );
+
 		}
 
 		?><li>
-			<a class="domainmapping-mapped" href="<?php echo $schema ?>://<?php echo $row->domain, $current_site->path ?>" target="_blank" title="<?php _e( 'Go to this domain', 'domainmap' ) ?>">
-				<?php echo $schema ?>://<?php echo $row->domain, $current_site->path ?>
+      <a class="domainmapping-map-toggle-scheme dashicons-before dashicons-admin-network" href="#" data-href="<?php echo esc_url( $toggle_scheme_link ) ?>" title="<?php _e( 'Toggle scheme', 'domainmap' ) ?>"></a>
+
+      <a class="domainmapping-mapped" href="<?php echo $schema ?>://<?php echo $row->domain, $current_site->path ?>" target="_blank" title="<?php _e( 'Go to this domain', 'domainmap' ) ?>">
+				<?php echo $schema ?>://<?php echo Domainmap_Punycode::decode( $row->domain ), $current_site->path ?>
 			</a>
-			<?php self::render_health_column( $row->domain ) ?>
-			<a class="domainmapping-map-remove icon-trash" href="#" data-href="<?php echo esc_url( $remove_link ) ?>" title="<?php _e( 'Remove the domain', 'domainmap' ) ?>"></a>
+
+      <?php self::render_health_column( $row->domain ) ?>
+			<a class="domainmapping-map-remove dashicons-before dashicons-trash" href="#" data-href="<?php echo esc_url( $remove_link ) ?>" title="<?php _e( 'Remove the domain', 'domainmap' ) ?>"></a>
 			<?php if ( $multi ) : ?>
-			<a class="domainmapping-map-primary <?php echo $primary_class ?>" href="#" data-select-href="<?php echo $select_primary ?>" data-deselect-href="<?php echo $deselect_primary ?>" title="<?php _e( 'Select as primary domain', 'domainmap' ) ?>"></a>
+			<a class="domainmapping-map-primary dashicons-before <?php echo $primary_class ?>" href="#" data-select-href="<?php echo $select_primary ?>" data-deselect-href="<?php echo $deselect_primary ?>" title="<?php _e( 'Select as primary domain', 'domainmap' ) ?>"></a>
 			<?php endif; ?>
 		</li><?php
 	}
 
 	/**
-	 * Renders health check status columnt.
+	 * Renders health check status column.
 	 *
 	 * @since 4.0.0
 	 *
@@ -207,7 +220,7 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 		), admin_url( 'admin-ajax.php' ) );
 
 		$health = get_site_transient( "domainmapping-{$domain}-health" );
-		$health_message = __( 'need revalidate', 'domainmap' );
+		$health_message = __( 'needs revalidation', 'domainmap' );
 		$health_class = ' domainmapping-need-revalidate';
 		if ( $health !== false ) {
 			if ( $health ) {
@@ -223,5 +236,7 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 			echo $health_message
 		?></a><?php
 	}
+
+
 
 }

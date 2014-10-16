@@ -84,10 +84,13 @@ class Domainmap_Module_Setup extends Domainmap_Module {
 			),
 			'message' => array(
 				'unmap'             => __( 'You are about to unmap selected domain. Do you really want to proceed?', 'domainmap' ),
+				'unmap_error'       => __( 'Unmapping was not successful, please check your permissions and try again later', 'domainmap' ),
 				'empty'             => __( 'Please enter a valid domain to be mapped to your site.', 'domainmap' ),
+				'empty_email_pass'  => __( 'Please enter username and password', 'domainmap' ),
 				'deselect'          => __( 'You are about to deselect your primary domain. Do you really want to proceed?', 'domainmap' ),
 				'valid_selection'   => __( 'You are about to change your primary domain. Do you really want to proceed?', 'domainmap' ),
-				'invalid_selection' => __( 'You are about to select invalid domain as primary. It could cause unexpected issues at your front end. Do you really want to proceed?', 'domainmap' ),
+				'invalid_selection' => __( 'You are about to make a invalid domain the primary domain. This could cause unexpected issues on the front-end of your site. Do you want to proceed?', 'domainmap' ),
+                'invalid_data'      => __( 'Invalid data, please try again', 'domainmap' ),
 
 				'invalid' => array(
 					'card_number' => __( 'Credit card number is invalid.', 'domainmap' ),
@@ -100,6 +103,16 @@ class Domainmap_Module_Setup extends Domainmap_Module {
 					'success' => __( 'Domain name has been purchased successfully.', 'domainmap' ),
 					'failed'  => __( 'Domain name purchase has failed.', 'domainmap' ),
 				),
+
+                'order' => array(
+                    'success' => __( 'Domain name has been ordered and  successfully mapped', 'domainmap' ),
+                    'failed'  => __( 'Domain name order has failed.', 'domainmap' ),
+                ),
+
+                'registration' => array(
+                    'success' => __( 'Client account successfully registered, now you can go on with purchasing the domain.', 'domainmap' ),
+                    'failed'  => __( 'Client account registration failed.', 'domainmap' ),
+                ),
 			),
 		) );
 
@@ -121,6 +134,7 @@ class Domainmap_Module_Setup extends Domainmap_Module {
 	 */
 	public function setup_resellers( $resellers ) {
 		$resellers[] = new Domainmap_Reseller_Enom();
+		$resellers[] = new Domainmap_Reseller_WHMCS();
 		return $resellers;
 	}
 

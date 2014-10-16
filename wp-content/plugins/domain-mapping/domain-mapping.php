@@ -3,7 +3,7 @@
 Plugin Name: Domain Mapping
 Plugin URI: https://premium.wpmudev.org/project/domain-mapping/
 Description: The ultimate Multisite domain mapping plugin - sync cookies, sell domains with eNom, and integrate with Pro Sites.
-Version: 4.1.4.2
+Version: 4.2.0.2
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 99
@@ -35,7 +35,7 @@ if ( !is_multisite() || class_exists( 'Domainmap_Plugin', false ) ) {
 }
 
 // UnComment out the line below to allow multiple domain mappings per blog
-//define('DOMAINMAPPING_ALLOWMULTI', 'yes');
+define('DOMAINMAPPING_ALLOWMULTI', 'yes');
 
 // WPMUDev Dashboard Notices
 //load dashboard notice
@@ -57,15 +57,24 @@ require_once 'classes/class.domainmap.php';
  */
 function domainmap_autoloader( $class ) {
 	$basedir = dirname( __FILE__ );
-	$namespaces = array( 'Domainmap' );
+	$namespaces = array( 'Domainmap', "Vendor" );
 	foreach ( $namespaces as $namespace ) {
 		if ( substr( $class, 0, strlen( $namespace ) ) == $namespace ) {
+
 			$filename = $basedir . str_replace( '_', DIRECTORY_SEPARATOR, "_classes_{$class}.php" );
 			if ( is_readable( $filename ) ) {
 				require $filename;
 				return true;
 			}
 		}
+
+        if( $namespace === "Vendor" ){
+            $filename = $basedir . str_replace( '_', DIRECTORY_SEPARATOR, "_classes_Vendor_{$class}.php" );
+            if ( is_readable( $filename ) ) {
+                require $filename;
+                return true;
+            }
+        }
 	}
 
 	return false;
@@ -158,6 +167,7 @@ spl_autoload_register( 'domainmap_autoloader' );
 
 // launch the plugin
 domainmap_launch();
+
 
 /*================== Global Functions =======================*/
 
