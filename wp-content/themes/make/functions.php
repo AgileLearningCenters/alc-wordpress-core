@@ -6,7 +6,7 @@
 /**
  * The current version of the theme.
  */
-define( 'TTFMAKE_VERSION', '1.4.2' );
+define( 'TTFMAKE_VERSION', '1.4.9' );
 
 /**
  * The suffix to use for scripts.
@@ -35,21 +35,33 @@ if ( ! function_exists( 'ttfmake_content_width' ) ) :
 function ttfmake_content_width() {
 	global $content_width;
 
+	$new_width = $content_width;
 	$left = ttfmake_has_sidebar( 'left' );
 	$right = ttfmake_has_sidebar( 'right' );
 
 	// No sidebars
 	if ( ! $left && ! $right ) {
-		$content_width = 960;
+		$new_width = 960;
 	}
 	// Both sidebars
 	else if ( $left && $right ) {
-		$content_width = 464;
+		$new_width = 464;
 	}
 	// One sidebar
 	else if ( $left || $right ) {
-		$content_width = 620;
+		$new_width = 620;
 	}
+
+	/**
+	 * Filter to modify the $content_width variable.
+	 *
+	 * @since 1.4.8
+	 *
+	 * @param int     $new_width    The new content width.
+	 * @param bool    $left         True if the current view has a left sidebar.
+	 * @param bool    $right        True if the current view has a right sidebar.
+	 */
+	$content_width = apply_filters( 'make_content_width', $new_width, $left, $right );
 }
 endif;
 
@@ -58,6 +70,9 @@ add_action( 'template_redirect', 'ttfmake_content_width' );
 /**
  * Global includes.
  */
+// Compatibility
+require get_template_directory() . '/inc/compatibility.php';
+
 // Custom functions that act independently of the theme templates
 require get_template_directory() . '/inc/extras.php';
 
@@ -82,6 +97,9 @@ if ( is_admin() ) {
 
 	// Page Builder
 	require get_template_directory() . '/inc/builder/core/base.php';
+
+	// Admin notices
+	require get_template_directory() . '/inc/admin-notice/admin-notice.php';
 }
 
 /**
@@ -136,6 +154,9 @@ function ttfmake_setup() {
 		'gallery',
 		'caption'
 	) );
+
+	// Title tag
+	add_theme_support( 'title-tag' );
 
 	// Menu locations
 	register_nav_menus( array(
@@ -237,12 +258,26 @@ if ( ! function_exists( 'ttfmake_head_early' ) ) :
  * @return void
  */
 function ttfmake_head_early() {
+	// Title tag fallback
+	if ( version_compare( $GLOBALS['wp_version'], '4.1', '<' ) ) : ?>
+		<title><?php wp_title( '|', true, 'right' ); ?></title>
+<?php
+	endif;
+
 	// JavaScript detection ?>
-	<script type="text/javascript">
-		/* <![CDATA[ */
-		document.documentElement.className = document.documentElement.className.replace(new RegExp('(^|\\s)no-js(\\s|$)'), '$1js$2');
-		/* ]]> */
-	</script>
+
+		<script type="text/javascript">
+			/* <![CDATA[ */
+			document.documentElement.className = document.documentElement.className.replace(new RegExp('(^|\\s)no-js(\\s|$)'), '$1js$2');
+			/* ]]> */
+		</script>
+
+<?php
+	// Meta tags ?>
+		<meta charset="<?php bloginfo( 'charset' ); ?>">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
 <?php
 }
 endif;
@@ -553,3 +588,16 @@ function ttfmake_plus_styles() {
 
 add_action( 'admin_head', 'ttfmake_plus_styles', 20 );
 add_action( 'customize_controls_print_styles', 'ttfmake_plus_styles', 20 );
+
+/**
+ * Generate a link to the Make info page.
+ *
+ * @since  1.0.6.
+ *
+ * @param  string    $deprecated    This parameter is no longer used.
+ * @return string                   The link.
+ */
+function ttfmake_get_plus_link( $deprecated ) {
+	$url = 'https://thethemefoundry.com/make-buy/';
+	return esc_url( $url );
+}

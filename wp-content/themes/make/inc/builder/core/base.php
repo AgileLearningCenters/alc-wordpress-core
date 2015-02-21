@@ -547,10 +547,12 @@ class TTFMAKE_Builder_Base {
 		// Print the template for removing images
 		?>
 			<script type="text/html" id="tmpl-ttfmake-remove-image">
-				<h3><?php _e( 'Current image', 'make' ); ?></h3>
-				<a href="#" class="ttfmake-remove-image-from-modal">
-					<?php _e( 'Remove Current Image', 'make' ); ?>
-				</a>
+				<div class="ttfmake-remove-current-image">
+					<h3><?php _e( 'Current image', 'make' ); ?></h3>
+					<a href="#" class="ttfmake-remove-image-from-modal">
+						<?php _e( 'Remove Current Image', 'make' ); ?>
+					</a>
+				</div>
 			</script>
 		<?php
 	}
@@ -559,6 +561,7 @@ class TTFMAKE_Builder_Base {
 	 * Wrapper function to produce a WP Editor with special defaults.
 	 *
 	 * @since  1.0.0.
+	 * @deprecated  1.3.0.
 	 *
 	 * @param  string    $content     The content to display in the editor.
 	 * @param  string    $name        Name of the editor.
@@ -566,29 +569,8 @@ class TTFMAKE_Builder_Base {
 	 * @return void
 	 */
 	public function wp_editor( $content, $name, $settings = array() ) {
-		$settings = wp_parse_args( $settings, array(
-			'tinymce'   => array(
-				'toolbar1' => 'bold,italic,link,unlink',
-				'toolbar2' => '',
-				'toolbar3' => '',
-				'toolbar4' => '',
-			),
-			'quicktags' => array(
-				'buttons' => 'strong,em,link',
-			),
-			'editor_height' => 150,
-		) );
-
-		// Remove the default media buttons action and replace it with the custom one
-		remove_action( 'media_buttons', 'media_buttons' );
-		add_action( 'media_buttons', array( $this, 'media_buttons' ) );
-
-		// Render the editor
+		_deprecated_function( __FUNCTION__, '1.3.0', 'wp_editor' );
 		wp_editor( $content, $name, $settings );
-
-		// Reinstate the original media buttons function
-		remove_action( 'media_buttons', array( $this, 'media_buttons' ) );
-		add_action( 'media_buttons', 'media_buttons' );
 	}
 
 	/**
@@ -599,24 +581,14 @@ class TTFMAKE_Builder_Base {
 	 * text in some situations.
 	 *
 	 * @since  1.0.0.
+	 * @deprecated  1.3.0.
 	 *
 	 * @param  string    $editor_id    The value of the current editor ID.
 	 * @return void
 	 */
 	public function media_buttons( $editor_id = 'content' ) {
-		$post = get_post();
-		if ( ! $post && ! empty( $GLOBALS['post_ID'] ) ) {
-			$post = $GLOBALS['post_ID'];
-		}
-
-		wp_enqueue_media( array(
-			'post' => $post
-		) );
-
-		$img = '<span class="wp-media-buttons-icon"></span>';
-
-		// Note that the theme textdomain is not used for Add Media in order to use the core l10n
-		echo '<a href="#" id="insert-media-button" class="button insert-media add_media" data-editor="' . esc_attr( $editor_id ) . '" title="' . esc_attr__( 'Add Media', 'make' ) . '">' . $img . ' <span class="ttfmake-media-button-text">' . __( 'Add Media', 'make' ) . '</span></a>';
+		_deprecated_function( __FUNCTION__, '1.3.0', 'media_buttons' );
+		media_buttons( $editor_id );
 	}
 
 	/**
@@ -704,7 +676,8 @@ class TTFMAKE_Builder_Base {
 	 * @return void
 	 */
 	public function post_submitbox_misc_actions() {
-	?>
+		global $typenow;
+		if ( 'page' === $typenow ) : ?>
 		<div class="misc-pub-section ttfmake-duplicator">
 			<p style="font-style:italic;margin:0 0 7px 3px;">
 				<?php
@@ -720,7 +693,7 @@ class TTFMAKE_Builder_Base {
 			</p>
 			<div class="clear"></div>
 		</div>
-	<?php
+	<?php endif;
 	}
 }
 endif;
@@ -948,21 +921,6 @@ function ttfmake_get_section_name( $data, $is_js_template ) {
 	 * @param bool      $is_js_template    Whether or not this is in the context of a JS template.
 	 */
 	return apply_filters( 'make_get_section_name', $name, $data, $is_js_template );
-}
-endif;
-
-if ( ! function_exists( 'ttfmake_sanitize_text' ) ) :
-/**
- * Allow only the allowedtags array in a string.
- *
- * @since  1.0.0.
- *
- * @param  string    $string    The unsanitized string.
- * @return string               The sanitized string.
- */
-function ttfmake_sanitize_text( $string ) {
-	global $allowedtags;
-	return wp_kses( $string, $allowedtags );
 }
 endif;
 

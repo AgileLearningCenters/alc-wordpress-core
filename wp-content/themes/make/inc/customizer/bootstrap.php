@@ -15,8 +15,8 @@ function ttfmake_customizer_init() {
 	$path = get_template_directory() . '/inc/customizer/';
 
 	// Always load
-	require_once( $path . 'compatibility.php' );
 	require_once( $path . 'controls.php' );
+	require_once( $path . 'google-fonts.php' );
 	require_once( $path . 'helpers.php' );
 	require_once( $path . 'helpers-css.php' );
 	require_once( $path . 'helpers-defaults.php' );
@@ -72,6 +72,13 @@ function ttfmake_customizer_get_panels() {
 		'footer'         => array( 'title' => __( 'Footer', 'make' ), 'priority' => 600 ),
 	);
 
+	/**
+	 * Filter the array of panel definitions for the Customizer.
+	 *
+	 * @since 1.3.0.
+	 *
+	 * @param array    $panels    The array of panel definitions.
+	 */
 	return apply_filters( 'make_customizer_panels', $panels );
 }
 endif;
@@ -124,6 +131,16 @@ if ( ! function_exists( 'ttfmake_customizer_get_sections' ) ) :
  * @return array    The master array of Customizer sections
  */
 function ttfmake_customizer_get_sections() {
+	/**
+	 * Filter the array of section definitions for the Customizer.
+	 *
+	 * This filter is used to compile a master array of section definitions for each
+	 * panel in the Customizer.
+	 *
+	 * @since 1.3.0.
+	 *
+	 * @param array    $sections    The array of section definitions.
+	 */
 	return apply_filters( 'make_customizer_sections', array() );
 }
 endif;
@@ -271,12 +288,26 @@ function ttfmake_customizer_add_section_options( $section, $args, $initial_prior
 		// Add setting
 		if ( isset( $option['setting'] ) ) {
 			$defaults = array(
-				'default' => ttfmake_get_default( $setting_id ),
-				'type'    => 'theme_mod',
+				'type'                 => 'theme_mod',
+				'capability'           => 'edit_theme_options',
+				'theme_supports'       => '',
+				'default'              => ttfmake_get_default( $setting_id ),
+				'transport'            => 'refresh',
+				'sanitize_callback'    => '',
+				'sanitize_js_callback' => '',
 			);
 			$setting = wp_parse_args( $option['setting'], $defaults );
 
-			$wp_customize->add_setting( $setting_id, $setting );
+			// Add the setting arguments inline so Theme Check can verify the presence of sanitize_callback
+			$wp_customize->add_setting( $setting_id, array(
+				'type'                 => $setting['type'],
+				'capability'           => $setting['capability'],
+				'theme_supports'       => $setting['theme_supports'],
+				'default'              => $setting['default'],
+				'transport'            => $setting['transport'],
+				'sanitize_callback'    => $setting['sanitize_callback'],
+				'sanitize_js_callback' => $setting['sanitize_js_callback'],
+			) );
 		}
 
 		// Add control
@@ -298,10 +329,16 @@ function ttfmake_customizer_add_section_options( $section, $args, $initial_prior
 			// Check for a specialized control class
 			if ( isset( $control['control_type'] ) ) {
 				$class = $control['control_type'];
-				unset( $control['control_type'] );
-				$wp_customize->add_control(
-					new $class( $wp_customize, $control_id, $control )
-				);
+
+				if ( class_exists( $class ) ) {
+					unset( $control['control_type'] );
+
+					// Dynamically generate a new class instance
+					$reflection = new ReflectionClass( $class );
+					$class_instance = $reflection->newInstanceArgs( array( $wp_customize, $control_id, $control ) );
+
+					$wp_customize->add_control( $class_instance );
+				}
 			} else {
 				$wp_customize->add_control( $control_id, $control );
 			}

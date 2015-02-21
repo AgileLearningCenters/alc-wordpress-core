@@ -1,3 +1,55 @@
+## 1.4.9
+
+* Fixed bug that displayed page duplication info on custom post type screens.
+* Fixed undefined function error in WP versions less than 4.0.
+* Fixed doubled content in document title tag.
+* Added formal system for showing/hiding admin notices.
+* Added a notice when Make is installed on a site running a WordPress version older than 3.9.
+* Added notices for when an older version of Make Plus is installed.
+
+## 1.4.8
+
+* Fixed bug preventing Builder section duplication in some cases
+* Fixed line breaks in post comment count in Webkit browsers
+* Fixed content editor in Builder overlay resizable
+* Deprecated unused Builder functions
+* Added new filter hook: `make_content_width`
+* Added theme support for title tag
+* Added Russian translation
+
+## 1.4.7
+
+* Fixed bug where Customizer's font-family options weren't showing correct selected choice
+* Fixed issue with the custom logo not appearing correctly in some server environments
+* Added additional inline documentation for some action and filter hooks
+* Added Estonian translation
+
+## 1.4.6
+
+* Fixed several small compatibility issues in WordPress 4.1
+* Fixed error thrown by Format Builder on some admin screens
+* Fixed entry date layout issue in Chrome caused by excess whitespace in HTML
+
+## 1.4.5
+
+* Fixed raw CSS appearing in rich snippet content in some situations
+* Fixed post meta alignment issues
+* Fixed blurry Page Builder overlays in Safari
+* Updated Google Fonts list
+* Updated documentation links
+* Updated Dutch translation
+
+## 1.4.4
+
+* Fixed inaccessible Attachment Display Settings panel when editing pages
+* Added Dutch translation
+
+## 1.4.3
+
+* Improved text sanitization in some instances to allow more HTML tags and attributes
+* Fixed incorrect text color being applied to Header Bar menu items
+* Other minor code improvements
+
 ## 1.4.2
 
 * Fixed Column configuration data not saving correctly in the Page Builder
