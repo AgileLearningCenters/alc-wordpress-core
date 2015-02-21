@@ -1,5 +1,5 @@
 <?php
-if( ! defined("MC4WP_LITE_VERSION") ) {
+if( ! defined( 'MC4WP_LITE_VERSION' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	exit;
@@ -10,6 +10,9 @@ class MC4WP_MailChimp {
 	/**
 	 * Get MailChimp lists
 	 * Try cache first, then try API, then try fallback cache.
+	 *
+	 * @param bool $force_renewal
+	 * @param bool $force_fallback
 	 *
 	 * @return array
 	 */
@@ -51,7 +54,7 @@ class MC4WP_MailChimp {
 				}
 
 				// get merge vars for all lists at once
-				$merge_vars_data = $api->get_lists_with_merge_vars( array_keys($lists) );
+				$merge_vars_data = $api->get_lists_with_merge_vars( array_keys( $lists ) );
 				if ( $merge_vars_data ) {
 					foreach ( $merge_vars_data as $list ) {
 						// add merge vars to list
@@ -82,6 +85,8 @@ class MC4WP_MailChimp {
 	 * Get a given MailChimp list
 	 *
 	 * @param int $list_id
+	 * @param bool $force_renewal
+	 * @param bool $force_fallback
 	 *
 	 * @return bool
 	 */
@@ -104,7 +109,7 @@ class MC4WP_MailChimp {
 	public function get_list_name( $id ) {
 		$list = $this->get_list( $id );
 
-		if( is_object( $list ) ) {
+		if( is_object( $list ) && isset( $list->name ) ) {
 			return $list->name;
 		}
 
@@ -114,7 +119,7 @@ class MC4WP_MailChimp {
 	/**
 	 * Returns number of subscribers on given lists.
 	 *
-	 * @param array $list_ids of list id's.
+	 * @param array $list_ids Array of list id's.
 	 * @return int Sum of subscribers for given lists.
 	 */
 	public function get_subscriber_count( $list_ids ) {
@@ -162,16 +167,20 @@ class MC4WP_MailChimp {
 
 	/**
 	 * Build the group array object which will be stored in cache
+	 *
+	 * @param object $group
 	 * @return object
 	 */
 	public function strip_unnecessary_group_properties( $group ) {
 		return (object) array(
-			'name' => $group->name
+			'name' => $group->name,
 		);
 	}
 
 	/**
 	 * Build the groupings array object which will be stored in cache
+	 *
+	 * @param object $grouping
 	 * @return object
 	 */
 	public function strip_unnecessary_grouping_properties( $grouping ) {
@@ -179,12 +188,14 @@ class MC4WP_MailChimp {
 			'id' => $grouping->id,
 			'name' => $grouping->name,
 			'groups' => array_map( array( $this, 'strip_unnecessary_group_properties' ), $grouping->groups ),
-			'form_field' => $grouping->form_field
+			'form_field' => $grouping->form_field,
 		);
 	}
 
 	/**
 	 * Build the merge_var array object which will be stored in cache
+	 *
+	 * @param object $merge_var
 	 * @return object
 	 */
 	public function strip_unnecessary_merge_vars_properties( $merge_var ) {
@@ -192,15 +203,15 @@ class MC4WP_MailChimp {
 			'name' => $merge_var->name,
 			'field_type' => $merge_var->field_type,
 			'req' => $merge_var->req,
-			'tag' => $merge_var->tag
+			'tag' => $merge_var->tag,
 		);
 
 		if ( isset( $merge_var->choices ) ) {
-			$array["choices"] = $merge_var->choices;
+			$array['choices'] = $merge_var->choices;
 		}
 
 		return (object) $array;
 
 	}
 
-} 
+}

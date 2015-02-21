@@ -1,7 +1,7 @@
 <?php
 
 // prevent direct file access
-if( ! defined( "MC4WP_LITE_VERSION" ) ) {
+if( ! defined( 'MC4WP_LITE_VERSION' ) ) {
 	header( 'Status: 403 Forbidden' );
 	header( 'HTTP/1.1 403 Forbidden' );
 	exit;
@@ -29,12 +29,13 @@ class MC4WP_General_Integration extends MC4WP_Integration {
 
 		// hook actions
 		add_action( 'init', array( $this, 'maybe_subscribe'), 90 );
+
 	}
 
 	/**
 	* Upgrade routine
 	*/
-	private function upgrade() {
+	protected function upgrade() {
 		// set new $_POST trigger value
 		if( isset( $_POST['mc4wp-try-subscribe'] ) ) {
 			$_POST[ $this->checkbox_name ] = 1;
@@ -45,13 +46,23 @@ class MC4WP_General_Integration extends MC4WP_Integration {
 			$_POST[ $this->checkbox_name ] = 1;
 			unset( $_POST['mc4wp-do-subscribe'] );
 		}
+
+		if( isset( $_POST['_mc4wp_subscribe'] ) ) {
+			$_POST[ $this->checkbox_name ] = 1;
+			unset( $_POST['_mc4wp_subscribe'] );
+		}
 	}
 
 	/**
 	 * Maybe fire a general subscription request
 	 */
 	public function maybe_subscribe() {
-		if ( $this->checkbox_was_checked() === false ) {
+
+		if( $this->is_spam() ) {
+			return false;
+		}
+
+		if ( ! $this->checkbox_was_checked() ) {
 			return false;
 		}
 
@@ -60,35 +71,17 @@ class MC4WP_General_Integration extends MC4WP_Integration {
 			return false;
 		}
 
-		// don't run if this is an events manager request
+		// don't run if this is an Events Manager request
 		if( isset( $_POST['action'] ) && $_POST['action'] === 'booking_add' && isset( $_POST['event_id'] ) ) {
 			return false;
 		}
 
-		$this->try_subscribe();
+		return $this->try_subscribe();
 	}
 
 	/**
-	 * @return boolean
+	 * Tries to create a sign-up request from the current $_POST data
 	 */
-	public function checkbox_was_checked() {
-
-		if( $this->is_honeypot_filled() ) {
-			return false;
-		}
-
-		if( isset( $_POST[ '_mc4wp_subscribe' ] ) && $_POST[ '_mc4wp_subscribe' ] == 1 ) {
-			return true;
-		}
-
-		return ( isset( $_POST[ $this->checkbox_name ] ) && $_POST[ $this->checkbox_name ] == 1 );
-	}
-
-	/**
-	* Tries to subscribe from any third-party form (and CF7)
-	*
-	* @param string $trigger
-	*/	
 	public function try_subscribe() {
 
 		// start running..
@@ -112,9 +105,10 @@ class MC4WP_General_Integration extends MC4WP_Integration {
 					break;
 
 					case 'GROUPINGS':
-						$groupings = $value;
 
-						foreach($groupings as $grouping_id_or_name => $groups) {
+						$groupings = (array) $value;
+
+						foreach( $groupings as $grouping_id_or_name => $groups ) {
 
 							$grouping = array();
 
@@ -129,7 +123,7 @@ class MC4WP_General_Integration extends MC4WP_Integration {
 							if( ! is_array( $groups ) ) {
 								$groups = explode( ',', sanitize_text_field( $groups ) );
 							}
-						
+
 							$grouping['groups'] = array_map( 'stripslashes', $groups );
 
 							// add grouping to array
@@ -159,19 +153,19 @@ class MC4WP_General_Integration extends MC4WP_Integration {
 				if( ! isset( $merge_vars['NAME'] ) && in_array( $simple_key, array( 'name', 'yourname', 'username', 'fullname' ) ) ) {
 					// find name field
 					$merge_vars['NAME'] = $value;
-				} elseif( ! isset( $merge_vars['FNAME'] ) && in_array( $simple_key, array( 'firstname', 'fname', "givenname", "forename" ) ) ) {
+				} elseif( ! isset( $merge_vars['FNAME'] ) && in_array( $simple_key, array( 'firstname', 'fname', 'givenname', 'forename' ) ) ) {
 					// find first name field
 					$merge_vars['FNAME'] = $value;
 				} elseif( ! isset( $merge_vars['LNAME'] ) && in_array( $simple_key, array( 'lastname', 'lname', 'surname', 'familyname' ) ) ) {
 					// find last name field
 					$merge_vars['LNAME'] = $value;
 				}
-			} 
+			}
 		}
 
 		// unset groupings if not used
-		if( empty( $merge_vars['GROUPINGS'] ) ) { 
-			unset( $merge_vars['GROUPINGS'] ); 
+		if( empty( $merge_vars['GROUPINGS'] ) ) {
+			unset( $merge_vars['GROUPINGS'] );
 		}
 
 		// if email has not been found by the smart field guessing, return false.. Sorry

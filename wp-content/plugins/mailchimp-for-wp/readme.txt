@@ -1,14 +1,14 @@
 === MailChimp for WordPress ===
-Contributors: DvanKooten
+Contributors: DvanKooten, iMazed
 Donate link: https://mc4wp.com/
-Tags: mailchimp,newsletter,optin,mailinglist,sign-up form,subscribe,form,shortcode,widget,checkbox,comment,buddypress,multisite,bbpress,woocommerce,easy digital downloads,contact form,contact form 7,events manager,comment form,registration form,captcha
-Requires at least: 3.6
-Tested up to: 4.0.1
-Stable tag: 2.1.7
+Tags: MailChimp,newsletter,optin,mailinglist,sign-up form,subscribe,form,shortcode,widget,checkbox,comment,buddypress,multisite,bbpress,woocommerce,easy digital downloads,contact form,contact form 7,events manager,comment form,registration form,captcha
+Requires at least: 3.7
+Tested up to: 4.1.1
+Stable tag: 2.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The best MailChimp plugin to get more email subscribers. Easily add sign-up forms and sign-up checkboxes to your WordPress website.
+The best MailChimp plugin to get more email subscribers. Easily add MailChimp sign-up forms and sign-up checkboxes to your WordPress site.
 
 == Description ==
 
@@ -16,19 +16,20 @@ The best MailChimp plugin to get more email subscribers. Easily add sign-up form
 
 *Adding sign-up methods for your MailChimp lists to your WordPress site should be easy. With this plugin, it finally is.*
 
-MailChimp for WordPress lets you create a highly customizable sign-up form which you can display wherever you want it to display using a simple shortcode, widget or template function.  You can also add sign-up checkboxes to various forms on your site, like your comment or contact forms.
+MailChimp for WordPress lets you create a highly customizable sign-up form which you can display wherever you want it to display using a simple shortcode, widget or template function. You can also add MailChimp sign-up checkboxes to various forms on your site, like your comment or contact forms.
 
-= Sign-Up Forms =
+= MailChimp Sign-Up Forms =
 Easily create sign-up forms for your MailChimp list and display it using a simple shortcode, a widget or PHP function.
 
 = Sign-Up Checkboxes =
-Add sign-up checkboxes to *any* form on your website. The plugin offers built-in integration with comment forms, registration forms, Contact Form 7, BuddyPress, bbPress and WordPress MultiSite.
+Add MailChimp sign-up checkboxes to *any* form on your website. The plugin offers built-in integration with comment forms, registration forms, Contact Form 7, BuddyPress, bbPress and WordPress MultiSite.
 
 **MailChimp for WordPress, at a glance..**
 
 - Simple. All you need is your MailChimp API key.
 - Customizable. Have the form fields generated for you or use your own customized HTML.
 - Beautiful. Choose one of the default form themes or use your own styles.
+- Integrates with Contact Form 7, WooCommerce checkout and other popular form plugins.
 - Developer friendly.
 
 [Installation](https://wordpress.org/plugins/mailchimp-for-wp/installation/) | [Frequently Asked Questions](https://wordpress.org/plugins/mailchimp-for-wp/faq/) | [Screenshots](https://wordpress.org/plugins/mailchimp-for-wp/screenshots/)
@@ -40,26 +41,31 @@ Add sign-up checkboxes to *any* form on your website. The plugin offers built-in
 > Easy CSS Styles Builder & Custom Color Themes.<br />
 > AJAX Forms. Forms do not require a page reload.<br />
 > Log & Statistics. Useful insights.<br />
-> WooCommerce and Easy Digital Downloads checkout integration.<br />
 > Priority Support<br />
 >
 > [Upgrade to MailChimp for WordPress Pro](https://mc4wp.com/features/#utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=after-features-link)
 
+**Add-on plugins**
+
+There are several add-on plugins available for MailChimp for WordPress, which help you get even more out of your site.
+
+- [MailChimp Top Bar](https://wordpress.org/plugins/mailchimp-top-bar/) - Adds a top bar  to your site, asking visitors to subscribe.
+- [MailChimp Sync](https://wordpress.org/plugins/mailchimp-sync/) -  Synchronizes your WordPress users with a MailChimp list.
+
 **Translations**
 
-The plugin is fully translated into the following languages: English, Dutch, Spanish, Brazilian, German, Italian, Slovak and Hungarian.
+New or improved [translations of the MailChimp for WordPress plugin are welcomed on Transifex](https://www.transifex.com/projects/p/mailchimp-for-wordpress/).
 
-The [MailChimp for WordPress translations](https://wordpress.org/plugins/mailchimp-for-wp/other_notes/) page lists all the wonderful people that helped translate the plugin.
+**Bug Reports**
 
-Want to [translate the plugin into your own language](https://www.transifex.com/projects/p/mailchimp-for-wordpress/)?
-
+Bug reports for [MailChimp for WordPress are welcomed on GitHub](https://github.com/dannyvankooten/mailchimp-for-wordpress). Please note that GitHub is _not_ a support forum.
 
 **More information**
 
 - [MailChimp for WordPress Pro](https://mc4wp.com/), containing [additional features](https://mc4wp.com/features/#utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=more-info-link).
 - [Translate the MailChimp for WordPress plugin into your language](https://www.transifex.com/projects/p/mailchimp-for-wordpress/)
 - Developers; follow or contribute to the [MailChimp for WP plugin on GitHub](https://github.com/dannyvankooten/mailchimp-for-wordpress)
-- Other [WordPress plugins](https://dannyvankooten.com/wordpress-plugins/#utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=more-info-link) by [Danny van Kooten](http://dannyvankooten.com#utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=more-info-link)
+- Other [WordPress plugins](https://dannyvankooten.com/wordpress-plugins/#utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=more-info-link) by [Danny van Kooten](https://dannyvankooten.com#utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=more-info-link)
 - [@DannyvanKooten](https://twitter.com/dannyvankooten) on Twitter
 
 
@@ -101,13 +107,12 @@ if( function_exists( 'mc4wp_form' ) ) {
 }
 `
 
-Need help? Please take a look at the [frequently asked questions](https://wordpress.org/plugins/mailchimp-for-wp/faq/) first. If you can't find your answer there, start a topic in the [MailChimp for WordPress plugin support forums](http://wordpress.org/support/plugin/mailchimp-for-wp).
+Need help? Please take a look at the [frequently asked questions](https://wordpress.org/plugins/mailchimp-for-wp/faq/) first. If you can't find your answer there, start a topic in the [MailChimp for WordPress plugin support forums](https://wordpress.org/support/plugin/mailchimp-for-wp).
 
 = Upgrade to MailChimp for WordPress Pro =
 If you like the plugin, [get the Pro version of MailChimp for WordPress](https://mc4wp.com/#utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=installation-instructions-link) for an even better plugin!
 
 == Frequently Asked Questions ==
-
 
 > **What are the main differences between Pro and Lite?**<br />
 >
@@ -135,13 +140,20 @@ if( function_exists( 'mc4wp_form' ) ) {
 }
 `
 
+= I am getting spam sign-ups =
+
+To prevent bots from subscribing, you can take the following anti-spam measures.
+
+- Enable double opt-in in the plugin settings.
+- Install the [Goodbye Captcha](https://wordpress.org/plugins/goodbye-captcha/) plugin.
+
 = Oops. Something went wrong. =
 `Admin notice: FNAME must be provided - Please enter a value`
 
 Your selected MailChimp list requires a field named **FNAME**. Either go into your MailChimp list settings and make the FNAME field optional or add it to your form (using the *Add MailChimp field** select box).
 
 = The form shows a success message but subscribers are not added to my list(s)? =
-If the form shows a success message, it means MailChimp accepted the sign-up request and will take over from there. MailChimp could have a slight delay sending the confirmation email though, just be patient.
+If the form shows a success message, it means MailChimp accepted the sign-up request and will take over from there. MailChimp could have a slight delay sending the confirmation email though, please just be patient.
 
 = How can I style the sign-up form? =
 You can use CSS rules to style the sign-up form, use the following CSS selectors to target the various form elements.
@@ -229,33 +241,128 @@ Your theme probably does not support the necessary comment hook this plugin uses
 
 Your theme folder can be found by browsing to `/wp-content/themes/your-theme-name/`.
 
-== Translations ==
+== Other Notes ==
+
+= Bug Reports =
+
+Bug reports for [MailChimp for WordPress are welcomed on GitHub](https://github.com/dannyvankooten/mailchimp-for-wordpress). Please note that GitHub is _not_ a support forum.
+
+= Translations =
 
 The MailChimp for WordPress plugin is translated into the following languages.
 
 - English (en_US) - [Danny van Kooten](https://dannyvankooten.com)
 - Dutch (nl_NL) - [Danny van Kooten](https://dannyvankooten.com)
+- German (de_DE) - [Stefan Oderbolz](http://metaodi.ch/)
 - Spanish (es_ES) - [Paul Benitez ](http://www.administrandowp.com/) & [Enrique Pinto](http://www.thehivecluster.com/en)
 - Brazilian (pt_BR) - [Felipe Scuissiatto](http://www.evonline.com.br/)
 - German (de_DE) - [Jochen Gererstorfer](http://slotnerd.de/)
 - Italian (it_IT) - [Gianpaolo Rolando](http://www.gianpaolorolando.eu/) & [Tiziano D'Angelo](http://www.dangelos.it/)
 - Slovak (sk_SK) - [Henrich Koszegi](http://www.webworks.sk/)
 - Hungarian (hu_HU) - Németh Balázs
+- Various other awesome people!
 
 It's easy to translate the plugin into your own language. Head over to the [translation project on Transifex](https://www.transifex.com/projects/p/mailchimp-for-wordpress/) and click on "[Help translate MailChimp for WordPress](https://www.transifex.com/signup/?join_project=mailchimp-for-wordpress)".
 
+
 == Screenshots ==
 
-1. Simple or advanced sign-up forms that blend in with your theme.
+1. Simple or advanced MailChimp sign-up forms that blend in with your theme.
 2. A sign-up checkbox in your comment form is an amazing conversion booster.
 3. A simple form in the footer of the Twenty Thirteen theme.
 4. Add sign-up checkboxes to various places on your site.
-5. Creating sign-up forms is easy. The Pro version allows you to create as many form as you like.
+5. Creating sign-up forms for your MailChimp lists is easy. The Pro version allows you to create as many form as you like.
 6. Write your own HTML or have it generated for you. Many (optional) customization settings are availabl.
 7. **Pro only:** Gain valuable insights which method your visitors used to subscribe for any given time period using beautiful line charts.
 8. **Pro only:** Create your own CSS styles with the form designer in the Pro version.
 
 == Changelog ==
+
+= 2.2.5 - February 13, 2015 =
+
+**Fixed**
+
+- Issue where WooCommerce checkout sign-up was not working for cheque payments.
+- Translation were loaded too late to properly translate some strings, like the admin menu items.
+
+**Improvements**
+
+- The presence of required list fields in form mark-up is now checked as you type.
+- Number fields will now repopulate if an error occurred.
+- Updated all translations.
+- Make sure there is only one plugin instance.
+- Various other code improvements.
+
+**Additions**
+
+- Added support for [GitHub Updater Plugin](https://github.com/afragen/github-updater).
+- You can now specify whether you want to send a welcome email (only with double opt-in disabled).
+
+A huge thank you to [Stefan Oderbolz](http://metaodi.ch/) for various fixed and improvements related to translations in this release.
+
+
+= 2.2.4 - February 4, 2015 =
+
+**Fixed**
+
+- Textual fix as entering "0" for no redirection does not work.
+
+**Improvements**
+
+- Moved third-party scripts to their own directory for easier exclusion
+- All code is now adhering to the WP Code Standards
+- Updated [Dutch, German, Spanish, Hungarian, French, Italian and Turkish translations](https://www.transifex.com/projects/p/mailchimp-for-wordpress/).
+
+**Additions**
+
+- Now showing a heads up when at limit of 100 MailChimp lists. ([#71](https://github.com/dannyvankooten/mailchimp-for-wordpress/issues/71))
+- Added `wpml-config.xml` file for better WPML compatibility
+- Added filter `mc4wp_menu_items` for adding & removing menu items from add-ons
+
+= 2.2.3 - January 24, 2015 =
+
+Minor improvements and additions for compatibility with the [MailChimp Sync plugin](https://wordpress.org/plugins/mailchimp-sync/).
+
+= 2.2.2 - January 13, 2015 =
+
+**Fixes**
+
+- Plugin wasn't connecting to MailChimp for users on MailChimp server `us10` (API keys ending in `-us10`)
+
+= 2.2.1 - January 12, 2015 =
+
+**Improvements**
+
+- Use JS object to transfer lists data to Field Wizard.
+- Field Wizard strings are now translatable
+- Add `is_spam` method to checkbox integration to battle spam sign-ups
+- Minor code & code style improvements
+- Updated Danish, German, Spanish, French, Italian and Portugese (Brazil) translations
+
+**Additions**
+
+- You can now set `MC_LOCATION`, `MC_NOTES` and `MC_LANGUAGE` from your form HTML
+- The submit button now has a default value when generating HTML for it
+
+
+= 2.2 - December 9, 2014 =
+
+**Fixes**
+
+- "Select at least one list" notice appearing when unselecting any MailChimp list in Form settings
+- If an error occurs, textareas will no longer lose their value
+
+**Improvements**
+
+- Improved the way form submissions are handled
+- Minor code & documentation improvements
+- Updated Dutch, French, Portugese and Spanish translations
+
+**Additions**
+
+- Added sign-up checkbox integration for [WooCommerce](https://wordpress.org/plugins/woocommerce/) checkout.
+- Added sign-up checkbox integration for [Easy Digital Downloads](https://wordpress.org/plugins/easy-digital-downloads/) checkout.
+- The entered email will now be appended to the URL when redirecting to another page
 
 = 2.1.7 - December 1, 2014 =
 
@@ -629,5 +736,6 @@ It's easy to translate the plugin into your own language. Head over to the [tran
 
 == Upgrade Notice ==
 
-= 2.1.7 =
-JS bugfix for older versions of IE. Updated translations & minor textual improvements.
+= 2.2.5 =
+
+Various code & usability improvements. Fixed WooCommerce checkout sign-up for cheque payments. Added option to send Welcome Email.
