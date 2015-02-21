@@ -76,13 +76,13 @@ function gf_is_match(formId, rule){
 
         for(var i=0; i< inputs.length; i++){
             fieldValue = gf_get_value(jQuery(inputs[i]).val());
-        
+
             //find specific checkbox/radio item. Skip if this is not the specific item and the operator is not one that targets a range of values (i.e. greater than and less than)
             var isRangeOperator = jQuery.inArray(rule["operator"], ["<", ">", "contains", "starts_with", "ends_with"]) >= 0;
             if(fieldValue != rule["value"] && !isRangeOperator) {
                 continue;
 			}
-		
+
             //blank value if item isn't checked
             if(!jQuery(inputs[i]).is(":checked")) {
                 fieldValue = "";
@@ -94,7 +94,7 @@ function gf_is_match(formId, rule){
 
             if(gf_matches_operation(fieldValue, rule["value"], rule["operator"]))
                 isMatch = true;
-        }       
+        }
     }
     else{
         //handling all other fields (non-checkboxes)
@@ -179,14 +179,14 @@ function gf_matches_operation(val1, val2, operation){
             val2 = gf_try_convert_float(val2);
 
             return gformIsNumber(val1) && gformIsNumber(val2) ? val1 > val2 : false;
-        break;
+            break;
 
         case "<" :
             val1 = gf_try_convert_float(val1);
             val2 = gf_try_convert_float(val2);
 
             return gformIsNumber(val1) && gformIsNumber(val2) ? val1 < val2 : false;
-        break;
+            break;
 
         case "contains" :
             return val1.indexOf(val2) >=0;
@@ -238,45 +238,64 @@ function gf_do_next_button_action(formId, action, fieldId, isInit){
 }
 
 function gf_do_action(action, targetId, useAnimation, defaultValues, isInit, callback){
-    if(action == "show"){
-        if(useAnimation && !isInit){
-            if(jQuery(targetId).length > 0)
-                jQuery(targetId).slideDown(callback);
-            else if(callback)
-                callback();
+	var $target = jQuery(targetId);
+	if(action == "show"){
 
+        // reset tabindex for selects
+        $target.find( 'select' ).each( function() {
+            $select = jQuery( this );
+            $select.attr( 'tabindex', $select.data( 'tabindex' ) );
+        } );
+
+    	if(useAnimation && !isInit){
+            if($target.length > 0){
+				$target.slideDown(callback);
+			} else if(callback){
+				callback();
+			}
         }
         else{
-            jQuery(targetId).show();
-            if(callback)
-                callback();
+			//$target.show();
+			//Getting around an issue with Chrome on Android. Does not like jQuery('xx').show() ...
+            if ($target.is('.gf_inline, input.button')) {
+                $target.css('display', 'inline-block');
+            } else {
+                $target.css('display', 'block');
+            }
 
+            if(callback){
+				callback();
+			}
         }
     }
     else{
         //if field is not already hidden, reset its values to the default
-        var child = jQuery(targetId).children().first();
+        var child = $target.children().first();
 		if (child.length > 0){
-        if(!gformIsHidden(child)){
-            gf_reset_to_default(targetId, defaultValues);
-        }
+	        if(!gformIsHidden(child)){
+	            gf_reset_to_default(targetId, defaultValues);
+	        }
 		}
 
+        // remove tabindex and stash as a data attr for selects
+        $target.find( 'select' ).each( function() {
+            $select = jQuery( this );
+            $select.data( 'tabindex', $select.attr( 'tabindex' ) ).removeAttr( 'tabindex' );
+        } );
+
         if(useAnimation && !isInit){
-            if(jQuery(targetId).length > 0) {
-                jQuery(targetId).slideUp(callback);
-			}
-            else if(callback) {
+            if($target.length > 0 && $target.is(":visible")) {
+				$target.slideUp(callback);
+			} else if(callback) {
                 callback();
-        }
-        }
-        else{
-            jQuery(targetId).hide();
+			}
+        } else{
+			$target.hide();
             if(callback){
                 callback();
-        	}
-    	}
-	}
+			}
+        }
+    }
 }
 
 function gf_reset_to_default(targetId, defaultValue){
@@ -319,7 +338,7 @@ function gf_reset_to_default(targetId, defaultValue){
 
         var element = jQuery(this);
         if(element.is('select:not([multiple])')){
-            val = element.find('option').eq(0).val();
+            val = element.find('option' ).not( ':disabled' ).eq(0).val();
         }
 
         //get name of previous input field to see if it is the radio button which goes with the "Other" text box
