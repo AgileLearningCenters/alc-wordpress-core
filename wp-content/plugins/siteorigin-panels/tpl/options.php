@@ -76,6 +76,12 @@
 					__('Cell Side Margins', 'siteorigin-panels')
 				);
 
+				siteorigin_panels_options_field(
+					'inline-css',
+					$settings['inline-css'],
+					__('Inline CSS', 'siteorigin-panels')
+				);
+
 				?>
 
 			</tbody>

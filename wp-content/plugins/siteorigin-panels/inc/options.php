@@ -32,7 +32,7 @@ function siteorigin_panels_setting($key = ''){
 
 		// Get the settings provided by the theme
 		$theme_settings = get_theme_support('siteorigin-panels');
-		if(!empty($theme_settings)) $theme_settings = $theme_settings[0];
+		if( !empty($theme_settings) ) $theme_settings = $theme_settings[0];
 		else $theme_settings = array();
 
 		$settings = wp_parse_args( $theme_settings, apply_filters( 'siteorigin_panels_settings_defaults', array(
@@ -41,7 +41,7 @@ function siteorigin_panels_setting($key = ''){
 			'home-template' => 'home-panels.php',
 			'post-types' => array('page', 'post'),
 
-			'bundled-widgets' => true,
+			'bundled-widgets' => get_option( 'siteorigin_panels_is_using_bundled', false ),
 			'responsive' => true,
 			'mobile-width' => 780,
 
