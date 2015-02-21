@@ -200,8 +200,9 @@ class GFUserSignups {
         // unbind site creation from gform_user_registered hook, run it manually below
         if(is_multisite())
             remove_action( 'gform_user_registered' , array( 'GFUser', 'create_new_multisite' ) );
-        
-        $user_data = GFUser::create_user( $signup->lead, $signup->form, $signup->config);
+
+		GFUser::log_debug("Activating signup for username: {$signup->user_login} - entry: {$signup->lead["id"]}" );
+        $user_data = GFUser::create_user( $signup->lead, $signup->form, $signup->config, GFUser::decrypt( $signup->meta['password'] ) );
         $user_id = rgar($user_data, 'user_id');
 
         if(!$user_id){
