@@ -4,7 +4,7 @@ Donate link: http://www.blackstudio.it/en/wordpress-plugins/black-studio-tinymce
 Tags: wysiwyg, widget, tinymce, editor, image, media, rich text, rich text editor, visual editor, wysiwyg editor, tinymce editor, widget editor, html editor, wysiwyg widget, html widget, editor widget, text widget, rich text widget, enhanced text widget, tinymce widget, visual widget, image widget, media widget
 Requires at least: 3.1
 Tested up to: 4.1
-Stable tag: 2.1.2
+Stable tag: 2.2.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -141,6 +141,11 @@ add_filter( 'black_studio_tinymce_before_text', '__return_empty_string' );
 add_filter( 'black_studio_tinymce_after_text', '__return_empty_string' );
 `
 
+There's also an additional hook, that you may use to specify to not display widgets if their content is empty:
+`
+add_filter( 'black_studio_tinymce_hide_empty', '__return_true' );
+`
+
 = How to customize widget contents (using hooks) =
 
 You may alter widget title and text via code using the `widget_title` and `widget_text` filter hooks (see [Codex](http://codex.wordpress.org/Plugin_API/Filter_Reference#Widgets) for details).
@@ -172,6 +177,48 @@ function remove_bstw_widget_text_filters() {
 Plugin's data is stored in serialized format inside a record in the `wp_options` table having `option_name` = `'widget_black-studio-tinymce'`. Data storage is handled by WordPress and not directly by the plugin itslef. The widgets data is intentionally kept in the datatbase upon plugin deactivation / deletion to avoid content loss. If you want to totally remove the plugin including its data, just remove that record after plugin removal.
 
 == Changelog ==
+
+= 2.2.3 (2015-02-17) =
+* Fixed bug on reordering gallery images
+* Added czech and lithuanian translations (courtesy of WP-Translation.org team on Transifex)
+
+= 2.2.2 (2014-12-24) =
+* Fixed bug on visual/text mode not being saved in WordPress 4.1
+* Updated German and French translations
+* Added support for [Composer](https://getcomposer.org) dependency manager (courtesy of [@cfoellmann](https://github.com/cfoellmann))
+
+= 2.2.1 (2014-11-18) =
+* Fixed paragraph formatting bug on saving
+* Fixed real-time update bug in Theme Customizer
+* Enhanced editor initialization
+* Simplified internal integration with Page Builder
+* Simplified internal initialization for accessibility mode
+* Minor changes for coding standard compliance
+
+= 2.2.0 (2014-11-18) =
+* Added filter to hide empty widgets
+* Added workaround for WordPress Core bug #28403
+* Enhanced compatibility for widgets created with 1.x plugin versions
+* Enhanced compatibility for editor instances used by other plugins
+* Fixed bug on line breaks being stripped in text mode
+* Updated translations
+
+= 2.1.6 (2014-10-23) =
+* Fixed bug on line breaks being changed on editor load
+* Improved TinyMCE editor stuff loading
+
+= 2.1.5 (2014-10-21) =
+* Fixed bug when saving in text mode
+
+= 2.1.4 (2014-10-19) =
+* Fixed compatibility issue on TinyMCE initialization filtering
+* Fixed z-index issue when both thickbox and media dialog windows were used (i.e. using Hover Effects Pack plugin)
+
+= 2.1.3 (2014-10-18) =
+* Added ability to disable automatic addition of paragraphs when editing (i.e. using TinyMCE Advanced plugin option)
+* Enhanced real time rendering in theme customizer
+* Fixed compatibility issue with Page Builder related to comment reply in admin
+* Fixed compatibility issue with Styles plugin related to plugins_loaded hook
 
 = 2.1.2 (2014-10-13) =
 * Hotfix for fullscreen mode when using Page Builder
@@ -213,7 +260,7 @@ Plugin's data is stored in serialized format inside a record in the `wp_options`
 * Improved code quality and security thanks to [Scrutinizer](https://scrutinizer-ci.com/g/black-studio/black-studio-tinymce-widget/) service
 * Improved development workflow thanks to [Grunt](http://gruntjs.com/)
 * Improved performance and user experience
-* A huge Thanks to @cfoellmann for his precious support and contributions
+* A huge Thanks to [@cfoellmann](https://github.com/cfoellmann) for his precious support and contributions
 
 = 1.4.8 (2014-09-13) =
 * Fixed bug on image captions on WordPress 4.0 (part 2)
@@ -366,5 +413,5 @@ Plugin's data is stored in serialized format inside a record in the `wp_options`
 
 == Upgrade Notice ==
 
-= 2.1.2 =
+= 2.2.3 =
 Version 2.x is a major update. If you are upgrading from version 1.x please ensure to backup your database before upgrading.

@@ -20,7 +20,6 @@ if ( ! class_exists( 'WP_Widget_Black_Studio_TinyMCE' ) ) {
 		 * Widget Class constructor
 		 *
 		 * @uses WP_Widget::__construct()
-		 * @return void
 		 * @since 0.5
 		 */
 		public function __construct() {
@@ -53,13 +52,16 @@ if ( ! class_exists( 'WP_Widget_Black_Studio_TinyMCE' ) ) {
 			$after_text = apply_filters( 'black_studio_tinymce_after_text', '</div>', $instance );
 			$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base );
 			$text = apply_filters( 'widget_text', empty( $instance['text'] ) ? '' : $instance['text'], $instance, $this );
-			$output = $before_widget;
-			if ( ! empty( $title ) ) {
-				$output .= $before_title . $title . $after_title;
+			$hide_empty = apply_filters( 'black_studio_tinymce_hide_empty', false, $instance );
+			if ( ! ( $hide_empty && empty( $text ) ) ) {
+				$output = $before_widget;
+				if ( ! empty( $title ) ) {
+					$output .= $before_title . $title . $after_title;
+				}
+				$output .= $before_text . $text . $after_text;
+				$output .= $after_widget;
+				echo $output; // xss ok
 			}
-			$output .= $before_text . $text . $after_text;
-			$output .= $after_widget;
-			echo $output; // xss ok
 		}
 
 		/**
@@ -110,20 +112,20 @@ if ( ! class_exists( 'WP_Widget_Black_Studio_TinyMCE' ) ) {
 			$instance = wp_parse_args( (array) $instance, array( 'title' => '', 'text' => '', 'type' => 'visual' ) );
 			// Guess (wpautop) filter value for widgets created with previous version
 			if ( ! isset( $instance['filter'] ) ) {
-				$instance['filter'] = $instance['type'] == 'visual'? 1 : 0;
+				$instance['filter'] = $instance['type'] == 'visual' && substr( $instance['text'], 0, 3 ) != '<p>' ? 1 : 0;
 			}
 			$title = strip_tags( $instance['title'] );
 			do_action( 'black_studio_tinymce_before_editor' );
 			?>
 			<input id="<?php echo $this->get_field_id( 'type' ); ?>" name="<?php echo $this->get_field_name( 'type' ); ?>" type="hidden" value="<?php echo esc_attr( $instance['type'] ); ?>" />
-			<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></p>
+			<p><label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Title:' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" /></p>
 			<?php
 			do_action( 'black_studio_tinymce_editor', $instance['text'], $this->get_field_id( 'text' ), $this->get_field_name( 'text' ), $instance['type'] );
 			do_action( 'black_studio_tinymce_after_editor' );
 			?>
-			<input id="<?php echo $this->get_field_id( 'filter' ); ?>-hidden" name="<?php echo $this->get_field_name( 'filter' ); ?>" type="hidden" value="0" />
-			<p><input id="<?php echo $this->get_field_id( 'filter' ); ?>" name="<?php echo $this->get_field_name( 'filter' ); ?>" type="checkbox" value="1" <?php checked( $instance['filter'] ); ?> />&nbsp;<label for="<?php echo $this->get_field_id( 'filter' ); ?>"><?php _e( 'Automatically add paragraphs' ); ?></label></p>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>-hidden" name="<?php echo esc_attr( $this->get_field_name( 'filter' ) ); ?>" type="hidden" value="0" />
+			<p><input id="<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'filter' ) ); ?>" type="checkbox" value="1" <?php checked( $instance['filter'] ); ?> />&nbsp;<label for="<?php echo esc_attr( $this->get_field_id( 'filter' ) ); ?>"><?php _e( 'Automatically add paragraphs' ); ?></label></p>
             <?php
 		}
 
