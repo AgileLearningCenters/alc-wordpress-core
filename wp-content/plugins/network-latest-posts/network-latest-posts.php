@@ -3,7 +3,7 @@
 Plugin Name: Network Latest Posts
 Plugin URI: http://en.8elite.com/network-latest-posts
 Description: Display the latest posts from the blogs in your network using it as a function, shortcode or widget.
-Version: 3.6
+Version: 3.6.2
 Author: Jose Luis SAYAGO
 Author URI: http://laelite.info/
  */
@@ -192,6 +192,9 @@ function network_latest_posts( $parameters ) {
     // Global variables
     global $wpdb;
     //global $nlp_time_frame;
+    // Variables
+    $total  = 0;
+    $ignore = '';
     // Default values
     $defaults = array(
         'title'            => NULL,          // Widget title
@@ -834,7 +837,8 @@ function network_latest_posts( $parameters ) {
                 'next_text' => __('&raquo;','trans-nlp'),
                 'total' => $total,
                 'current' => $pag,
-                'type' => 'list'
+                'type' => 'list',
+                'add_args'  => true
             ));
             // Close pagination wrapper
             echo $html_tags['pagination_c'];
@@ -847,19 +851,23 @@ function network_latest_posts( $parameters ) {
             echo '
             <script type="text/javascript" charset="utf-8">
                 //<![CDATA[
-                jQuery(document).ready(function(){
-                    jQuery(".nlp-instance-'.$instance.' .pagination a").live("click", function(e){
-                        e.preventDefault();
-                        var link = jQuery(this).attr("href");
-                        jQuery(".nlp-instance-'.$instance.' .nlposts-wrapper").html("<style type=\"text/css\">p.loading { text-align:center;margin:0 auto; padding:20px; }</style><p class=\"loading\"><img src=\"'.plugins_url('/img/loader.gif', __FILE__) .'\" /></p>");
-                        jQuery(".nlp-instance-'.$instance.' .nlposts-wrapper").fadeOut("slow",function(){
-                            jQuery(".nlp-instance-'.$instance.' .nlposts-wrapper").load(link+" .nlp-instance-'.$instance.' .nlposts-wrapper > *").fadeIn(3000);
+                    jQuery(document).ready(function(){
+                        jQuery(".nlp-instance-'.$instance.' .pagination a").live("click", function(e){
+                            e.preventDefault();
+                            var link = jQuery(this).attr("href");
+                            jQuery(".nlp-instance-'.$instance.' .nlposts-wrapper").html("<style type=\"text/css\">p.loading { text-align:center;margin:0 auto; padding:20px; }</style><p class=\"loading\"><img src=\"'.plugins_url('/img/loader.gif', __FILE__) .'\" /></p>");
+                            jQuery.ajax({
+                                url: link,
+                                dataType: "html",
+                                success: function(data){
+                                    jQuery(".nlp-instance-'.$instance.' .nlposts-wrapper").html( jQuery(data).find(".nlposts-wrapper").html() ).fadeIn(3000);
+                                }
+                            });
                         });
-
                     });
-                });
                 //]]>
-            </script>';
+            </script>
+            ';
             // Close content box
             echo $html_tags['content_c'];
         // Without pagination

@@ -1,7 +1,7 @@
 <?php
 /*
     Network Latest Posts Widget
-    Version 3.5.6
+    Version 3.6.2
     Author L'Elite
     Author URI http://laelite.info/
  */
@@ -103,7 +103,7 @@ class NLposts_Widget extends WP_Widget {
                 // If it's not 'null' then convert to value1,..,valueN
                 } else {
                     // Scape the string (trying to minimize injection risks
-                    $instance['blog_id'] = implode(',', array_map('mysql_real_escape_string', $instance['blog_id']));
+                    $instance['blog_id'] = implode(',', array_map('htmlspecialchars', $instance['blog_id']));
                 }
              // If it isn't an array
              } else {
@@ -125,7 +125,7 @@ class NLposts_Widget extends WP_Widget {
                 // If it's not 'null' then convert to value1,..,valueN
                 } else {
                     // Scape the string (trying to minimize injection risks
-                    $instance['ignore_blog'] = implode(',', array_map('mysql_real_escape_string', $instance['ignore_blog']));
+                    $instance['ignore_blog'] = implode(',', array_map('htmlspecialchars', $instance['ignore_blog']));
                 }
              // If it isn't an array
              } else {

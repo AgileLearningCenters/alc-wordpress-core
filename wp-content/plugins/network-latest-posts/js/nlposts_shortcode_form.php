@@ -26,13 +26,13 @@ function nlp_config_path()
     $base = dirname(__FILE__);
     $path = false;
     // Check multiple levels, until find the config file
-    if (@file_exists(dirname(dirname($base))."/wp-config.php")){
+    if (@file_exists(dirname(dirname($base))."/wp-load.php")){
         $path = dirname(dirname($base));
-    } elseif (@file_exists(dirname(dirname(dirname($base)))."/wp-config.php")) {
+    } elseif (@file_exists(dirname(dirname(dirname($base)))."/wp-load.php")) {
         $path = dirname(dirname(dirname($base)));
-    } elseif (@file_exists(dirname(dirname(dirname(dirname($base))))."/wp-config.php")) {
+    } elseif (@file_exists(dirname(dirname(dirname(dirname($base))))."/wp-load.php")) {
         $path = dirname(dirname(dirname(dirname($base))));
-    } elseif (@file_exists(dirname(dirname(dirname(dirname(dirname($base)))))."/wp-config.php")) {
+    } elseif (@file_exists(dirname(dirname(dirname(dirname(dirname($base)))))."/wp-load.php")) {
         $path = dirname(dirname(dirname(dirname(dirname($base)))));
     } else {
         $path = false;
