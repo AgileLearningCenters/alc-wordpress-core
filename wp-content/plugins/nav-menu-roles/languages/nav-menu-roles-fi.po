@@ -1,19 +1,19 @@
 # Copyright (C) 2014 Nav Menu Roles
 # This file is distributed under the same license as the Nav Menu Roles package.
 # Translators:
-# Björn Sennbrink <konsult@sennbrink.se>, 2014
+# timoleinio <tjlein@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Nav Menu Roles\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/nav-menu-roles\n"
 "POT-Creation-Date: 2014-06-26 15:17:58+00:00\n"
-"PO-Revision-Date: 2014-08-04 07:46+0000\n"
-"Last-Translator: Björn Sennbrink <konsult@sennbrink.se>\n"
-"Language-Team: Swedish (Sweden) (http://www.transifex.com/projects/p/nav-menu-roles/language/sv_SE/)\n"
+"PO-Revision-Date: 2014-12-26 14:36+0000\n"
+"Last-Translator: timoleinio <tjlein@gmail.com>\n"
+"Language-Team: Finnish (http://www.transifex.com/projects/p/nav-menu-roles/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv_SE\n"
+"Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: inc/class.Nav_Menu_Roles_Import.php:100
@@ -22,79 +22,79 @@ msgstr ""
 #: inc/class.Nav_Menu_Roles_Import.php:159
 #: inc/class.Nav_Menu_Roles_Import.php:168
 msgid "Sorry, there has been an error."
-msgstr "Tyvärr, något gick fel."
+msgstr "Virhe tapahtui."
 
 #: inc/class.Nav_Menu_Roles_Import.php:101
 msgid "The file does not exist, please try again."
-msgstr "Filen finns inte, vänligen försök igen."
+msgstr "Tiedostoa ei ole olemassa, yritä uudelleen."
 
 #: inc/class.Nav_Menu_Roles_Import.php:140
 msgid "All done."
-msgstr "Allt klart."
+msgstr "Valmista."
 
 #: inc/class.Nav_Menu_Roles_Import.php:140
 msgid "Have fun!"
-msgstr "Ha det så trevligt!"
+msgstr "Pidä hauskaa!"
 
 #: inc/class.Nav_Menu_Roles_Import.php:160
 msgid ""
 "The export file could not be found at <code>%s</code>. It is likely that "
 "this was caused by a permissions problem."
-msgstr "Exportfilen kunde inte hittas vid <code>%s</code>. Troligen beror detta på ett behörighetsproblem."
+msgstr "Vientitiedosta ei löytynyt <code>%s</code>. On todennäköistä, että kyseessä on käyttöoikeusongelma."
 
 #: inc/class.Nav_Menu_Roles_Import.php:176
 msgid ""
 "This WXR file (version %s) may not be supported by this version of the "
 "importer. Please consider updating."
-msgstr "Den här WXR-filen (version %s) saknas det kanske stöd för i den här versionen av importfunktionen. Vänligen överväg att uppdatera."
+msgstr "Tuontityökalun tämä versio ei välttämättä tue WXR-tiedostoa (versio %s). Harkitse työkalun päivitystä."
 
 #: inc/class.Nav_Menu_Roles_Import.php:244
 msgid "Import Nav Menu Roles"
-msgstr "Importera Nav Meny-roller"
+msgstr "Tuo valikkorooleja"
 
 #: inc/class.Nav_Menu_Roles_Import.php:251
 msgid ""
 "A new version of this importer is available. Please update to version %s to "
 "ensure compatibility with newer export files."
-msgstr "En ny version av den här importversionen finns tillgänglig. Vänligen uppdatera till version %s för att säkra kompatibilitet med nyare exportfiler. "
+msgstr "Tuontityökalusta on uusi versio. Ole hyvä ja päivitä versioon %s varmistaaksesi yhteensopivuus uusien vientitiedostojen kanssa."
 
 #: inc/class.Nav_Menu_Roles_Import.php:266
 msgid ""
 "Re-Upload your normal WordPress eXtended RSS (WXR) file and we&#8217;ll "
 "import the Nav Menu Roles and any other missing post meta for the Nav Menu "
 "items."
-msgstr "Återuppladda din normala WordPress eXtended RSS-fil (WXR) och vi kommer att importera Nav Menu-rollerna och all annan saknad postmeta för menyvalen i Nav Menu."
+msgstr "Lataa WordPressin eXtended RSS (WXR) -tiedosto ja tuomme valikkoroolit."
 
 #: inc/class.Nav_Menu_Roles_Import.php:267
 msgid "Choose a WXR (.xml) file to upload, then click Upload file and import."
-msgstr "Välj en WXR-fil (.xml) att ladda upp, klicka på Ladda upp och importera."
+msgstr "Valitse ladattava WXR (.xml) -tiedosto ja klikkaa Tuo tiedosto -nappia."
 
 #. translators: %s: title of menu item which is invalid
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:87
 msgid "%s (Invalid)"
-msgstr "%s (Ogiltig)"
+msgstr "%s (virheellinen)"
 
 #. translators: %s: title of menu item in draft status
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:91
 msgid "%s (Pending)"
-msgstr "%s (Väntande)"
+msgstr "%s (Odottaa)"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:104
 msgid "sub item"
-msgstr "under-val"
+msgstr "alavalinta"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:119
 msgid "Move up"
-msgstr "Flytta upp"
+msgstr "Siirrä ylöspäin"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:132
 msgid "Move down"
-msgstr "Flytta ner"
+msgstr "Siirrä alaspäin"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:134
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:136
 msgid "Edit Menu Item"
-msgstr "Redigera menyval"
+msgstr "Muokkaa valikon kohtaa"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:145
 msgid "URL"
@@ -102,102 +102,102 @@ msgstr "URL"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:152
 msgid "Navigation Label"
-msgstr "Menyvalsnamn"
+msgstr "Valikkoteksti"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:158
 msgid "Title Attribute"
-msgstr "Titelattribut"
+msgstr "Title-attribuutti"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:165
 msgid "Open link in a new window/tab"
-msgstr "Öpnna länk i nytt fönster/ny tabb"
+msgstr "Avaa linkki uuteen ikkunaan tai välilehteen"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:170
 msgid "CSS Classes (optional)"
-msgstr "CSS-klasser (valfritt)"
+msgstr "CSS-luokat (vapaaehtoinen)"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:176
 msgid "Link Relationship (XFN)"
-msgstr "Relationslänk (XFN)"
+msgstr "Linkkisuhde (XFN)"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:182
 msgid "Description"
-msgstr "Beskrivning"
+msgstr "Kuvaus"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:184
 msgid ""
 "The description will be displayed in the menu if the current theme supports "
 "it."
-msgstr "Beskrivningen visas i menyn om nuvarande tema har stöd för det."
+msgstr "Kuvaus näytetään nykyisen teeman valikossa, jos nykyinen teema tukee sitä."
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:196
 msgid "Move"
-msgstr "Flytta"
+msgstr "Siirrä"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:197
 msgid "Up one"
-msgstr "Upp en"
+msgstr "Yksi ylöspäin"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:198
 msgid "Down one"
-msgstr "Ner en"
+msgstr "Yksi alaspäin"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:201
 msgid "To the top"
-msgstr "Till toppen"
+msgstr "Ylimmäksi"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:208
 msgid "Original: %s"
-msgstr "Original: %s"
+msgstr "Alkuperäinen: %s"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:221
 msgid "Remove"
-msgstr "Ta bort"
+msgstr "Poista"
 
 #: inc/class.Walker_Nav_Menu_Edit_Roles.php:222
 msgid "Cancel"
-msgstr "Avbryt"
+msgstr "Peruuta"
 
 #: nav-menu-roles.php:76 nav-menu-roles.php:85
 msgid "Cheatin&#8217; huh?"
-msgstr "Fuskar du&#8217; ?"
+msgstr "Yritätkö huijata?"
 
 #. Plugin Name of the plugin/theme
 msgid "Nav Menu Roles"
-msgstr "Nav Menu Roles"
+msgstr "Valikkoroolit"
 
 #: nav-menu-roles.php:163
 msgid ""
 "Import %snav menu roles%s and other menu item meta skipped by the default "
 "importer"
-msgstr "Importera %nav menu-roller%s och annan menyvalsmeta som hoppades över av standardimporten"
+msgstr "Tuo %svalikkorooleja%s ja niiden muita metatietoja"
 
 #: nav-menu-roles.php:219
 msgid ""
 "Nav Menu Roles has detected a possible conflict with the following functions"
 " or classes: %1$s. Please see the %2$sFAQ%3$s for more information and "
 "possible resolution. | %4$sHide Notice%3$s"
-msgstr "Nav Menu Roles har upptäckt en möjlig konflikt med följande funktioner eller klasser: %s1$s. Var god se %2$sFAQ%3$s för mer information och en möjlig lösning.  | %4$sDölj notis%3$s"
+msgstr "Nav Menu Roles on havainnut mahdollisen ongelman seuraavan funktion tai luokan kanssa: %1$s. Katso %2$sFAQ%3$s siitä, miten mahdollisesti voit asian korjata. | %4$sPiilota ilmoitus%3$s"
 
 #: nav-menu-roles.php:289
 msgid "Display Mode"
-msgstr "Synlighet"
+msgstr "Näytä"
 
 #: nav-menu-roles.php:297
 msgid "Logged Out Users"
-msgstr "Ej inloggade användare"
+msgstr "Kirjautumaton käyttäjä"
 
 #: nav-menu-roles.php:304
 msgid "Logged In Users"
-msgstr "Inloggade användare"
+msgstr "Kirjautunut käyttäjä"
 
 #: nav-menu-roles.php:311
 msgid "By Role"
-msgstr "via Roll"
+msgstr "Roolin mukaan"
 
 #: nav-menu-roles.php:318
 msgid "Access Role"
-msgstr "Behörighetsroll"
+msgstr "Käyttäjärooli"
 
 #. Plugin URI of the plugin/theme
 msgid "http://www.kathyisawesome.com/449/nav-menu-roles/"
@@ -205,7 +205,7 @@ msgstr "http://www.kathyisawesome.com/449/nav-menu-roles/"
 
 #. Description of the plugin/theme
 msgid "Hide custom menu items based on user roles"
-msgstr "Dölj anpassade menyval baserat på användarroller"
+msgstr "Piilota valikkolinkkejä käyttäjäroolien perusteella"
 
 #. Author of the plugin/theme
 msgid "Kathy Darling"
