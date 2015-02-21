@@ -21,7 +21,11 @@ class URE_Screen_Help {
             <li><strong>' . esc_html__('Show deprecated capabilities','ure').'</strong> - '.
                 esc_html__('Capabilities like "level_0", "level_1" are deprecated and are not used by WordPress. '
                         . 'They are left at the user roles for the compatibility purpose with the old themes and plugins code. '
-                        . 'Turning on this option will show those deprecated capabilities.', 'ure') . '</li>';
+                        . 'Turning on this option will show those deprecated capabilities.', 'ure') . '</li>
+            <li><strong>' . esc_html__('Edit user capabilities','ure').'</strong> - '.
+                esc_html__('If turned off - capabilities section of selected user is shown in readonly mode. '
+                        . 'Administrator can not assign capabilities to the user directly. '
+                        . 'He should make it using roles only.', 'ure') . '</li>';
 
         $text = apply_filters('ure_get_settings_general_tab_help', $text);
         $text .='
@@ -36,9 +40,12 @@ class URE_Screen_Help {
     protected function get_additional_modules_tab() {
         $text = '<h2>User Role Editor Options page help</h2>
             <p>
-            <ul>
-            <li><strong>' . esc_html__('Count users without role', 'ure').'</strong> - ' .
-                esc_html__('select roles below','ure') . '</li>';        
+            <ul>';
+        if (!is_multisite()) {
+            $text .= '<li><strong>' . esc_html__('Count users without role', 'ure').'</strong> - ' .
+                     esc_html__('Show at the "Users" page a quant of users without role. Module allows to assign all of them '.
+                     'an empty role "No rights", in order to look on the users list with role "No rights" at the separate tab then.','ure') . '</li>';        
+        }
         $text = apply_filters('ure_get_settings_additional_modules_tab_help', $text);
         $text .='
             </ul>
