@@ -1,0 +1,350 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: mc-plugin\n"
+"POT-Creation-Date: 2014-04-09 19:58+0100\n"
+"PO-Revision-Date: 2014-04-09 19:58+0100\n"
+"Last-Translator: \n"
+"Language-Team: ITRO Corp\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;_e\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/popup-admin.php:141
+msgid "settings saved."
+msgstr ""
+
+#: admin/popup-admin.php:148
+msgid "I.T.RO. Popup Plugin - Settings"
+msgstr ""
+
+#: admin/popup-admin.php:160
+msgid "General Popup Option:"
+msgstr ""
+
+#: admin/popup-admin.php:167
+msgid "SHOW ADVANCED SETTINGS"
+msgstr ""
+
+#: admin/popup-admin.php:168
+msgid "Display many other options"
+msgstr ""
+
+#: admin/popup-admin.php:173
+msgid "DECIDE WHERE POPUP WILL BE DISPLAYED"
+msgstr ""
+
+#: admin/popup-admin.php:175
+msgid "Only selected pages"
+msgstr ""
+
+#: admin/popup-admin.php:175
+msgid "Multiple choise with CTRL+Click or SHIFT+Arrow up or down"
+msgstr ""
+
+#: admin/popup-admin.php:176
+msgid "All pages"
+msgstr ""
+
+#: admin/popup-admin.php:177
+msgid "No page"
+msgstr ""
+
+#: admin/popup-admin.php:181
+msgid "Blog homepage"
+msgstr ""
+
+#: admin/popup-admin.php:183
+msgid ""
+"If in your Settings->Reading you have set 'Front page displays: Your latest "
+"posts' and want to display the popup in the home, check this box."
+msgstr ""
+
+#: admin/popup-admin.php:193
+msgid "GENERAL SETTINGS"
+msgstr ""
+
+#: admin/popup-admin.php:196
+msgid "Disable on mobile device"
+msgstr ""
+
+#: admin/popup-admin.php:197
+msgid "Check this to disable popup on mobile devices"
+msgstr ""
+
+#: admin/popup-admin.php:200
+msgid "Disable ESC key"
+msgstr ""
+
+#: admin/popup-admin.php:201
+msgid ""
+"If you set this option popup can not be closed with ESC button of keyboard."
+msgstr ""
+
+#: admin/popup-admin.php:206
+msgid "Popup seconds:"
+msgstr ""
+
+#: admin/popup-admin.php:206
+msgid ""
+"Set seconds until the popup automatically close. Set it to zero to disable "
+"countdown."
+msgstr ""
+
+#: admin/popup-admin.php:214
+msgid "Popup delay:"
+msgstr ""
+
+#: admin/popup-admin.php:214
+msgid "Set seconds before the popup will be displayed"
+msgstr ""
+
+#: admin/popup-admin.php:222
+msgid "Next visualization (hours):"
+msgstr ""
+
+#: admin/popup-admin.php:222
+msgid ""
+"Set time for the next visualization of popup, to prevent annoying repeated "
+"visualizations, when someone visit pages"
+msgstr ""
+
+#: admin/popup-admin.php:228
+msgid "Delete cookie"
+msgstr ""
+
+#: admin/popup-admin.php:229
+msgid "Cookie deleted!"
+msgstr ""
+
+#: admin/popup-admin.php:234
+msgid "Show countdown"
+msgstr ""
+
+#: admin/popup-admin.php:235
+msgid ""
+"Show the countdown at the bottom of the popup which dispay the time before "
+"popup will close. If is hidden, it run anyway."
+msgstr ""
+
+#: admin/popup-admin.php:237
+msgid "Countdown font color:"
+msgstr ""
+
+#: admin/popup-admin.php:238
+msgid "Select the countdown font color."
+msgstr ""
+
+#: admin/popup-admin.php:242
+msgid "POPUP ASPECT"
+msgstr ""
+
+#: admin/popup-admin.php:246
+msgid "Popup width:"
+msgstr ""
+
+#: admin/popup-admin.php:246
+msgid ""
+"Use the % to change width dinamically with the browser window , or px for "
+"fixed dimension i.e: 30% or 200px"
+msgstr ""
+
+#: admin/popup-admin.php:260
+msgid "Popup height:"
+msgstr ""
+
+#: admin/popup-admin.php:260
+msgid "Select auto to adapt popup height to the content"
+msgstr ""
+
+#: admin/popup-admin.php:274
+msgid "Popup background color"
+msgstr ""
+
+#: admin/popup-admin.php:276
+msgid "Popup border color:"
+msgstr ""
+
+#: admin/popup-admin.php:282
+msgid "Popup border radius(px):"
+msgstr ""
+
+#: admin/popup-admin.php:290
+msgid "Popup border width(px):"
+msgstr ""
+
+#: admin/popup-admin.php:298
+msgid "Popup padding(px):"
+msgstr ""
+
+#: admin/popup-admin.php:305
+msgid "BACKGROUND IMAGE"
+msgstr ""
+
+#: admin/popup-admin.php:306
+msgid "Show image"
+msgstr ""
+
+#: admin/popup-admin.php:309
+msgid "No background"
+msgstr ""
+
+#: admin/popup-admin.php:312
+msgid "Upload Image"
+msgstr ""
+
+#: admin/popup-admin.php:315
+msgid "Popup position:"
+msgstr ""
+
+#: admin/popup-admin.php:315
+msgid ""
+"Setting ABSOLUTE the popup will be static on the page. Setting FIXED it will "
+"scroll with the page."
+msgstr ""
+
+#: admin/popup-admin.php:326
+msgid "Automatic top margin:"
+msgstr ""
+
+#: admin/popup-admin.php:327
+msgid ""
+"The system will try to auto center the popup, in case of problem deselect "
+"this option"
+msgstr ""
+
+#: admin/popup-admin.php:332
+msgid "Popup top margin(px):"
+msgstr ""
+
+#: admin/popup-admin.php:342
+msgid "Background opacity"
+msgstr ""
+
+#: admin/popup-admin.php:342
+msgid "Set the opacity of opaque background under the popup."
+msgstr ""
+
+#: admin/popup-admin.php:363
+msgid "Opaque background color"
+msgstr ""
+
+#: admin/popup-admin.php:368
+msgid "Close cross"
+msgstr ""
+
+#: admin/popup-admin.php:368
+msgid ""
+"Select the colour combination of the closing cross on the upper right of "
+"popup."
+msgstr ""
+
+#: admin/popup-admin.php:370
+msgid "Black"
+msgstr ""
+
+#: admin/popup-admin.php:371
+msgid "White"
+msgstr ""
+
+#: admin/popup-admin.php:372
+msgid "White with border"
+msgstr ""
+
+#: admin/popup-admin.php:381
+msgid "Age restriction settings:"
+msgstr ""
+
+#: admin/popup-admin.php:385
+msgid "Enable age validation"
+msgstr ""
+
+#: admin/popup-admin.php:388
+msgid "Enter button text:"
+msgstr ""
+
+#: admin/popup-admin.php:389
+msgid "i.e.: I AM OVER 18 - ENTER"
+msgstr ""
+
+#: admin/popup-admin.php:393
+msgid "Enter button background color:"
+msgstr ""
+
+#: admin/popup-admin.php:396
+msgid "Enter button border color:"
+msgstr ""
+
+#: admin/popup-admin.php:399
+msgid "Enter button font color:"
+msgstr ""
+
+#: admin/popup-admin.php:404
+msgid "Leave button text:"
+msgstr ""
+
+#: admin/popup-admin.php:405
+msgid "i.e.: I AM UNDER 18 - LEAVE"
+msgstr ""
+
+#: admin/popup-admin.php:407
+msgid "Leave button url:"
+msgstr ""
+
+#: admin/popup-admin.php:408
+msgid "i.e.: http://www.mysite.com/leave.html"
+msgstr ""
+
+#: admin/popup-admin.php:412
+msgid "Leave button background color:"
+msgstr ""
+
+#: admin/popup-admin.php:415
+msgid "Leave button border color:"
+msgstr ""
+
+#: admin/popup-admin.php:418
+msgid "Leave button font color:"
+msgstr ""
+
+#: admin/popup-admin.php:430 admin/popup-admin.php:452
+msgid "Preview page"
+msgstr ""
+
+#: admin/popup-admin.php:436
+msgid "ITRO Popup messages"
+msgstr ""
+
+#: admin/popup-admin.php:443
+msgid "Your text (or HTML code:)"
+msgstr ""
+
+#: admin/popup-admin.php:460
+msgid "Like it? Offer us a coffee! ;-)"
+msgstr ""
+
+#: admin/popup-admin.php:468
+msgid "System Status"
+msgstr ""
+
+#: admin/popup-admin.php:479
+msgid "DELETE ALL DATA ON PLUGIN UNISTALL"
+msgstr ""
+
+#: admin/popup-admin.php:480
+msgid ""
+"Check this box if you want to delete or maintain database tables. It is "
+"usefull if you have to try to install again the plugin, without lost your "
+"settings."
+msgstr ""
+
+#: templates/itro-popup-template.php:11
+msgid "This popup will be closed in: "
+msgstr ""
+
+#: templates/itro-popup-template.php:26
+msgid "CLOSE"
+msgstr ""

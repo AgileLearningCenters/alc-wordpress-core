@@ -1,0 +1,530 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: mc-plugin\n"
+"POT-Creation-Date: 2014-04-09 19:58+0100\n"
+"PO-Revision-Date: 2014-04-09 19:59+0100\n"
+"Last-Translator: \n"
+"Language-Team: ITRO Corp\n"
+"Language: ITALIANO\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;_e\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/popup-admin.php:141
+msgid "settings saved."
+msgstr "Impostazioni salvate"
+
+#: admin/popup-admin.php:148
+msgid "I.T.RO. Popup Plugin - Settings"
+msgstr "ITRO Popup Plugin - Impostazioni"
+
+#: admin/popup-admin.php:160
+msgid "General Popup Option:"
+msgstr "Impostazioni Generali"
+
+#: admin/popup-admin.php:167
+msgid "SHOW ADVANCED SETTINGS"
+msgstr "VISUALIZZA LE IMPOSTAZIONI AVANZATE"
+
+#: admin/popup-admin.php:168
+msgid "Display many other options"
+msgstr "Visualizza moltre altre funzioni per utenti avanzati"
+
+#: admin/popup-admin.php:173
+msgid "DECIDE WHERE POPUP WILL BE DISPLAYED"
+msgstr "DECIDERE DOVE VISUALIZZARE IL POPUP"
+
+#: admin/popup-admin.php:175
+msgid "Only selected pages"
+msgstr "Solo pagine selezionate"
+
+#: admin/popup-admin.php:175
+msgid "Multiple choise with CTRL+Click or SHIFT+Arrow up or down"
+msgstr "Scelta multipla con CTRL+Click o SHIFT+Freccia su o giu"
+
+#: admin/popup-admin.php:176
+msgid "All pages"
+msgstr "Tutte le pagine"
+
+#: admin/popup-admin.php:177
+msgid "No page"
+msgstr "Nessuna pagina"
+
+#: admin/popup-admin.php:181
+msgid "Blog homepage"
+msgstr "Blog homepage"
+
+#: admin/popup-admin.php:183
+msgid ""
+"If in your Settings->Reading you have set 'Front page displays: Your latest "
+"posts' and want to display the popup in the home, check this box."
+msgstr ""
+"Se in Impostazioni->Lettura è stato selezionato 'La pagina iniziale mostra: "
+"Gli ultimi articoli' e su vuole visualizzare il popup in home, sezionare la "
+"casella."
+
+#: admin/popup-admin.php:193
+msgid "GENERAL SETTINGS"
+msgstr "IMPOSTAZIONI GENERALI"
+
+#: admin/popup-admin.php:196
+msgid "Disable on mobile device"
+msgstr "Disabilita per dispositivi mobili"
+
+#: admin/popup-admin.php:197
+msgid "Check this to disable popup on mobile devices"
+msgstr ""
+"Selezionare questo riquadro per disabilitare il popup sui dispositivi mobili."
+
+#: admin/popup-admin.php:200
+msgid "Disable ESC key"
+msgstr "Disabilitare tasto ESC"
+
+#: admin/popup-admin.php:201
+msgid ""
+"If you set this option popup can not be closed with ESC button of keyboard."
+msgstr ""
+"Selezionando questa opzione il popup non può essere chiuso con il tasto ESC. "
+"Si chiuderà automaticamente solo con il conto alla rovescia."
+
+#: admin/popup-admin.php:206
+msgid "Popup seconds:"
+msgstr "Secondi popup:"
+
+#: admin/popup-admin.php:206
+msgid ""
+"Set seconds until the popup automatically close. Set it to zero to disable "
+"countdown."
+msgstr ""
+"Imposta i secondi prima che il popup si chiuda automaticamente. Lasciare a "
+"zero per disabilitare il conto alla rovescia."
+
+#: admin/popup-admin.php:214
+msgid "Popup delay:"
+msgstr "Ritardo popup:"
+
+#: admin/popup-admin.php:214
+msgid "Set seconds before the popup will be displayed"
+msgstr "Imposta il tempo di ritardo prima che il popup venga visualizzato."
+
+#: admin/popup-admin.php:222
+msgid "Next visualization (hours):"
+msgstr "Prossima visualizzazione (ore):"
+
+#: admin/popup-admin.php:222
+msgid ""
+"Set time for the next visualization of popup, to prevent annoying repeated "
+"visualizations, when someone visit pages"
+msgstr ""
+"Imposta il tempo prima che il popup appaia nuovamente, ad una nuova visita "
+"della pagina. Serve ad evitare fastidiose ripetute visualizzazioni dello "
+"stesso."
+
+#: admin/popup-admin.php:228
+msgid "Delete cookie"
+msgstr "Elimina cookie"
+
+#: admin/popup-admin.php:229
+msgid "Cookie deleted!"
+msgstr "Cookie eliminato!"
+
+#: admin/popup-admin.php:234
+msgid "Show countdown"
+msgstr "Visualizza conto alla rovescia"
+
+#: admin/popup-admin.php:235
+msgid ""
+"Show the countdown at the bottom of the popup which dispay the time before "
+"popup will close. If is hidden, it run anyway."
+msgstr ""
+"Visualizza il conto alla rovescia prima che il popup si chiuda, in fondo "
+"allo stesso. Anche se nascosto, funzionerà comunque."
+
+#: admin/popup-admin.php:237
+msgid "Countdown font color:"
+msgstr "Colore font:"
+
+#: admin/popup-admin.php:238
+msgid "Select the countdown font color."
+msgstr "Selezionare il colore del font del conto alla rovescia."
+
+#: admin/popup-admin.php:242
+msgid "POPUP ASPECT"
+msgstr "ASPETTO POPUP"
+
+#: admin/popup-admin.php:246
+msgid "Popup width:"
+msgstr "Larghezza Popup:"
+
+#: admin/popup-admin.php:246
+msgid ""
+"Use the % to change width dinamically with the browser window , or px for "
+"fixed dimension i.e: 30% or 200px"
+msgstr ""
+"Usare il % per far cambiare dinamicamente le dimensioni con il "
+"ridimensionamento della finestra, o px per dimensioni fisse. es: 30% o 200px"
+
+#: admin/popup-admin.php:260
+msgid "Popup height:"
+msgstr "Altezza Popup:"
+
+#: admin/popup-admin.php:260
+msgid "Select auto to adapt popup height to the content"
+msgstr "Selezionare auto per far adattare l'altezza del popup al contenuto."
+
+#: admin/popup-admin.php:274
+msgid "Popup background color"
+msgstr "Colore di sfondo:"
+
+#: admin/popup-admin.php:276
+msgid "Popup border color:"
+msgstr "Colore bordo:"
+
+#: admin/popup-admin.php:282
+msgid "Popup border radius(px):"
+msgstr "Rotondità bordo popup(px):"
+
+#: admin/popup-admin.php:290
+msgid "Popup border width(px):"
+msgstr "Spessore bordo popup(px):"
+
+#: admin/popup-admin.php:298
+msgid "Popup padding(px):"
+msgstr "Spaziatura interna (px):"
+
+#: admin/popup-admin.php:305
+msgid "BACKGROUND IMAGE"
+msgstr "IMMAGINE DI SFONDO"
+
+#: admin/popup-admin.php:306
+msgid "Show image"
+msgstr "Visualizza immagine"
+
+#: admin/popup-admin.php:309
+msgid "No background"
+msgstr "Nessuno sfondo"
+
+#: admin/popup-admin.php:312
+msgid "Upload Image"
+msgstr "Carica Immagine"
+
+#: admin/popup-admin.php:315
+msgid "Popup position:"
+msgstr "Posizione del popup:"
+
+#: admin/popup-admin.php:315
+msgid ""
+"Setting ABSOLUTE the popup will be static on the page. Setting FIXED it will "
+"scroll with the page."
+msgstr ""
+"Impostare ABSOLUTE per avere il popup fisso sulla pagina, FIXED per farlo "
+"scorrere con la pagina."
+
+#: admin/popup-admin.php:326
+msgid "Automatic top margin:"
+msgstr "Margine superiore automatico"
+
+#: admin/popup-admin.php:327
+msgid ""
+"The system will try to auto center the popup, in case of problem deselect "
+"this option"
+msgstr ""
+"Il sistema proverà a centrare automaticamente il popup, in caso di problemi "
+"deselezionare questa opzione."
+
+#: admin/popup-admin.php:332
+msgid "Popup top margin(px):"
+msgstr "Margine superiore popup (px):"
+
+#: admin/popup-admin.php:342
+msgid "Background opacity"
+msgstr "Opacità sfondo"
+
+#: admin/popup-admin.php:342
+msgid "Set the opacity of opaque background under the popup."
+msgstr "Imposta l'opacità dello sfondo che compare dietro al popup."
+
+#: admin/popup-admin.php:363
+msgid "Opaque background color"
+msgstr "Colore sfondo opaco:"
+
+#: admin/popup-admin.php:368
+msgid "Close cross"
+msgstr "Croce di chiusura"
+
+#: admin/popup-admin.php:368
+msgid ""
+"Select the colour combination of the closing cross on the upper right of "
+"popup."
+msgstr ""
+"Selezionare la combinazione di colori per la croce di chiusura del popup, "
+"posta in alto a destra,"
+
+#: admin/popup-admin.php:370
+msgid "Black"
+msgstr "Nera"
+
+#: admin/popup-admin.php:371
+msgid "White"
+msgstr "Bianca"
+
+#: admin/popup-admin.php:372
+msgid "White with border"
+msgstr "Bianca con bordi"
+
+#: admin/popup-admin.php:381
+msgid "Age restriction settings:"
+msgstr "Sito con restrizioni di età:"
+
+#: admin/popup-admin.php:385
+msgid "Enable age validation"
+msgstr "Abilita blocco età"
+
+#: admin/popup-admin.php:388
+msgid "Enter button text:"
+msgstr "Testo bottone di ingresso:"
+
+#: admin/popup-admin.php:389
+msgid "i.e.: I AM OVER 18 - ENTER"
+msgstr "es: HO PIU' DI 18 ANNI - ENTRA"
+
+#: admin/popup-admin.php:393
+msgid "Enter button background color:"
+msgstr "Colore di sfondo bottone di ingresso:"
+
+#: admin/popup-admin.php:396
+msgid "Enter button border color:"
+msgstr "Colore bordo pulsante di ingresso:"
+
+#: admin/popup-admin.php:399
+msgid "Enter button font color:"
+msgstr "Colore font pulsante di ingresso:"
+
+#: admin/popup-admin.php:404
+msgid "Leave button text:"
+msgstr "Testo pulsante di allontanamento:"
+
+#: admin/popup-admin.php:405
+msgid "i.e.: I AM UNDER 18 - LEAVE"
+msgstr "es: HO MENO DI 18 ANNI - ALLONTANAMI DAL SITO"
+
+#: admin/popup-admin.php:407
+msgid "Leave button url:"
+msgstr "Url bottone di allontanamento:"
+
+#: admin/popup-admin.php:408
+msgid "i.e.: http://www.mysite.com/leave.html"
+msgstr "es.: http://www.mysite.com/leave.html"
+
+#: admin/popup-admin.php:412
+msgid "Leave button background color:"
+msgstr "Colore di sfondo pulsante di allontanamento:"
+
+#: admin/popup-admin.php:415
+msgid "Leave button border color:"
+msgstr "Colore bordo pulsante allontanamento:"
+
+#: admin/popup-admin.php:418
+msgid "Leave button font color:"
+msgstr "Colore font pulsante allontanamento:"
+
+#: admin/popup-admin.php:430 admin/popup-admin.php:452
+msgid "Preview page"
+msgstr "Pagina di anteprima"
+
+#: admin/popup-admin.php:436
+msgid "ITRO Popup messages"
+msgstr "ITRO Popup: messaggi importanti"
+
+#: admin/popup-admin.php:443
+msgid "Your text (or HTML code:)"
+msgstr "Il tuo testo (o il codice HTML)"
+
+#: admin/popup-admin.php:460
+msgid "Like it? Offer us a coffee! ;-)"
+msgstr "Il plugin ti piace? Offrici un caffè! ;-)"
+
+#: admin/popup-admin.php:468
+msgid "System Status"
+msgstr "Informazioni di Sistema"
+
+#: admin/popup-admin.php:479
+msgid "DELETE ALL DATA ON PLUGIN UNISTALL"
+msgstr "ELIMINA TUTTI DATI ALLA DISINSTALLAZIONE DEL PLUGIN"
+
+#: admin/popup-admin.php:480
+msgid ""
+"Check this box if you want to delete or maintain database tables. It is "
+"usefull if you have to try to install again the plugin, without lost your "
+"settings."
+msgstr ""
+"Selezionare questa casella se si desidera rimuovere tutte le tabelle dal "
+"database."
+
+#: templates/itro-popup-template.php:11
+msgid "This popup will be closed in: "
+msgstr "Questo popup verrà; chiuso tra:"
+
+#: templates/itro-popup-template.php:26
+msgid "CLOSE"
+msgstr "CHIUDI"
+
+#~ msgid "Make your donation"
+#~ msgstr "Fai la tua donazione"
+
+#~ msgid "little donation"
+#~ msgstr "donazione piccola"
+
+#~ msgid "right donation"
+#~ msgstr "donazione giusta"
+
+#~ msgid "normal donation"
+#~ msgstr "donazione normale"
+
+#~ msgid "good donation"
+#~ msgstr "donazione corposa"
+
+#~ msgid "great donation"
+#~ msgstr "donazione grande"
+
+#~ msgid "thiny donation"
+#~ msgstr "donazione minima"
+
+#~ msgid "Any pages"
+#~ msgstr "Nessuna pagina"
+
+#~ msgid "Enable IE compatibility"
+#~ msgstr "Usare la compatibilit&agrave; per IE:"
+
+#~ msgid ""
+#~ "If your site is has visualization issues in Internet Explorer, check this "
+#~ "box to solve the compatibility problem."
+#~ msgstr ""
+#~ "Se il tuo sito ha problemi di visualizzazione su Internet Explorer, "
+#~ "spunta questa casella per risolvere il problema di compatibilità"
+
+#~ msgid "Where are my old images?"
+#~ msgstr "Dove sono le mie vecchie immagini?"
+
+#~ msgid ""
+#~ "If your plugin version is older than 3.4 here you can found your old "
+#~ "uploaded images."
+#~ msgstr ""
+#~ "Se la versione installata del plugin è precedente alla 3.4 il link "
+#~ "mostrerà le vecchie immagini caricate."
+
+#~ msgid "Set hours until the popup will appear again"
+#~ msgstr ""
+#~ "Imposta quante ore passerano prima della prossima visualizzazione del "
+#~ "popup."
+
+#~ msgid ""
+#~ "Select manually the top margin to vertical align the popup i.e.: 20px or "
+#~ "10%"
+#~ msgstr ""
+#~ "Selezionare manualmente il margine superiore del popup per centrarlo es: "
+#~ "10px o 20%"
+
+#~ msgid "Unlockable popup"
+#~ msgstr "Popup bloccato"
+
+#~ msgid "Leave it blank to maintain the aspect ratio"
+#~ msgstr "Lasciare bianco per mantenere le proporzioni dell'immagine."
+
+#~ msgid "Age restricted page:"
+#~ msgstr "Sito con restrizioni di età:"
+
+#~ msgid "Select Image"
+#~ msgstr "Carica Immagine"
+
+#~ msgid "Text background color"
+#~ msgstr "Colore di sfondo testo personalizzato:"
+
+#~ msgid "Text border color:"
+#~ msgstr "Colore bordo box del testo personalizzato:"
+
+#~ msgid "Popup image settings:"
+#~ msgstr "Impostazioni immagine popup:"
+
+#~ msgid "Added image from direct url"
+#~ msgstr "Aggiunta immagine dal link inserito."
+
+#~ msgid "Added background from direct url"
+#~ msgstr "Aggiunto sfondo dal link inserito."
+
+#~ msgid "INSERTED IMAGE"
+#~ msgstr "IMMAGINE DA INSERIRE"
+
+#~ msgid "Image size (%):"
+#~ msgstr "Grandezza immagine (%):"
+
+#~ msgid "Insert pure number whithout %"
+#~ msgstr "Inserire un numero puro senza il simbolo %"
+
+#~ msgid "Use direck url:"
+#~ msgstr "Inserisci url immagine:"
+
+#~ msgid "Current image link:"
+#~ msgstr "Link immagine attuale:"
+
+#~ msgid "Upload and delete images"
+#~ msgstr "Carica ed elimina le immagini"
+
+#~ msgid "Overwrite"
+#~ msgstr "Sovrascrivi"
+
+#~ msgid "HELP US TO CONTINUE OUR DEVELOPING WORK. PLEASE DONATE!"
+#~ msgstr "AIUTACI A CONTINUARE IL NOSTRO LAVORO. DONA ORA!"
+
+#~ msgid "Warning file is too big, this may cause problems!"
+#~ msgstr ""
+#~ "Attenzione! Il file è troppo grande, questo pu&#242; causare dei problemi."
+
+#~ msgid "\" already exists. Please check the overwrite option"
+#~ msgstr "\" esiste già. Perfavore selezione l'opzione sovrascrivi."
+
+#~ msgid "\" successfully uploaded"
+#~ msgstr "\" eliminato con successo."
+
+#~ msgid "Any image selected"
+#~ msgstr "Nessuna immagine selezionata."
+
+#~ msgid " added in popup"
+#~ msgstr "aggiunto al popup."
+
+#~ msgid "Any background image used"
+#~ msgstr "Nessuno sfondo selezionatao."
+
+#~ msgid " selected as background"
+#~ msgstr "selezionato come sfondo"
+
+#~ msgid "Any image selected. Please select one."
+#~ msgstr "Nessuna immagine selezionata. Selezionarne una."
+
+#~ msgid "\" successfully deleted"
+#~ msgstr "\" eliminato con successo."
+
+#~ msgid "Error, can't delete image."
+#~ msgstr "Errore, impossibile eleiminare l'immagine."
+
+#~ msgid "UPLOAD AND DELETE IMAGES"
+#~ msgstr "CARICA ED ELIMINA LE IMMAGINI"
+
+#~ msgid "Save"
+#~ msgstr "Salva"
+
+#~ msgid "Select"
+#~ msgstr "Seleziona"
+
+#~ msgid "RGB code i.e.: rgb(255,0,0) HEX code i.e.: #FF0000"
+#~ msgstr "codice RGB es: rgb(255,0,0) codice HEX es: #FF0000"
+
+#~ msgid " selected"
+#~ msgstr " selezionato."
+
+#~ msgid "Settings"
+#~ msgstr "Impostazioni"
