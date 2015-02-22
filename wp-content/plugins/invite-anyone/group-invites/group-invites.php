@@ -7,10 +7,22 @@ function invite_anyone_add_js() {
 
 	if ( $bp->current_action == BP_INVITE_ANYONE_SLUG || ( isset( $bp->action_variables[1] ) && $bp->action_variables[1] == BP_INVITE_ANYONE_SLUG ) ) {
 
-		wp_enqueue_script( 'invite-anyone-autocomplete-js', WP_PLUGIN_URL . '/invite-anyone/group-invites/jquery.autocomplete/jquery.autocomplete-min.js', array( 'jquery' ) );
+		$min = '-min';
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			$min = '';
+		}
 
-		wp_register_script( 'invite-anyone-js', WP_PLUGIN_URL . '/invite-anyone/group-invites/group-invites-js.js', array( 'invite-anyone-autocomplete-js' ) );
+		wp_enqueue_script( 'invite-anyone-autocomplete-js', plugins_url() . "/invite-anyone/group-invites/jquery.autocomplete/jquery.autocomplete$min.js", array( 'jquery' ) );
+
+		wp_register_script( 'invite-anyone-js', plugins_url() . '/invite-anyone/group-invites/group-invites-js.js', array( 'invite-anyone-autocomplete-js' ) );
 		wp_enqueue_script( 'invite-anyone-js' );
+
+		// Add words that we need to use in JS to the end of the page
+		// so they can be translated and still used.
+		$params = apply_filters( 'ia_get_js_strings', array(
+			'unsent_invites'     => __( 'Click &ldquo;Send Invites&rdquo; to finish sending your new invitations.', 'invite-anyone' ),
+		) );
+		wp_localize_script( 'invite-anyone-js', 'IA_js_strings', $params );
 
 	}
 }
@@ -20,7 +32,7 @@ function invite_anyone_add_group_invite_css() {
 	global $bp;
 
 	if ( $bp->current_action == BP_INVITE_ANYONE_SLUG || ( isset( $bp->action_variables[1] ) && $bp->action_variables[1] == BP_INVITE_ANYONE_SLUG ) ) {
-   		$style_url = WP_PLUGIN_URL . '/invite-anyone/group-invites/group-invites-css.css';
+		$style_url = plugins_url() . '/invite-anyone/group-invites/group-invites-css.css';
 		$style_file = WP_PLUGIN_DIR . '/invite-anyone/group-invites/group-invites-css.css';
 
 		if (file_exists($style_file)) {
@@ -31,13 +43,15 @@ function invite_anyone_add_group_invite_css() {
 }
 add_action( 'wp_print_styles', 'invite_anyone_add_group_invite_css' );
 
-function invite_anyone_add_old_css() { ?>
+function invite_anyone_add_old_css() {
+	$plugins_url = plugins_url();
+	?>
 	<style type="text/css">
 
 li a#nav-invite-anyone {
 	padding: 0.55em 3.1em 0.55em 0px !important;
 	margin-right: 10px;
-	background: url(<?php echo WP_PLUGIN_URL, '/invite-anyone/invite-anyone/invite_bullet.gif'; ?>) no-repeat 89% 52%;
+	background: url(<?php echo $plugins_url . '/invite-anyone/invite-anyone/invite_bullet.gif'; ?>) no-repeat 89% 52%;
 
 }
 	</style>
@@ -146,6 +160,11 @@ class BP_Invite_Anyone extends BP_Group_Extension {
 
 	function enable_nav_item() {
 		global $bp;
+
+		// Group-specific settings always override
+		if ( ! bp_groups_user_can_send_invites() ) {
+			return false;
+		}
 
 		if ( invite_anyone_group_invite_access_test() == 'anyone' )
 			return true;
@@ -443,19 +462,32 @@ function invite_anyone_remove_invite_subnav() {
 add_filter( 'groups_create_group_steps', 'invite_anyone_remove_group_creation_invites', 1 );
 add_action( 'bp_setup_nav', 'invite_anyone_remove_invite_subnav', 15 );
 
-
-
-
-/* Utility function to test which members the current user can invite to a group */
-function invite_anyone_group_invite_access_test() {
+/**
+ * Determine access setting for a group/user pair.
+ *
+ * @param int $group_id Group ID. Default: current group ID.
+ * @param int $user_id User ID. Default: current user ID.
+ */
+function invite_anyone_group_invite_access_test( $group_id = 0, $user_id = 0 ) {
 	global $current_user, $bp;
 
-	if ( ! is_user_logged_in() || ( empty( $bp->groups->current_group ) && ! bp_is_group_create() ) ) {
+	if ( empty( $group_id ) ) {
+		$group_id = bp_is_group() ? bp_get_current_group_id() : 0;
+	}
+
+	if ( empty( $group_id ) && ! bp_is_group_create() ) {
 		return 'noone';
 	}
 
-	if ( !$iaoptions = get_option( 'invite_anyone' ) )
-		$iaoptions = array();
+	if ( empty( $user_id ) ) {
+		$user_id = bp_loggedin_user_id();
+	}
+
+	if ( empty( $user_id ) ) {
+		return 'noone';
+	}
+
+	$iaoptions = invite_anyone_options();
 
 	if ( bp_is_group_create() ) {
 		if ( empty( $iaoptions['group_invites_can_group_admin'] ) || $iaoptions['group_invites_can_group_admin'] == 'anyone' || !$iaoptions['group_invites_can_group_admin'] )
@@ -466,24 +498,25 @@ function invite_anyone_group_invite_access_test() {
 			return 'noone';
 	}
 
-	if ( !groups_is_user_member( $bp->loggedin_user->id, $bp->groups->current_group->id ) )
+	if ( ! groups_is_user_member( $user_id, $group_id ) ) {
 		return 'noone';
+	}
 
-	if ( is_super_admin() ) {
+	if ( user_can( $user_id, 'bp_moderate' ) ) {
 		if ( empty( $iaoptions['group_invites_can_admin'] ) || $iaoptions['group_invites_can_admin'] == 'anyone' || !$iaoptions['group_invites_can_admin'] )
 			return 'anyone';
 		if ( $iaoptions['group_invites_can_admin'] == 'friends' )
 			return 'friends';
 		if ( $iaoptions['group_invites_can_admin'] == 'noone' )
 			return 'noone';
-	} else if ( bp_group_is_admin() || bp_is_group_create() ) {
+	} else if ( groups_is_user_admin( $user_id, $group_id ) ) {
 		if ( empty( $iaoptions['group_invites_can_group_admin'] ) || $iaoptions['group_invites_can_group_admin'] == 'anyone' || !$iaoptions['group_invites_can_group_admin'] )
 			return 'anyone';
 		if ( $iaoptions['group_invites_can_group_admin'] == 'friends' )
 			return 'friends';
 		if ( $iaoptions['group_invites_can_group_admin'] == 'noone' )
 			return 'noone';
-	} else if ( bp_group_is_mod() ) {
+	} else if ( groups_is_user_mod( $user_id, $group_id ) ) {
 		if ( empty( $iaoptions['group_invites_can_group_mod'] ) || $iaoptions['group_invites_can_group_mod'] == 'anyone' || !$iaoptions['group_invites_can_group_mod'] )
 			return 'anyone';
 		if ( $iaoptions['group_invites_can_group_mod'] == 'friends' )

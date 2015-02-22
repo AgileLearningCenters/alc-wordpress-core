@@ -82,16 +82,21 @@ function bpdw_is_wiki_home() {
  * Is a given doc a Wiki doc?
  */
 function bpdw_is_wiki_doc( $doc_id ) {
+
+	// This should already have been pulled up
+	$cached_is_wiki_term = wp_cache_get( $doc_id, 'bpdw_is_wiki_relationships' );
+
+	if ( false === $cached_is_wiki_term ) {
+		$docs = array( get_post( $doc_id ) );
+		update_post_caches( $docs, bp_docs_get_post_type_name(), true, false );
+		$cached_is_wiki_term = wp_cache_get( $doc_id, 'bpdw_is_wiki_relationships' );
+	}
+
 	$is_wiki_doc = false;
-
-	$terms = wp_get_post_terms( $doc_id, 'bpdw_is_wiki' );
-
-	if ( ! empty( $terms ) ) {
-		foreach ( $terms as $term ) {
-			if ( 1 == $term->name ) {
-				$is_wiki_doc = true;
-				break;
-			}
+	if ( ! empty( $cached_is_wiki_term ) ) {
+		$cached_term = array_pop( $cached_is_wiki_term );
+		if ( 1 == $cached_term->slug ) {
+			$is_wiki_term = true;
 		}
 	}
 
@@ -164,7 +169,7 @@ function bpdw_get_item_terms( $terms ) {
 		'post_type' => bp_docs_get_post_type_name(),
 		'tax_query' => array( bpdw_tax_query_iswiki() ),
 		'update_post_meta_cache' => false,
-		'update_post_term_cache' => true,
+		'update_post_term_cache' => false,
 		'nopaging' => true,
 		'posts_per_page' => -1,
 	) );
@@ -178,18 +183,23 @@ function bpdw_get_item_terms( $terms ) {
 
 	// Have to do it one at a time so we have accurate wiki/doc-only counts
 	$all_terms = array();
-	foreach ( $item_ids as $item_id ) {
-		$terms = wp_get_object_terms( $item_id, array( buddypress()->bp_docs->docs_tag_tax_name ) );
-		foreach ( $terms as $t ) {
-			if ( ! isset( $all_terms[ $t->slug ] ) ) {
-				$all_terms[ $t->slug ] = array(
-					'name' => $t->name,
-					'posts' => array(),
-				);
-			}
+	update_post_caches( $wiki_items, bp_docs_get_post_type_name(), true, false );
 
-			if ( ! in_array( $item_id, $all_terms[ $t->slug ]['posts'] ) ) {
-				$all_terms[ $t->slug ]['posts'][] = $item_id;
+	foreach ( $item_ids as $item_id ) {
+		// This data should be cached
+		$cached_terms = wp_cache_get( $item_id, 'bp_docs_tag_relationships' );
+		if ( ! empty( $cached_terms ) ) {
+			foreach ( $cached_terms as $t ) {
+				if ( ! isset( $all_terms[ $t->slug ] ) ) {
+					$all_terms[ $t->slug ] = array(
+						'name' => $t->name,
+						'posts' => array(),
+					);
+				}
+
+				if ( ! in_array( $item_id, $all_terms[ $t->slug ]['posts'] ) ) {
+					$all_terms[ $t->slug ]['posts'][] = $item_id;
+				}
 			}
 		}
 	}
@@ -198,7 +208,7 @@ function bpdw_get_item_terms( $terms ) {
 		$at['count'] = count( $at['posts'] );
 	}
 
-	unset( $items, $terms );
+	unset( $items, $cached_terms );
 
 	// Don't allow BP Docs to do its native directory filtering
 	remove_action( 'bp_docs_taxonomy_get_item_terms', array( buddypress()->bp_docs, 'get_item_terms' ) );

@@ -1,8 +1,8 @@
 <?php
 
-require( WP_PLUGIN_DIR . '/invite-anyone/by-email/by-email-db.php' );
-require( WP_PLUGIN_DIR . '/invite-anyone/widgets/widgets.php' );
-require( WP_PLUGIN_DIR . '/invite-anyone/by-email/cloudsponge-integration.php' );
+require( BP_INVITE_ANYONE_DIR . 'by-email/by-email-db.php' );
+require( BP_INVITE_ANYONE_DIR . 'widgets/widgets.php' );
+require( BP_INVITE_ANYONE_DIR . 'by-email/cloudsponge-integration.php' );
 
 // Temporary function until bp_is_active is fully integrated
 function invite_anyone_are_groups_running() {
@@ -67,7 +67,12 @@ function invite_anyone_opt_out_screen() {
 	global $bp;
 
 	if ( isset( $_POST['oops_submit'] ) ) {
-		bp_core_redirect( site_url( BP_REGISTER_SLUG ) . '/accept-invitation/' . urlencode( $_POST['opt_out_email'] ) );
+		$oops_email = urlencode( stripslashes( $_POST['opt_out_email'] ) );
+		$opt_out_link = add_query_arg( array(
+			'iaaction' => 'accept-invitation',
+			'email'    => $oops_email,
+		), bp_get_root_domain() . '/' . bp_get_signup_slug() . '/' );
+		bp_core_redirect( $opt_out_link );
 	}
 
 	$opt_out_button_text 	= __( 'Opt Out', 'bp-invite-anyone' );
@@ -79,13 +84,14 @@ function invite_anyone_opt_out_screen() {
 
 	$oops_message 		= sprintf( __( 'If you are here by mistake and would like to accept your invitation to %s, click "Accept Invitation" instead.', 'bp-invite-anyone' ), $sitename );
 
-	if ( $bp->current_component == BP_REGISTER_SLUG && $bp->current_action == 'opt-out' ) {
+	if ( bp_is_register_page() && isset( $_GET['iaaction'] ) && 'opt-out' === urldecode( $_GET['iaaction'] ) ) {
 		get_header();
 ?>
 		<div id="content">
 		<div class="padder">
-		<?php if ( $bp->action_variables[1] == 'submit' ) : ?>
+		<?php if ( ! empty( $_POST['opt_out_submit'] ) ) : ?>
 			<?php if ( $_POST['opt_out_submit'] == $opt_out_button_text && $email = urldecode( $_POST['opt_out_email'] ) ) : ?>
+				<?php $email = str_replace( ' ', '+', $email ) ?>
 
 				<?php check_admin_referer( 'invite_anyone_opt_out' ) ?>
 
@@ -100,15 +106,15 @@ function invite_anyone_opt_out_screen() {
 			<?php endif; ?>
 
 		<?php else : ?>
-			<?php if ( $email = $bp->action_variables[0] ) : ?>
+			<?php if ( isset( $_GET['email'] ) && $email = $_GET['email'] ) : ?>
 				<script type="text/javascript">
 				jQuery(document).ready( function() {
-					jQuery("input#opt_out_email").val("<?php echo urldecode($email) ?>");
+					jQuery("input#opt_out_email").val("<?php echo str_replace( ' ', '+', urldecode( $email ) ) ?>");
 				});
 				</script>
 			<?php endif; ?>
 
-			<form action="<?php echo $email ?>/submit" method="post">
+			<form action="" method="post">
 
 				<?php do_action( 'invite_anyone_before_optout_messages' ) ?>
 
@@ -139,18 +145,29 @@ add_action( 'wp', 'invite_anyone_opt_out_screen', 1 );
 
 function invite_anyone_register_screen_message() {
 	global $bp;
+
+	if ( ! invite_anyone_is_accept_invitation_page() ) {
+		return;
+	}
+
+	if ( isset( $_GET['email'] ) ) {
+		$email = urldecode( $_GET['email'] );
+	} else {
+		$email = '';
+	}
+
 ?>
-	<?php if ( isset( $bp->current_action ) && $bp->current_action == 'accept-invitation' && empty( $bp->action_variables[0] ) ) : ?>
+	<?php if ( empty( $email ) ) : ?>
 		<div id="message" class="error"><p><?php _e( "It looks like you're trying to accept an invitation to join the site, but some information is missing. Please try again by clicking on the link in the invitation email.", 'bp-invite-anyone' ) ?></p></div>
 	<?php endif; ?>
 
-	<?php if ( $bp->signup->step == 'request-details' && $bp->current_action == 'accept-invitation' && $email = urldecode( $bp->action_variables[0] ) ) : ?>
+	<?php if ( $bp->signup->step == 'request-details' && ! empty( $email ) ) : ?>
 
 		<?php do_action( 'accept_email_invite_before' ) ?>
 
 		<script type="text/javascript">
 		jQuery(document).ready( function() {
-			jQuery("input#signup_email").val("<?php echo $email ?>");
+			jQuery("input#signup_email").val("<?php echo str_replace( ' ', '+', $email ) ?>");
 		});
 
 		</script>
@@ -453,7 +470,7 @@ function invite_anyone_catch_clear() {
 		bp_core_redirect( $bp->displayed_user->domain . $bp->invite_anyone->slug . '/sent-invites/' );
 	}
 }
-add_action( 'wp', 'invite_anyone_catch_clear', 1 );
+add_action( 'bp_template_redirect', 'invite_anyone_catch_clear', 5 );
 
 function invite_anyone_screen_one() {
 	global $bp;
@@ -647,6 +664,14 @@ function invite_anyone_screen_one_content() {
 				<p><?php _e( '(optional) Select some groups. Invitees will receive invitations to these groups when they join the site.', 'bp-invite-anyone' ) ?></p>
 				<ul id="invite-anyone-group-list">
 					<?php while ( bp_groups() ) : bp_the_group(); ?>
+						<?php
+
+						// Enforce per-group invitation settings
+						if ( ! bp_groups_user_can_send_invites( bp_get_group_id() ) || 'anyone' !== invite_anyone_group_invite_access_test( bp_get_group_id() ) ) {
+							continue;
+						}
+
+						?>
 						<li>
 						<input type="checkbox" name="invite_anyone_groups[]" id="invite_anyone_groups-<?php bp_group_id() ?>" value="<?php bp_group_id() ?>" <?php if ( $from_group == bp_get_group_id() || array_search( bp_get_group_id(), $returned_groups) ) : ?>checked<?php endif; ?> />
 
@@ -703,7 +728,7 @@ function invite_anyone_screen_two() {
 
 		// Load the pagination helper
 		if ( !class_exists( 'BBG_CPT_Pag' ) )
-			require_once( dirname( __FILE__ ) . '/../lib/bbg-cpt-pag.php' );
+			require_once( BP_INVITE_ANYONE_DIR . 'lib/bbg-cpt-pag.php' );
 		$pagination = new BBG_CPT_Pag;
 
 		$inviter_id = bp_loggedin_user_id();
@@ -939,8 +964,19 @@ function invite_anyone_wildcard_replace( $text, $email = false ) {
 	$inviter_name = $bp->loggedin_user->userdata->display_name;
 	$site_name    = get_bloginfo( 'name' );
 	$inviter_url  = bp_loggedin_user_domain();
-	$accept_link  = apply_filters( 'invite_anyone_accept_url', bp_get_root_domain() . '/' . bp_get_signup_slug() . '/accept-invitation/' . urlencode( $email ) );
-	$opt_out_link = site_url( BP_REGISTER_SLUG ) . '/opt-out/' . urlencode( $email );
+
+	$email = urlencode( $email );
+
+	$accept_link  = add_query_arg( array(
+		'iaaction' => 'accept-invitation',
+		'email'    => $email,
+	), bp_get_root_domain() . '/' . bp_get_signup_slug() . '/' );
+	$accept_link  = apply_filters( 'invite_anyone_accept_url', $accept_link );
+
+	$opt_out_link = add_query_arg( array(
+		'iaaction' => 'opt-out',
+		'email'    => $email,
+	), bp_get_root_domain() . '/' . bp_get_signup_slug() . '/' );
 
 	$text = str_replace( '%%INVITERNAME%%', $inviter_name, $text );
 	$text = str_replace( '%%INVITERURL%%', $inviter_url, $text );
@@ -1094,11 +1130,13 @@ function invite_anyone_process_invitations( $data ) {
 		setcookie( 'invite-anyone', serialize( $returned_data ), 0, '/' );
 		$redirect = bp_loggedin_user_domain() . $bp->invite_anyone->slug . '/invite-new-members/';
 		bp_core_redirect( $redirect );
+		die();
 	}
 
 	if ( empty( $emails ) ) {
 		bp_core_add_message( __( 'You didn\'t include any email addresses!', 'bp-invite-anyone' ), 'error' );
 		bp_core_redirect( $bp->loggedin_user->domain . $bp->invite_anyone->slug . '/invite-new-members' );
+		die();
 	}
 
 	// Max number of invites sent
@@ -1115,6 +1153,7 @@ function invite_anyone_process_invitations( $data ) {
 			setcookie( 'invite-anyone', serialize( $returned_data ), 0, '/' );
 			$redirect = bp_loggedin_user_domain() . $bp->invite_anyone->slug . '/invite-new-members/';
 			bp_core_redirect( $redirect );
+			die();
 		}
 	}
 
@@ -1145,7 +1184,7 @@ function invite_anyone_process_invitations( $data ) {
 				break;
 
 			case 'limited_domain' :
-				$returned_data['error_message'] = sprintf( __( '<strong>%s</strong> is not a permitted email address. Please make sure that you have typed the domain name correctly.', 'bp-invite-anyone' ), $email );
+				$returned_data['error_message'] .= sprintf( __( '<strong>%s</strong> is not a permitted email address. Please make sure that you have typed the domain name correctly.', 'bp-invite-anyone' ), $email );
 				break;
 		}
 
@@ -1208,11 +1247,9 @@ function invite_anyone_process_invitations( $data ) {
 		bp_core_add_message( $success_message );
 
 		do_action( 'sent_email_invites', $bp->loggedin_user->id, $emails, $groups );
-
 	} else {
 		$success_message = sprintf( __( "Please correct your errors and resubmit.", 'bp-invite-anyone' ) );
 		bp_core_add_message( $success_message, 'error' );
-
 	}
 
 	// If there are errors, redirect to the Invite New Members page
@@ -1220,6 +1257,7 @@ function invite_anyone_process_invitations( $data ) {
 		setcookie( 'invite-anyone', serialize( $returned_data ), 0, '/' );
 		$redirect = bp_loggedin_user_domain() . $bp->invite_anyone->slug . '/invite-new-members/';
 		bp_core_redirect( $redirect );
+		die();
 	}
 
 	return true;
@@ -1230,14 +1268,73 @@ function invite_anyone_send_invitation( $inviter_id, $email, $message, $groups )
 
 }
 
+/**
+ * Redirect from old 'accept-invitation' and 'opt-out' email formats
+ *
+ * Invite Anyone used to use the current_action and action_variables for
+ * subpages of the registration screen. This caused some problems with URL
+ * encoding, and it also broke with BP 2.1. In IA 1.3.4, this functionality
+ * was moved to URL arguments; the current function handles backward
+ * compatibility with the old addresses.
+ *
+ * @since 1.3.4
+ */
+function invite_anyone_accept_invitation_backward_compatibility() {
+	if ( ! bp_is_register_page() ) {
+		return;
+	}
+
+	if ( ! bp_current_action() ) {
+		return;
+	}
+
+	$action = bp_current_action();
+
+	if ( ! in_array( $action, array( 'accept-invitation', 'opt-out' ) ) ) {
+		return;
+	}
+
+	$redirect_to = add_query_arg( 'iaaction', $action, bp_get_root_domain() . '/' . bp_get_signup_slug() . '/' );
+
+	$email = bp_action_variable( 0 );
+	$email = str_replace( ' ', '+', $email );
+
+	if ( ! empty( $email ) ) {
+		$redirect_to = add_query_arg( 'email', $email, $redirect_to );
+	}
+
+	bp_core_redirect( $redirect_to );
+	die();
+}
+add_action( 'bp_actions', 'invite_anyone_accept_invitation_backward_compatibility', 0 );
+
+/**
+ * Is this the 'accept-invitation' page?
+ *
+ * @since 1.3.4
+ *
+ * @return bool
+ */
+function invite_anyone_is_accept_invitation_page() {
+	$retval = false;
+
+	if ( bp_is_register_page() && ! empty( $_GET['iaaction'] ) && 'accept-invitation' === urldecode( $_GET['iaaction'] ) ) {
+		$retval = true;
+	}
+
+	return apply_filters( 'invite_anyone_is_accept_invitation_page', $retval );
+}
+
 function invite_anyone_bypass_registration_lock() {
 	global $bp;
 
-	if ( $bp->current_component != BP_REGISTER_SLUG || $bp->current_action != 'accept-invitation' )
+	if ( ! invite_anyone_is_accept_invitation_page() ) {
 		return;
+	}
 
-	if ( !isset( $bp->action_variables[0] ) || !$email = urldecode( $bp->action_variables[0] ) )
+	if ( ! isset( $_GET['email'] ) || ! $email = urldecode( $_GET['email'] ) ) {
 		return;
+	}
 
 	$options = invite_anyone_options();
 
@@ -1278,8 +1375,8 @@ add_action( 'wp', 'invite_anyone_bypass_registration_lock', 1 );
  * @param array $results Error results from user signup validation
  * @return array
  */
-function invite_anyone_check_invitation($results) {
-	if ( ! bp_is_current_component( BP_REGISTER_SLUG ) || ! bp_is_current_action( 'accept-invitation' ) ) {
+function invite_anyone_check_invitation( $results ) {
+	if ( ! invite_anyone_is_accept_invitation_page() ) {
 		return $results;
 	}
 
@@ -1342,13 +1439,21 @@ function invite_anyone_validate_email( $user_email ) {
 function invite_anyone_already_accepted_redirect( $redirect ) {
 	global $bp;
 
-	if ( bp_is_current_action( 'accept-invitation' ) && $reg_email = urldecode( bp_action_variable( 0 ) ) ) {
-		if ( bp_core_get_user_email( bp_loggedin_user_id() ) !== $reg_email ) {
-			return;
-		}
-
-		$redirect = add_query_arg( 'already', 'accepted', trailingslashit( bp_loggedin_user_domain() . $bp->invite_anyone->slug ) );
+	if ( ! invite_anyone_is_accept_invitation_page() ) {
+		return $redirect;
 	}
+
+	if ( empty( $_GET['email'] ) ) {
+		return $redirect;
+	}
+
+	$reg_email = urldecode( $_GET['email'] );
+
+	if ( bp_core_get_user_email( bp_loggedin_user_id() ) !== $reg_email ) {
+		return $redirect;
+	}
+
+	$redirect = add_query_arg( 'already', 'accepted', trailingslashit( bp_loggedin_user_domain() . $bp->invite_anyone->slug ) );
 
 	return $redirect;
 }
