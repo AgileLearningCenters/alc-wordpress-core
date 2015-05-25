@@ -1,9 +1,4 @@
 <?php
-if( ! defined( 'MC4WP_LITE_VERSION' ) ) {
-	header( 'Status: 403 Forbidden' );
-	header( 'HTTP/1.1 403 Forbidden' );
-	exit;
-}
 
 class MC4WP_MailChimp {
 
@@ -114,6 +109,72 @@ class MC4WP_MailChimp {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Get the interest grouping object for a given list.
+	 *
+	 * @param string $list_id ID of MailChimp list that contains the grouping
+	 * @param string $grouping_id ID of the Interest Grouping
+	 *
+	 * @return object|null
+	 */
+	public function get_list_grouping( $list_id, $grouping_id ) {
+		$list = $this->get_list( $list_id, false, true );
+
+		if( is_object( $list ) && isset( $list->interest_groupings ) ) {
+			foreach( $list->interest_groupings as $grouping ) {
+
+				if( $grouping->id !== $grouping_id ) {
+					continue;
+				}
+
+				return $grouping;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the name of a list grouping by its ID
+	 *
+	 * @param $list_id
+	 * @param $grouping_id
+	 *
+	 * @return string
+	 */
+	public function get_list_grouping_name( $list_id, $grouping_id ) {
+
+		$grouping = $this->get_list_grouping( $list_id, $grouping_id );
+		if( $grouping ) {
+			return $grouping->name;
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get the group object for a group in an interest grouping
+	 *
+	 * @param string $list_id ID of MailChimp list that contains the grouping
+	 * @param string $grouping_id ID of the Interest Grouping containing the group
+	 * @param string $group_id_or_name ID or name of the Group
+	 * @return object|null
+	 */
+	public function get_list_grouping_group( $list_id, $grouping_id, $group_id_or_name ) {
+		$grouping = $this->get_list_grouping( $list_id, $grouping_id );
+		if( is_object( $grouping ) && isset( $grouping->groups ) ) {
+			foreach( $grouping->groups as $group ) {
+
+				if( $group->id == $group_id_or_name || $group->name === $group_id_or_name ) {
+					return $group;
+				}
+
+			}
+		}
+
+		return null;
 	}
 
 	/**

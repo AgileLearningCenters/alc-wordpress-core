@@ -36,8 +36,9 @@
 	}
 
 	function toggleWooCommerceSettings() {
+		console.log( $(this).prop('checked'));
 		var $el = $(document.getElementById('woocommerce-settings'));
-		$el.toggle( $(this).prop('checked'));
+		$el.toggle(this.checked);
 	}
 
 	function toggleFieldWizard() {
@@ -89,7 +90,7 @@
 	$context.find('input[name$="[double_optin]"]').change(toggleSendWelcomeFields);
 
 	// show woocommerce settings only when `show at woocommerce checkout` is checked.
-	$context.find('input[name$="[show_at_woocommerce_checkout]"]').change(toggleWooCommerceSettings());
+	$context.find('input[name$="[show_at_woocommerce_checkout]"]').change(toggleWooCommerceSettings);
 
 	// only show fieldwizard when a list is selected
 	$listInputs.change(toggleFieldWizard);
@@ -243,6 +244,11 @@
 			var selected = $(this).find(':selected');
 			switch( selected.val() ) {
 
+				case '_action':
+					fieldType = 'action';
+					$wizardFields.find('.wrap-p').show();
+					break;
+
 				case 'submit':
 					fieldType = 'submit';
 					$valueLabel.text( strings.buttonText );
@@ -373,6 +379,24 @@
 			return html;
 		}
 
+		function getActionChoiceHTML() {
+			var actions = [
+				{ name: "subscribe", label: strings.subscribe, checked: true },
+				{ name: "unsubscribe", label: strings.unsubscribe, checked: false }
+			];
+
+			var html = '';
+			for( var i=0; i<actions.length; i++ ) {
+				var action = actions[i];
+
+				html += '<label>' + "\n";
+				html += "\t" + '<input type="radio" name="_mc4wp_action" value="' + action.name + '" '+ ( ( action.checked ) ? 'checked' : '' ) +' > ' + action.label + "\n";
+				html += '</label>' + "\n";
+			}
+
+			return html;
+		}
+
 
 
 		/**
@@ -458,6 +482,17 @@
 			var $input;
 
 			switch(fieldType) {
+
+				case 'action':
+					var html = getActionChoiceHTML();
+
+					if( wrapInParagraph() ) {
+						html = "<p>" + html + "</p>";
+					}
+
+					return setCodePreview(html);
+					break;
+
 				// MailChimp lists
 				case 'lists':
 					var html = getListChoiceHTML();

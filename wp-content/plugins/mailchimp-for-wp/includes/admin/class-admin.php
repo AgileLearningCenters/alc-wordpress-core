@@ -1,11 +1,5 @@
 <?php
 
-if( ! defined( 'MC4WP_LITE_VERSION' ) ) {
-	header( 'Status: 403 Forbidden' );
-	header( 'HTTP/1.1 403 Forbidden' );
-	exit;
-}
-
 class MC4WP_Lite_Admin
 {
 
@@ -34,7 +28,7 @@ class MC4WP_Lite_Admin
 	/**
 	 * Upgrade routine
 	 */
-	private function upgrade() {
+	private function load_upgrader() {
 
 		// Only run if db option is at older version than code constant
 		$db_version = get_option( 'mc4wp_lite_version', 0 );
@@ -42,11 +36,8 @@ class MC4WP_Lite_Admin
 			return false;
 		}
 
-		// define a constant that we're running an upgrade
-		define( 'MC4WP_DOING_UPGRADE', true );
-
-		// update code version
-		update_option( 'mc4wp_lite_version', MC4WP_LITE_VERSION );
+		$upgrader = new MC4WP_DB_Upgrader( MC4WP_LITE_VERSION, $db_version );
+		$upgrader->run();
 	}
 
 	/**
@@ -71,7 +62,7 @@ class MC4WP_Lite_Admin
 		}
 
 		// Hooks for Form settings page
-		if( isset( $_GET['page'] ) && $_GET['page'] === 'mailchimp-for-wp-form-settings' ) {
+		if( $this->get_current_page() === 'mailchimp-for-wp-form-settings' ) {
 			add_filter( 'quicktags_settings', array( $this, 'set_quicktags_buttons' ), 10, 2 );
 		}
 
@@ -96,13 +87,13 @@ class MC4WP_Lite_Admin
 
 		// register settings
 		register_setting( 'mc4wp_lite_settings', 'mc4wp_lite', array( $this, 'validate_settings' ) );
-		register_setting( 'mc4wp_lite_checkbox_settings', 'mc4wp_lite_checkbox', array( $this, 'validate_checkbox_settings' ) );
-		register_setting( 'mc4wp_lite_form_settings', 'mc4wp_lite_form', array( $this, 'validate_form_settings' ) );
+		register_setting( 'mc4wp_lite_checkbox_settings', 'mc4wp_lite_checkbox', array( $this, 'validate_settings' ) );
+		register_setting( 'mc4wp_lite_form_settings', 'mc4wp_lite_form', array( $this, 'validate_settings' ) );
 
 		// store whether this plugin has the BWS captcha plugin running (https://wordpress.org/plugins/captcha/)
 		$this->has_captcha_plugin = function_exists( 'cptch_display_captcha_custom' );
 
-		$this->upgrade();
+		$this->load_upgrader();
 	}
 
 	/**
@@ -110,8 +101,8 @@ class MC4WP_Lite_Admin
 	 */
 	private function listen() {
 		// did the user click on upgrade to pro link?
-		if( isset( $_GET['page'] ) && $_GET['page'] === 'mailchimp-for-wp-upgrade' && false === headers_sent() ) {
-			wp_redirect( 'https://mc4wp.com/#utm_source=lite-plugin&utm_medium=link&utm_campaign=menu-upgrade-link' );
+		if( $this->get_current_page() === 'mailchimp-for-wp-upgrade' && false === headers_sent() ) {
+			wp_redirect( 'https://mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=menu-upgrade-link' );
 			exit;
 		}
 	}
@@ -166,7 +157,7 @@ class MC4WP_Lite_Admin
 		}
 
 		$links[] = '<a href="https://wordpress.org/plugins/mailchimp-for-wp/faq/">FAQ</a>';
-		$links[] = '<a href="https://mc4wp.com/#utm_source=lite-plugin&utm_medium=link&utm_campaign=plugins-upgrade-link">' . __( 'Upgrade to MailChimp for WordPress Pro', 'mailchimp-for-wp' ) . '</a>';
+		$links[] = '<a href="https://mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=plugins-upgrade-link">' . __( 'Upgrade to MailChimp for WordPress Pro', 'mailchimp-for-wp' ) . '</a>';
 		return $links;
 	}
 
@@ -212,7 +203,7 @@ class MC4WP_Lite_Admin
 		$menu_items = apply_filters( 'mc4wp_menu_items', $menu_items );
 
 		// add top menu item
-		add_menu_page( 'MailChimp for WP Lite', 'MailChimp for WP', $required_cap, 'mailchimp-for-wp', array($this, 'show_api_settings'), MC4WP_LITE_PLUGIN_URL . 'assets/img/menu-icon.png' );
+		add_menu_page( 'MailChimp for WP Lite', 'MailChimp for WP', $required_cap, 'mailchimp-for-wp', array( $this, 'show_api_settings' ), MC4WP_LITE_PLUGIN_URL . 'assets/img/menu-icon.png', '99.68491' );
 
 		// add submenu pages
 		foreach( $menu_items as $item ) {
@@ -229,104 +220,37 @@ class MC4WP_Lite_Admin
 	* @param array $settings
 	* @return array
 	*/
-	public function validate_settings( $settings ) {
+	public function validate_settings( array $settings ) {
 
-		if( isset( $settings['api_key'] ) ) {
-			$settings['api_key'] = sanitize_text_field( $settings['api_key'] );
-		}
-
-		return $settings;
-	}
-
-	/**
-	* Validates the Form settings
-	*
-	* @param array $settings
-	* @return array
-	*/
-	public function validate_form_settings( $settings ) {
-
-		// If settings is malformed, just store an empty array.
-		if( ! is_array( $settings ) ) {
-			return array();
-		}
-
-		// Loop through new settings
-		foreach( $settings as $key => $value ) {
-
-			// sanitize text fields
-			if( substr( $key, 0, 5 ) === 'text_' ) {
-				$settings[ $key ] = strip_tags( trim( $value ), '<a><b><strong><em><br><i><u><pre><script><abbr><strike>' );
-				continue;
+		// sanitize simple text fields (no HTML, just chars & numbers)
+		$simple_text_fields = array( 'api_key', 'redirect', 'css' );
+		foreach( $simple_text_fields as $field ) {
+			if( isset( $settings[ $field ] ) ) {
+				$settings[ $field ] = sanitize_text_field( $settings[ $field ] );
 			}
-
-			switch( $key ) {
-
-				// sanitize markup textarea
-				case 'markup' :
-					$settings[ $key ] = preg_replace( '/<\/?form(.|\s)*?>/i', '', $value );
-					break;
-
-				// sanitize select
-				case 'css':
-					$settings[ $key ] = sanitize_text_field( $value );
-					break;
-
-				// sanitize radio & checkbox inputs
-				case 'double_optin':
-				case 'hide_after_success':
-					$settings[ $key ] = ( $value == 1 )  ? 1 : 0;
-					break;
-			}
-
 		}
 
-		return $settings;
-	}
-
-	/**
-	 * Validates the Checkbox settings
-	 *
-	 * @param array $settings
-	 * @return array
-	 */
-	public function validate_checkbox_settings( $settings ) {
-
-		// If settings is malformed, just store an empty array.
-		if( ! is_array( $settings ) ) {
-			return array();
+		// validate woocommerce checkbox position
+		if( isset( $settings['woocommerce_position'] ) ) {
+			// make sure position is either 'order' or 'billing'
+			if( ! in_array( $settings['woocommerce_position'], array( 'order', 'billing' ) ) ) {
+				$settings['woocommerce_position'] = 'billing';
+			}
 		}
 
-		// Loop through new settings
-		foreach( $settings as $key => $value ) {
-
-			switch( $key ) {
-
-				case 'lists':
-					if( ! is_array( $value ) ) {
-						$settings[ $key ] = array();
-					} else {
-						foreach( $settings[ $key ] as $list_key => $list_value ) {
-							$settings[ $key ][$list_key] = sanitize_text_field( $list_value );
-						}
-					}
-					break;
-
-				// sanitize text inputs
-				case 'label' :
-					$settings[ $key ] = strip_tags( trim( $value ), '<a><b><strong><em><br><i><u><pre><script><abbr><strike>' );
-					break;
-
-				// sanitize radio & checkbox inputs
-				case 'double_optin':
-				case 'show_at_comment_form':
-				case 'show_at_registration_form':
-				case 'precheck':
-				case 'css':
-					$settings[ $key ] = ( $value == 1 )  ? 1 : 0;
-					break;
+		// dynamic sanitization
+		foreach( $settings as $setting => $value ) {
+			// strip special tags from text settings
+			if( substr( $setting, 0, 5 ) === 'text_' || $setting === 'label' ) {
+				$value = trim( $value );
+				$value = strip_tags( $value, '<a><b><strong><em><i><br><u><script><span><abbr><strike>' );
+				$settings[ $setting ] = $value;
 			}
+		}
 
+		// strip <form> from form mark-up
+		if( isset( $settings[ 'markup'] ) ) {
+			$settings[ 'markup' ] = preg_replace( '/<\/?form(.|\s)*?>/i', '', $settings[ 'markup'] );
 		}
 
 		return $settings;
@@ -338,7 +262,7 @@ class MC4WP_Lite_Admin
 	*/
 	public function load_css_and_js() {
 		// only load asset files on the MailChimp for WordPress settings pages
-		if( ! isset( $_GET['page'] ) || strpos( $_GET['page'], 'mailchimp-for-wp' ) !== 0 ) {
+		if( strpos( $this->get_current_page(), 'mailchimp-for-wp' ) !== 0 ) {
 			return false;
 		}
 
@@ -364,7 +288,8 @@ class MC4WP_Lite_Admin
 						'optional' => __( '(optional)', 'mailchimp-for-wp' ),
 						'labelFor' => __( 'Label for', 'mailchimp-for-wp' ),
 						'orLeaveEmpty' => __( '(or leave empty)', 'mailchimp-for-wp' ),
-						'subscribe' => __( 'Subscribe', 'mailchimp-for-wp' )
+						'subscribe' => __( 'Subscribe', 'mailchimp-for-wp' ),
+						'unsubscribe' => __( 'Unsubscribe', 'mailchimp-for-wp' ),
 					)
 				),
 				'mailchimpLists' => $mailchimp->get_lists()
@@ -420,7 +345,7 @@ class MC4WP_Lite_Admin
 	*/
 	public function redirect_to_pro()
 	{
-		?><script type="text/javascript">window.location.replace('https://mc4wp.com/#utm_source=lite-plugin&utm_medium=link&utm_campaign=menu-upgrade-link'); </script><?php
+		?><script type="text/javascript">window.location.replace('https://mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=menu-upgrade-link'); </script><?php
 	}
 
 	/**
@@ -471,52 +396,14 @@ class MC4WP_Lite_Admin
 		$mailchimp = new MC4WP_MailChimp();
 		$lists = $mailchimp->get_lists();
 
-		// create array of missing form fields
-		$missing_form_fields = array();
-
-		// check if form contains EMAIL field
-		$search = preg_match( '/<(input|textarea)(?=[^>]*name="EMAIL")[^>]*>/i', $opts['markup'] );
-		if( ! $search) {
-			$missing_form_fields[] = sprintf( __( 'An EMAIL field. Example: <code>%s</code>', 'mailchimp-for-wp' ), '&lt;input type="email" name="EMAIL" /&gt;' );
-		}
-
-		// check if form contains submit button
-		$search = preg_match( '/<(input|button)(?=[^>]*type="submit")[^>]*>/i', $opts['markup'] );
-		if( ! $search ) {
-			$missing_form_fields[] = sprintf( __( 'A submit button. Example: <code>%s</code>', 'mailchimp-for-wp' ), '&lt;input type="submit" value="'. __( 'Sign Up', 'mailchimp-for-wp' ) .'" /&gt;' );
-		}
-
-		// loop through selected list ids
-		if( isset( $opts['lists'] ) && is_array( $opts['lists'] ) ) {
-
-			foreach( $opts['lists'] as $list_id ) {
-
-				// get list object
-				$list = $mailchimp->get_list( $list_id );
-				if( ! is_object( $list ) ) {
-					continue;
-				}
-
-				// loop through merge vars of this list
-				foreach( $list->merge_vars as $merge_var ) {
-
-					// if field is required, make sure it's in the form mark-up
-					if( ! $merge_var->req || $merge_var->tag === 'EMAIL' ) {
-						continue;
-					}
-
-					// search for field tag in form mark-up using 'name="FIELD_NAME' without closing " because of array fields
-					$search = stristr( $opts['markup'], 'name="'. $merge_var->tag );
-					if( false === $search ) {
-						$missing_form_fields[] = sprintf( __( 'A \'%s\' field', 'mailchimp-for-wp' ), $merge_var->tag );
-					}
-
-				}
-
-			}
-		}
-
 		require MC4WP_LITE_PLUGIN_DIR . 'includes/views/form-settings.php';
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_current_page() {
+		return isset( $_GET['page'] ) ? $_GET['page'] : '';
 	}
 
 }
