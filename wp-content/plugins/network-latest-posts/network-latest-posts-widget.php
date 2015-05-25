@@ -1,11 +1,11 @@
 <?php
 /*
     Network Latest Posts Widget
-    Version 3.6.2
-    Author L'Elite
-    Author URI http://laelite.info/
+    Version 3.7
+    Author Jose SAYAGO
+    Author URI http://wplatino.com
  */
-/*  Copyright 2007 - 2014  L'Elite (email : opensource@laelite.info)
+/*  Copyright 2007 - 2015  Jose SAYAGO (jose@wplatino.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -55,6 +55,7 @@ class NLposts_Widget extends WP_Widget {
         'auto_excerpt'     => FALSE,         // Generate excerpt from content
         'excerpt_trail'    => 'text',        // Excerpt's trailing element: text, image
         'full_meta'        => FALSE,         // Display full metadata
+        'display_date'     => FALSE,         // Display post date along with rest of metadata
         'sort_by_date'     => FALSE,         // Display the latest posts first regardless of the blog they come from
         'sort_by_blog'     => FALSE,         // Sort by Blog ID
         'sorting_order'    => NULL,          // Sort posts from Newest to Oldest or vice versa (newer / older), asc / desc for blog ID
@@ -206,6 +207,7 @@ class NLposts_Widget extends WP_Widget {
         $instance['excerpt_length']   = (int)$new_instance['excerpt_length'];
         $instance['auto_excerpt']     = strip_tags($new_instance['auto_excerpt']);
         $instance['full_meta']        = strip_tags($new_instance['full_meta']);
+        $instance['display_date']     = strip_tags($new_instance['display_date']);
         $instance['sort_by_date']     = strip_tags($new_instance['sort_by_date']);
         $instance['sort_by_blog']     = strip_tags($new_instance['sort_by_blog']);
         $instance['sorting_order']    = strip_tags($new_instance['sorting_order']);
@@ -588,6 +590,7 @@ class NLposts_Widget extends WP_Widget {
             $widget_form.= "<option value='true'>" . __('Yes','trans-nlp') . "</option>";
             $widget_form.= "<option value='false' selected='selected'>" . __('No','trans-nlp') . "</option>";
         }
+        $widget_form.= "</select>";
         // honor_sticky
         $widget_form.= $br;
         $widget_form.= "<label for='".$this->get_field_id('honor_sticky')."'>" . __('Honor Sticky Posts','trans-nlp') . "</label>";
@@ -600,6 +603,7 @@ class NLposts_Widget extends WP_Widget {
             $widget_form.= "<option value='true'>" . __('Yes','trans-nlp') . "</option>";
             $widget_form.= "<option value='false' selected='selected'>" . __('No','trans-nlp') . "</option>";
         }
+        $widget_form.= "</select>";
         // sort_by_date
         $widget_form.= $br;
         $widget_form.= "<label for='".$this->get_field_id('sort_by_date')."'>" . __('Sort by Date','trans-nlp') . "</label>";
@@ -672,6 +676,19 @@ class NLposts_Widget extends WP_Widget {
         $widget_form.= $br;
         $widget_form.= "<select id='".$this->get_field_id('full_meta')."' name='".$this->get_field_name('full_meta')."'>";
         if( $full_meta == 'true' ) {
+            $widget_form.= "<option value='true' selected='selected'>" . __('Yes','trans-nlp') . "</option>";
+            $widget_form.= "<option value='false'>" . __('No','trans-nlp') . "</option>";
+        } else {
+            $widget_form.= "<option value='true'>" . __('Yes','trans-nlp') . "</option>";
+            $widget_form.= "<option value='false' selected='selected'>" . __('No','trans-nlp') . "</option>";
+        }
+        $widget_form.= "</select>";
+        $widget_form.= $br;
+        // display date
+        $widget_form.= "<label for='".$this->get_field_id('display_date')."'>" . __('Display Post Date','trans-nlp') . "</label>";
+        $widget_form.= $br;
+        $widget_form.= "<select id='".$this->get_field_id('display_date')."' name='".$this->get_field_name('display_date')."'>";
+        if( $display_date == 'true' ) {
             $widget_form.= "<option value='true' selected='selected'>" . __('Yes','trans-nlp') . "</option>";
             $widget_form.= "<option value='false'>" . __('No','trans-nlp') . "</option>";
         } else {

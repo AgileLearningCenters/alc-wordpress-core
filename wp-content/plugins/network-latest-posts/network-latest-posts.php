@@ -3,11 +3,11 @@
 Plugin Name: Network Latest Posts
 Plugin URI: http://en.8elite.com/network-latest-posts
 Description: Display the latest posts from the blogs in your network using it as a function, shortcode or widget.
-Version: 3.6.2
+Version: 3.7
 Author: Jose Luis SAYAGO
-Author URI: http://laelite.info/
+Author URI: http://wplatino.com/
  */
-/*  Copyright 2007 - 2014  L'Elite (email : opensource@laelite.info)
+/*  Copyright 2007 - 2015  Jose SAYAGO (jose@wplatino.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -173,6 +173,7 @@ require_once dirname( __FILE__ ) . '/network-latest-posts-widget.php';
  * -- @auto_excerpt       : If true then it will generate an excerpt from the post content, it's useful for those who forget to use the Excerpt field in the post edition page
  * -- @excerpt_trail      : Set the type of trail you want to append to the excerpts: text, image. The text will be _more_, the image is inside the plugin's img directory and it's called excerpt_trail.png
  * -- @full_meta          : Display the date and the author of the post, for the date/time each blog time format will be used
+ * -- @display_date       : Display post date along with other metadata, date is not displayed by default (false), set to true to display
  * -- @sort_by_date       : Sorting capabilities, this will take all posts found (regardless their blogs) and sort them in order of recency, putting newest first
  * -- @sort_by_blog       : Sort by blog ID
  * -- @sorting_order      : Specify the sorting order: 'newer' means from newest to oldest posts, 'older' means from oldest to newest. Asc and desc for blog IDs
@@ -221,6 +222,7 @@ function network_latest_posts( $parameters ) {
         'auto_excerpt'     => FALSE,         // Generate excerpt from content
         'excerpt_trail'    => 'text',        // Excerpt's trailing element: text, image
         'full_meta'        => FALSE,         // Display full metadata
+        'display_date'     => FALSE,         // Display post date along with rest of metadata
         'sort_by_date'     => FALSE,         // Display the latest posts first regardless of the blog they come from
         'sort_by_blog'     => FALSE,         // Sort by Blog ID
         'sorting_order'    => NULL,          // Sort posts from Newest to Oldest or vice versa (newer / older), asc / desc for blog ID
@@ -234,7 +236,7 @@ function network_latest_posts( $parameters ) {
         'post_ignore'      => NULL,          // Post ID(s) to ignore
         'alert_msg'        => __("Sorry, I couldn't find any recent posts matching your parameters.","trans-nlp"), // Alert Message
         'use_pub_date'     => FALSE,         // AFW Display the most recently published posts first regardless of the blog they come from
-        'honor_sticky'     => FALSE          // AFW Sort sticky posts to the top of the list, ordered by requested sort order
+        'honor_sticky'     => FALSE,         // AFW Sort sticky posts to the top of the list, ordered by requested sort order
     );
     // Parse & merge parameters with the defaults
     $settings = wp_parse_args( $parameters, $defaults );
@@ -731,8 +733,12 @@ function network_latest_posts( $parameters ) {
                             // Author's page for other blogs
                             $author_url = ${'blog_url_'.$all_blogkeys[$field->guid]}.'/author/'.$author->user_login;
                         }
-                        // Print metainfo
-                        echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        if( $display_date == 'true' ) {
+                            // Print metainfo
+                            echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        } else {
+                            echo $blog_name . ' - ' . __('Published','trans-nlp') . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        }
                         // Close meta box
                         echo $html_tags['meta_c'];
                     }
@@ -790,8 +796,12 @@ function network_latest_posts( $parameters ) {
                             // Author's page for other blogs
                             $author_url = ${'blog_url_'.$all_blogkeys[$field->guid]}.'/author/'.$author->user_login;
                         }
-                        // Print metainfo
-                        echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        if( $display_date == 'true' ) {
+                            // Print metainfo
+                            echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        } else {
+                            echo $blog_name . ' - ' . __('Published','trans-nlp') . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        }
                         // Close meta box
                         echo $html_tags['meta_c'];
                     }
@@ -852,7 +862,7 @@ function network_latest_posts( $parameters ) {
             <script type="text/javascript" charset="utf-8">
                 //<![CDATA[
                     jQuery(document).ready(function(){
-                        jQuery(".nlp-instance-'.$instance.' .pagination a").live("click", function(e){
+                        jQuery(document).on("click", ".nlp-instance-'.$instance.' .pagination a", function(e){
                             e.preventDefault();
                             var link = jQuery(this).attr("href");
                             jQuery(".nlp-instance-'.$instance.' .nlposts-wrapper").html("<style type=\"text/css\">p.loading { text-align:center;margin:0 auto; padding:20px; }</style><p class=\"loading\"><img src=\"'.plugins_url('/img/loader.gif', __FILE__) .'\" /></p>");
@@ -861,6 +871,10 @@ function network_latest_posts( $parameters ) {
                                 dataType: "html",
                                 success: function(data){
                                     jQuery(".nlp-instance-'.$instance.' .nlposts-wrapper").html( jQuery(data).find(".nlposts-wrapper").html() ).fadeIn(3000);
+                                    var nlpOffset = jQuery( ".nlp-instance-'.$instance.'" ).offset().top;
+                                    jQuery("body, html").animate({
+                                        scrollTop: nlpOffset-100
+                                    }, 200);
                                 }
                             });
                         });
@@ -962,8 +976,12 @@ function network_latest_posts( $parameters ) {
                             // Author's page for other blogs
                             $author_url = ${'blog_url_'.$all_blogkeys[$field->guid]}.'/author/'.$author->user_login;
                         }
-                        // Print metainfo
-                        echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        if( $display_date == 'true' ) {
+                            // Print metainfo
+                            echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        } else {
+                            echo $blog_name . ' - ' . __('Published','trans-nlp') . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        }
                         // Close meta box
                         echo $html_tags['meta_c'];
                     }
@@ -1021,8 +1039,12 @@ function network_latest_posts( $parameters ) {
                             // Author's page for other blogs
                             $author_url = ${'blog_url_'.$all_blogkeys[$field->guid]}.'/author/'.$author->user_login;
                         }
-                        // Print metainfo
-                        echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        if( $display_date == 'true' ) {
+                            // Print metainfo
+                            echo $blog_name . ' - ' . __('Published on','trans-nlp') . ' ' . $datepost . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        } else {
+                            echo $blog_name . ' - ' . __('Published','trans-nlp') . ' ' . __('by','trans-nlp') . ' ' . '<a href="' . $author_url . '">' . $author->display_name . '</a>';
+                        }
                         // Close meta box
                         echo $html_tags['meta_c'];
                     }
