@@ -134,6 +134,8 @@ class GFSettings {
 			RGForms::setup( true );
 		}
 
+		require_once( 'currency.php' );
+
 		if ( isset( $_POST['submit'] ) ) {
 			check_admin_referer( 'gforms_update_settings', 'gforms_update_settings' );
 
@@ -141,16 +143,16 @@ class GFSettings {
 				die( __( "You don't have adequate permission to edit settings.", 'gravityforms' ) );
 			}
 
-			RGFormsModel::save_key( $_POST['gforms_key'] );
-			update_option( 'rg_gforms_disable_css', rgpost( 'gforms_disable_css' ) );
-			update_option( 'rg_gforms_enable_html5', rgpost( 'gforms_enable_html5' ) );
-			update_option( 'gform_enable_noconflict', rgpost( 'gform_enable_noconflict' ) );
-			update_option( 'gform_enable_background_updates', rgpost( 'gform_enable_background_updates' ) );
-			update_option( 'rg_gforms_enable_akismet', rgpost( 'gforms_enable_akismet' ) );
-			update_option( 'rg_gforms_captcha_public_key', rgpost( 'gforms_captcha_public_key' ) );
-			update_option( 'rg_gforms_captcha_private_key', rgpost( 'gforms_captcha_private_key' ) );
+			RGFormsModel::save_key( sanitize_text_field( $_POST['gforms_key'] ) );
+			update_option( 'rg_gforms_disable_css', (bool) rgpost( 'gforms_disable_css' ) );
+			update_option( 'rg_gforms_enable_html5', (bool) rgpost( 'gforms_enable_html5' ) );
+			update_option( 'gform_enable_noconflict', (bool) rgpost( 'gform_enable_noconflict' ) );
+			update_option( 'gform_enable_background_updates', (bool) rgpost( 'gform_enable_background_updates' ) );
+			update_option( 'rg_gforms_enable_akismet', (bool) rgpost( 'gforms_enable_akismet' ) );
+			update_option( 'rg_gforms_captcha_public_key', sanitize_text_field( rgpost( 'gforms_captcha_public_key' ) ) );
+			update_option( 'rg_gforms_captcha_private_key', sanitize_text_field( rgpost( 'gforms_captcha_private_key' ) ) );
 
-			if ( ! rgempty( 'gforms_currency' ) ) {
+			if ( ! rgempty( 'gforms_currency' ) && in_array( rgpost( 'gforms_currency' ), array_keys( RGCurrency::get_currencies() ) ) ) {
 				update_option( 'rg_gforms_currency', rgpost( 'gforms_currency' ) );
 			}
 
@@ -263,12 +265,11 @@ class GFSettings {
 						<select id="gforms_currency" name="gforms_currency" <?php echo $disabled ?>>
 							<option><?php _e( 'Select a Currency', 'gravityforms' ) ?></option>
 							<?php
-							require_once( 'currency.php' );
 							$current_currency = GFCommon::get_currency();
 
 							foreach ( RGCurrency::get_currencies() as $code => $currency ) {
 								?>
-								<option value="<?php echo $code ?>" <?php echo $current_currency == $code ? "selected='selected'" : '' ?>><?php echo $currency['name'] ?></option>
+								<option value="<?php echo esc_attr( $code ) ?>" <?php echo $current_currency == $code ? "selected='selected'" : '' ?>><?php echo esc_html( $currency['name'] ) ?></option>
 							<?php
 							}
 							?>
@@ -305,7 +306,7 @@ class GFSettings {
 						<label for="gforms_captcha_public_key"><?php _e( 'reCAPTCHA Public Key', 'gravityforms' ); ?></label>  <?php gform_tooltip( 'settings_recaptcha_public' ) ?>
 					</th>
 					<td>
-						<input type="text" name="gforms_captcha_public_key" style="width:350px;" value="<?php echo get_option( 'rg_gforms_captcha_public_key' ) ?>" /><br />
+						<input type="text" name="gforms_captcha_public_key" style="width:350px;" value="<?php echo esc_attr( get_option( 'rg_gforms_captcha_public_key' ) ); ?>" /><br />
 						<span class="gf_settings_description"><?php _e( 'Required only if you decide to use the reCAPTCHA field.', 'gravityforms' ); ?> <?php printf( __( '%sSign up%s for a free account to get the key.', 'gravityforms' ), '<a target="_blank" href="http://www.google.com/recaptcha">', '</a>' ); ?></span>
 					</td>
 				</tr>
@@ -374,7 +375,7 @@ class GFSettings {
 			<tr valign="top">
 				<th scope="row"><label><?php _e( 'MySQL Version', 'gravityforms' ); ?></label></th>
 				<td class="installation_item_cell">
-					<strong><?php echo $wpdb->db_version(); ?></strong>
+					<strong><?php echo esc_html( $wpdb->db_version() ); ?></strong>
 				</td>
 				<td>
 					<?php
@@ -394,7 +395,7 @@ class GFSettings {
 			<tr valign="top">
 				<th scope="row"><label><?php _e( 'WordPress Version', 'gravityforms' ); ?></label></th>
 				<td class="installation_item_cell">
-					<strong><?php echo get_bloginfo( 'version' ); ?></strong>
+					<strong><?php echo esc_html( get_bloginfo( 'version' ) ); ?></strong>
 				</td>
 				<td>
 					<?php
@@ -414,7 +415,7 @@ class GFSettings {
 			<tr valign="top">
 				<th scope="row"><label><?php _e( 'Gravity Forms Version', 'gravityforms' ); ?></label></th>
 				<td class="installation_item_cell">
-					<strong><?php echo GFCommon::$version ?></strong>
+					<strong><?php echo esc_html( GFCommon::$version ) ?></strong>
 				</td>
 				<td>
 					<?php
@@ -423,7 +424,7 @@ class GFSettings {
 						<i class="fa fa-check gf_valid"></i>
 					<?php
 					} else {
-						echo sprintf( __( 'New version %s available. Automatic upgrade available on the %splugins page%s', 'gravityforms' ), $version_info['version'], '<a href="plugins.php">', '</a>' );
+						echo sprintf( __( 'New version %s available. Automatic upgrade available on the %splugins page%s', 'gravityforms' ), esc_html( $version_info['version'] ), '<a href="plugins.php">', '</a>' );
 					}
 					?>
 				</td>
@@ -464,8 +465,10 @@ class GFSettings {
 
 	public static function page_header( $title = '', $message = '' ) {
 
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+
 		// register admin styles
-		wp_register_style( 'gform_admin', GFCommon::get_base_url() . '/css/admin.css' );
+		wp_register_style( 'gform_admin', GFCommon::get_base_url() . "/css/admin{$min}.css" );
 		wp_print_styles( array( 'jquery-ui-styles', 'gform_admin' ) );
 
 		$current_tab = self::get_subview();

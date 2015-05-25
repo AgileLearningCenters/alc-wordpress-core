@@ -99,11 +99,17 @@ class GFFormList {
 					break;
 			}
 
-			if ( isset( $message ) )
+			if ( isset( $message ) ) {
 				$message = sprintf( $message, $form_count );
-
+			}
 		}
 		$sort_column    = empty( $_GET['sort'] ) ? 'title' : $_GET['sort'];
+		$db_columns = GFFormsModel::get_form_db_columns();
+
+		if ( ! in_array( strtolower( $sort_column ), $db_columns ) ) {
+			$sort_column = 'title';
+		}
+
 		$sort_direction = empty( $_GET['dir'] ) ? 'ASC' : $_GET['dir'];
 		$active         = RGForms::get( 'active' ) == '' ? null : RGForms::get( 'active' );
 		$trash          = RGForms::get( 'trash' ) == '' ? false : RGForms::get( 'trash' );
@@ -115,6 +121,8 @@ class GFFormList {
 		wp_print_styles( array( 'thickbox' ) );
 
 		add_action( 'admin_print_footer_scripts', array( __class__, 'output_form_list_script_block' ), 20 );
+
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
 
 		?>
 
@@ -219,6 +227,12 @@ class GFFormList {
 				jQuery("#forms_form")[0].submit();
 			}
 
+			function ConfirmDeleteForm(form_id){
+				if( confirm(' <?php esc_attr_e( 'WARNING: You are about to delete this form and ALL entries associated with it. ', 'gravityforms' ) . __( 'Cancel to stop, OK to delete.', 'gravityforms' ) ?> ') ){
+					DeleteForm(form_id);
+				}
+			}
+
 			function DuplicateForm(form_id) {
 				jQuery("#action_argument").val(form_id);
 				jQuery("#action").val("duplicate");
@@ -277,11 +291,11 @@ class GFFormList {
 			}
 		</script>
 
-		<link rel="stylesheet" href="<?php echo GFCommon::get_base_url() ?>/css/admin.css" />
+		<link rel="stylesheet" href="<?php echo GFCommon::get_base_url() ?>/css/admin<?php echo $min; ?>.css" />
 		<div class="wrap <?php echo GFCommon::get_browser_class() ?>">
 
 		<h2>
-			<?php _e( 'Forms', 'gravityforms' ); ?>
+			<?php esc_html_e( 'Forms', 'gravityforms' ); ?>
 			<a class="add-new-h2" href="" onclick="return loadNewFormModal();"><?php _e( 'Add New', 'gravityforms' ) ?></a>
 		</h2>
 
@@ -296,19 +310,19 @@ class GFFormList {
 
 		<ul class="subsubsub">
 			<li>
-				<a class="<?php echo ( $active === null ) ? 'current' : '' ?>" href="?page=gf_edit_forms"><?php _e( 'All', 'gravityforms' ); ?>
+				<a class="<?php echo ( $active === null ) ? 'current' : '' ?>" href="?page=gf_edit_forms"><?php echo esc_html( _x( 'All', 'Form List', 'gravityforms' ) ); ?>
 					<span class="count">(<span id="all_count"><?php echo $form_count['total'] ?></span>)</span></a> |
 			</li>
 			<li>
-				<a class="<?php echo $active == '1' ? 'current' : '' ?>" href="?page=gf_edit_forms&active=1"><?php _e( 'Active', 'gravityforms' ); ?>
+				<a class="<?php echo $active == '1' ? 'current' : '' ?>" href="?page=gf_edit_forms&active=1"><?php echo esc_html( _x( 'Active', 'Form List', 'gravityforms' ) ); ?>
 					<span class="count">(<span id="active_count"><?php echo $form_count['active'] ?></span>)</span></a> |
 			</li>
 			<li>
-				<a class="<?php echo $active == '0' ? 'current' : '' ?>" href="?page=gf_edit_forms&active=0"><?php _e( 'Inactive', 'gravityforms' ); ?>
+				<a class="<?php echo $active == '0' ? 'current' : '' ?>" href="?page=gf_edit_forms&active=0"><?php echo esc_html( _x( 'Inactive', 'Form List', 'gravityforms' ) ); ?>
 					<span class="count">(<span id="inactive_count"><?php echo $form_count['inactive'] ?></span>)</span></a> |
 			</li>
 			<li>
-				<a class="<?php echo $active == '0' ? 'current' : '' ?>" href="?page=gf_edit_forms&trash=1"><?php _e( 'Trash', 'gravityforms' ); ?>
+				<a class="<?php echo $active == '0' ? 'current' : '' ?>" href="?page=gf_edit_forms&trash=1"><?php esc_html_e( 'Trash', 'gravityforms' ); ?>
 					<span class="count">(<span id="trash_count"><?php echo $form_count['trash'] ?></span>)</span></a>
 			</li>
 		</ul>
@@ -445,7 +459,8 @@ class GFFormList {
 									$form_actions['restore'] = array(
 										'label'        => __( 'Restore', 'gravityforms' ),
 										'title'        => __( 'Restore', 'gravityforms' ),
-										'url'          => 'javascript:RestoreForm(' . $form->id . ');',
+										'url'          => '#',
+										'onclick'      => 'RestoreForm(' . $form->id . ');',
 										'capabilities' => 'gravityforms_delete_forms',
 										'priority'     => 600,
 									);
@@ -453,7 +468,8 @@ class GFFormList {
 										'label'        => __( 'Delete permanently', 'gravityforms' ),
 										'title'        => __( 'Delete permanently', 'gravityforms' ),
 										'menu_class'   => 'delete',
-										'url'          => 'javascript: if(confirm("' . __( 'WARNING: You are about to delete this form and ALL entries associated with it. ', 'gravityforms' ) . __( '\"Cancel\" to stop, \"OK\" to delete.', 'gravityforms' ) . '")){ DeleteForm(' . $form->id . ');}',
+										'url'          => '#',
+										'onclick'      => 'ConfirmDeleteForm(' . $form->id. ');',
 										'capabilities' => 'gravityforms_delete_forms',
 										'priority'     => 500,
 									);
@@ -466,7 +482,8 @@ class GFFormList {
 									$form_actions['duplicate'] = array(
 										'label'        => __( 'Duplicate', 'gravityforms' ),
 										'title'        => __( 'Duplicate this form', 'gravityforms' ),
-										'url'          => 'javascript:DuplicateForm(' . $form->id . ');',
+										'url'         => '#',
+										'onclick'          => 'DuplicateForm(' . $form->id . ');return false;',
 										'capabilities' => 'gravityforms_create_form',
 										'priority'     => 600,
 									);
@@ -474,7 +491,8 @@ class GFFormList {
 									$form_actions['trash'] = array(
 										'label'        => __( 'Trash', 'gravityforms' ),
 										'title'        => __( 'Move this form to the trash', 'gravityforms' ),
-										'url'          => 'javascript:TrashForm(' . $form->id . ');',
+										'url'         => '#',
+										'onclick'          => 'TrashForm(' . $form->id . ');return false;',
 										'capabilities' => 'gravityforms_delete_forms',
 										'menu_class'   => 'trash',
 										'priority'     => 500,

@@ -106,7 +106,7 @@ if ( ! class_exists( 'GFResults' ) ) {
 				$link_class = '';
 				if ( rgget( 'page' ) == 'gf_new_form' ) {
 					$link_class = 'gf_toolbar_disabled';
-				} else if ( rgget( 'page' ) == 'gf_entries' && rgget( 'view' ) == 'gf_results_' . $this->_slug ) {
+				} elseif ( rgget( 'page' ) == 'gf_entries' && rgget( 'view' ) == 'gf_results_' . $this->_slug ) {
 					$link_class = 'gf_toolbar_active';
 				}
 
@@ -474,14 +474,20 @@ if ( ! class_exists( 'GFResults' ) ) {
 		}
 
 		public static function get_field_results( $form_id, $data, $field, $search_criteria ) {
+
+			if ( empty( $data['entry_count'] ) || empty ( $data['field_data'] ) ) {
+				return __( 'No entries for this field', 'gravityforms' );
+			}
+
 			$field_data    = $data['field_data'];
 			$entry_count   = $data['entry_count'];
-			$field_results = '';
-			if ( empty( $field_data[ $field->id ] ) ) {
-				$field_results .= __( 'No entries for this field', 'gravityforms' );
 
-				return $field_results;
+			if ( empty( $field_data[ $field->id ] ) ) {
+				return __( 'No entries for this field', 'gravityforms' );
 			}
+
+			$field_results = '';
+
 			$field_type = GFFormsModel::get_input_type( $field );
 			switch ( $field_type ) {
 				case 'radio' :

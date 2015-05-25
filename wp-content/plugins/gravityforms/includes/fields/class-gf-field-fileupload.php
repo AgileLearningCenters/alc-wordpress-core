@@ -33,6 +33,8 @@ class GF_Field_FileUpload extends GF_Field {
 	public function validate( $value, $form ) {
 		$input_name = 'input_' . $this->id;
 
+		$allowed_extensions = ! empty( $this->allowedExtensions ) ? GFCommon::clean_extensions( explode( ',', strtolower( $this->allowedExtensions ) ) ) : array();
+
 		if ( $this->multipleFiles ) {
 			$file_names = isset( GFFormsModel::$uploaded_files[ $form['id'] ][ $input_name ] ) ? GFFormsModel::$uploaded_files[ $form['id'] ][ $input_name ] : array();
 		} else {
@@ -58,20 +60,34 @@ class GF_Field_FileUpload extends GF_Field {
 				$this->validation_message = sprintf( __( 'File exceeds size limit. Maximum file size: %dMB', 'gravityforms' ), $max_upload_size_in_mb );
 				return;
 			}
+
+			$whitelisting_disabled = apply_filters( 'gform_file_upload_whitelisting_disabled', false );
+
+			if ( ! empty( $_FILES[ $input_name ]['name'] ) && empty( $allowed_extensions ) && ! $whitelisting_disabled ) {
+				$check_result = GFCommon::check_type_and_ext( $_FILES[ $input_name ] );
+				if ( is_wp_error( $check_result ) ) {
+					$this->failed_validation = true;
+					$this->validation_message = __( 'The uploaded file type is not allowed.', 'gravityforms' );
+					return;
+				}
+			}
 			$single_file_name = $_FILES[ $input_name ]['name'];
-			$file_names       = array( array( 'uploaded_filename' => $single_file_name ) );
+			$file_names = array( array( 'uploaded_filename' => $single_file_name ) );
 		}
 
 		foreach ( $file_names as $file_name ) {
 			$info = pathinfo( rgar( $file_name, 'uploaded_filename' ) );
-			$allowed_extensions = ! empty( $this->allowedExtensions ) ? GFCommon::clean_extensions( explode( ',', strtolower( $this->allowedExtensions ) ) ) : array();
 
-			if ( empty( $allowed_extensions ) && GFCommon::file_name_has_disallowed_extension( rgar( $file_name, 'uploaded_filename' ) ) ) {
-				$this->failed_validation  = true;
-				$this->validation_message = empty( $this->errorMessage ) ? __( 'The uploaded file type is not allowed.', 'gravityforms' ) : $this->errorMessage;
-			} elseif ( ! empty( $allowed_extensions ) && ! empty( $info['basename'] ) && ! GFCommon::match_file_extension( rgar( $file_name, 'uploaded_filename' ), $allowed_extensions ) ) {
-				$this->failed_validation  = true;
-				$this->validation_message = empty( $this->errorMessage ) ? sprintf( __( 'The uploaded file type is not allowed. Must be one of the following: %s', 'gravityforms' ), strtolower( $this->allowedExtensions ) ) : $this->errorMessage;
+			if ( empty( $allowed_extensions ) ) {
+				if ( GFCommon::file_name_has_disallowed_extension( rgar( $file_name, 'uploaded_filename' ) ) ) {
+					$this->failed_validation  = true;
+					$this->validation_message = empty( $this->errorMessage ) ? __( 'The uploaded file type is not allowed.', 'gravityforms' ) : $this->errorMessage;
+				}
+			} else {
+				if ( ! empty( $info['basename'] ) && ! GFCommon::match_file_extension( rgar( $file_name, 'uploaded_filename' ), $allowed_extensions ) ) {
+					$this->failed_validation  = true;
+					$this->validation_message = empty( $this->errorMessage ) ? sprintf( __( 'The uploaded file type is not allowed. Must be one of the following: %s', 'gravityforms' ), strtolower( $this->allowedExtensions ) ) : $this->errorMessage;
+				}
 			}
 		}
 	}
@@ -86,7 +102,7 @@ class GF_Field_FileUpload extends GF_Field {
 
 		$lead_id = intval( rgar( $entry, 'id' ) );
 
-		$form_id         = $form['id'];
+		$form_id         = absint( $form['id'] );
 		$is_entry_detail = $this->is_entry_detail();
 		$is_form_editor  = $this->is_form_editor();
 
@@ -109,7 +125,7 @@ class GF_Field_FileUpload extends GF_Field {
 
 		$max_upload_size = ! $is_admin && $this->maxFileSize > 0 ? $this->maxFileSize * 1048576 : wp_max_upload_size();
 		if ( $multiple_files ) {
-			$upload_action_url = trailingslashit( site_url() ) . '?gf_page=upload';
+			$upload_action_url = trailingslashit( site_url() ) . '?gf_page=' . GFCommon::get_upload_page_slug();
 			$max_files         = $this->maxFiles > 0 ? $this->maxFiles : 0;
 			$browse_button_id  = 'gform_browse_button_' . $form_id . '_' . $id;
 			$container_id      = 'gform_multifile_upload_' . $form_id . '_' . $id;
@@ -153,6 +169,10 @@ class GF_Field_FileUpload extends GF_Field {
 					)
 				);
 
+				if ( rgar( $form, 'requireLogin' ) ) {
+					$plupload_init['multipart_params'][ '_gform_file_upload_nonce_' . $form_id ] = wp_create_nonce( 'gform_file_upload_' . $form_id, '_gform_file_upload_nonce_' . $form_id );
+				}
+
 				// plupload 2 was introduced in WordPress 3.9. Plupload 1 accepts a slightly different init array.
 				if ( version_compare( get_bloginfo( 'version' ), '3.9-RC1', '<' ) ) {
 					$plupload_init['max_file_size'] = $max_upload_size . 'b';
@@ -161,12 +181,6 @@ class GF_Field_FileUpload extends GF_Field {
 			}
 
 			$plupload_init = apply_filters( "gform_plupload_settings_{$form_id}", apply_filters( 'gform_plupload_settings', $plupload_init, $form_id, $this ), $form_id, $this );
-
-			// Multi-file uploading doesn't currently work in iOS Safari,
-			// single-file allows the built-in camera to be used as source for images
-			if ( wp_is_mobile() ) {
-				$plupload_init['multi_selection'] = false;
-			}
 
 			$drop_files_here_text = __( 'Drop files here or', 'gravityforms' );
 			$select_files_text    = __( 'Select files', 'gravityforms' );
@@ -268,10 +282,10 @@ class GF_Field_FileUpload extends GF_Field {
 	}
 
 	public function get_value_save_entry( $value, $form, $input_name, $lead_id, $lead ) {
-		return $this->multipleFiles ? $this->get_multifile_value($form['id'], $input_name) : $this->get_single_file_value( $form['id'], $input_name );
+		return $this->multipleFiles ? $this->get_multifile_value( $form['id'], $input_name, $value ) : $this->get_single_file_value( $form['id'], $input_name );
 	}
 
-	public function get_multifile_value($form_id, $input_name){
+	public function get_multifile_value( $form_id, $input_name, $value ) {
 		global $_gf_uploaded_files;
 
 		GFCommon::log_debug( __METHOD__ . '(): Starting.' );
@@ -345,6 +359,7 @@ class GF_Field_FileUpload extends GF_Field {
 		}
 
 		if ( move_uploaded_file( $file['tmp_name'], $target['path'] ) ) {
+			GFCommon::log_debug( __METHOD__ . '(): File successfully moved.' );
 			$this->set_permissions( $target['path'] );
 
 			return $target['url'];
@@ -355,7 +370,7 @@ class GF_Field_FileUpload extends GF_Field {
 		}
 	}
 
-	public function get_value_entry_list( $value, $entry, $field_id, $columns, $form ){
+	public function get_value_entry_list( $value, $entry, $field_id, $columns, $form ) {
 		if ( $this->multipleFiles ) {
 			$uploaded_files_arr = empty( $value ) ? array() : json_decode( $value, true );
 			$file_count         = count( $uploaded_files_arr );
@@ -364,6 +379,8 @@ class GF_Field_FileUpload extends GF_Field {
 				return $value;
 			} elseif ( $file_count == 1 ) {
 				$value = $uploaded_files_arr[0];
+			} elseif ( $file_count == 0 ) {
+				return;
 			}
 		}
 
@@ -408,7 +425,7 @@ class GF_Field_FileUpload extends GF_Field {
 
 				$file = str_replace( ' ', '%20', $file );
 
-				if ( $esc_html ){
+				if ( $esc_html ) {
 					$value = esc_html( $value );
 				}
 			}
@@ -418,7 +435,7 @@ class GF_Field_FileUpload extends GF_Field {
 			$value = str_replace( ' ', '%20', $value );
 		}
 
-		if ( $url_encode ){
+		if ( $url_encode ) {
 			$value = urlencode( $value );
 		}
 
@@ -452,7 +469,21 @@ class GF_Field_FileUpload extends GF_Field {
 		GFFormsModel::set_permissions( $path );
 	}
 
+	public function sanitize_settings() {
+		parent::sanitize_settings();
+		if ( $this->maxFileSize ) {
+			$this->maxFileSize = absint( $this->maxFileSize );
+		}
 
+		if ( $this->maxFiles ) {
+			$this->maxFiles = preg_replace( '/[^0-9,.]/', '', $this->maxFiles );
+		}
+
+		$this->multipleFiles = (bool) $this->multipleFiles;
+
+		$this->allowedExtensions = sanitize_text_field( $this->allowedExtensions );
+
+	}
 
 }
 
