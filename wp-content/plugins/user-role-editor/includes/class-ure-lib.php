@@ -787,7 +787,7 @@ class Ure_Lib extends Garvs_WP_Lib {
             $wp_roles = new WP_Roles();
             $reload_link = wp_get_referer();
             $reload_link = remove_query_arg('action', $reload_link);
-            $reload_link = add_query_arg('action', 'roles_restore_note', $reload_link);
+            $reload_link = esc_url_raw(add_query_arg('action', 'roles_restore_note', $reload_link));
 ?>    
             <script type="text/javascript" >
               document.location = '<?php echo $reload_link; ?>';
@@ -1441,7 +1441,8 @@ class Ure_Lib extends Garvs_WP_Lib {
         }
         // end of switch
         if (!empty($url)) {
-            $link = '<a href="' . $url . '" title="read about ' . $capability . ' user capability" target="new"><img src="' . 
+            $link = '<a href="' . $url . '" title="' . esc_html__('read about', 'ure') .' '. $capability .' '. 
+                    esc_html__('user capability', 'ure') .'" target="new"><img src="' . 
                     URE_PLUGIN_URL . 'images/help.png" alt="' . esc_html__('Help', 'ure') . '" /></a>';
         } else {
             $link = '';
@@ -1698,7 +1699,7 @@ class Ure_Lib extends Garvs_WP_Lib {
         }
               
         $this->wp_roles_reinit();
-        $this->_init_ure_caps();
+        $this->init_ure_caps();
         if ($this->is_full_network_synch() || $this->apply_to_all) {
             $this->current_role = '';
             $this->direct_network_roles_update();
@@ -1706,7 +1707,7 @@ class Ure_Lib extends Garvs_WP_Lib {
         //$this->validate_user_roles();  // if user has non-existing role lower him to Subscriber role
         
         $reload_link = wp_get_referer();
-        $reload_link = remove_query_arg('action', $reload_link);        
+        $reload_link = esc_url_raw(remove_query_arg('action', $reload_link));
         ?>    
         	<script type="text/javascript" >
              jQuery.ure_postGo('<?php echo $reload_link; ?>', 
