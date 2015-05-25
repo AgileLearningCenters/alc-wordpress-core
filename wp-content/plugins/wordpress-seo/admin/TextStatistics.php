@@ -1,6 +1,6 @@
 <?php
 /**
- * @package Admin
+ * @package WPSEO\Admin
  */
 
 /**
@@ -76,7 +76,8 @@ class Yoast_TextStatistics {
 		try {
 			if ( $this->strEncoding == '' ) {
 				$intTextLength = mb_strlen( $strText );
-			} else {
+			}
+			else {
 				$intTextLength = mb_strlen( $strText, $this->strEncoding );
 			}
 		} catch ( Exception $e ) {
@@ -104,7 +105,8 @@ class Yoast_TextStatistics {
 		try {
 			if ( $this->strEncoding == '' ) {
 				$intTextLength = mb_strlen( $strText );
-			} else {
+			}
+			else {
 				$intTextLength = mb_strlen( $strText, $this->strEncoding );
 			}
 		} catch ( Exception $e ) {
@@ -170,7 +172,8 @@ class Yoast_TextStatistics {
 		try {
 			if ( $this->strEncoding == '' ) {
 				$strLowerCaseText = mb_strtolower( $strText );
-			} else {
+			}
+			else {
 				$strLowerCaseText = mb_strtolower( $strText, $this->strEncoding );
 			}
 		} catch ( Exception $e ) {
@@ -195,7 +198,8 @@ class Yoast_TextStatistics {
 		try {
 			if ( $this->strEncoding == '' ) {
 				$strUpperCaseText = mb_strtoupper( $strText );
-			} else {
+			}
+			else {
 				$strUpperCaseText = mb_strtoupper( $strText, $this->strEncoding );
 			}
 		} catch ( Exception $e ) {
@@ -241,7 +245,7 @@ class Yoast_TextStatistics {
 
 		$strText = $this->clean_text( $strText );
 		// Will be tripped by em dashes with spaces either side, among other similar characters
-		$intWords = 1 + $this->text_length( preg_replace( '`[^ ]`', '', $strText ) ); // Space count + 1 is word count
+		$intWords = ( 1 + $this->text_length( preg_replace( '`[^ ]`', '', $strText ) ) ); // Space count + 1 is word count
 		return $intWords;
 	}
 
@@ -381,7 +385,7 @@ class Yoast_TextStatistics {
 
 		// Some syllables do not follow normal rules - check for them
 		// Thanks to Joe Kovar for correcting a bug in the following lines
-		$intSyllableCount = $intWordPartCount + $intPrefixSuffixCount;
+		$intSyllableCount = ( $intWordPartCount + $intPrefixSuffixCount );
 		foreach ( $arrSubSyllables as $strSyllable ) {
 			$intSyllableCount -= preg_match( '`' . $strSyllable . '`', $strWord );
 		}
@@ -402,6 +406,7 @@ class Yoast_TextStatistics {
 	 * @param    int|float $score Initial score
 	 * @param    int       $min   Minimum score allowed
 	 * @param    int       $max   Maximum score allowed
+	 * @param    int       $dps   Round to # decimals
 	 *
 	 * @return    int|float
 	 */
@@ -413,7 +418,8 @@ class Yoast_TextStatistics {
 
 		if ( $score > $max ) {
 			$score = $max;
-		} elseif ( $score < $min ) {
+		}
+		elseif ( $score < $min ) {
 			$score = $min;
 		}
 
