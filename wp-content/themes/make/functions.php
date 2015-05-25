@@ -6,7 +6,7 @@
 /**
  * The current version of the theme.
  */
-define( 'TTFMAKE_VERSION', '1.4.9' );
+define( 'TTFMAKE_VERSION', '1.5.2' );
 
 /**
  * The suffix to use for scripts.
@@ -313,7 +313,7 @@ function ttfmake_scripts() {
 		'ttfmake-font-awesome',
 		get_template_directory_uri() . '/css/font-awesome' . TTFMAKE_SUFFIX . '.css',
 		$style_dependencies,
-		'4.2.0'
+		'4.3.0'
 	);
 	$style_dependencies[] = 'ttfmake-font-awesome';
 
@@ -433,7 +433,7 @@ function ttfmake_cycle2_script_setup( $script_dependencies ) {
 			'ttfmake-cycle2',
 			get_template_directory_uri() . '/js/libs/cycle2/jquery.cycle2.js',
 			$script_dependencies,
-			'2.1.3',
+			'2.1.6',
 			true
 		);
 
@@ -466,9 +466,21 @@ if ( ! function_exists( 'ttfmake_head_late' ) ) :
  *
  * @return void
  */
-function ttfmake_head_late() { ?>
-	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
+function ttfmake_head_late() {
+	// Pingback link ?>
+		<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 <?php
+	// Favicon
+	$logo_favicon = get_theme_mod( 'logo-favicon', ttfmake_get_default( 'logo-favicon' ) );
+	if ( ! empty( $logo_favicon ) ) : ?>
+		<link rel="icon" href="<?php echo esc_url( $logo_favicon ); ?>" />
+	<?php endif;
+
+	// Apple Touch icon
+	$logo_apple_touch = get_theme_mod( 'logo-apple-touch', ttfmake_get_default( 'logo-apple-touch' ) );
+	if ( ! empty( $logo_apple_touch ) ) : ?>
+		<link rel="apple-touch-icon" href="<?php echo esc_url( $logo_apple_touch ); ?>" />
+	<?php endif;
 }
 endif;
 
