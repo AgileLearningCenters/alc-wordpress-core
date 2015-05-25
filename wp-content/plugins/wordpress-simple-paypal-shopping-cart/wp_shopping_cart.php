@@ -1,8 +1,7 @@
 <?php
-
 /*
 Plugin Name: WP Simple Paypal Shopping cart
-Version: v4.0.6
+Version: v4.0.8
 Plugin URI: https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768
 Author: Tips and Tricks HQ, Ruhul Amin
 Author URI: https://www.tipsandtricks-hq.com/
@@ -23,7 +22,7 @@ if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
     }
 }
 
-define('WP_CART_VERSION', '4.0.5');
+define('WP_CART_VERSION', '4.0.8');
 define('WP_CART_FOLDER', dirname(plugin_basename(__FILE__)));
 define('WP_CART_PATH', plugin_dir_path(__FILE__));
 define('WP_CART_URL', plugins_url('', __FILE__));
@@ -372,6 +371,8 @@ function print_wp_cart_button_new($content) {
 }
 
 function wp_cart_add_read_form_javascript() {
+    $debug_marker = "<!-- WP Simple Shopping Cart plugin v" . WP_CART_VERSION . " - https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768/ -->";
+    echo "\n${debug_marker}\n";    
     echo '
 	<script type="text/javascript">
 	<!--
@@ -402,16 +403,6 @@ function wp_cart_add_read_form_javascript() {
 	}
 	//-->
 	</script>';
-}
-
-function wpspsc_admin_side_enqueue_scripts()
-{
-    if (isset($_GET['page']) && $_GET['page'] == 'wordpress-paypal-shopping-cart') //simple paypal shopping cart discount page
-    {
-        wp_enqueue_style('jquery-ui-style', '//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css');
-        wp_register_script('wpspsc-admin', WP_CART_URL.'/lib/wpspsc_admin_side.js', array('jquery', 'jquery-ui-datepicker'));
-        wp_enqueue_script('wpspsc-admin');
-    }
 }
 
 function print_wp_cart_button_for_product($name, $price, $shipping = 0, $var1 = '', $var2 = '', $var3 = '', $atts = array()) {
@@ -589,10 +580,18 @@ class WP_PayPal_Cart_Widget extends WP_Widget {
 
 }
 
-function wp_cart_css() {
-    $debug_marker = "<!-- WP Simple Shopping Cart plugin v" . WP_CART_VERSION . " - https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768/ -->";
-    echo "\n${debug_marker}\n";
-    echo '<link type="text/css" rel="stylesheet" href="' . WP_CART_URL . '/wp_shopping_cart_style.css" />' . "\n";
+function wspsc_admin_side_enqueue_scripts()
+{
+    if (isset($_GET['page']) && $_GET['page'] == 'wordpress-paypal-shopping-cart') //simple paypal shopping cart discount page
+    {
+        wp_enqueue_style('jquery-ui-style', '//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css');
+        wp_register_script('wpspsc-admin', WP_CART_URL.'/lib/wpspsc_admin_side.js', array('jquery', 'jquery-ui-datepicker'));
+        wp_enqueue_script('wpspsc-admin');
+    }
+}
+
+function wspsc_front_side_enqueue_scripts() {
+    wp_enqueue_style('wspsc-style', WP_CART_URL . '/wp_shopping_cart_style.css', array(), WP_CART_VERSION);
 }
 
 function wpspc_plugin_install() {
@@ -633,6 +632,6 @@ add_shortcode('wp_cart_button', 'wp_cart_button_handler');
 add_shortcode('wp_cart_display_product', 'wp_cart_display_product_handler');
 add_shortcode('wp_compact_cart', 'wspsc_compact_cart_handler');
 
-add_action('wp_head', 'wp_cart_css');
 add_action('wp_head', 'wp_cart_add_read_form_javascript');
-add_action('admin_enqueue_scripts', 'wpspsc_admin_side_enqueue_scripts' );
+add_action('wp_enqueue_scripts', 'wspsc_front_side_enqueue_scripts');
+add_action('admin_enqueue_scripts', 'wspsc_admin_side_enqueue_scripts' );

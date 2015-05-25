@@ -38,6 +38,7 @@ function wp_cart_display_product_handler($atts)
         'var2' => '',
         'var3' => '',    
         'thumbnail' => '',
+        'thumb_target' => '',
         'description' => '',
         'button_image' => '',
         'file_url' => '',
@@ -55,8 +56,11 @@ function wp_cart_display_product_handler($atts)
     }
     $price = wspsc_strip_char_from_price_amount($price);
     $shipping = wspsc_strip_char_from_price_amount($shipping);
-        
-    $thumbnail_code = apply_filters('wspsc_product_box_thumbnail_code', '<img src="'.$thumbnail.'" />', $atts);
+    $thumbnail_code = '<img src="'.$thumbnail.'">';
+    if(!empty($thumb_target) && preg_match("/http/", $thumb_target)){
+        $thumbnail_code = '<a href="'.$thumb_target.'"><img src="'.$thumbnail.'"></a>';
+    }
+    $thumbnail_code = apply_filters('wspsc_product_box_thumbnail_code', $thumbnail_code, $atts);
     $currency_symbol = get_option('cart_currency_symbol');
     $formatted_price = print_payment_currency($price, $currency_symbol);
     $button_code = print_wp_cart_button_for_product($name, $price, $shipping, $var1, $var2, $var3, $atts);

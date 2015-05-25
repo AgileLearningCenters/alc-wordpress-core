@@ -3,8 +3,8 @@ Contributors: Tips and Tricks HQ, Ruhul Amin, wptipsntricks, mbrsolution
 Donate link: https://www.tipsandtricks-hq.com
 Tags: cart, shopping cart, WordPress shopping cart, Paypal shopping cart, sell, selling, sell products, online shop, shop, e-commerce, wordpress ecommerce, wordpress store, store, PayPal cart widget, sell digital products, sell service, digital downloads, paypal, paypal cart, e-shop, compact cart, coupon, discount
 Requires at least: 3.0
-Tested up to: 4.1
-Stable tag: 4.0.6
+Tested up to: 4.2
+Stable tag: 4.0.8
 License: GPLv2 or later
 
 Very easy to use Simple WordPress Paypal Shopping Cart Plugin. Great for selling products online in one click from your WordPress site.
@@ -30,7 +30,7 @@ WP simple Paypal Cart Plugin, interfaces with the Paypal sandbox to allow for te
 For video tutorial, screenshots, detailed documentation, support and updates, please visit:
 [WP Simple Cart Details Page](https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768)
 or
-[WP Simple Cart Documentation](http://www.tipsandtricks-hq.com/ecommerce/wp-shopping-cart)
+[WP Simple Cart Documentation](https://www.tipsandtricks-hq.com/ecommerce/wp-shopping-cart)
 
 = Features =
 
@@ -84,6 +84,7 @@ The following language translations are already available:
 * Swedish
 * Norwegian
 * Danish
+* Turkish
 
 You can translate the plugin using [this documentation](http://www.tipsandtricks-hq.com/ecommerce/translating-the-wp-simple-shopping-cart-plugin-2627).
 
@@ -175,6 +176,16 @@ Visit the plugin site at https://www.tipsandtricks-hq.com/wordpress-simple-paypa
 None
 
 == Changelog ==
+
+= 4.0.8 =
+- Added Turkish Language translation to the plugin. The Turkish translation file was submitted by Vural Pamir.
+- WordPress 4.2 compatibility
+
+= 4.0.7 =
+- The cart stylesheet file now uses the 'wp_enqueue_scripts' hook
+- Added a new shortcode parameter (thumb_target) which can be used to specify a target URL for the product thumbnail image
+- Coupon codes are now case-insensitive.
+- Updated the Italian language file.
 
 = 4.0.6 =
 - Added an email tag to include the coupon code used in the notification email.

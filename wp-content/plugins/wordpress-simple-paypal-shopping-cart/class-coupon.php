@@ -21,7 +21,7 @@ class WPSPSC_Coupons_Collection
         }
         foreach($this->coupon_items as $key => $coupon)
         {
-            if($coupon->coupon_code == $coupon_code){
+            if(strtolower($coupon->coupon_code) == strtolower($coupon_code)){
                 return $coupon;
             }
         }
