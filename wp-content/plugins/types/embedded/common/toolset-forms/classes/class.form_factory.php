@@ -10,9 +10,9 @@ define( "CLASS_NAME_PREFIX", "WPToolset_Field_" );
  * Creation Form Class
  * @author onTheGo System
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/embedded/common/toolset-forms/classes/class.form_factory.php $
- * $LastChangedDate: 2015-01-28 06:42:34 +0000 (Wed, 28 Jan 2015) $
- * $LastChangedRevision: 1077234 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/common/toolset-forms/classes/class.form_factory.php $
+ * $LastChangedDate: 2015-04-01 14:15:17 +0000 (Wed, 01 Apr 2015) $
+ * $LastChangedRevision: 1125405 $
  * $LastChangedBy: iworks $
  *
  *
@@ -37,8 +37,12 @@ class FormFactory extends FormAbstract
 
         wp_register_script( 'wptoolset-forms',
             WPTOOLSET_FORMS_RELPATH . '/js/main.js',
-            array('jquery', 'underscore'), WPTOOLSET_FORMS_VERSION, false );
+            array('jquery', 'underscore', 'suggest'), WPTOOLSET_FORMS_VERSION, false );
         wp_enqueue_script( 'wptoolset-forms' );
+		$wptoolset_forms_localization = array(
+			'ajaxurl' => admin_url( 'admin-ajax.php', null )
+		);
+		wp_localize_script( 'wptoolset-forms', 'wptoolset_forms_local', $wptoolset_forms_localization );
 
         if ( is_admin() ) {
             wp_register_style( 'wptoolset-forms-admin',
@@ -238,8 +242,10 @@ class FormFactory extends FormAbstract
                 if ( current_user_can('manage_options') ) {
                     $htmlArray[] = sprintf(
                         '<div id="message" class="error"><p>%s</p><p>%s</p></div>',
+                        //https://icanlocalize.basecamphq.com/projects/7393061-toolset/todo_items/196628627/comments#310360880
+                        //changed render to rendering
                         sprintf(
-                            __('There is a problem with render <strong>%s (%s)</strong> field.', 'wpv-views'),
+                            __('There is a problem rendering field <strong>%s (%s)</strong>.', 'wpv-views'),
                             $_cfg['title'],
                             $_cfg['type']
                         ),

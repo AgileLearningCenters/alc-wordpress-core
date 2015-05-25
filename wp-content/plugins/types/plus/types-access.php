@@ -2,15 +2,14 @@
 /*
  * Types Access teaser.
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/plus/types-access.php $
- * $LastChangedDate: 2015-02-04 13:43:06 +0000 (Wed, 04 Feb 2015) $
- * $LastChangedRevision: 1082328 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/plus/types-access.php $
+ * $LastChangedDate: 2015-03-02 10:49:00 +0000 (Mon, 02 Mar 2015) $
+ * $LastChangedRevision: 1103173 $
  * $LastChangedBy: iworks $
  *
  */
 
 add_action( 'plugins_loaded', 'wpcf_access_teaser_init', 15 );
-add_action( 'wpcf_menu_plus', 'wpcf_access_teaser_admin_menu' );
 
 /**
  * Teaser init.
@@ -32,6 +31,7 @@ function wpcf_access_teaser_init() {
         $locale = get_locale();
         load_textdomain( 'wpcf_access',
                 WPCF_ACCESS_ABSPATH . '/locale/types-access-' . $locale . '.mo' );
+        add_action( 'wpcf_menu_plus', 'wpcf_access_teaser_admin_menu' );
     }
 }
 
@@ -80,7 +80,7 @@ function wpcf_access_teaser_admin_menu_page()
     /**
      * show message
      */
-    echo wpcf_add_admin_header( __( 'Access', 'wpcf' ), 'icon-wpcf-access' );
+    wpcf_add_admin_header( __( 'Access', 'wpcf' ), 'icon-wpcf-access' );
     echo '<div class="types-help"><div class="types-help-content"';
     echo '<p>' . sprintf(__( 'This screen shows a preview of %sAccess%s - the access control and roles management addon for Types.',
             'wpcf' ), '<strong><a href="http://wp-types.com/home/types-access/?utm_source=typesplugin&utm_medium=accessadmin&utm_term=Access&utm_campaign=typesplugin" target="_blank">','</a></strong>')
@@ -96,5 +96,5 @@ function wpcf_access_teaser_admin_menu_page()
     echo '</div></div>';
     require_once WPCF_ACCESS_INC . '/admin-edit-access.php';
     wpcf_access_admin_edit_access( false );
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 }

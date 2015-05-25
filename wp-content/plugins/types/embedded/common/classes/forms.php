@@ -2,15 +2,15 @@
 /**
  * Returns HTML formatted output for elements and handles form submission.
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/embedded/common/classes/forms.php $
- * $LastChangedDate: 2014-11-18 06:47:25 +0000 (Tue, 18 Nov 2014) $
- * $LastChangedRevision: 1027712 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/common/classes/forms.php $
+ * $LastChangedDate: 2015-05-12 12:24:38 +0000 (Tue, 12 May 2015) $
+ * $LastChangedRevision: 1158787 $
  * $LastChangedBy: iworks $
  *
  * @version 1.0
  */
-if (!class_exists('Enlimbo_Forms_Wpcf')) {
-
+if (!class_exists('Enlimbo_Forms_Wpcf')) {   
+    
     class Enlimbo_Forms_Wpcf
     {
 
@@ -368,10 +368,15 @@ if (!class_exists('Enlimbo_Forms_Wpcf')) {
             if ( isset( $element['#labelclass'] ) ) {
 				$labelclass = $element['#labelclass'] . ' ';
             }
+            $labelstyle = '';
+            if ( isset( $element['#labelstyle'] ) ) {
+				$labelstyle = ' style="' . $element['#labelstyle'] . '" ';
+            }
             $element['_render']['label'] = isset($element['#title']) ? '<label class="'
 					. $labelclass
                     . $this->css_class . '-label ' . $this->css_class . '-'
-                    . $element['#type'] . '-label" for="' . $element['#id'] . '">'
+                    . $element['#type'] . '-label" for="' . $element['#id'] . '"'.
+                    $labelstyle . '>'
                     . stripslashes($element['#title'])
                     . '</label>' . "\r\n" : '';
             $element['_render']['title'] = $this->_setElementTitle($element);
@@ -932,8 +937,10 @@ if (!class_exists('Enlimbo_Forms_Wpcf')) {
             }
 
             $parts = explode('[', $name);
-            $parts = array_map(create_function('&$a', 'return trim($a, \']\');'),
-                    $parts);
+            //https://icanlocalize.basecamphq.com/projects/7393061-toolset/todo_items/196173458/comments
+            //Security Fixing
+            //$parts = array_map(create function('&$a', 'return trim($a, \']\');'), $parts);
+            $parts = array_map("cred_mytrimfunction", $parts);
             if (!isset($_REQUEST[$parts[0]])) {
                 return in_array($element['#type'],
                                 array('textfield', 'textarea')) ? '' : 0;

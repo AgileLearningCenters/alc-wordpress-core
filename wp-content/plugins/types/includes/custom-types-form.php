@@ -3,9 +3,9 @@
  *
  * Custom types form
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/includes/custom-types-form.php $
- * $LastChangedDate: 2015-01-16 14:28:15 +0000 (Fri, 16 Jan 2015) $
- * $LastChangedRevision: 1069430 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/includes/custom-types-form.php $
+ * $LastChangedDate: 2015-04-01 14:15:17 +0000 (Wed, 01 Apr 2015) $
+ * $LastChangedRevision: 1125405 $
  * $LastChangedBy: iworks $
  *
  */
@@ -18,15 +18,16 @@ function wpcf_admin_custom_types_form()
     global $wpcf;
 
     include_once dirname(__FILE__).'/common-functions.php';
+    include_once dirname(__FILE__).'/fields.php';
 
     $ct = array();
     $id = false;
     $update = false;
 
     if ( isset( $_GET['wpcf-post-type'] ) ) {
-        $id = $_GET['wpcf-post-type'];
+        $id = sanitize_text_field( $_GET['wpcf-post-type'] );
     } elseif ( isset( $_POST['wpcf-post-type'] ) ) {
-        $id = $_POST['wpcf-post-type'];
+        $id = sanitize_text_field( $_POST['wpcf-post-type'] );
     }
 
     if ( $id ) {
@@ -39,8 +40,7 @@ function wpcf_admin_custom_types_form()
                 flush_rewrite_rules();
             }
         } else {
-            wpcf_admin_message( __( 'Wrong custom post type specified', 'wpcf' ),
-                    'error' );
+            wpcf_admin_message( __( 'Wrong custom post type specified', 'wpcf' ), 'error' );
             return false;
         }
     } else {
@@ -125,12 +125,10 @@ function wpcf_admin_custom_types_form()
         '#title' => __( 'Custom post type name plural', 'wpcf' ) . ' (<strong>' . __( 'required',
                 'wpcf' ) . '</strong>)',
         '#description' => '<strong>' . __( 'Enter in plural!', 'wpcf' )
-//        . '</strong><br />' . __('Alphanumeric with whitespaces only', 'wpcf')
         . '.',
         '#value' => isset( $ct['labels']['name'] ) ? $ct['labels']['name'] : '',
         '#validate' => array(
             'required' => array('value' => 'true'),
-//            'alphanumeric' => array('value' => 'true'),
         ),
         '#pattern' => $table_row,
         '#inline' => true,
@@ -138,6 +136,7 @@ function wpcf_admin_custom_types_form()
         '#attributes' => array(
             'data-wpcf_warning_same_as_slug' => $wpcf->post_types->message( 'warning_singular_plural_match' ),
             'data-wpcf_warning_same_as_slug_ignore' => $wpcf->post_types->message( 'warning_singular_plural_match_ignore' ),
+            'placeholder' => __('Enter post type name plural', 'wpcf' ),
         ),
     );
     $form['name-singular'] = array(
@@ -147,25 +146,25 @@ function wpcf_admin_custom_types_form()
                 'wpcf' ) . '</strong>)',
         '#description' => '<strong>' . __( 'Enter in singular!', 'wpcf' )
         . '</strong><br />'
-//        . __('Alphanumeric with whitespaces only', 'wpcf')
         . '.',
         '#value' => isset( $ct['labels']['singular_name'] ) ? $ct['labels']['singular_name'] : '',
         '#validate' => array(
             'required' => array('value' => 'true'),
-//            'alphanumeric' => array('value' => 'true'),
         ),
         '#pattern' => $table_row,
         '#inline' => true,
         '#id' => 'name-singular',
+        '#attributes' => array(
+            'placeholder' => __('Enter post type name singular', 'wpcf' ),
+        ),
     );
 
-    /*
-     *
+    /**
      * IF isset $_POST['slug'] it means form is not submitted
      */
     $attributes = array();
     if ( !empty( $_POST['ct']['slug'] ) ) {
-        $reserved = wpcf_is_reserved_name( $_POST['ct']['slug'], 'post_type' );
+        $reserved = wpcf_is_reserved_name( sanitize_text_field( $_POST['ct']['slug'] ), 'post_type' );
         if ( is_wp_error( $reserved ) ) {
             $attributes = array(
                 'class' => 'wpcf-form-error',
@@ -186,7 +185,10 @@ function wpcf_admin_custom_types_form()
             'nospecialchars' => array('value' => 'true'),
             'maxlength' => array('value' => '20'),
         ),
-        '#attributes' => $attributes + array('maxlength' => '20'),
+        '#attributes' => $attributes + array(
+            'maxlength' => '20',
+            'placeholder' => __('Enter post type slug', 'wpcf' ),
+            ),
         '#id' => 'slug',
     );
     $form['description'] = array(
@@ -197,6 +199,7 @@ function wpcf_admin_custom_types_form()
         '#attributes' => array(
             'rows' => 4,
             'cols' => 60,
+            'placeholder' => __('Enter post type description', 'wpcf' ),
         ),
         '#pattern' => $table_row,
         '#inline' => true,
@@ -422,11 +425,13 @@ function wpcf_admin_custom_types_form()
     );
 
     global $sitepress;
-    if ( $update && isset( $sitepress )
-            && version_compare( ICL_SITEPRESS_VERSION, '2.6.2', '>=' )
-            && function_exists( 'wpml_custom_post_translation_options' ) ) {
+    if (
+        $update && isset( $sitepress )
+        && version_compare( ICL_SITEPRESS_VERSION, '2.6.2', '>=' )
+        && function_exists( 'wpml_custom_post_translation_options' )
+    ) {
         $form['table-1-close']['#markup'] .= wpml_custom_post_translation_options( $ct['slug'] );
-            }
+    }
 
     $form['post-body-content-close'] = array(
         '#type' => 'markup',
@@ -436,9 +441,13 @@ function wpcf_admin_custom_types_form()
     /**
      * get box order
      */
-    $meta_box_order_defaults = array(
-        'side' => 'submitdiv,wpcf_visibility,taxonomies',
-        'normal' => 'labels,display_sections,options',
+    $meta_box_order_defaults = apply_filters(
+        'wpcf_meta_box_order_defaults',
+        array(
+            'side' => array('submitdiv', 'wpcf_visibility', 'taxonomies'),
+            'normal' => array('labels', 'display_sections', 'options'),
+        ),
+        'post_type'
     );
     $screen = get_current_screen();
     if ( false == ( $meta_box_order = get_user_option( 'meta-box-order_'.$screen->id) )) {
@@ -449,14 +458,20 @@ function wpcf_admin_custom_types_form()
         }
     }
 
-    $meta_boxes = array(
-        'submitdiv' => false,
-        'wpcf_visibility' => $ct,
-        'taxonomies' => $ct,
-        'labels' => $ct,
-        'display_sections' => $ct,
-        'options' => $ct,
-    );
+    $meta_boxes = array();
+    foreach( $meta_box_order_defaults as $key => $value ) {
+        foreach($value as $meta_box_key) {
+            $meta_boxes[$meta_box_key] = $ct;
+        }
+    }
+    $meta_boxes[ 'submitdiv'] = false;
+
+    foreach ( $meta_box_order as $key => $value ) {
+        if ( is_array($value) ) {
+            continue;
+        }
+        $meta_box_order[$key] = explode(',', $value);
+    }
 
     /**
      * postbox-container-1
@@ -466,7 +481,7 @@ function wpcf_admin_custom_types_form()
         '#type' => 'markup',
         '#markup' => '<div id="postbox-container-1" class="postbox-container"><div class="meta-box-sortables ui-sortable" id="side-sortables">',
     );
-    foreach( explode(',',$meta_box_order['side']) as $key ) {
+    foreach( $meta_box_order['side'] as $key ) {
         $function = sprintf('wpcf_admin_metabox_%s', $key);
         if ( is_callable($function) ) {
             $form += $function($meta_boxes[$key]);
@@ -487,7 +502,7 @@ function wpcf_admin_custom_types_form()
         '#type' => 'markup',
         '#markup' => '<div id="postbox-container-2" class="postbox-container"><div class="meta-box-sortables ui-sortable">',
     );
-    foreach( explode(',',$meta_box_order['normal']) as $key ) {
+    foreach( $meta_box_order['normal'] as $key ) {
         $function = sprintf('wpcf_admin_metabox_%s', $key);
         if ( is_callable($function) ) {
             $form += $function($meta_boxes[$key]);
@@ -536,6 +551,9 @@ function wpcf_admin_types_form_js_validation()
 
 /**
  * Submit function
+ *
+ * @global object $wpdb
+ *
  */
 function wpcf_admin_custom_types_form_submit($form)
 {
@@ -617,9 +635,11 @@ function wpcf_admin_custom_types_form_submit($form)
         /**
          * update post meta "_wp_types_group_post_types"
          */
-        $sql = sprintf(
-            'select meta_id, meta_value from %s where meta_key = \'%s\'',
-            $wpdb->postmeta,
+        $sql = $wpdb->prepare(
+            sprintf(
+                'select meta_id, meta_value from %s where meta_key = %%s',
+                $wpdb->postmeta
+            ),
             '_wp_types_group_post_types'
         );
         $all_meta = $wpdb->get_results($sql, OBJECT_K);
@@ -728,6 +748,11 @@ function wpcf_admin_custom_types_form_submit($form)
         }
     }
 
+    /**
+     * set last edit time
+     */
+    $data[TOOLSET_EDIT_LAST] = time();
+
     // Merging protected data
     $custom_types[$post_type] = array_merge( $protected_data_check, $data );
 
@@ -778,7 +803,7 @@ function wpcf_admin_metabox_submitdiv($cf)
 /**
  * Visibility
  */
-function wpcf_admin_metabox_wpcf_visibility($cf)
+function wpcf_admin_metabox_wpcf_visibility($ct)
 {
     $form = array();
     $form['table-2-open'] = wpcf_admin_metabox_begin(__( 'Visibility', 'wpcf' ), 'wpcf_visibility', 'wpcf-types-form-visibility-table', false);
@@ -812,6 +837,16 @@ function wpcf_admin_metabox_wpcf_visibility($cf)
         '#inline' => true,
         '#pattern' => '<BEFORE><p><LABEL><ELEMENT><ERROR></p><AFTER>',
         '#after' => '</div>',
+    );
+    /**
+     * dashboard glance option to show counters on admin dashbord widget
+     */
+    $form['dashboard_glance'] = array(
+        '#type' => 'checkbox',
+        '#before' => sprintf('<h4>%s</h4>', __( 'Show in Right Now', 'wpcf' )),
+        '#name' => 'ct[dashboard_glance]',
+        '#title' => __( 'Show number of entries on "At a Glance" admin widget.', 'wpcf' ),
+        '#default_value' => !empty( $ct['dashboard_glance'] ),
     );
     $form['table-2-close'] = wpcf_admin_metabox_end();
     return $form;
@@ -860,7 +895,7 @@ function wpcf_admin_metabox_taxonomies($ct)
     /**
      * Labels
      */
-function wpcf_admin_metabox_labels($cf)
+function wpcf_admin_metabox_labels($ct)
 {
     $form = array();
     $form['table-4-open'] = wpcf_admin_metabox_begin(__( 'Labels', 'wpcf' ), 'labels', 'wpcf-types-form-table');
@@ -911,12 +946,6 @@ function wpcf_admin_metabox_display_sections($ct)
 {
     $form = array();
     $form['table-5-open'] = wpcf_admin_metabox_begin(__( 'Display Sections', 'wpcf' ), 'display_sections', 'wpcf-types-form-supports-table');
-    $form['title-editor-warning'] = array(
-        '#type' => 'markup',
-        '#markup' => '<div id="wpcf-types-title-editor-warning" class="wpcf-form-error" style="display:none;">'
-        . __( 'WordPress does not allow disabling both the title and the editor. Please enable at least one of these.',
-                'wpcf' ) . '</div>',
-    );
     $options = array(
         'title' => array(
             '#name' => 'ct[supports][title]',
@@ -926,9 +955,6 @@ function wpcf_admin_metabox_display_sections($ct)
                     'wpcf' ),
             '#inline' => true,
             '#id' => 'wpcf-supports-title',
-            '#attributes' => array(
-                'onclick' => 'wpcfTitleEditorCheck();',
-            ),
         ),
         'editor' => array(
             '#name' => 'ct[supports][editor]',
@@ -937,9 +963,6 @@ function wpcf_admin_metabox_display_sections($ct)
             '#description' => __( 'Content input box for writing.', 'wpcf' ),
             '#inline' => true,
             '#id' => 'wpcf-supports-editor',
-            '#attributes' => array(
-                'onclick' => 'wpcfTitleEditorCheck();',
-            ),
         ),
         'comments' => array(
             '#name' => 'ct[supports][comments]',

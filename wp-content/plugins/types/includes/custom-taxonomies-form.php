@@ -3,9 +3,9 @@
  *
  * Custom taxonomies form
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/includes/custom-taxonomies-form.php $
- * $LastChangedDate: 2015-01-16 14:28:15 +0000 (Fri, 16 Jan 2015) $
- * $LastChangedRevision: 1069430 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/includes/custom-taxonomies-form.php $
+ * $LastChangedDate: 2015-04-01 14:15:17 +0000 (Wed, 01 Apr 2015) $
+ * $LastChangedRevision: 1125405 $
  * $LastChangedBy: iworks $
  *
  */
@@ -24,9 +24,9 @@ function wpcf_admin_custom_taxonomies_form() {
     $update = false;
 
     if ( isset( $_GET['wpcf-tax'] ) ) {
-        $id = $_GET['wpcf-tax'];
+        $id = sanitize_text_field( $_GET['wpcf-tax'] );
     } else if ( isset( $_POST['wpcf-tax'] ) ) {
-        $id = $_POST['wpcf-tax'];
+        $id = sanitize_text_field( $_POST['wpcf-tax'] );
     }
 
     if ( $id ) {
@@ -93,7 +93,6 @@ function wpcf_admin_custom_taxonomies_form() {
         '#markup' => '<div id="post-body-content">',
     );
 
-
     $form['table-1-open'] = array(
         '#type' => 'markup',
         '#markup' => '<table id="wpcf-types-form-name-table" class="wpcf-types-form-table widefat"><thead><tr><th colspan="2">' . __( 'Name and description',
@@ -104,19 +103,19 @@ function wpcf_admin_custom_taxonomies_form() {
     $form['name'] = array(
         '#type' => 'textfield',
         '#name' => 'ct[labels][name]',
-        '#title' => __( 'Custom taxonomy name plural', 'wpcf' ) . ' (<strong>' . __( 'required',
-                'wpcf' ) . '</strong>)',
+        '#title' => __( 'Custom taxonomy name plural', 'wpcf' ) . ' (<strong>' . __( 'required', 'wpcf' ) . '</strong>)',
         '#description' => '<strong>' . __( 'Enter in plural!', 'wpcf' )
-//        . '</strong><br />' . __('Alphanumeric with whitespaces only', 'wpcf')
         . '.',
         '#value' => isset( $ct['labels']['name'] ) ? $ct['labels']['name'] : '',
         '#validate' => array(
             'required' => array('value' => true),
             'maxlength' => array('value' => 30),
-//            'alphanumeric' => array('value' => true),
         ),
         '#pattern' => $table_row,
         '#inline' => true,
+        '#attributes' => array(
+            'placeholder' => __('Enter custom taxonomy name plural','wpcf'),
+        ),
     );
     $form['name-singular'] = array(
         '#type' => 'textfield',
@@ -125,25 +124,26 @@ function wpcf_admin_custom_taxonomies_form() {
                 'wpcf' ) . '</strong>)',
         '#description' => '<strong>' . __( 'Enter in singular!', 'wpcf' )
         . '</strong><br />'
-//        . __('Alphanumeric with whitespaces only', 'wpcf')
         . '.',
         '#value' => isset( $ct['labels']['singular_name'] ) ? $ct['labels']['singular_name'] : '',
         '#validate' => array(
             'required' => array('value' => true),
             'maxlength' => array('value' => 30),
-//            'alphanumeric' => array('value' => true),
         ),
         '#pattern' => $table_row,
         '#inline' => true,
+        '#attributes' => array(
+            'placeholder' => __('Enter custom taxonomy name singular','wpcf'),
+        ),
     );
 
     /*
-     * 
+     *
      * IF isset $_POST['slug'] it means form is not submitted
      */
     $attributes = array();
     if ( !empty( $_POST['ct']['slug'] ) ) {
-        $reserved = wpcf_is_reserved_name( $_POST['ct']['slug'], 'taxonomy' );
+        $reserved = wpcf_is_reserved_name( sanitize_text_field( $_POST['ct']['slug'] ), 'taxonomy' );
         if ( is_wp_error( $reserved ) ) {
             $attributes = array(
                 'class' => 'wpcf-form-error',
@@ -168,7 +168,10 @@ function wpcf_admin_custom_taxonomies_form() {
             'nospecialchars' => array('value' => true),
             'maxlength' => array('value' => 30),
         ),
-        '#attributes' => $attributes + array('maxlength' => '30'),
+        '#attributes' => $attributes + array(
+            'maxlength' => '30',
+            'placeholder' => __('Enter custom taxonomy slug','wpcf'),
+        ),
     );
     $form['description'] = array(
         '#type' => 'textarea',
@@ -178,6 +181,7 @@ function wpcf_admin_custom_taxonomies_form() {
         '#attributes' => array(
             'rows' => 4,
             'cols' => 60,
+            'placeholder' => __('Enter custom taxonomy description','wpcf'),
         ),
         '#pattern' => $table_row,
         '#inline' => true,
@@ -191,13 +195,16 @@ function wpcf_admin_custom_taxonomies_form() {
         '#markup' => '</div>',
     );
 
-
     /**
      * get box order
      */
-    $meta_box_order_defaults = array(
-        'side' => 'submitdiv,wpcf_visibility,post_types',
-        'normal' => 'labels,options',
+    $meta_box_order_defaults = apply_filters(
+        'wpcf_meta_box_order_defaults',
+        array(
+            'side' => array('submitdiv', 'wpcf_visibility', 'post_types'),
+            'normal' => array('labels', 'options'),
+        ),
+        'taxonomy'
     );
     $screen = get_current_screen();
     if ( false == ( $meta_box_order = get_user_option( 'meta-box-order_'.$screen->id) )) {
@@ -208,13 +215,20 @@ function wpcf_admin_custom_taxonomies_form() {
         }
     }
 
-    $meta_boxes = array(
-        'submitdiv' => false,
-        'wpcf_visibility' => $ct,
-        'post_types' => $ct,
-        'labels' => $ct,
-        'options' => $ct,
-    );
+    $meta_boxes = array();
+    foreach( $meta_box_order_defaults as $key => $value ) {
+        foreach($value as $meta_box_key) {
+            $meta_boxes[$meta_box_key] = $ct;
+        }
+    }
+    $meta_boxes[ 'submitdiv'] = false;
+
+    foreach ( $meta_box_order as $key => $value ) {
+        if ( is_array($value) ) {
+            continue;
+        }
+        $meta_box_order[$key] = explode(',', $value);
+    }
 
     /**
      * postbox-container-1
@@ -224,7 +238,7 @@ function wpcf_admin_custom_taxonomies_form() {
         '#type' => 'markup',
         '#markup' => '<div id="postbox-container-1" class="postbox-container"><div class="meta-box-sortables ui-sortable" id="side-sortables">',
     );
-    foreach( explode(',',$meta_box_order['side']) as $key ) {
+    foreach( $meta_box_order['side'] as $key ) {
         $function = sprintf('wpcf_admin_metabox_%s', $key);
         if ( is_callable($function) ) {
             $form += $function($meta_boxes[$key], 'side');
@@ -245,7 +259,7 @@ function wpcf_admin_custom_taxonomies_form() {
         '#type' => 'markup',
         '#markup' => '<div id="postbox-container-2" class="postbox-container"><div class="meta-box-sortables ui-sortable" id="normal-sortables">',
     );
-    foreach( explode(',',$meta_box_order['normal']) as $key ) {
+    foreach( $meta_box_order['normal'] as $key ) {
         $function = sprintf('wpcf_admin_metabox_%s', $key);
         if ( is_callable($function) ) {
             $form += $function($meta_boxes[$key]);
@@ -294,6 +308,9 @@ function wpcf_admin_tax_form_js_validation()
 
 /**
  * Submit function
+ *
+ * @global object $wpdb
+ *
  */
 function wpcf_admin_custom_taxonomies_form_submit( $form )
 {
@@ -387,8 +404,14 @@ function wpcf_admin_custom_taxonomies_form_submit( $form )
         $post_types = get_option( 'wpcf-custom-types', array() );
         foreach ( $post_types as $id => $type ) {
             if ( array_key_exists( $id, $data['supports'] ) ) {
+                if ( empty($post_types[$id]['taxonomies'][$data['slug']]) ) {
+                    $post_types[$id][TOOLSET_EDIT_LAST] = time();
+                }
                 $post_types[$id]['taxonomies'][$data['slug']] = 1;
             } else {
+                if ( !empty($post_types[$id]['taxonomies'][$data['slug']]) ) {
+                    $post_types[$id][TOOLSET_EDIT_LAST] = time();
+                }
                 unset( $post_types[$id]['taxonomies'][$data['slug']] );
             }
         }
@@ -396,6 +419,7 @@ function wpcf_admin_custom_taxonomies_form_submit( $form )
     }
 
     $custom_taxonomies[$tax] = $data;
+    $custom_taxonomies[$tax][TOOLSET_EDIT_LAST] = time();
     update_option( 'wpcf-custom-taxonomies', $custom_taxonomies );
 
     // WPML register strings
@@ -694,6 +718,31 @@ function wpcf_admin_metabox_options($data)
         '#description' => __( 'Function name that will be called to update the count of an associated $object_type, such as post, is updated.', 'wpcf' ) . '<br />' . __( 'Default: None.', 'wpcf' ),
         '#value' => !empty( $data['update_count_callback'] ) ? $data['update_count_callback'] : '',
         '#inline' => true,
+    );
+
+    $form['meta_box_cb-header'] = array(
+        '#type' => 'markup',
+        '#markup' => sprintf('<h3>%s</h3>', __('Meta box callback function', 'wpcf')),
+    );
+    $form['meta_box_cb-disabled'] = array(
+        '#type' => 'checkbox',
+        '#force_boolean' => true,
+        '#title' => __( 'Hide taxonomy meta box.', 'wpcf' ),
+        '#name' => 'ct[meta_box_cb][disabled]',
+        '#default_value' => !empty( $data['meta_box_cb']['disabled'] ),
+        '#inline' => true,
+        '#description' => __( 'If you disable this, there will be no metabox on entry edit screen.', 'wpcf' ),
+    );
+    $hidden = empty( $data['meta_box_cb']['disabled'] ) ? '':' class="hidden"';
+    $form['meta_box_cb'] = array(
+        '#type' => 'textfield',
+        '#name' => 'ct[meta_box_cb][callback]',
+        '#title' => __('meta_box_cb', 'wpcf'),
+        '#description' => __( 'Provide a callback function name for the meta box display.', 'wpcf' ) . '<br />' . __( 'Default: None.', 'wpcf' ),
+        '#value' => !empty( $data['meta_box_cb']['callback']) ? $data['meta_box_cb']['callback'] : '',
+        '#inline' => true,
+        '#before' => '<div id="wpcf-types-form-meta_box_cb-toggle"' . $hidden . '>',
+        '#after' => '</div>',
     );
     /**
      * close

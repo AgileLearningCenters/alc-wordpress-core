@@ -1,18 +1,18 @@
 <?php
 /*
-  Plugin Name: Types Embeded - Complete Solution for Custom Fields and Types
+  Plugin Name: Types Embedded
   Plugin URI: http://wordpress.org/extend/plugins/types/
-  Description: Define custom post types, custom taxonomy and custom fields.
+  Description: Define custom post types, custom taxonomies and custom fields.
   Author: OnTheGoSystems
   Author URI: http://www.onthegosystems.com
-  Version: 1.6.5
+  Version: 1.6.6.5
  */
 /**
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/embedded/plugin.php $
- * $LastChangedDate: 2015-02-10 17:10:42 +0000 (Tue, 10 Feb 2015) $
- * $LastChangedRevision: 1086547 $
- * $LastChangedBy: AmirHelzer $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/plugin.php $
+ * $LastChangedDate: 2015-05-20 11:41:05 +0000 (Wed, 20 May 2015) $
+ * $LastChangedRevision: 1164110 $
+ * $LastChangedBy: iworks $
  *
  */
 

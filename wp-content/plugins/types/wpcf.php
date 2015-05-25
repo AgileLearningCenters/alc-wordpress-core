@@ -1,17 +1,17 @@
 <?php
 /*
-  Plugin Name: Types - Complete Solution for Custom Fields and Types
+  Plugin Name: Types
   Plugin URI: http://wordpress.org/extend/plugins/types/
-  Description: Define custom post types, custom taxonomy and custom fields.
+  Description: Define custom post types, custom taxonomies and custom fields.
   Author: OnTheGoSystems
   Author URI: http://www.onthegosystems.com
-  Version: 1.6.5
+  Version: 1.6.6.5
  */
 /**
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/wpcf.php $
- * $LastChangedDate: 2015-02-04 13:43:06 +0000 (Wed, 04 Feb 2015) $
- * $LastChangedRevision: 1082328 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/wpcf.php $
+ * $LastChangedDate: 2015-05-20 11:41:05 +0000 (Wed, 20 May 2015) $
+ * $LastChangedRevision: 1164110 $
  * $LastChangedBy: iworks $
  *
  */
@@ -20,7 +20,7 @@ if ( !defined( 'WPCF_VERSION' ) ) {
     /**
      * make sure that WPCF_VERSION in embedded/bootstrap.php is the same!
      */
-    define( 'WPCF_VERSION', '1.6.5' );
+    define( 'WPCF_VERSION', '1.6.6.5' );
 }
 
 define( 'WPCF_REPOSITORY', 'http://api.wp-types.com/' );
@@ -33,12 +33,19 @@ define( 'WPCF_RES_ABSPATH', WPCF_ABSPATH . '/resources' );
 define( 'WPCF_RES_RELPATH', WPCF_RELPATH . '/resources' );
 
 // Add installer
-include dirname( __FILE__ ) . '/plus/installer/loader.php';
-WP_Installer_Setup($wp_installer_instance,
-array(
-    'plugins_install_tab' => '1',
-    'repositories_include' => array('toolset', 'wpml')
-));
+$installer = dirname( __FILE__ ) . '/plus/installer/loader.php';
+if ( file_exists($installer) ) {
+    include_once $installer;
+    if ( function_exists('WP_Installer_Setup') ) {
+        WP_Installer_Setup(
+            $wp_installer_instance,
+            array(
+                'plugins_install_tab' => '1',
+                'repositories_include' => array('toolset', 'wpml')
+            )
+        );
+    }
+}
 
 require_once WPCF_INC_ABSPATH . '/constants.php';
 /*
@@ -169,8 +176,12 @@ function wpcf_is_reserved_name($name, $context, $check_pages = true)
      */
     if ( $check_pages && !empty( $name ) ) {
         global $wpdb;
-        $page = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type='page'",
-                        sanitize_title( $name ) ) );
+        $page = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type='page'",
+                sanitize_title( $name )
+            )
+        );
         if ( !empty( $page ) ) {
             return new WP_Error( 'wpcf_reserved_name', __( 'You cannot use this slug because there is already a page by that name. Please choose a different slug.',
                                     'wpcf' ) );

@@ -3,9 +3,9 @@
  *
  * Admin functions
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/admin.php $
- * $LastChangedDate: 2015-02-04 13:43:06 +0000 (Wed, 04 Feb 2015) $
- * $LastChangedRevision: 1082328 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/admin.php $
+ * $LastChangedDate: 2015-03-25 12:38:40 +0000 (Wed, 25 Mar 2015) $
+ * $LastChangedRevision: 1120400 $
  * $LastChangedBy: iworks $
  *
  */
@@ -30,12 +30,18 @@ include_once WPCF_ABSPATH.'/classes/class.wpcf-marketing-messages.php';
 new WPCF_Types_Marketing_Messages();
 
 /**
+ * last edit flag
+ */
+if ( !defined('TOOLSET_EDIT_LAST' )){
+    define( 'TOOLSET_EDIT_LAST', '_toolset_edit_last');
+}
+
+/**
  * admin_init hook.
  */
 function wpcf_admin_init_hook()
 {
     wp_register_style('wpcf-css-embedded', WPCF_EMBEDDED_RES_RELPATH . '/css/basic.css', array(), WPCF_VERSION );
-    wp_register_style('wpcf-css', WPCF_RES_RELPATH . '/css/basic.css', array(), WPCF_VERSION);
 
     wp_enqueue_style( 'wpcf-promo-tabs', WPCF_EMBEDDED_RES_RELPATH . '/css/tabs.css', array(), WPCF_VERSION );
     wp_enqueue_style('toolset-dashicons');
@@ -59,38 +65,38 @@ function wpcf_admin_menu_hook()
 
     $subpages = array();
 
-    // Custom types and tax
+    // Custom Post Types
+    $subpages['wpcf-cpt'] = array(
+        'menu_title' => __( 'Custom Post Types', 'wpcf' ),
+        'function'   => 'wpcf_admin_menu_summary_cpt',
+    );
+
+    // Custom Taxonomies
     $subpages['wpcf-ctt'] = array(
-        'page_title' => __( 'Custom Types and Taxonomies', 'wpcf' ),
-        'menu_title' => __( 'Types &amp; Taxonomies', 'wpcf' ),
+        'menu_title' => __( 'Custom Taxonomies', 'wpcf' ),
         'function'   => 'wpcf_admin_menu_summary_ctt',
     );
 
     // Custom fields
     $subpages['wpcf-cf'] = array(
-        'page_title' => __( 'Custom Fields', 'wpcf' ),
         'menu_title' => __( 'Custom Fields', 'wpcf' ),
         'function'   => 'wpcf_admin_menu_summary',
     );
 
     // Custom Fields Control
     $subpages['wpcf-custom-fields-control'] = array(
-        'page_title' => __( 'Custom Fields Control', 'wpcf' ),
         'menu_title' => __( 'Custom Fields Control', 'wpcf' ),
         'function'   => 'wpcf_admin_menu_custom_fields_control',
     );
 
     // User Meta
     $subpages['wpcf-um'] = array(
-        'page_title' => __( 'User Fields', 'wpcf' ),
         'menu_title' => __( 'User Fields', 'wpcf' ),
         'function'   => 'wpcf_usermeta_summary',
-        'load_hook'  => 'wpcf_admin_menu_summary_hook',
     );
 
     // User Fields Control
     $subpages['wpcf-user-fields-control'] = array(
-        'page_title' => __( 'User Fields Control', 'wpcf' ),
         'menu_title' => __( 'User Fields Control', 'wpcf' ),
         'function'   => 'wpcf_admin_menu_user_fields_control',
     );
@@ -100,19 +106,16 @@ function wpcf_admin_menu_hook()
 
     // Import/Export
     $subpages['wpcf-import-export'] = array(
-        'page_title' => __( 'Import/Export', 'wpcf' ),
         'menu_title' => __( 'Import/Export', 'wpcf' ),
         'function'   => 'wpcf_admin_menu_import_export',
     );
 
     // Settings
     $subpages['wpcf-custom-settings'] = array(
-        'page_title' => __( 'Settings', 'wpcf' ),
         'menu_title' => __( 'Settings', 'wpcf' ),
         'function'   => 'wpcf_admin_menu_settings',
         'submenu' => array(
             'wpcf-debug-information' => array(
-                'page_title' => __( 'Debug Information', 'wpcf' ),
                 'menu_title' => __( 'Debug Information', 'wpcf' ),
                 'function' => 'wpcf_admin_menu_debug_information',
             ),
@@ -193,10 +196,21 @@ function wpcf_admin_menu_debug_information()
 /**
  * Menu page hook.
  */
+function wpcf_usermeta_summary_hook()
+{
+    do_action( 'wpcf_admin_page_init' );
+    wpcf_admin_load_collapsible();
+    wpcf_admin_page_add_options('uf',  __( 'User Fields', 'wpcf' ));
+}
+
+/**
+ * Menu page hook.
+ */
 function wpcf_admin_menu_summary_hook()
 {
     do_action( 'wpcf_admin_page_init' );
     wpcf_admin_load_collapsible();
+    wpcf_admin_page_add_options('cf',  __( 'Custom Fields', 'wpcf' ));
 }
 
 /**
@@ -204,16 +218,19 @@ function wpcf_admin_menu_summary_hook()
  */
 function wpcf_admin_menu_summary()
 {
-    echo wpcf_add_admin_header( __( 'Custom Fields', 'wpcf' ) );
+    wpcf_add_admin_header(
+        __( 'Custom Fields', 'wpcf' ),
+        array('page'=>'wpcf-edit'),
+        __('Add New Group', 'wpcf')
+    );
     require_once WPCF_INC_ABSPATH . '/fields.php';
     require_once WPCF_INC_ABSPATH . '/fields-list.php';
     $to_display = wpcf_admin_fields_get_fields();
     if ( !empty( $to_display ) ) {
-        add_action( 'wpcf_groups_list_table_after',
-                'wpcf_admin_promotional_text' );
+        add_action( 'wpcf_groups_list_table_after', 'wpcf_admin_promotional_text' );
     }
     wpcf_admin_fields_list();
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 }
 
 /**
@@ -293,49 +310,32 @@ function wpcf_admin_menu_edit_fields()
     } else {
         $title = __( 'Add New Group', 'wpcf' );
     }
-    echo wpcf_add_admin_header( $title );
+    wpcf_add_admin_header( $title );
     wpcf_wpml_warning();
     $form = wpcf_form( 'wpcf_form_fields' );
-
-    ?>
-    <script type="text/javascript">
-        function wpcf_group_submit()
-        {
-        if (jQuery('#wpcf-group-name').val() == "<?php echo addslashes(__('Enter group title', 'wpcf')); ?>") {
-                jQuery('#wpcf-group-name').val('');
-            }
-            if (jQuery('#wpcf-group-description').val() == "<?php echo addslashes(__('Enter a description for this group', 'wpcf')); ?>") {
-                jQuery('#wpcf-group-description').val('');
-            }
-            jQuery('.wpcf-forms-set-legend').each(function () {
-                if (jQuery(this).val() == "<?php echo addslashes(__('Enter field name', 'wpcf')); ?>") {
-                    jQuery(this).val('');
-                }
-                if (jQuery(this).next().val() == "<?php echo addslashes(__('Enter field slug', 'wpcf')); ?>") {
-                    jQuery(this).next().val('');
-                }
-                if (jQuery(this).next().next().val() == "<?php echo addslashes(__('Describe this field', 'wpcf')); ?>") {
-                    jQuery(this).next().next().val('');
-                }
-            });
-        }
-    </script>
-
-    <br /><form method="post" action="" class="wpcf-fields-form wpcf-form-validate" onsubmit="wpcf_group_submit()">
-    <?php echo $form->renderForm(); ?>
-    </form>
-    <?php
-    echo wpcf_add_admin_footer();
+    echo '<form method="post" action="" class="wpcf-fields-form wpcf-form-validate">';
+    echo '<div id="poststuff">';
+    echo $form->renderForm();
+    echo '</div>';
+    echo '</form>';
+    wpcf_add_admin_footer();
 }
 
-/**
- * Menu page hook.
- */
-function wpcf_admin_menu_summary_ctt_hook()
+function wpcf_admin_page_add_options( $name, $label)
+{
+    $option = 'per_page';
+    $args = array(
+        'label' => $label,
+        'default' => 10,
+        'option' => sprintf('wpcf_%s_%s', $name, $option),
+    );
+    add_screen_option( $option, $args );
+}
+
+function wpcf_admin_menu_summary_cpt_ctt_hook()
 {
     do_action( 'wpcf_admin_page_init' );
-    wp_enqueue_style( 'wpcf-promo-tabs', WPCF_RES_RELPATH . '/css/tabs.css',
-            array(), WPCF_VERSION );
+    wp_enqueue_style( 'wpcf-promo-tabs', WPCF_RES_RELPATH . '/css/tabs.css', array(), WPCF_VERSION );
     wpcf_admin_load_collapsible();
     require_once WPCF_INC_ABSPATH . '/custom-types.php';
     require_once WPCF_INC_ABSPATH . '/custom-taxonomies.php';
@@ -343,19 +343,51 @@ function wpcf_admin_menu_summary_ctt_hook()
 }
 
 /**
+ * Menu page hook.
+ */
+function wpcf_admin_menu_summary_cpt_hook()
+{
+    wpcf_admin_menu_summary_cpt_ctt_hook();
+    wpcf_admin_page_add_options('cpt',  __( 'Custom Post Types', 'wpcf' ));
+}
+
+/**
+ * Menu page display.
+ */
+function wpcf_admin_menu_summary_cpt()
+{
+    wpcf_add_admin_header(
+        __( 'Custom Post Types', 'wpcf' ),
+        array('page'=>'wpcf-edit-type'),
+        __('Add New Custom Post Type', 'wpcf')
+    );
+    $to_display_posts = get_option( 'wpcf-custom-types', array() );
+    $to_display_tax = get_option( 'wpcf-custom-taxonomies', array() );
+    if ( !empty( $to_display_posts ) || !empty( $to_display_tax ) ) {
+        add_action( 'wpcf_types_tax_list_table_after', 'wpcf_admin_promotional_text' );
+    }
+    wpcf_admin_custom_post_types_list();
+    wpcf_add_admin_footer();
+}
+
+/**
+ * Menu page hook.
+ */
+function wpcf_admin_menu_summary_ctt_hook()
+{
+    wpcf_admin_menu_summary_cpt_ctt_hook();
+    wpcf_admin_page_add_options('ctt',  __( 'Custom Taxonomies', 'wpcf' ));
+}
+
+/**
  * Menu page display.
  */
 function wpcf_admin_menu_summary_ctt()
 {
-    echo wpcf_add_admin_header( __( 'Custom Post Types and Taxonomies', 'wpcf' ) );
-    $to_display_posts = get_option( 'wpcf-custom-types', array() );
-    $to_display_tax = get_option( 'wpcf-custom-taxonomies', array() );
-    if ( !empty( $to_display_posts ) || !empty( $to_display_tax ) ) {
-        add_action( 'wpcf_types_tax_list_table_after',
-                'wpcf_admin_promotional_text' );
-    }
-    wpcf_admin_ctt_list();
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_header( __( 'Custom Taxonomies', 'wpcf' ), array('page' => 'wpcf-edit-tax') );
+    wpcf_admin_custom_taxonomies_list();
+    do_action('wpcf_types_tax_list_table_after');
+    wpcf_add_admin_footer();
 }
 
 /**
@@ -402,14 +434,14 @@ function wpcf_admin_menu_edit_type()
     } else {
         $title = __( 'Add New Custom Post Type', 'wpcf' );
     }
-    echo wpcf_add_admin_header( $title );
+    wpcf_add_admin_header( $title );
     wpcf_wpml_warning();
     $form = wpcf_form( 'wpcf_form_types' );
     echo '<br /><form method="post" action="" class="wpcf-types-form '
     . 'wpcf-form-validate">';
     echo $form->renderForm();
     echo '</form>';
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 }
 
 /**
@@ -451,14 +483,14 @@ function wpcf_admin_menu_edit_tax()
     } else {
         $title = __( 'Add New Taxonomy', 'wpcf' );
     }
-    echo wpcf_add_admin_header( $title );
+    wpcf_add_admin_header( $title );
     wpcf_wpml_warning();
     $form = wpcf_form( 'wpcf_form_tax' );
     echo '<br /><form method="post" action="" class="wpcf-tax-form '
     . 'wpcf-form-validate">';
     echo $form->renderForm();
     echo '</form>';
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 }
 
 /**
@@ -481,12 +513,12 @@ function wpcf_admin_menu_import_export_hook()
  */
 function wpcf_admin_menu_import_export()
 {
-    echo wpcf_add_admin_header( __( 'Import/Export', 'wpcf' ) );
+    wpcf_add_admin_header( __( 'Import/Export', 'wpcf' ) );
     echo '<br /><form method="post" action="" class="wpcf-import-export-form '
     . 'wpcf-form-validate" enctype="multipart/form-data">';
     echo wpcf_form_simple( wpcf_admin_import_export_form() );
     echo '</form>';
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 }
 
 /**
@@ -505,7 +537,7 @@ function wpcf_admin_menu_custom_fields_control_hook()
             && wp_verify_nonce( $_REQUEST['_wpnonce'],
                     'custom_fields_control_bulk' )
             && (isset( $_POST['action'] ) || isset( $_POST['action2'] )) && !empty( $_POST['fields'] ) ) {
-        $action = $_POST['action'] == '-1' ? $_POST['action2'] : $_POST['action'];
+        $action = ( $_POST['action'] == '-1' ) ? sanitize_text_field( $_POST['action2'] ) : sanitize_text_field( $_POST['action'] );
         wpcf_admin_custom_fields_control_bulk_actions( $action );
     }
 
@@ -524,13 +556,13 @@ function wpcf_admin_menu_custom_fields_control_hook()
 function wpcf_admin_menu_custom_fields_control()
 {
     global $wpcf_control_table;
-    echo wpcf_add_admin_header( __( 'Custom Fields Control', 'wpcf' ) );
+    wpcf_add_admin_header( __( 'Custom Fields Control', 'wpcf' ) );
     echo '<form method="post" action="" id="wpcf-custom-fields-control-form" class="wpcf-custom-fields-control-form '
     . 'wpcf-form-validate" enctype="multipart/form-data">';
     echo wpcf_admin_custom_fields_control_form( $wpcf_control_table );
     wp_nonce_field( 'custom_fields_control_bulk' );
     echo '</form>';
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 }
 
 /**
@@ -552,13 +584,13 @@ function wpcf_admin_menu_migration_hook()
  */
 function wpcf_admin_menu_migration()
 {
-    echo wpcf_add_admin_header( __( 'Migration', 'wpcf' ) );
+    wpcf_add_admin_header( __( 'Migration', 'wpcf' ) );
     echo '<br /><form method="post" action="" id="wpcf-migration-form" class="wpcf-migration-form '
     . 'wpcf-form-validate" enctype="multipart/form-data">';
     $form = wpcf_form( 'wpcf_form_migration' );
     echo $form->renderForm();
     echo '</form>';
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 }
 
 /**
@@ -583,7 +615,7 @@ function wpcf_admin_menu_settings()
 {
     $show_toolset_messages = !WPCF_Types_Marketing_Messages::check_register();
     ob_start();
-    echo wpcf_add_admin_header( __( 'Settings', 'wpcf' ) );
+    wpcf_add_admin_header( __( 'Settings', 'wpcf' ) );
 
     ?>
     <p style="font-weight: bold;"><?php
@@ -703,7 +735,7 @@ printf(
         </tbody>
     </table>
     <?php
-    echo wpcf_add_admin_footer();
+    wpcf_add_admin_footer();
 
     echo ob_get_clean();
 }
@@ -715,12 +747,24 @@ printf(
  * @param string $icon_id Custom icon
  * @return string
  */
-function wpcf_add_admin_header($title)
+function wpcf_add_admin_header($title, $add_new = false, $add_new_title = false)
 {
     echo '<div class="wrap">';
-    printf('<h2>%s</h2>', $title );
+    echo '<h2>', $title;
+    if ( !$add_new_title ) {
+        $add_new_title = __('Add New', 'wpcf');
+    }
+    if ( $add_new ) {
+        printf(
+            ' <a href="%s" class="add-new-h2">%s</a>',
+            add_query_arg( $add_new, admin_url('admin.php')),
+            $add_new_title
+        );
+    }
+    echo '</h2>';
+	$current_page = sanitize_text_field( $_GET['page'] );
     do_action( 'wpcf_admin_header' );
-    do_action( 'wpcf_admin_header_' . $_GET['page'] );
+    do_action( 'wpcf_admin_header_' . $current_page );
 }
 
 /**
@@ -731,7 +775,8 @@ function wpcf_add_admin_header($title)
  */
 function wpcf_add_admin_footer()
 {
-    do_action( 'wpcf_admin_footer_' . $_GET['page'] );
+    $current_page = sanitize_text_field( $_GET['page'] );
+	do_action( 'wpcf_admin_footer_' . $current_page );
     do_action( 'wpcf_admin_footer' );
     echo '</div>';
 }
@@ -811,7 +856,7 @@ function wpcf_admin_widefat_table( $ID, $header, $rows = array(), $empty_message
 function wpcf_admin_tabs($tabs, $page, $default = '', $current = '')
 {
     if ( empty( $current ) && isset( $_GET['tab'] ) ) {
-        $current = $_GET['tab'];
+        $current = sanitize_text_field( $_GET['tab'] );
     } else {
         $current = $default;
     }
@@ -877,6 +922,7 @@ function wpcf_admin_plugin_help($hook, $page)
                 $call = 'custom_fields';
                 break;
 
+            case 'wpcf-cpt':
             case 'wpcf-ctt':
                 $call = 'custom_types_and_taxonomies';
                 break;
@@ -1006,6 +1052,7 @@ function wpcf_admin_deactivate_content($type, $arg, $action = 'delete')
                     }
                     if ( array_key_exists( $arg, $data['supports'] ) ) {
                         unset( $custom[$post_type]['supports'][$arg] );
+                        $custom[$post_type][TOOLSET_EDIT_LAST] = time();
                     }
                 }
                 update_option( 'wpcf-custom-taxonomies', $custom );
@@ -1022,6 +1069,7 @@ function wpcf_admin_deactivate_content($type, $arg, $action = 'delete')
                     }
                     if ( array_key_exists( $arg, $data['taxonomies'] ) ) {
                         unset( $custom[$post_type]['taxonomies'][$arg] );
+                        $custom[$post_type][TOOLSET_EDIT_LAST] = time();
                     }
                 }
                 update_option( 'wpcf-custom-types', $custom );
@@ -1142,7 +1190,7 @@ function wpcf_admin_add_submenu_page($menu, $menu_slug = null, $menu_parent = 'w
      */
     $hook = add_submenu_page(
         $menu_parent,
-        $menu['page_title'],
+        isset($menu['page_title'])? $menu['page_title']:$menu['menu_title'],
         $menu['menu_title'],
         $wpcf_capability,
         $menu_slug,
@@ -1175,3 +1223,25 @@ function wpcf_admin_add_submenu_page($menu, $menu_slug = null, $menu_parent = 'w
     return $hook;
 }
 
+/**
+ * sort helper for tables
+ */
+function wpcf_usort_reorder($a,$b)
+{
+    $orderby = (!empty($_REQUEST['orderby'])) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'title'; //If no sort, default to title
+    $order = (!empty($_REQUEST['order'])) ? sanitize_text_field( $_REQUEST['order'] ) : 'asc'; //If no order, default to asc
+    if ( ! in_array( $order, array( 'asc', 'desc' ) ) ) {
+        $order = 'asc';
+    }
+    if ('title' == $orderby || !isset($a[$orderby])) {
+        $orderby = 'slug';
+    }
+    $result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
+    return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
+}
+
+add_filter('set-screen-option', 'wpcf_table_set_option', 10, 3);
+function wpcf_table_set_option($status, $option, $value)
+{
+      return $value;
+}

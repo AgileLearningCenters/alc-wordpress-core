@@ -4,9 +4,9 @@
  *
  * Since Types 1.2
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/embedded/includes/module-manager.php $
- * $LastChangedDate: 2014-11-18 06:47:25 +0000 (Tue, 18 Nov 2014) $
- * $LastChangedRevision: 1027712 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/includes/module-manager.php $
+ * $LastChangedDate: 2015-05-12 12:24:38 +0000 (Tue, 12 May 2015) $
+ * $LastChangedRevision: 1158787 $
  * $LastChangedBy: iworks $
  *
  */
@@ -572,6 +572,18 @@ function wpcf_admin_export_selected_data ( array $items, $_type = 'all', $return
                 array() ), $_items );
         } else {
             $custom_types = get_option( 'wpcf-custom-types', array() );
+            /**
+             * fix custom field array for proper XML output
+             */
+            foreach ( $custom_types as $custom_type_key => $custom_type_data ) {
+                if ( !isset($custom_type_data['custom_fields']) || empty($custom_type_data['custom_fields']) ) {
+                    continue;
+                }
+                $custom_types[$custom_type_key]['custom_fields'] = array();
+                foreach( $custom_type_data['custom_fields'] as $custom_field_name ) {
+                    $custom_types[$custom_type_key]['custom_fields'][$custom_field_name] = 1;
+                }
+            }
         }
         // Get custom types
         if ( !empty( $custom_types ) ) {
@@ -775,7 +787,7 @@ function wpcf_admin_export_selected_data ( array $items, $_type = 'all', $return
  *
  * Import selected items given by xmlstring.
  *
- * @global type $wpdb
+ * @global object $wpdb
  * @global type $iclTranslationManagement
  * @param type $data
  * @param type $_type
@@ -850,10 +862,13 @@ function wpcf_admin_import_data_from_xmlstring( $data = '', $_type = 'types',
                 'post_content' => !empty( $group['post_content'] ) ? $group['post_content'] : '',
             );
             if ( (isset( $group['add'] ) && $group['add'] ) ) {
-                $post_to_update = $wpdb->get_var( $wpdb->prepare(
-                                "SELECT ID FROM $wpdb->posts
-                    WHERE post_title = %s AND post_type = %s",
-                                $group['post_title'], 'wp-types-group' ) );
+                $post_to_update = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "SELECT ID FROM $wpdb->posts WHERE post_title = %s AND post_type = %s",
+                        $group['post_title'],
+                        'wp-types-group'
+                    )
+                );
                 // Update (may be forced by bulk action)
                 if ( $group['update'] || (!empty( $post_to_update )) ) {
                     if ( !empty( $post_to_update ) ) {

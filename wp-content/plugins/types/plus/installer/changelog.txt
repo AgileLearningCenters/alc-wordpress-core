@@ -1,3 +1,24 @@
+= 1.5.5 =
+* Fixed the logic for the high_priority parameter
+* Fixed js bug causing a conflict with NextGen
+* Fixed bug preventing users to install and upgrade Types when they didn't have a Toolset subscription
+* Fixed bug preventing users to upgrade from the embedded Types to the full version
+
+= 1.5.4 =
+* Option to disable auto-updates
+* Escaped urls generated with add_query_arg
+
+= 1.5.3 =
+* Fixed bug in WP_Installer::custom_plugins_api_call (filter for plugins_api) causing conflicts with other filters for plugins_api
+
+= 1.5.2 =
+* More meaningful errors when plugin downloads fail
+* WordPress 4.2 compatibility
+* Performance improvements (will not load in places where it's not needed and not make unnecessary requests to the CDN)
+* Support putting deps.xml config file in the theme folder (root)
+* Included code for importing data for toolset plugins
+* Use CloudFront urls for products list files
+
 = 1.5.1 =
 * Fix for allowing embedded plugins to be updated
 * Logic for the migration from embedded plugins to full plugins

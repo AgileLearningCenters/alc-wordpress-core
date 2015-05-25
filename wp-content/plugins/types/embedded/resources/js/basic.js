@@ -4,9 +4,9 @@
  * For now full and embedded version use this script.
  * Before moving full-version-only code - make sure it's not needed here.
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.5/embedded/resources/js/basic.js $
- * $LastChangedDate: 2015-01-28 06:42:34 +0000 (Wed, 28 Jan 2015) $
- * $LastChangedRevision: 1077234 $
+ * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/resources/js/basic.js $
+ * $LastChangedDate: 2015-03-10 06:46:08 +0000 (Tue, 10 Mar 2015) $
+ * $LastChangedRevision: 1109249 $
  * $LastChangedBy: iworks $
  *
  */
@@ -243,7 +243,7 @@ jQuery(document).ready(function(){
                 passed = false;
             }
         });
-        
+
         if (passed == false) {
             // Bind message fade out
             jQuery('.wpcf-forms-field-slug').live('keyup', function(){
@@ -265,6 +265,7 @@ jQuery(document).ready(function(){
         var updateAdd = wpcfGetParameterByName('wpcf_ajax_update_add', jQuery(this).attr('href'));
         var warning = wpcfGetParameterByName('wpcf_warning', jQuery(this).attr('href'));
         var thisObject = jQuery(this);
+        var thisObjectTR = jQuery(this).closest('tr');
         if (warning != false) {
             var answer = confirm(warning);
             if (answer == false) {
@@ -275,7 +276,6 @@ jQuery(document).ready(function(){
             url: jQuery(this).attr('href'),
             type: 'get',
             dataType: 'json',
-            //            data: ,
             cache: false,
             beforeSend: function() {
                 if (update != false) {
@@ -299,6 +299,17 @@ jQuery(document).ready(function(){
                         && (typeof data.wpcf_nonce_ajax_callback != 'undefined'
                             && data.wpcf_nonce_ajax_callback == wpcf_nonce_ajax_callback)) {
                         eval(data.execute);
+                    }
+                    if (typeof data.status != 'undefined' ) {
+                        if ( 'inactive' == data.status ) {
+                            thisObjectTR.addClass('status-inactive');
+
+                        } else {
+                            thisObjectTR.removeClass('status-inactive');
+                        }
+                    }
+                    if (typeof data.status_label != 'undefined' ) {
+                        jQuery('td.status', thisObjectTR).html(data.status_label);
                     }
                 }
                 if (callback != false) {
@@ -369,6 +380,16 @@ jQuery(document).ready(function(){
             jQuery('#wpcf-types-form-rewrite-toggle').slideDown();
         } else {
             jQuery('#wpcf-types-form-rewrite-toggle').slideUp();
+        }
+    });
+    /**
+     * meta_box_cb
+     */
+    jQuery('.wpcf-tax-form input[name="ct[meta_box_cb][disabled]"]').change(function(){
+        if (jQuery(this).is(':checked')) {
+            jQuery('#wpcf-types-form-meta_box_cb-toggle').slideUp();
+        } else {
+            jQuery('#wpcf-types-form-meta_box_cb-toggle').slideDown();
         }
     });
     jQuery('input[name="ct[show_in_menu]"]').change(function(){
@@ -523,18 +544,6 @@ function wpcfLoadingButtonStop() {
     //type modal didnt disappeared
     jQuery('.types_modal_box').remove();
     jQuery('.types_block_page').remove();
-    
-}
-
-/**
- * Controls supports title or body Warning.
- */
-function wpcfTitleEditorCheck() {
-    if (!jQuery('#wpcf-supports-title').is(':checked') && !jQuery('#wpcf-supports-editor').is(':checked')) {
-        jQuery('#wpcf-types-title-editor-warning').fadeIn();
-    } else {
-        jQuery('#wpcf-types-title-editor-warning').fadeOut();
-    }
 }
 
 /**
