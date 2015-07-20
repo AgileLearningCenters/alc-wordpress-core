@@ -2,10 +2,6 @@
 
 /**
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/common/toolset-forms/bootstrap.php $
- * $LastChangedDate: 2015-05-12 12:24:38 +0000 (Tue, 12 May 2015) $
- * $LastChangedRevision: 1158787 $
- * $LastChangedBy: iworks $
  *
  */
 require_once 'api.php';
@@ -289,8 +285,10 @@ class WPToolset_Forms_Bootstrap {
             $current_types = $query->get('post_type');
             if (empty($current_types)) {
                 $cpt_to_add[] = 'post';
-            } else {
+            } elseif (is_array($current_types)) {
                 $cpt_to_add = array_merge($current_types, $cpt_to_add);
+            } elseif (is_string($current_types)) {
+                $cpt_to_add[] = $current_types;
             }
             $query->set('post_type', $cpt_to_add);
         }

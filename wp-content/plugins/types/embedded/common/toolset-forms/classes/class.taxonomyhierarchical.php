@@ -2,10 +2,6 @@
 
 /**
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/common/toolset-forms/classes/class.taxonomyhierarchical.php $
- * $LastChangedDate: 2015-05-12 12:24:38 +0000 (Tue, 12 May 2015) $
- * $LastChangedRevision: 1158787 $
- * $LastChangedBy: iworks $
  *
  */
 include_once 'class.textfield.php';

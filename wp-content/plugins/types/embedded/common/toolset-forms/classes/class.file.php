@@ -1,10 +1,6 @@
 <?php
 /**
  *
- * $HeadURL: http://plugins.svn.wordpress.org/types/tags/1.6.6.5/embedded/common/toolset-forms/classes/class.file.php $
- * $LastChangedDate: 2015-05-12 12:24:38 +0000 (Tue, 12 May 2015) $
- * $LastChangedRevision: 1158787 $
- * $LastChangedBy: iworks $
  *
  */
 require_once 'class.textfield.php';
@@ -39,10 +35,21 @@ class WPToolset_Field_File extends WPToolset_Field_Textfield
         if ( !wp_script_is( 'wptoolset-field-file', 'enqueued' ) ) {
             wp_enqueue_script( 'wptoolset-field-file' );
         }
-        global $post;
-        if ( is_object($post) ) {
-            wp_enqueue_media(array('post' => $post->ID));
+
+        if ( is_admin() ) {
+            $screen = get_current_screen();
+            if (isset($screen->parent_base) && 'users' == $screen->parent_base) {
+                wp_enqueue_media();
+            }
+
+            if (isset($screen->post_type) && isset($screen->base) && 'post' == $screen->base) {
+                global $post;
+                if ( is_object($post) ) {
+                    wp_enqueue_media(array('post' => $post->ID));
+                }
+            }
         }
+
     }
 
     public function enqueueStyles()
@@ -75,15 +82,25 @@ class WPToolset_Field_File extends WPToolset_Field_Textfield
 
         // Set preview
         if ( !empty( $attachment_id ) ) {
-            $preview = wp_get_attachment_image( $attachment_id, 'thumbnail' );
+            $attributes = array();
+            $full = wp_get_attachment_image_src($attachment_id, 'full');
+            if ( !empty($full) ) {
+                  $attributes['data-full-src'] = esc_attr($full[0]);
+            }
+            $preview = wp_get_attachment_image( $attachment_id, 'thumbnail', false, $attributes);
         } else {
             // If external image set preview
             $file_path = parse_url( $value );
-            if ( $file_path && isset( $file_path['path'] ) )
-                    $file = pathinfo( $file_path['path'] );
-            else $file = pathinfo( $value );
-            if ( isset( $file['extension'] ) && in_array( strtolower( $file['extension'] ),
-                            array('jpg', 'jpeg', 'gif', 'png') ) ) {
+            if ( $file_path && isset( $file_path['path'] ) ) {
+                $file = pathinfo( $file_path['path'] );
+            }
+            else {
+                $file = pathinfo( $value );
+            }
+            if (
+                isset( $file['extension'] )
+                && in_array( strtolower( $file['extension'] ), array('jpg', 'jpeg', 'gif', 'png') )
+            ) {
                 $preview = '<img alt="" src="' . $value . '" />';
             }
         }
