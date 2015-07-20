@@ -102,6 +102,7 @@ class paypal_ipn_handler {
 
         $payment_currency = get_option('cart_payment_currency');
 
+        $individual_paid_item_total = 0;
         foreach ($cart_items as $current_cart_item)
         {
             $cart_item_data_num = $current_cart_item['item_number'];
@@ -109,6 +110,7 @@ class paypal_ipn_handler {
             $cart_item_data_quantity = $current_cart_item['quantity'];
             $cart_item_data_total = $current_cart_item['mc_gross'];
             $cart_item_data_currency = $current_cart_item['mc_currency'];
+            $individual_paid_item_total += $cart_item_data_total;
 
             $this->debug_log('Item Number: '.$cart_item_data_num,true);
             $this->debug_log('Item Name: '.$cart_item_data_name,true);
@@ -116,146 +118,163 @@ class paypal_ipn_handler {
             $this->debug_log('Item Total: '.$cart_item_data_total,true);
             $this->debug_log('Item Currency: '.$cart_item_data_currency,true);
 
-            // Compare the values
+            // Compare the currency values to make sure it is correct.
             if ($payment_currency != $cart_item_data_currency)
             {
-            $this->debug_log('Invalid Product Currency : '.$payment_currency,false);
-            return false;
+                $this->debug_log('Invalid Product Currency : '.$payment_currency,false);
+                return false;
             }
         }        
         
         $post_id = $custom_values['wp_cart_id'];
+        $orig_cart_items = get_post_meta( $post_id, 'wpsc_cart_items', true );
         $ip_address = $custom_values['ip'];
         $applied_coupon_code = $custom_values['coupon_code'];
         $currency_symbol = get_option('cart_currency_symbol');
         $this->debug_log('custom values',true);
         $this->debug_log_array($custom_values,true);
-        //$this->debug_log('post id: '.$post_id,true);
-        if($post_id)
-        {           
-            //security check
-            if(!get_post_status($post_id))
-            {
-                $this->debug_log('Order ID '.$post_id.' does not exist in the database. This is not a Simple PayPal Shopping Cart order', false);
+        $this->debug_log('Order post id: '.$post_id,true);
+        
+        //*** Do security checks ***
+        if(empty($post_id)){
+            $this->debug_log('Order ID '.$post_id.' does not exist in the IPN notification. This request will not be processed.', false);
+            return;
+        }
+        
+        if(!get_post_status($post_id))
+        {
+            $this->debug_log('Order ID '.$post_id.' does not exist in the database. This is not a Simple PayPal Shopping Cart order', false);
+            return;
+        }
+
+        if (get_option('wp_shopping_cart_strict_email_check') != '')
+        {
+            $seller_paypal_email = get_option('cart_paypal_email');
+            if ($seller_paypal_email != $this->ipn_data['receiver_email']){
+                $error_msg .= 'Invalid Seller Paypal Email Address : '.$this->ipn_data['receiver_email'];
+                $this->debug_log($error_msg, false);
                 return;
             }
-            
-            if (get_option('wp_shopping_cart_strict_email_check') != '')
-            {
-                $seller_paypal_email = get_option('cart_paypal_email');
-                if ($seller_paypal_email != $this->ipn_data['receiver_email']){
-                    $error_msg .= 'Invalid Seller Paypal Email Address : '.$this->ipn_data['receiver_email'];
-                    $this->debug_log($error_msg, false);
-                    return;
-                }
-                else{
-                    $this->debug_log('Seller Paypal Email Address is Valid: '.$this->ipn_data['receiver_email'],true);
-                }
-            }
-            
-            $transaction_id = get_post_meta( $post_id, 'wpsc_txn_id', true );
-            if(!empty($transaction_id))
-            {
-                if($transaction_id == $txn_id)  //this transaction has been already processed once
-                {
-                    $this->debug_log('This transaction has been already processed once. Transaction ID: '.$transaction_id, false);
-                    return;
-                }
-            }
-            
-            //End of security check
-        
-            $updated_wpsc_order = array(
-                'ID'             => $post_id,
-                'post_status'    => 'publish',
-                'post_type'     => 'wpsc_cart_orders',
-            );
-            wp_update_post($updated_wpsc_order);
-            
-            update_post_meta( $post_id, 'wpsc_first_name', $first_name );
-            update_post_meta( $post_id, 'wpsc_last_name', $last_name );
-            update_post_meta( $post_id, 'wpsc_email_address', $buyer_email );
-            update_post_meta( $post_id, 'wpsc_txn_id', $txn_id );
-            $mc_gross = $this->ipn_data['mc_gross'];
-            update_post_meta( $post_id, 'wpsc_total_amount', $mc_gross);
-            update_post_meta( $post_id, 'wpsc_ipaddress', $ip_address );
-            update_post_meta( $post_id, 'wpsc_address', $address );
-            update_post_meta( $post_id, 'wpspsc_phone', $phone );
-            $status = "Paid";
-            update_post_meta( $post_id, 'wpsc_order_status', $status );
-            update_post_meta( $post_id, 'wpsc_applied_coupon', $applied_coupon_code );
-            $cart_items = get_post_meta( $post_id, 'wpsc_cart_items', true );
-            $product_details = "";
-            $item_counter = 1;
-            $shipping = "";
-            if($cart_items){
-                foreach ($cart_items as $item){
-                    if($item_counter != 1){
-                        $product_details .= "\n";
-                    }
-                    $item_total = $item['price'] * $item['quantity'];
-                    $product_details .= $item['name']." x ".$item['quantity']." - ".$currency_symbol.wpspsc_number_format_price($item_total)."\n";
-                    if($item['file_url']){
-                        $file_url = base64_decode($item['file_url']);
-                        $product_details .= "Download Link: ".$file_url."\n";
-                    }
-                    if(!empty($item['shipping'])){
-                        $shipping += $item['shipping'] * $item['quantity'];
-                    }
-                    $item_counter++;
-                }
-            }
-            if(empty($shipping)){
-                $shipping = "0.00";
-	    }
             else{
-                $baseShipping = get_option('cart_base_shipping_cost');
-	    	$shipping = $shipping + $baseShipping;
-                $shipping = wpspsc_number_format_price($shipping);
-            }
-            update_post_meta( $post_id, 'wpsc_shipping_amount', $shipping);
-            $args = array();
-            $args['product_details'] = $product_details;
-            update_post_meta($post_id, 'wpspsc_items_ordered', $product_details);
-            $from_email = get_option('wpspc_buyer_from_email');
-            $subject = get_option('wpspc_buyer_email_subj');
-            $body = get_option('wpspc_buyer_email_body');
-            $args['email_body'] = $body;
-            $args['coupon_code'] = $applied_coupon_code;
-            $body = wpspc_apply_dynamic_tags_on_email_body($this->ipn_data, $args);
-            
-            $this->debug_log('Applying filter - wspsc_buyer_notification_email_body', true);
-            $body = apply_filters('wspsc_buyer_notification_email_body', $body, $this->ipn_data, $cart_items);            
-            
-            $headers = 'From: '.$from_email . "\r\n";
-            if(!empty($buyer_email)){
-                $args['payer_email'] = $buyer_email;
-                if(get_option('wpspc_send_buyer_email'))
-        	{
-                    wp_mail($buyer_email, $subject, $body, $headers);
-                    $this->debug_log('Product Email successfully sent to '.$buyer_email,true);
-                    update_post_meta( $post_id, 'wpsc_buyer_email_sent', 'Email sent to: '.$buyer_email);
-                }
-            }
-            $notify_email = get_option('wpspc_notify_email_address');
-            $seller_email_subject = get_option('wpspc_seller_email_subj');
-            $seller_email_body = get_option('wpspc_seller_email_body');
-            $args['email_body'] = $seller_email_body;
-            $args['order_id'] = $post_id;
-            $args['coupon_code'] = $applied_coupon_code;
-            $seller_email_body = wpspc_apply_dynamic_tags_on_email_body($this->ipn_data, $args);
-            
-            $this->debug_log('Applying filter - wspsc_seller_notification_email_body', true);
-            $seller_email_body = apply_filters('wspsc_seller_notification_email_body', $seller_email_body, $this->ipn_data, $cart_items);
-            
-            if(!empty($notify_email)){
-                if(get_option('wpspc_send_seller_email'))
-        	{
-                    wp_mail($notify_email, $seller_email_subject, $seller_email_body, $headers);
-                    $this->debug_log('Notify Email successfully sent to '.$notify_email,true);
-                }
+                $this->debug_log('Seller Paypal Email Address is Valid: '.$this->ipn_data['receiver_email'],true);
             }
         }
+
+        $transaction_id = get_post_meta( $post_id, 'wpsc_txn_id', true );
+        if(!empty($transaction_id))
+        {
+            if($transaction_id == $txn_id)  //this transaction has been already processed once
+            {
+                $this->debug_log('This transaction has been already processed once. Transaction ID: '.$transaction_id, false);
+                return;
+            }
+        }
+
+        //Validate prices
+        $orig_individual_item_total = 0;
+        foreach ($orig_cart_items as $item){
+            $orig_individual_item_total += $item['price'] * $item['quantity'];
+        }
+        
+        $orig_individual_item_total = round($orig_individual_item_total,2);
+        $individual_paid_item_total = round($individual_paid_item_total,2);
+        if($orig_individual_item_total < $individual_paid_item_total){
+            $this->debug_log('Error! Post payment price validation failed. The price amount may have been altered. This transaction will not be processed.', false);
+            $this->debug_log('Original total price: ' . $orig_individual_item_total . '. Paid total price: '.$individual_paid_item_total, false);
+            return;
+        }        
+        //*** End of security check ***
+
+        $updated_wpsc_order = array(
+            'ID'             => $post_id,
+            'post_status'    => 'publish',
+            'post_type'     => 'wpsc_cart_orders',
+        );
+        wp_update_post($updated_wpsc_order);
+
+        update_post_meta( $post_id, 'wpsc_first_name', $first_name );
+        update_post_meta( $post_id, 'wpsc_last_name', $last_name );
+        update_post_meta( $post_id, 'wpsc_email_address', $buyer_email );
+        update_post_meta( $post_id, 'wpsc_txn_id', $txn_id );
+        $mc_gross = $this->ipn_data['mc_gross'];
+        update_post_meta( $post_id, 'wpsc_total_amount', $mc_gross);
+        update_post_meta( $post_id, 'wpsc_ipaddress', $ip_address );
+        update_post_meta( $post_id, 'wpsc_address', $address );
+        update_post_meta( $post_id, 'wpspsc_phone', $phone );
+        $status = "Paid";
+        update_post_meta( $post_id, 'wpsc_order_status', $status );
+        update_post_meta( $post_id, 'wpsc_applied_coupon', $applied_coupon_code );            
+        $product_details = "";
+        $item_counter = 1;
+        $shipping = "";
+        if($orig_cart_items){
+            foreach ($orig_cart_items as $item){
+                if($item_counter != 1){
+                    $product_details .= "\n";
+                }
+                $item_total = $item['price'] * $item['quantity'];
+                $product_details .= $item['name']." x ".$item['quantity']." - ".$currency_symbol.wpspsc_number_format_price($item_total)."\n";
+                if($item['file_url']){
+                    $file_url = base64_decode($item['file_url']);
+                    $product_details .= "Download Link: ".$file_url."\n";
+                }
+                if(!empty($item['shipping'])){
+                    $shipping += $item['shipping'] * $item['quantity'];
+                }
+                $item_counter++;
+            }
+        }
+        if(empty($shipping)){
+            $shipping = "0.00";
+        }
+        else{
+            $baseShipping = get_option('cart_base_shipping_cost');
+            $shipping = $shipping + $baseShipping;
+            $shipping = wpspsc_number_format_price($shipping);
+        }
+        update_post_meta( $post_id, 'wpsc_shipping_amount', $shipping);
+        $args = array();
+        $args['product_details'] = $product_details;
+        update_post_meta($post_id, 'wpspsc_items_ordered', $product_details);
+        $from_email = get_option('wpspc_buyer_from_email');
+        $subject = get_option('wpspc_buyer_email_subj');
+        $body = get_option('wpspc_buyer_email_body');
+        $args['email_body'] = $body;
+        $args['coupon_code'] = $applied_coupon_code;
+        $body = wpspc_apply_dynamic_tags_on_email_body($this->ipn_data, $args);
+
+        $this->debug_log('Applying filter - wspsc_buyer_notification_email_body', true);
+        $body = apply_filters('wspsc_buyer_notification_email_body', $body, $this->ipn_data, $cart_items);            
+
+        $headers = 'From: '.$from_email . "\r\n";
+        if(!empty($buyer_email)){
+            $args['payer_email'] = $buyer_email;
+            if(get_option('wpspc_send_buyer_email'))
+            {
+                wp_mail($buyer_email, $subject, $body, $headers);
+                $this->debug_log('Product Email successfully sent to '.$buyer_email,true);
+                update_post_meta( $post_id, 'wpsc_buyer_email_sent', 'Email sent to: '.$buyer_email);
+            }
+        }
+        $notify_email = get_option('wpspc_notify_email_address');
+        $seller_email_subject = get_option('wpspc_seller_email_subj');
+        $seller_email_body = get_option('wpspc_seller_email_body');
+        $args['email_body'] = $seller_email_body;
+        $args['order_id'] = $post_id;
+        $args['coupon_code'] = $applied_coupon_code;
+        $seller_email_body = wpspc_apply_dynamic_tags_on_email_body($this->ipn_data, $args);
+
+        $this->debug_log('Applying filter - wspsc_seller_notification_email_body', true);
+        $seller_email_body = apply_filters('wspsc_seller_notification_email_body', $seller_email_body, $this->ipn_data, $cart_items);
+
+        if(!empty($notify_email)){
+            if(get_option('wpspc_send_seller_email'))
+            {
+                wp_mail($notify_email, $seller_email_subject, $seller_email_body, $headers);
+                $this->debug_log('Notify Email successfully sent to '.$notify_email,true);
+            }
+        }
+
 
         /**** Affiliate plugin integratin ****/
         $this->debug_log('Updating Affiliate Database Table with Sales Data if Using the WP Affiliate Platform Plugin.',true);       

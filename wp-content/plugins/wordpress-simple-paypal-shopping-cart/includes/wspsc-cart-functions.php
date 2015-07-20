@@ -107,11 +107,11 @@ function print_wp_shopping_cart($args = array()) {
             $output .= '</td>';
             
             $output .= "<td style='text-align: center'><form method=\"post\"  action=\"\" name='pcquantity' style='display: inline'>
-                <input type=\"hidden\" name=\"product\" value=\"" . htmlspecialchars($item['name']) . "\" />
+                <input type=\"hidden\" name=\"wspsc_product\" value=\"" . htmlspecialchars($item['name']) . "\" />
 	        <input type='hidden' name='cquantity' value='1' /><input type='text' name='quantity' value='" . $item['quantity'] . "' size='1' onchange='document.pcquantity.submit();' onkeypress='document.getElementById(\"pinfo\").style.display = \"\";' /></form></td>
 	        <td style='text-align: center'>" . print_payment_currency(($item['price'] * $item['quantity']), $paypal_symbol, $decimal) . "</td>
 	        <td><form method=\"post\" action=\"\" class=\"wp_cart_remove_item_form\">
-	        <input type=\"hidden\" name=\"product\" value=\"" . $item['name'] . "\" />
+	        <input type=\"hidden\" name=\"wspsc_product\" value=\"" . $item['name'] . "\" />
 	        <input type='hidden' name='delcart' value='1' />
 	        <input type='image' src='" . WP_CART_URL . "/images/Shoppingcart_delete.png' value='" . (__("Remove", "WSPSC")) . "' title='" . (__("Remove", "WSPSC")) . "' /></form></td></tr>
 	        ";

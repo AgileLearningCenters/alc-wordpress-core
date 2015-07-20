@@ -191,6 +191,10 @@ function wpspc_run_activation()
     $seller_email_body .= "\n\nThe sale was made to {first_name} {last_name} ({payer_email})";
     $seller_email_body .= "\n\nThanks";
     add_option('wpspc_seller_email_body', $seller_email_body);
+    
+    //Generate and save a private key for this site
+    $unique_id = uniqid();
+    add_option('wspsc_private_key_one',$unique_id);
 }
 
 function wpspsc_settings_menu_footer()
