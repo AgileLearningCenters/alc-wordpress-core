@@ -4,8 +4,8 @@ Contributors: helgatheviking
 Donate link: https://inspirepay.com/pay/helgatheviking
 Tags: menu, menus, nav menu, nav menus
 Requires at least: 3.8
-Tested up to: 4.1
-Stable tag: 1.6.4
+Tested up to: 4.2
+Stable tag: 1.7.0
 License: GPLv3
 
 Hide custom menu items based on user roles
@@ -38,9 +38,8 @@ Please report any bugs, errors, warnings, code problems to [Github](https://gith
 1. Upload the `plugin` folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Go to Appearance > Menus
-1. Edit the menu items accordingly.  First select whether you'd like to display the item to all logged in users, all logged out users or to customize by role.
-1. If you chose customize by role, then you you can check the boxes next to the roles you'd like to restrict visibility to.
-1. If you choose 'By Role' and don't check any boxes, the item will be visible to everyone like normal.
+1. Edit the menu items accordingly. First select whether you'd like to display the item to Everyone, all logged out users, or all logged in users. 
+1. Logged in users can be further limited to specific roles by checking the boxes next to the roles you'd like to restrict visibility to.
 
 == Screenshots ==
 
@@ -133,6 +132,18 @@ add_filter( 'nav_menu_roles_item_visibility', 'kia_item_visibility', 10, 2 );
 
 Note that you have to generate your own if/then logic. I can't provide free support for custom integration with another plugin. You may [contact me](http://kathyisawesome.com/contact) to discuss hiring me, or I would suggest using a plugin that supports WordPress' roles, such as Justin Tadlock's [Members](http://wordpress.org/plugins/members).
 
+= The menu exploded? Why are all my pages displaying for logged out users? =
+
+If every item in your menu is configured to display to logged in users (either all logged in users, or by specific role), then when a logged out visitor comes to your site there are no items in the menu to display.  `wp_nav_menu()` will then try check its `fallback_cb` argument... which defaults to `wp_page_menu`.
+
+Therefore, if you have no items to display, WordPress will end up displaying ALL your pages!!
+
+If you don't want this, you must set the fallback argument to be a null string.
+
+`
+wp_nav_menu( array( 'theme_location' => 'primary-menu', 'fallback_cb' => '' ) );
+`
+
 = What happened to my menu roles on import/export? =
 
 The Nav Menu Roles plugin stores 1 piece of post *meta* to every menu item/post.  This is exported just fine by the default Export tool.
@@ -148,6 +159,12 @@ However, the Import plugin only imports certain post meta for menu items.  As of
 1. No duplicate posts will be created but all menu post meta (including your Nav Menu Roles info) will be imported
 
 == Changelog ==
+
+= 1.7.0 =
+* adjust admin UI to be more user-friendly. Options are now: show to everyone, show to logged out users, and show to logged in users (optionally, logged in users by specific role)
+
+= 1.6.5 =
+* add Guajarati language. props @rohilmistry93
 
 = 1.6.4 =
 * more language issues -> sync svn+git version numbers
