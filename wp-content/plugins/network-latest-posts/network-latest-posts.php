@@ -3,7 +3,7 @@
 Plugin Name: Network Latest Posts
 Plugin URI: http://en.8elite.com/network-latest-posts
 Description: Display the latest posts from the blogs in your network using it as a function, shortcode or widget.
-Version: 3.7
+Version: 3.7.1
 Author: Jose Luis SAYAGO
 Author URI: http://wplatino.com/
  */
@@ -271,6 +271,7 @@ function network_latest_posts( $parameters ) {
     }
     // Display blog or blogs
     // if the user passes one value
+    $display = '';
     if( !preg_match("/,/",$blog_id) ) {
         // Always clean this stuff ;) (oh.. told you I'm a paranoid)
         $blog_id = (int)htmlspecialchars($blog_id);
@@ -296,6 +297,7 @@ function network_latest_posts( $parameters ) {
     }
     // Ignore blog or blogs
     // if the user passes one value
+    $ignore = '';
     if( !preg_match("/,/",$ignore_blog) ) {
         // Always clean this stuff ;)
         $ignore_blog = (int)htmlspecialchars($ignore_blog);
