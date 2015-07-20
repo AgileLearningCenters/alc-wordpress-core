@@ -63,6 +63,10 @@ class MC4WP_API {
 			return false;
 		}
 
+		if( ! function_exists( 'add_settings_error' ) ) {
+			return false;
+		}
+
 		add_settings_error( 'mc4wp-api', 'mc4wp-api-error', $message, 'error' );
 		return true;
 	}
@@ -150,6 +154,8 @@ class MC4WP_API {
 	public function get_lists( $list_ids = array() ) {
 		$args = array(
 			'limit' => 100,
+			'sort_field' => 'web',
+			'sort_dir' => 'ASC',
 		);
 
 		// set filter if the $list_ids parameter was set
@@ -324,11 +330,8 @@ class MC4WP_API {
 
 		$response = wp_remote_post( $url, array(
 				'body' => $data,
-				'timeout' => 15,
-				'headers' => array(
-					'Accept-Encoding' => '',
-				),
-				'sslverify' => false,
+				'timeout' => 10,
+				'headers' => $this->get_headers()
 			)
 		);
 
@@ -408,6 +411,25 @@ class MC4WP_API {
 		$this->last_response = null;
 		$this->error_code = 0;
 		$this->error_message = '';
+	}
+
+	/**
+	 * Get the request headers to send to the MailChimp API
+	 *
+	 * @return array
+	 */
+	private function get_headers() {
+
+		$headers = array(
+			'Accept-Encoding' => ''
+		);
+
+		// Copy Accept-Language from browser headers
+		if( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
+			$headers['Accept-Language'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+		}
+
+		return $headers;
 	}
 
 }

@@ -21,11 +21,6 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 	public $form_element_id = '';
 
 	/**
-	 * @var array
-	 */
-	public $data = array();
-
-	/**
 	 * @var string
 	 */
 	protected $message_type = '';
@@ -35,6 +30,16 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 	 */
 	public $success = false;
 
+	/**
+	 * @var array
+	 */
+	public $internal_data = array();
+
+	/**
+	 * @var array
+	 */
+	public $user_data = array();
+
 
 	/**
 	 * Constructor
@@ -43,13 +48,40 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 	 */
 	public function __construct( array $data ) {
 
-		$this->data = $this->normalize_data( $data );
+		// find fields prefixed with _mc4wp_
+		$this->internal_data = $this->get_internal_data( $data );
+
+		// normalize user data
+		$this->user_data = $this->normalize_data( $data );
 
 		// store number of submitted form
-		$this->form_element_id = (string) $this->data['_MC4WP_FORM_ELEMENT_ID'];
+		$this->form_element_id = (string) $this->internal_data['form_element_id'];
+
+		// get form
 		$this->form = MC4WP_Form::get( $this );
 	}
 
+	/**
+	 * @param $data
+	 *
+	 * @return array
+	 */
+	public function get_internal_data( &$data ) {
+		$config = array();
+
+		foreach( $data as $key => $value ) {
+			if( strpos( $key, '_mc4wp_' ) === 0 ) {
+
+				// remove data from array
+				unset( $data[$key] );
+
+				$key = substr( $key,7 );
+				$config[ $key ] = $value;
+			}
+		}
+
+		return $config;
+	}
 
 	/**
 	 * @param array $data
@@ -65,11 +97,7 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 		$data = stripslashes_deep( $data );
 
 		// sanitize all scalar values
-		foreach( $data as $key => $value ) {
-			if( is_scalar( $value ) ) {
-				$data[ $key ] = sanitize_text_field( $value );
-			}
-		}
+		$data = $this->sanitize_deep( $data );
 
 		/**
 		 * @filter `mc4wp_form_data`
@@ -78,6 +106,27 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 		$data = apply_filters( 'mc4wp_form_data', $data );
 
 		return (array) $data;
+	}
+
+	/**
+	 * @param $value
+	 *
+	 * @return array|string
+	 */
+	public function sanitize_deep( $value ) {
+
+		if ( is_scalar( $value ) ) {
+			$value = sanitize_text_field( $value );
+		} elseif( is_array( $value ) ) {
+			$value = array_map( array( $this, 'sanitize_deep' ), $value );
+		} elseif ( is_object($value) ) {
+			$vars = get_object_vars( $value );
+			foreach ($vars as $key=>$data) {
+				$value->{$key} = $this->sanitize_deep( $data );
+			}
+		}
+
+		return $value;
 	}
 
 	/**
@@ -94,7 +143,7 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 	 */
 	public function validate() {
 
-		$validator = new MC4WP_Form_Validator( $this->data );
+		$validator = new MC4WP_Form_Validator( $this->internal_data, $this->user_data );
 
 		// validate nonce
 		if( ! $validator->validate_nonce() ) {
@@ -152,7 +201,7 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 		$additional_replacements = array(
 			'{form_id}' => $this->form->ID,
 			'{form_element}' => $this->form_element_id,
-			'{email}' => urlencode( $this->data['EMAIL'] )
+			'{email}' => urlencode( $this->user_data['EMAIL'] )
 		);
 		$url = MC4WP_Tools::replace_variables( $this->form->settings['redirect'], $additional_replacements );
 		return $url;
@@ -175,7 +224,7 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 			 * @param   string  $email          The email of the subscriber
 			 * @param   array   $data           Additional list fields, like FNAME etc (if any)
 			 */
-			do_action( 'mc4wp_form_success', 0, $this->data['EMAIL'], $this->data );
+			do_action( 'mc4wp_form_success', 0, $this->user_data['EMAIL'], $this->user_data );
 
 			// check if we want to redirect the visitor
 			if ( '' !== $this->form->settings['redirect'] ) {
@@ -200,7 +249,7 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 			 * @param   string  $email          The email of the subscriber
 			 * @param   array   $data           Additional list fields, like FNAME etc (if any)
 			 */
-			do_action( 'mc4wp_form_error_' . $this->message_type, 0, $this->data['EMAIL'], $this->data );
+			do_action( 'mc4wp_form_error_' . $this->message_type, 0, $this->user_data['EMAIL'], $this->user_data );
 		}
 
 	}
@@ -216,9 +265,9 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 		$lists = $this->form->settings['lists'];
 
 		// get lists from form, if set.
-		if( isset( $this->data['_MC4WP_LISTS'] ) && ! empty( $this->data['_MC4WP_LISTS'] ) ) {
+		if( isset( $this->internal_data['lists'] ) && ! empty( $this->internal_data['lists'] ) ) {
 
-			$lists = $this->data['_MC4WP_LISTS'];
+			$lists = $this->internal_data['lists'];
 
 			// make sure lists is an array
 			if( ! is_array( $lists ) ) {
@@ -261,13 +310,6 @@ abstract class MC4WP_Request implements iMC4WP_Request {
 		}
 
 		return $html;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_data() {
-		return $this->data;
 	}
 
 }

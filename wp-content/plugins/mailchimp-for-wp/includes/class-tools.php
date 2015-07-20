@@ -41,6 +41,7 @@ class MC4WP_Tools {
 		$replacements = array(
 			'{ip}' => self::get_client_ip(),
 			'{current_url}' => mc4wp_get_current_url(),
+			'{current_path}' => ( ! empty( $_SERVER['REQUEST_URI'] ) ) ? esc_html( $_SERVER['REQUEST_URI'] ) : '',
 			'{date}' => date( 'm/d/Y' ),
 			'{time}' => date( 'H:i:s' ),
 			'{language}' => defined( 'ICL_LANGUAGE_CODE' ) ? ICL_LANGUAGE_CODE : get_locale(),
@@ -80,7 +81,7 @@ class MC4WP_Tools {
 
 		// replace dynamic variables
 		if( stristr( $string, '{data_' ) !== false ) {
-			$string = preg_replace_callback('/\{data_([^}]+)\}/', array( 'MC4WP_Tools', 'replace_request_data_variables' ), $string );
+			$string = preg_replace_callback('/\{data_([\w-.]+)( default=\"([^"]*)\"){0,1}\}/', array( 'MC4WP_Tools', 'replace_request_data_variables' ), $string );
 		}
 
 		return $string;
@@ -95,13 +96,15 @@ class MC4WP_Tools {
 	public static function replace_request_data_variables( $matches ) {
 
 		$variable = strtoupper( $matches[1] );
+		$default = ( ! empty( $matches[3] ) ) ? $matches[3] : '';
+
 		$request_data = array_change_key_case( $_REQUEST, CASE_UPPER );
 
 		if( isset( $request_data[ $variable ] ) && is_scalar( $request_data[ $variable ] ) ) {
 			return esc_html( $request_data[ $variable ] );
 		}
 
-		return '';
+		return $default;
 	}
 
 	/**
@@ -111,10 +114,13 @@ class MC4WP_Tools {
 	 */
 	public static function get_known_email() {
 
-		if( isset( $_REQUEST['EMAIL'] ) ) {
-			$email = $_REQUEST['EMAIL'];
-		} elseif( isset( $_REQUEST['mc4wp_email'] ) ) {
-			$email = $_REQUEST['mc4wp_email'];
+		// case insensitive check in $_REQUEST
+		$request_data = array_change_key_case( $_REQUEST, CASE_LOWER );
+
+		if( isset( $request_data['email'] ) ) {
+			$email = $request_data['email'];
+		} elseif( isset( $request_data['mc4wp_email'] ) ) {
+			$email = $request_data['mc4wp_email'];
 		} elseif( isset( $_COOKIE['mc4wp_email'] ) ) {
 			$email = $_COOKIE['mc4wp_email'];
 		} else {

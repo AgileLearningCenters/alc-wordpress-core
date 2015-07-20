@@ -36,7 +36,6 @@
 	}
 
 	function toggleWooCommerceSettings() {
-		console.log( $(this).prop('checked'));
 		var $el = $(document.getElementById('woocommerce-settings'));
 		$el.toggle(this.checked);
 	}
@@ -44,7 +43,6 @@
 	function toggleFieldWizard() {
 		var hasListSelected = $listInputs.filter(':checked').length > 0;
 		$(".mc4wp-notice.no-lists-selected").toggle( ! hasListSelected );
-		$( document.getElementById( 'mc4wp-fw-fields')).toggle( hasListSelected );
 		$( document.getElementById( 'mc4wp-fw-mailchimp-fields' )).toggle( hasListSelected );
 	}
 
@@ -181,7 +179,7 @@
 					}
 
 					// add field to select if no similar option exists yet
-					if($mailchimpMergeFields.find("option[value='"+ listField.tag +"']").length === 0) {
+					if($mailchimpMergeFields.children("option[value='"+ listField.tag +"']").length === 0) {
 
 						var text = (listField.name.length > 25) ? listField.name.substring(0, 25) + '..' : listField.name;
 						if(listField.req) { text += '*'; }
@@ -190,13 +188,6 @@
 							.text(text)
 							.val(listField.tag)
 							.data('list-field', listField);
-
-						// only enable 3 fields
-						if( i > 3 ) {
-							$option.text( strings.proOnly + " " + text)
-								.attr('disabled', 'disabled')
-								.data('field', null);
-						}
 
 						$mailchimpMergeFields.append($option);
 					}
@@ -207,7 +198,7 @@
 					var listGrouping = list.interest_groupings[i];
 
 					// add field to select if no similar option exists yet
-					if($mailchimpGroupings.find("option[value='"+ listGrouping.id +"']").length === 0) {
+					if($mailchimpGroupings.children("option[value='"+ listGrouping.id +"']").length === 0) {
 						var text = (listGrouping.name.length > 25) ? listGrouping.name.substring(0, 25) + '..' : listGrouping.name;
 						
 						// build option HTML
@@ -216,7 +207,7 @@
 							.val(listGrouping.id)
 							.data('list-grouping', listGrouping);
 
-						// only show 1 grouping
+						// only show 1 grouping per list
 						if(i >= 1) {
 							$option.text( strings.proOnly + " " + text)
 								.attr('disabled', 'disabled')
@@ -445,7 +436,7 @@
 			$label.val( data.name + ":" );
 
 			// set required attribute
-			$required.attr('checked', data.req);
+			$required.prop('checked', data.req);
 
 			if($multipleValues.is(":visible") && data.choices) {
 				for(var i = 0; i < data.choices.length; i++) {
