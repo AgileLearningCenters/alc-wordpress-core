@@ -18,7 +18,7 @@
 // | Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,               |
 // | MA 02110-1301 USA                                                    |
 // +----------------------------------------------------------------------+
-
+include_once  dirname(__FILE__) . "../../Vendor/CHttpRequest.php";
 /**
  * Base class for all modules. Implements routine methods required by all modules.
  *
@@ -27,7 +27,7 @@
  *
  * @since 4.0.0
  */
-class Domainmap_Module {
+class Domainmap_Module extends domain_map{
 
 	/**
 	 * The instance of wpdb class.
@@ -50,6 +50,15 @@ class Domainmap_Module {
 	protected $_plugin = null;
 
 	/**
+	 * CHttpRequest class instance
+	 *
+	 * @since 4.2.0.4
+	 *
+	 * @var CHttpRequest
+	 */
+	protected $_http;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 4.0.0
@@ -63,6 +72,8 @@ class Domainmap_Module {
 
 		$this->_wpdb = $wpdb;
 		$this->_plugin = $plugin;
+		$this->_http = new CHttpRequest();
+		$this->_http->init();
 	}
 
 	/**
@@ -141,54 +152,127 @@ class Domainmap_Module {
 		return $this;
 	}
 
-  /**
-   * Checks if current site resides in original domain
-   *
-   * @since 4.2.0
-   *
-   * @return bool true if it's original domain, false if not
-   */
-    protected function is_original_domain(){
-        $home = home_url( '/' );
-        $current_domain = parse_url( $home, PHP_URL_HOST );
-        $original_domain = parse_url( apply_filters( 'unswap_url', $home ), PHP_URL_HOST );
-        return $current_domain === $original_domain;
-    }
 
-  /**
-   * Checks if current site resides in mapped domain
-   *
-   * @since 4.2.0
-   *
-   * @return bool
-   */
-    protected function is_mapped_domain(){
-        return !$this->is_original_domain();
-    }
 
-  /**
-   * Checks if current page is login page
-   *
-   * @since 4.2.0
-   *
-   * @return bool
-   */
-    protected function is_login(){
-        return in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ));
-    }
+	/**
+	 * Validates health status of a domain.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @access private
+	 * @param string $domain The domain name to validate.
+	 * @return boolean TRUE if the domain name works, otherwise FALSE.
+	 */
+	protected function _validate_health_status( $domain ) {
+		$check = sha1( time() );
 
-  /**
-   * Checks if give domain should be forced to use https
-   *
-   * @since 4.2.0
-   *
-   * @param string $domain
-   * @return bool
-   */
-    public static function force_ssl_on_mapped_domain( $domain = "" ){
-        global $wpdb;
-        $domain = $domain === "" ?  $_SERVER['SERVER_NAME'] : $domain;
-        return (bool) $wpdb->get_var( $wpdb->prepare("SELECT `scheme` FROM `" . DOMAINMAP_TABLE_MAP . "` WHERE `domain`=%s", $domain) );
-    }
+		switch_to_blog( 1 );
+        $scheme = self::get_mapped_domain_scheme( $domain );
+		$ajax_url =  $scheme ?  set_url_scheme( admin_url( 'admin-ajax.php' ), $scheme ) : set_url_scheme( admin_url( 'admin-ajax.php' ), "http" );
+		$ajax_url = str_replace( parse_url( $ajax_url, PHP_URL_HOST ), $domain, $ajax_url );
+		restore_current_blog();
+		$response = wp_remote_request( esc_url_raw( add_query_arg( array(
+			'action' => Domainmap_Plugin::ACTION_HEARTBEAT_CHECK,
+			'check'  => $check,
+		), $ajax_url )), array( 'sslverify' => false ) );
 
+		$status = !is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) == 200 && preg_replace('/\W*/', '', wp_remote_retrieve_body( $response ) ) == $check ? 1 : 0;
+		$this->set_valid_transient( $domain, $status );
+		return $status;
+	}
+
+
+	/**
+	 * Checks if server supports ssl
+	 *
+	 * @since 4.2.0.4
+	 * @return bool
+	 */
+	protected  function server_supports_ssl(){
+		$request = wp_remote_head(  $this->_http->getHostInfo("https") );
+
+		if( is_wp_error( $request ) ){
+			if( isset( $request->errors['http_request_failed'] ) && isset( $request->errors['http_request_failed'][0] ) && strpos($request->errors['http_request_failed'][0], "SSL") !== false)
+				return true;
+
+			return false;
+		}else{
+			return true;
+		}
+
+	}
+
+	/**
+	 * Checks if current domain is a subdomain
+	 *
+	 * @since 4.2.0.4
+	 * @return bool
+	 */
+	protected function is_subdomain(){
+		$network_domain =  parse_url( network_home_url(), PHP_URL_HOST );
+		return apply_filters("dm_is_subdomain",  (bool) str_replace( $network_domain, "", $_SERVER['HTTP_HOST']));
+	}
+
+	/**
+	 * Returns ajax url based on the main domain
+	 *
+	 * @since 4.2.0.4
+	 * @param string $scheme The scheme to use. Default is 'admin', which obeys force_ssl_admin() and is_ssl(). 'http' or 'https' can be passed to force those schemes.
+	 * @return mixed
+	 */
+	protected function get_main_ajax_url( $scheme = 'admin'  ){
+		return  $this->_replace_last_occurence('network/', '', network_admin_url( 'admin-ajax.php', $scheme ) );
+	}
+
+	/**
+	 * Replaces last occurence of string with $replace string
+	 *
+	 * @since 4.2.0.5
+	 *
+	 * @param $search
+	 * @param $replace
+	 * @param $string
+	 *
+	 * @return mixed
+	 */
+	private function _replace_last_occurence($search, $replace, $string)
+	{
+		$pos = strrpos($string, $search);
+
+		if($pos !== false)
+			$string = substr_replace($string, $replace, $pos, strlen($search));
+
+		return $string;
+	}
+
+
+	/**
+	 * Checks to see if domain is valid, then sets appropriate transient and returns validity boolean
+	 *
+	 * @since 4.3.0
+	 * @param $domain
+	 * @param $status bool to set as domain's health status
+	 *
+	 * @return bool
+	 */
+	protected function set_valid_transient( $domain, $status = null ) {
+        $valid = $status;
+		if( is_null( $status ) ) {
+			$valid = $this->_validate_health_status( $domain );
+		}
+		set_site_transient( "domainmapping-{$domain}-health", $valid, $valid ? 4 * WEEK_IN_SECONDS  : 10 * MINUTE_IN_SECONDS );
+
+		return $valid;
+	}
+
+	/**
+	 * Returns current domain
+	 *
+	 * @since 4.3.1
+	 * @return mixed
+	 */
+	protected function get_current_domain(){
+		$home = home_url( '/' );
+		return parse_url( $home, PHP_URL_HOST );
+	}
 }

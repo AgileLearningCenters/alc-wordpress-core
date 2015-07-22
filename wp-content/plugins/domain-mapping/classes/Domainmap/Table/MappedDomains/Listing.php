@@ -104,7 +104,7 @@ class Domainmap_Table_MappedDomains_Listing extends Domainmap_Table {
             'actions'    => __( 'Actions', 'domainmap' ),
         );
 
-        if( !filter_var( DOMAINMAPPING_ALLOWMULTI, FILTER_VALIDATE_BOOLEAN ) ){
+        if( !domain_map::allow_multiple() ){
             unset( $cols["primary"] ) ;
         }
 
@@ -187,10 +187,8 @@ class Domainmap_Table_MappedDomains_Listing extends Domainmap_Table {
 	 * @param object $item current row's record
      */
     public function column_mapped_domain( $item ) {
-        global $current_site;
-        $suffix = $current_site->path != '/' ? $current_site->path : '';
         $scheme = $item->scheme ==  1 ? "https" : "http";
-        printf( '<a class="domainmapping-mapped" href="%1$s://%2$s%3$s">%1$s://%2$s%3$s</a>', $scheme , Domainmap_Punycode::decode( $item->mapped_domain ), $suffix );
+        printf( '<a class="domainmapping-mapped" href="%1$s://%2$s">%1$s://%2$s</a>', $scheme , Domainmap_Punycode::decode( $item->mapped_domain ) );
     }
 
     /**
@@ -240,7 +238,7 @@ class Domainmap_Table_MappedDomains_Listing extends Domainmap_Table {
             'action' => Domainmap_Plugin::ACTION_HEALTH_CHECK,
             'nonce'  => wp_create_nonce( Domainmap_Plugin::ACTION_HEALTH_CHECK ),
             'domain' => $item->mapped_domain,
-        ), admin_url( 'admin-ajax.php' ) );
+        ),  set_url_scheme( admin_url( 'admin-ajax.php' ), domain_map::get_mapped_domain_scheme( $item->mapped_domain ) )  );
 
         $health = get_site_transient( "domainmapping-{$item->mapped_domain}-health" );
         $health_message = __( 'needs revalidation', 'domainmap' );
@@ -257,7 +255,7 @@ class Domainmap_Table_MappedDomains_Listing extends Domainmap_Table {
 
         ?>
         <div class="domainmapping-domains">
-            <a class="domainmapping-map-state<?php echo $health_class ?>" href="<?php echo $url ?>" title="<?php _e( 'Refresh health status', 'domainmap' ) ?>">
+            <a class="domainmapping-map-state<?php echo $health_class ?>" href="<?php echo esc_url( $url ) ?>" title="<?php _e( 'Refresh health status', 'domainmap' ) ?>">
                 <?php echo $health_message ?>
             </a>
         </div>
@@ -300,11 +298,11 @@ class Domainmap_Table_MappedDomains_Listing extends Domainmap_Table {
 
     public function column_actions( $item ) {
 
-        $remove_link = add_query_arg( array(
+        $remove_link = esc_url( add_query_arg( array(
             'action' => Domainmap_Plugin::ACTION_UNMAP_DOMAIN,
             'nonce'  => wp_create_nonce( Domainmap_Plugin::ACTION_UNMAP_DOMAIN ),
             'domain' => $item->mapped_domain,
-        ), admin_url( 'admin-ajax.php' ) );
+        ), admin_url( 'admin-ajax.php' ) ) );
         $primary_class = $item->is_primary == 1 ? 'dashicons-star-filled' : 'dashicons-star-empty';
         $admin_ajax =  admin_url( 'admin-ajax.php' ) ;
 
@@ -327,9 +325,9 @@ class Domainmap_Table_MappedDomains_Listing extends Domainmap_Table {
       ), $admin_ajax) );
         ?>
         <div class="domainmapping-domains">
-          <a class="domainmapping-map-toggle-scheme dashicons-before dashicons-admin-network" href="#" data-href="<?php echo esc_url( $toggle_scheme_link ) ?>" title="<?php _e( 'Toggle scheme', 'domainmap' ) ?>"></a>
-          <?php if ( Domainmap_Render_Site_Map::_is_multi_enabled() ) : ?>
-            <a style="position: inherit" class="domainmapping-map-primary dashicons-before <?php echo $primary_class ?>" href="#" data-select-href="<?php echo $select_primary ?>" data-deselect-href="<?php echo $deselect_primary ?>" title="<?php _e( 'Select as primary domain', 'domainmap' ) ?>"></a>
+          <a class="domainmapping-map-toggle-scheme dashicons-before dashicons-admin-network" title="<?php _e("Switch schema", domain_map::Text_Domain); ?>" href="#" data-href="<?php echo esc_url( $toggle_scheme_link ) ?>" title="<?php _e( 'Toggle scheme', 'domainmap' ) ?>"></a>
+          <?php if ( domain_map::allow_multiple() ) : ?>
+            <a style="position: inherit" class="domainmapping-map-primary dashicons-before <?php echo $primary_class ?>" href="#" data-select-href="<?php echo $select_primary ?>" data-deselect-href="<?php echo $deselect_primary ?>" title="<?php _e( 'Select as primary domain', domain_map::Text_Domain ) ?>"></a>
           <?php endif; ?>
             <a style="position: inherit"  data-href="<?php echo $remove_link; ?>"  title="<?php _e("Remove Mapping", "domainmap"); ?>" class="domainmapping-btn domainmapping-map-remove dashicons-before dashicons-trash"></a>
         </div>

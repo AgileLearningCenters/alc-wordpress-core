@@ -39,19 +39,37 @@ class Domainmap_Module_Ajax extends Domainmap_Module {
 	 * @static
 	 * @access protected
 	 * @param string $domain The domain name to validate.
-	 * @return boolean TRUE if domain name is valid, otherwise FALSE.
+	 * @return boolean TRUE if domain name is valid, false if it's invalid and 0 if it's prohibited.
 	 */
-	protected function _validate_domain_name( $domain) {
+    protected function _validate_domain_name( $domain, $mapping = false) {
+        $is_valid = true;
         $map_verifydomain = $this->_plugin->get_option("map_verifydomain");
-		if( !$map_verifydomain ) return;
+        if( !$map_verifydomain ) $is_valid = true;
+
+	    $is_valid = $this->_plugin->is_prohibited_domain( $domain ) ? 0 : true;
+
+	    if( $this->_plugin->get_option("map_disallow_subdomain") && $is_valid ){
+		    $is_valid = $is_valid && strpos( $domain, "." . $this->get_original_domain() ) === false;
+	    }
+
+	    if( !$is_valid ){
+		    return apply_filters('dm_validate_domain_name', $is_valid, $domain, $mapping);
+	    }
 
         $domain = Domainmap_Punycode::encode($domain);
-            return preg_match( "/^([A-Za-z0-9](-*[A-Za-z0-9])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain ) //valid chars check
+
+        /**
+         * If it's a mapping, check if mapped domain is similar to original domain or www.originaldomain
+         */
+        if( $mapping && in_array( $domain, array( $this->get_original_domain(), $this->get_original_domain( true ) ) ) ) $is_valid = false;
+
+        $is_valid = preg_match( "/^([A-Za-z0-9](-*[A-Za-z0-9])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain ) //valid chars check
             && preg_match( "/^.{1,253}$/", $domain ) //overall length check
             && preg_match( "/^[^\.]{1,63}(\.[^\.]{2,63})+$/", $domain ) //length of each label
-                ;
+        ;
 
-	}
+        return apply_filters('dm_validate_domain_name', $is_valid, $domain, $mapping);
+    }
 
 	/**
 	 * Checks user permissions and block AJAX request if they don't match.
@@ -89,8 +107,25 @@ class Domainmap_Module_Ajax extends Domainmap_Module {
 	 */
 	public function redirect_to_login_form() {
 
-		wp_redirect( wp_login_url( add_query_arg() ) );
+		wp_redirect( wp_login_url( esc_url_raw( add_query_arg() ) ) );
 		exit;
+	}
+
+	/**
+	 * Checks if $domain can be a domain
+	 *
+	 * @param $domain_name
+	 *
+	 * @since 4.4.0.3
+	 * @return bool
+	 */
+	protected function _is_domain( $domain_name ){
+
+		if( false === strpos($domain_name, ".") || empty( $domain_name ) ) return false;
+
+		$domain_name = str_replace(array("http://", "www."), array("", ""), $domain_name);
+		$domain_name = "http://" . $domain_name;
+		return (bool) filter_var($domain_name, FILTER_VALIDATE_URL);
 	}
 
 }

@@ -30,16 +30,9 @@
  */
 class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 
-	/**
-	 * Determines whether ability to map multi domains is enabled or not.
-	 *
-	 * @since 4.0.3
-	 *
-	 * @static
-	 * @return boolean TRUE if multi domains mapping enabled, otherwise FALSE.
-	 */
-	public static function _is_multi_enabled() {
-		return defined( 'DOMAINMAPPING_ALLOWMULTI' ) && filter_var( DOMAINMAPPING_ALLOWMULTI, FILTER_VALIDATE_BOOLEAN );
+	function __construct($tabs, $active, $data){
+		parent::__construct($tabs, $active, $data);
+		$this->_save_excluded_pages();
 	}
 
 	/**
@@ -78,17 +71,9 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 	 * @access protected
 	 */
 	protected function _render_tab() {
+		$schema = Domainmap_Plugin::instance()->get_option("map_force_frontend_ssl") === 2 ? 'https' : 'http';
+		$form_class = count( $this->domains ) > 0 && !domain_map::allow_multiple() ? ' domainmapping-form-hidden' : '';
 
-		$schema = ( defined( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN' ) && DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN && is_ssl() ) ? 'https' : 'http';
-		$form_class = count( $this->domains ) > 0 && !self::_is_multi_enabled() ? ' domainmapping-form-hidden' : '';
-		$admin_ajax = esc_url( admin_url( 'admin-ajax.php' ) );
-
-		$mapping = get_option( 'domainmap_frontend_mapping', 'mapped' );
-		$mapping_types = array(
-			'user'     => __( 'disabled and entered domain should be used', 'domainmap' ),
-			'mapped'   => __( 'directed to mapped (primary) domain', 'domainmap' ),
-			'original' => __( 'directed to original domain', 'domainmap' ),
-		);
 
 		$this->_render_instructions();
 
@@ -108,36 +93,19 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 					<?php foreach( $this->domains as $row ) : ?>
 						<?php self::render_mapping_row( $row ) ?>
 					<?php endforeach; ?>
-					<li class="domainmapping-form">
-						<form id="domainmapping-front-mapping" action="<?php echo $admin_ajax ?>" method="post">
-							<?php wp_nonce_field( Domainmap_Plugin::ACTION_CHANGE_FRONTEND_REDIRECT, 'nonce' ) ?>
-							<input type="hidden" name="action" value="<?php echo Domainmap_Plugin::ACTION_CHANGE_FRONTEND_REDIRECT ?>">
-							<span><?php esc_html_e( 'Front end redirect should be', 'domainmap' ) ?></span>
-							<select name="mapping">
-								<?php foreach ( $mapping_types as $key => $label ) : ?>
-								<option value="<?php echo $key ?>"<?php selected( $key, $mapping ) ?>><?php echo esc_html( $label ) ?></option>
-								<?php endforeach; ?>
-							</select>
-						</form>
-						<form id="domainmapping-form-map-domain" action="<?php echo $admin_ajax ?>" method="post">
-							<?php wp_nonce_field( Domainmap_Plugin::ACTION_MAP_DOMAIN, 'nonce' ) ?>
-							<input type="hidden" name="action" value="<?php echo Domainmap_Plugin::ACTION_MAP_DOMAIN ?>">
-							<select type="text" name="scheme" class="domainmapping-input-prefix">
-                                <option value="0">http://</option>
-                                <option value="1">https://</option>
-                            </select>
-							<div class="domainmapping-controls-wrapper">
-								<input type="text" class="domainmapping-input-domain" autofocus name="domain">
-							</div>
-							<input type="text" class="domainmapping-input-sufix" readonly disabled value="/">
-							<button type="submit" class="button button-primary domainmapping-button dashicons-before dashicons-admin-site"><?php _e( 'Map domain', 'domainmap' ) ?></button>
-                          <i class="icon-globe icon-white"></i>
-							<div class="domainmapping-clear"></div>
-						</form>
-					</li>
+					<?php $this->_render_mapping_form();?>
 				</ul>
+				<br/>
+
 			</div>
-		</div><?php
+
+		<?php $this->_render_excluded_pages(); ?>
+		</div>
+
+
+
+		<?php
+
 	}
 
 	/**
@@ -149,16 +117,27 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 	 * @access public
 	 * @global stdClass $current_site Current site object.
 	 * @param object $row The mapped domain name.
-	 * @param string $schema The current schema.
+	 * @param string|bool $schema The current schema.
 	 */
 	public static function render_mapping_row( $row, $schema = false ) {
 		global $current_site;
 
 		if ( !$schema ) {
-			$schema = Domainmap_Module::force_ssl_on_mapped_domain( $row->domain ) ? 'https' : 'http';;
+			$force_type = Domainmap_Module::force_ssl_on_mapped_domain( $row->domain );
+			switch( $force_type ){
+				case 1:
+					$schema = 'https://';
+					break;
+				case 2:
+					$schema = '<del>http://</del>';
+					break;
+				default:
+					$schema = 'http://';
+					break;
+			}
 		}
 
-		$multi = self::_is_multi_enabled();
+		$multi = domain_map::allow_multiple();
 		$admin_ajax =  admin_url( 'admin-ajax.php' ) ;
 
 		$remove_link = esc_url( add_query_arg( array(
@@ -189,16 +168,16 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 		}
 
 		?><li>
-      <a class="domainmapping-map-toggle-scheme dashicons-before dashicons-admin-network" href="#" data-href="<?php echo esc_url( $toggle_scheme_link ) ?>" title="<?php _e( 'Toggle scheme', 'domainmap' ) ?>"></a>
+		<a class="domainmapping-map-toggle-scheme dashicons-before dashicons-admin-network" href="#" data-href="<?php echo esc_url( $toggle_scheme_link ) ?>" title="<?php _e( 'Toggle forced schema', 'domainmap' ) ?>"></a>
 
-      <a class="domainmapping-mapped" href="<?php echo $schema ?>://<?php echo $row->domain, $current_site->path ?>" target="_blank" title="<?php _e( 'Go to this domain', 'domainmap' ) ?>">
-				<?php echo $schema ?>://<?php echo Domainmap_Punycode::decode( $row->domain ), $current_site->path ?>
+        <a class="domainmapping-mapped" href="<?php echo strip_tags($schema) ?><?php echo $row->domain?>" target="_blank" title="<?php _e( 'Go to this domain', 'domainmap' ) ?>">
+				 <?php echo $schema ?><?php echo Domainmap_Punycode::decode( $row->domain ) ?>
 			</a>
 
       <?php self::render_health_column( $row->domain ) ?>
 			<a class="domainmapping-map-remove dashicons-before dashicons-trash" href="#" data-href="<?php echo esc_url( $remove_link ) ?>" title="<?php _e( 'Remove the domain', 'domainmap' ) ?>"></a>
 			<?php if ( $multi ) : ?>
-			<a class="domainmapping-map-primary dashicons-before <?php echo $primary_class ?>" href="#" data-select-href="<?php echo $select_primary ?>" data-deselect-href="<?php echo $deselect_primary ?>" title="<?php _e( 'Select as primary domain', 'domainmap' ) ?>"></a>
+			<a class="domainmapping-map-primary dashicons-before <?php echo $primary_class ?>" href="#" data-select-href="<?php echo esc_url( $select_primary ) ?>" data-deselect-href="<?php echo esc_url( $deselect_primary ) ?>" title="<?php _e( 'Select as primary domain', 'domainmap' ) ?>"></a>
 			<?php endif; ?>
 		</li><?php
 	}
@@ -217,9 +196,10 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 			'action' => Domainmap_Plugin::ACTION_HEALTH_CHECK,
 			'nonce'  => wp_create_nonce( Domainmap_Plugin::ACTION_HEALTH_CHECK ),
 			'domain' => $domain,
-		), admin_url( 'admin-ajax.php' ) );
+		), set_url_scheme(  admin_url( 'admin-ajax.php' ), domain_map::get_mapped_domain_scheme( $domain ) ) );
 
 		$health = get_site_transient( "domainmapping-{$domain}-health" );
+
 		$health_message = __( 'needs revalidation', 'domainmap' );
 		$health_class = ' domainmapping-need-revalidate';
 		if ( $health !== false ) {
@@ -232,11 +212,146 @@ class Domainmap_Render_Site_Map extends Domainmap_Render_Site {
 			}
 		}
 
-		?><a class="domainmapping-map-state<?php echo $health_class ?>" href="<?php echo $health_link ?>" title="<?php _e( 'Refresh health status', 'domainmap' ) ?>"><?php
+		?><a class="domainmapping-map-state<?php echo $health_class ?>" href="<?php echo esc_url( $health_link ) ?>" title="<?php _e( 'Refresh health status', 'domainmap' ) ?>"><?php
 			echo $health_message
 		?></a><?php
 	}
 
 
+	/**
+	 * Renders excluded pages list
+	 *
+	 * @since 4.3.0
+	 *
+	 */
+	private function _render_excluded_pages(){
 
+		/**
+		 * @param $page WP_Post
+		 */
+		if( !Domainmap_Plugin::instance()->get_option("map_allow_excluded_pages", true)
+		    && !Domainmap_Plugin::instance()->get_option("map_allow_excluded_urls", true)
+		    && !Domainmap_Plugin::instance()->get_option("map_allow_forced_pages", true)
+		    && !Domainmap_Plugin::instance()->get_option("map_allow_forced_urls", true)
+		) return;
+		?>
+
+		<h3  title="<?php _e("Pages selected here will not be mapped and can optionally force https", domain_map::Text_Domain); ?>">
+			<span class="dashicons-before dashicons-admin-comments"></span>
+			<?php _e("Excluded pages: ", domain_map::Text_Domain); ?>
+			<span class="description">
+				<?php _e('Pages selected here will not be mapped and can optionally force https, If you set the domain to use https, the following "force/unforce SSL will be ignored" ', domain_map::Text_Domain); ?>
+			</span>
+		</h3>
+		<br/>
+		<?php
+		if( Domainmap_Plugin::instance()->get_option("map_allow_excluded_pages", true) || Domainmap_Plugin::instance()->get_option("map_allow_forced_pages", true) ){
+			$table = new Domainmap_Table_ExcludedPages_Listing();
+			$table->prepare_items();
+			$table->display();
+		}
+
+		?>
+		<form  method="post" id="dm_save_excluded_pages_form" action="<?php echo esc_url_raw( add_query_arg( 'noheader', 'true' ) ) ?>">
+			<input type="hidden" name="page" value="domainmapping"/>
+			<input type="hidden" name="paged" value="<?php echo isset( $_REQUEST['paged'] ) ? $_REQUEST['paged'] : "" ?>"/>
+			<?php wp_nonce_field("save-exluded-pages", "_save-exluded-pages"); ?>
+		<?php if( Domainmap_Plugin::instance()->get_option("map_allow_excluded_urls", true) ): ?>
+			<input type="hidden" name="dm_excluded_pages" id="dm_exluded_pages_hidden_field" value="<?php echo Domainmap_Module_Mapping::get_excluded_pages(); ?>"/>
+			<h4 class="domain-mapping-or-urls-title">
+				<?php _e('Add page urls below to have excluded:', domain_map::Text_Domain); ?>
+			</h4>
+			<textarea name="dm_excluded_page_urls" id="dm_excluded_page_urls"  rows="4"> <?php  echo esc_html(Domainmap_Module_Mapping::get_excluded_page_urls()); ?></textarea>
+			<p class="description">
+				<?php _e('Please enter absolute URLs (starting with http:// or https://), URLs should be comma separated', domain_map::Text_Domain); ?>
+			</p>
+			<br/>
+			<br/>
+		<?php endif; ?>
+		<?php if( Domainmap_Plugin::instance()->get_option("map_allow_forced_urls", true) ): ?>
+			<input type="hidden" name="dm_ssl_forced_pages" id="dm_ssl_forced_pages_hidden_field" value="<?php echo Domainmap_Module_Mapping::get_ssl_forced_pages(); ?>"/>
+			<h4 class="domain-mapping-or-urls-title">
+				<?php _e('Add page urls below to force https:', domain_map::Text_Domain); ?>
+			</h4>
+			<textarea name="dm_ssl_forced_page_urls" id="dm_ssl_forced_page_urls"  rows="4"> <?php  echo esc_html(Domainmap_Module_Mapping::get_ssl_forced_page_urls()); ?></textarea>
+			<p class="description">
+				<?php _e('Please enter absolute URLs (starting with http:// or https://), URLs should be comma separated', domain_map::Text_Domain); ?>
+			</p>
+		<?php endif; ?>
+			<?php submit_button( __( 'Save excluded pages', domain_map::Text_Domain ), 'primary', "dm-save-exluded-pages", false, array( 'id' => 'save-exluded-pages' ) ); 		?>
+		</form>
+
+		<?php
+
+	}
+
+	/**
+	 * Updates excluded pages
+	 *
+	 * @since 4.3.0
+	 */
+	private function _save_excluded_pages()	{
+		if( isset( $_POST['dm-save-exluded-pages'] ) && wp_verify_nonce($nonce = filter_input( INPUT_POST, "_save-exluded-pages" ), "save-exluded-pages") ){
+			update_option( "dm_excluded_pages", strip_tags($_POST['dm_excluded_pages']) );
+			update_option( "dm_ssl_forced_pages", strip_tags($_POST['dm_ssl_forced_pages']) );
+			update_option( "dm_excluded_page_urls", strip_tags($_POST['dm_excluded_page_urls']) );
+			update_option( "dm_ssl_forced_page_urls", strip_tags($_POST['dm_ssl_forced_page_urls']) );
+			if ( filter_input( INPUT_GET, 'noheader', FILTER_VALIDATE_BOOLEAN ) ) {
+				wp_safe_redirect( esc_url_raw( add_query_arg( array( 'noheader' => false, 'saved' => 'true' ) ) ) );
+				exit;
+			}
+		}
+
+	}
+
+	private function _render_mapping_form(){
+		$admin_ajax = esc_url( admin_url( 'admin-ajax.php' ) );
+
+		$mapping = get_option( 'domainmap_frontend_mapping', 'mapped' );
+		$mapping_types = array(
+			'user'     => __( 'Disabled and entered domain should be used', 'domainmap' ),
+			'mapped'   => __( 'Directed to mapped (primary) domain', 'domainmap' ),
+			'original' => __( 'Directed to original domain', 'domainmap' ),
+		);
+		?>
+		<li class="domainmapping-form domainmapping-front-mapping-form-row <?php echo count($this->domains) === 0 ? "domainmapping-hidden" : "" ?>">
+
+			<form id="domainmapping-front-mapping" action="<?php echo $admin_ajax ?>" method="post">
+				<?php wp_nonce_field( Domainmap_Plugin::ACTION_CHANGE_FRONTEND_REDIRECT, 'nonce' ) ?>
+				<input type="hidden" name="action" value="<?php echo Domainmap_Plugin::ACTION_CHANGE_FRONTEND_REDIRECT ?>">
+				<p>
+					<?php esc_html_e( 'Front end redirect should be:', 'domainmap' ) ?>
+					<span id="domainmapping-front-mapping-spinner" class="spinner"></span>
+				</p>
+				<select name="mapping">
+					<?php foreach ( $mapping_types as $key => $label ) : ?>
+						<option value="<?php echo $key ?>"<?php selected( $key, $mapping ) ?>><?php echo esc_html( $label ) ?></option>
+					<?php endforeach; ?>
+				</select>
+
+			</form>
+		</li>
+		<li class="domainmapping-form"></li>
+
+		<li class="domainmapping-form">
+			<form id="domainmapping-form-map-domain" action="<?php echo $admin_ajax ?>" method="post">
+				<h4><?php _e("Map new domain name:", domain_map::Text_Domain); ?></h4>
+				<?php wp_nonce_field( Domainmap_Plugin::ACTION_MAP_DOMAIN, 'nonce' ) ?>
+				<input type="hidden" name="action" value="<?php echo Domainmap_Plugin::ACTION_MAP_DOMAIN ?>">
+				<select type="text" name="scheme" class="domainmapping-input-prefix">
+					<option value="0">http://</option>
+					<option value="1">https://</option>
+					<option value="2"><?php _e("Force none", domain_map::Text_Domain); ?></option>
+				</select>
+				<div class="domainmapping-controls-wrapper">
+					<input type="text" class="domainmapping-input-domain" autofocus name="domain">
+				</div>
+				<input type="text" class="domainmapping-input-sufix" readonly disabled value="/">
+				<button type="submit" class="button button-primary domainmapping-button dashicons-before dashicons-admin-site"><?php _e( 'Map domain', 'domainmap' ) ?></button>
+				<i class="icon-globe icon-white"></i>
+				<div class="domainmapping-clear"></div>
+			</form>
+		</li>
+	<?php
+	}
 }

@@ -3,7 +3,7 @@
 Plugin Name: Domain Mapping
 Plugin URI: https://premium.wpmudev.org/project/domain-mapping/
 Description: The ultimate Multisite domain mapping plugin - sync cookies, sell domains with eNom, and integrate with Pro Sites.
-Version: 4.2.0.2
+Version: 4.4.0.9
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 99
@@ -34,8 +34,8 @@ if ( !is_multisite() || class_exists( 'Domainmap_Plugin', false ) ) {
    return;
 }
 
-// UnComment out the line below to allow multiple domain mappings per blog
-define('DOMAINMAPPING_ALLOWMULTI', 'yes');
+// UnComment the line below to allow multiple domain mappings per blog
+//define('DOMAINMAPPING_ALLOWMULTI', true);
 
 // WPMUDev Dashboard Notices
 //load dashboard notice
@@ -44,6 +44,7 @@ $wpmudev_notices[] = array( 'id'=> 99,'name'=> 'Domain Mapping', 'screens' => ar
 require_once 'extra/wpmudev-dash-notification.php';
 
 // main domain mapping class
+require_once 'inc/DM_Currencies.php';
 require_once 'classes/class.domainmap.php';
 
 /**
@@ -95,13 +96,19 @@ function domainmap_setup_constants() {
 	define( 'DOMAINMAP_ABSURL',   plugins_url( '/', __FILE__ ) );
 	define( 'DOMAINMAP_ABSPATH',  dirname( __FILE__ ) );
 
-	if ( !defined( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN' ) ) {
-		define( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN', false );
-	}
+/**
+ * @deprecate DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN
+ */
+//	if ( !defined( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN' ) ) {
+//		define( 'DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN', false );
+//	}
 
-	if ( !defined( 'DOMAINMAPPING_ALLOWMULTI' ) ) {
-		define( 'DOMAINMAPPING_ALLOWMULTI', false );
-	}
+/**
+ * @deprecate DOMAINMAPPING_ALLOWMULTI
+ */
+//	if ( !defined( 'DOMAINMAPPING_ALLOWMULTI' ) ) {
+//		define( 'DOMAINMAPPING_ALLOWMULTI', false );
+//	}
 
 	// setup db tables
 	$prefix = isset( $wpdb->base_prefix ) ? $wpdb->base_prefix : $wpdb->prefix;
@@ -160,6 +167,8 @@ function domainmap_launch() {
 			$plugin->set_module( Domainmap_Module_Admin::NAME );
 		}
 	}
+
+
 }
 
 // register autoloader function
@@ -168,7 +177,15 @@ spl_autoload_register( 'domainmap_autoloader' );
 // launch the plugin
 domainmap_launch();
 
+function domainmap_plugin_activate() {
+	do_action("domainmap_plugin_activated");
+}
+register_activation_hook( __FILE__, 'domainmap_plugin_activate' );
 
+function domainmap_plugin_deactivate() {
+	do_action("domainmap_plugin_deactivated");
+}
+register_deactivation_hook( __FILE__, 'domainmap_plugin_deactivate' );
 /*================== Global Functions =======================*/
 
 /**

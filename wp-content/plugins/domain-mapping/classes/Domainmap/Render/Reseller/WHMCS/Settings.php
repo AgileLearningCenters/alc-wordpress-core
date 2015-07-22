@@ -71,6 +71,12 @@ class Domainmap_Render_Reseller_WHMCS_Settings extends Domainmap_Render {
 		$pwd_hash = md5( $pwd );
 		?><h4 class="domainmapping-block-header"><?php _e( 'Account credentials:', 'domainmap' ) ?></h4>
 
+		<?php if ( empty($this->uid) || empty($this->pwd) ) : ?>
+			<div class="domainmapping-info domainmapping-info-error">
+				<p><?php _e( "Maybe: Warning you haven't entered any API credentials, the purchase domain tab will not show till you've successfully saved your API credentials", 'domainmap' ) ?></p>
+			</div>
+		<?php endif; ?>
+
 		<?php if ( $this->valid === false ) : ?>
 		<div class="domainmapping-info domainmapping-info-error">
 			<p><?php _e( 'Looks like your credentials are invalid. Please, check the errors sent by WHMCS server:', 'domainmap' ) ?></p>
@@ -242,6 +248,23 @@ class Domainmap_Render_Reseller_WHMCS_Settings extends Domainmap_Render {
        <?php
     }
 
+	private function _render_currency_settings(){
+		$currencies = DM_Currencies::get_currency_list();
+		$current = $this->_reseller()->get_currency();
+		?><h4 class="domainmapping-block-header"><?php _e( 'Currency:', 'domainmap' ) ?></h4>
+		<div>
+			<label for="map_reseller_currency" id="whmcs_currency_label">
+				<select name="map_reseller_currency" id="map_reseller_currency">
+					<?php foreach($currencies as $key => $currency): ?>
+						<option value="<?php echo $key ?>" <?php selected($current, $key); ?> ><?php echo $currency[0]; ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
+		</div>
+
+	<?php
+	}
+
 	/**
 	 * Renders template.
 	 *
@@ -254,6 +277,7 @@ class Domainmap_Render_Reseller_WHMCS_Settings extends Domainmap_Render {
 		$this->_render_account_settings();
         $this->_render_registration_settings();
         $this->_render_domain_pricing();
+		$this->_render_currency_settings();
 		$this->_render_payment_settings();
 	}
 

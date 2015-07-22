@@ -163,6 +163,9 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
         // client registration
         $options[self::RESELLER_ID]['enable_registration'] = (bool) filter_input( INPUT_POST, 'map_reseller_whmcs_client_registration' );
 
+
+        $options[self::RESELLER_ID]['currency'] =  filter_input( INPUT_POST, 'map_reseller_currency', FILTER_SANITIZE_STRING );
+
 		// validate credentials
 		$options[self::RESELLER_ID]['valid'] = $need_health_check || ( isset( $options[self::RESELLER_ID]['valid'] ) && $options[self::RESELLER_ID]['valid'] === false )
 			? $this->_validate_credentials()
@@ -214,7 +217,7 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
 
         $gateways = array();
         $options = Domainmap_Plugin::instance()->get_options();
-        if( $options[self::RESELLER_ID]['valid'] ){
+        if( isset( $options[self::RESELLER_ID] ) && $options[self::RESELLER_ID]['valid'] ){
             $object = $this->exec_command( self::COMMAND_GET_GATEWAYS );
             if( !is_wp_error( $object ) ){
                 foreach( $object->paymentmethods->paymentmethod as $method ) {
@@ -341,7 +344,7 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
      * @return mixed
      */
     private function _callback_extract_tld( $item ){
-        return str_replace( ".", "",  $item['tld'] );
+	    return preg_replace('/./', '', $item['tld'] , 1);
     }
 
 	/**
@@ -454,7 +457,7 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
 	 * @param string $sld The SLD name.
 	 */
 	private function _populate_dns_records( $tld, $sld ) {
-		global $wpdb;
+		global $wpdb, $blog_id;
 
 		$ips = $args = array();
 		$options = Domainmap_Plugin::instance()->get_options();
@@ -489,10 +492,10 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
 			$ajax_url = str_replace( parse_url( $ajax_url, PHP_URL_HOST ), current( $ips ), $ajax_url );
 			restore_current_blog();
 
-			$response = wp_remote_request( add_query_arg( array(
+			$response = wp_remote_request( esc_url_raw( add_query_arg( array(
 				'action' => Domainmap_Plugin::ACTION_HEARTBEAT_CHECK,
 				'check'  => $check,
-			), $ajax_url ) );
+			), $ajax_url ) ) );
 
 			$dedicated = !is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) == 200 && wp_remote_retrieve_body( $response ) == $check;
 		}
@@ -511,7 +514,7 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
 			}
 		} else {
 			// network is hosted on shared hosting and we can use DNS CNAME records for it
-			$origin = $wpdb->get_row( "SELECT * FROM {$wpdb->blogs} WHERE blog_id = " . intval( $wpdb->blogid ) );
+			$origin = $wpdb->get_row( "SELECT * FROM {$wpdb->blogs} WHERE blog_id = " . intval( $blog_id ) );
 
 			$args['HostName1'] = "{$sld}.{$tld}";
 			$args['RecordType1'] = 'CNAME';
@@ -573,9 +576,10 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
         ob_start();
 
         printf(
-            '<div class="domainmapping-info domainmapping-info-success"><b>%s</b> %s <b>$%s</b> %s.<div class="domainmapping-clear"></div>',
+            '<div class="domainmapping-info domainmapping-info-success"><b>%s</b> %s <b>%s%s</b> %s.<div class="domainmapping-clear"></div>',
             strtoupper( "{$sld}.{$tld}" ),
             __( 'is available to purchase for', 'domainmap' ),
+	        $this->get_currency_symbol(),
             $this->get_tld_price( $tld ),
             __( 'per year', 'domainmap' )
         );
@@ -610,7 +614,7 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
                     <p>
                         <strong>
                         <?php
-                            printf( __("Or <a href='%s' id='dm_whmcs_register_client'>click to signup as a new client</a>", domain_map::Text_Domain), $register_link );
+                            printf( __("Or <a href='%s' id='dm_whmcs_register_client'>click to signup as a new client</a>", domain_map::Text_Domain), esc_url( $register_link ) );
                         ?>
                         </strong>
                     </p>
@@ -746,4 +750,16 @@ class Domainmap_Reseller_WHMCS extends Domainmap_Reseller {
 
         $this->_log_request( $type, $valid, $errors, $object );
     }
+
+	/**
+	 * Returns currenct currency code
+	 *
+	 * @sicne 4.3.1
+	 * @return string
+	 */
+	public function get_currency(){
+		$options = Domainmap_Plugin::instance()->get_options();
+		return isset( $options[self::RESELLER_ID]['currency'] ) ?  $options[self::RESELLER_ID]['currency'] : "USD";
+	}
+
 }

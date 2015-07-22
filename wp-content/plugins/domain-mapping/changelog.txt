@@ -1,4 +1,125 @@
 * Speed up DNS A record detection on network settings and allow disabling it via DM_SKIP_DNS_CHECK define
+== 4.4.0.9 ==
+* Fixed: Mixed urls in contents under ssl
+
+== 4.4.0.8 ==
+* Add dm_toggle_mapping action hook to toggle mapped domain active flag
+* Fix bug in domain mapping domain column length when used with InnoDB
+
+== 4.4.0.7 ==
+* Fixed: Blank page in sso reauthenticate function when redirect_to is null
+* Fixed: Bug in setting correct scheme for the endpoint
+* Fixed: Https admin ajax url in none https page
+* Fixed: Bug in sso endpoing url scheme,
+* Fixed: Inability to logout from mapped domain
+* Fixed: Bug in SSO that prevented it from working on slower installs
+* Fixed: Cross-login issue and cookie nag
+
+
+
+== 4.4.0.6 ==
+* Fixed: Issue in login functionality when both admin and login mappings are original
+* Fixed: Bugs in unswap url and login and sso from https pages
+* Fixed: Mapping bugs with https scheme
+* Fixed: Some domain validations issues
+
+
+== 4.4.0.5 ==
+* Fixed: Bug in login form action attribute on mapped domain
+
+== 4.4.0.4 ==
+* Fixed: Admin url issues on mapped site
+* Fixed: Sso endpoint resolution issues
+* Fixed: Bug in admin and login mapping uppon login
+
+== 4.4.0.3 ==
+* Fixed: Issue in login from mapped domain
+* Fixed: Issue in visiting admin with the secondary mapped domains
+* Fixed: Ability to remove prohibited domains from mapped domains table
+
+== 4.4.0.2 ==
+* Added: More control over excluded and ssl-forced pages and urls ( for super admin )
+* Fixed: Issue with prohibited domains and disallowed subdomains
+* Fixed: Issue with php v.5.2.x and Punycode Class ( used for International Domain Names )
+* Fixed: Some js issues in mapped domain table pagination
+* Fixed: Some typos
+
+== 4.4.0.1 ==
+* Fixed: Post preview link issue
+* Fixed: Bug in eNom purchase functionality
+* Fixed: Some minor bugs
+
+== 4.4.0 ==
+* Better integration with Multi-Domains plugin
+* Revamped SSO to improve performance and solve issue with out of date token nag, now fully async
+* Added: Ability to disable single url scheme forcing and mapping exclusion
+* Added: Better UX for adding and managing mapped domains
+* Added: Ability to enable multiple mapped domains from admin of the main site
+* Added: Support for multiple currencies
+* Fixed: Bug when  going from an excluded page to the mapped domain
+* Fixed: Forcing https for admin and login
+* Fixed: Better UX for adding and managing mapped domains
+* Fixed: Punycode class compatibility when some  extensions are not installed
+* Fixed: WP add_query_var and remove_query_var vulnerability
+* Removed: DM_FORCE_PROTOCOL_ON_MAPPED_DOMAIN, the schema forcing for mapped domains as well as original domain is only possible from the setting pages
+
+== 4.3.1 ==
+* Better integration with Multi-Domains plugin
+* Revamped SSO to improve performance and solve issue with out of date token nag, now fully async
+* Added: Ability to disable single url scheme forcing and mapping exclusion
+* Added: Better UX for adding and managing mapped domains
+* Added: Ability to enable multiple mapped domains from admin of the main site
+* Fixed: Bug when  going from an excluded page to the mapped domain
+* Fixed: Forcing https for admin and login
+* Fixed: Better UX for adding and managing mapped domains
+
+== 4.3.0.4 ==
+* Fixed issue with excluded pages problem on homepage
+
+== 4.3.0.3 ==
+* Added ability to turn "Check domain propagation before mapping" on and off
+* Fixed issue with static content (image, css, ...) not showing up in some sub-sites
+
+== 4.3.0.2 ==
+* Fixed minor bug when sub-site doesn't have a mapped domain
+
+== 4.3.0.1 ==
+* Fixed double forward slash in urls
+* Fixed sub-site name missing in some urls
+
+== 4.3.0 ==
+* Added ability to disable sub-domains of the original domain to be used as sub-site’s primary (mapped) domain
+* Added ability to prohibit certain domains and their sub-domains
+* Added ability to exclude some pages to be mapped
+* Added ability to force https for each single page
+* Added not mapping to primary (mapped) domain when it’s not valid yet.
+* Added ability to define custom sunrise file
+* Added ability to include SSO asynchronously
+* Fixed bug in mapped domain scheme forcing
+* Fixed wrong urls in the admin of sub-site when the sub-site has mapped domain
+* Fixed problem in sunrise when IP addressed is used instead of a domain name for the main site
+* Fixed bug when frontend is forced to  use https and redirect type is set to force primary domain
+* Fixed bug when front-end is to https forced in the main site’s settings page and it’s allowing both https and http for the mapped domain
+* Fixed problem in customizer when mapped domain is used with https
+
+
+== 4.2.0.6 ==
+* Fixed: bug in mapped domain scheme forcing
+
+== 4.2.0.5 ==
+* Fixed: bug causing redirect loop in sub-site's login when original admin/login pages are forced to have https and subdomain has mapped domain
+
+== 4.2.0.4 ==
+* Added: ability to force schema in admin of mapped domain when schema is forced for front-end of mapped domain
+* Added: ability to leave mapped domain schema unforced
+* Added: delete mapping record from db when blog is deleted
+* Fixed: bug in mapped domain schema forcing on nginx servers
+* Fixed: preventing original domain with www to be added as mapped domain
+* Fixed: bug in SSO when logging in subdomain and not getting logged in in mapped domain
+
+== 4.2.0.3 ==
+* Fixed: Domain validation issue
+
 == 4.2.0.2 ==
 * Fixed: bug that prevented some installs from adding a new domain
 * Fixed: domain validation when adding or removing a domain
@@ -76,4 +197,4 @@
 * Improved MultiDB compatibility by registering domain mapping tables as global
 
 
-327416-1413422148-au
+327416-1437571803-au

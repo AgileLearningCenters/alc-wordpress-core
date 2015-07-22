@@ -1,5 +1,26 @@
 <?php
+if( !function_exists("_mb_strlen") ){
+	function _mb_strlen($str) {// From WP v.4.2 for backward compatibility
+		// The solution below works only for UTF-8,
+		// so in case of a different charset just use built-in strlen()
+		$charset = get_option( 'blog_charset' );
+		if ( ! in_array( $charset, array( 'utf8', 'utf-8', 'UTF8', 'UTF-8' ) ) ) {
+			return strlen( $str );
+		}
+		// Use the regex unicode support to separate the UTF-8 characters into an array
+		preg_match_all( '/./us', $str, $match );
+		return count( $match[0] );
+	}
+}
 
+
+if ( !function_exists('mb_strlen') ):
+	function mb_strlen( $str ) {
+		return _mb_strlen($str);
+	}
+endif;
+
+if( !class_exists("Punycode") ):
 /**
  * Punycode implementation as described in RFC 3492
  *
@@ -72,8 +93,8 @@ class Punycode
     {
         $codePoints = $this->_codePoints($input);
 
-        $n = static::INITIAL_N;
-        $bias = static::INITIAL_BIAS;
+        $n = self::INITIAL_N;
+        $bias = self::INITIAL_BIAS;
         $delta = 0;
         $h = $b = count($codePoints['basic']);
 
@@ -85,7 +106,7 @@ class Punycode
             return $output;
         }
         if ($b > 0) {
-            $output .= static::DELIMITER;
+            $output .= self::DELIMITER;
         }
 
         $codePoints['nonBasic'] = array_unique($codePoints['nonBasic']);
@@ -99,16 +120,16 @@ class Punycode
             $n = $m;
 
             foreach ($codePoints['all'] as $c) {
-                if ($c < $n || $c < static::INITIAL_N) {
+                if ($c < $n || $c < self::INITIAL_N) {
                     $delta++;
                 }
                 if ($c === $n) {
                     $q = $delta;
-                    for ($k = static::BASE;; $k += static::BASE) {
-                        if ($k <= $bias + static::TMIN) {
-                            $t = static::TMIN;
-                        } elseif ($k >= $bias + static::TMAX) {
-                            $t = static::TMAX;
+                    for ($k = self::BASE;; $k += self::BASE) {
+                        if ($k <= $bias + self::TMIN) {
+                            $t = self::TMIN;
+                        } elseif ($k >= $bias + self::TMAX) {
+                            $t = self::TMAX;
                         } else {
                             $t = $k - $bias;
                         }
@@ -116,13 +137,13 @@ class Punycode
                             break;
                         }
 
-                        $code = $t + (($q - $t) % (static::BASE - $t));
-                        $output .= static::$_encodeTable[$code];
+                        $code = $t + (($q - $t) % (self::BASE - $t));
+                        $output .= self::$_encodeTable[$code];
 
-                        $q = ($q - $t) / (static::BASE - $t);
+                        $q = ($q - $t) / (self::BASE - $t);
                     }
 
-                    $output .= static::$_encodeTable[$q];
+                    $output .= self::$_encodeTable[$q];
                     $bias = $this->_adapt($delta, $h + 1, ($h === $b));
                     $delta = 0;
                     $h++;
@@ -133,7 +154,7 @@ class Punycode
             $n++;
         }
 
-        return static::PREFIX . $output;
+        return self::PREFIX . $output;
     }
 
 /**
@@ -159,17 +180,17 @@ class Punycode
  */
     protected function _decodePart($input)
     {
-        if (strpos($input, static::PREFIX) !== 0) {
+        if (strpos($input, self::PREFIX) !== 0) {
             return $input;
         }
-        $input = ltrim($input, static::PREFIX);
+        $input = ltrim($input, self::PREFIX);
 
-        $n = static::INITIAL_N;
+        $n = self::INITIAL_N;
         $i = 0;
-        $bias = static::INITIAL_BIAS;
+        $bias = self::INITIAL_BIAS;
         $output = '';
 
-        $pos = strrpos($input, static::DELIMITER);
+        $pos = strrpos($input, self::DELIMITER);
         if ($pos !== false) {
             $output = substr($input, 0, $pos++);
         } else {
@@ -182,14 +203,14 @@ class Punycode
             $oldi = $i;
             $w = 1;
 
-            for ($k = static::BASE;; $k += static::BASE) {
-                $digit = static::$_decodeTable[$input[$pos++]];
+            for ($k = self::BASE;; $k += self::BASE) {
+                $digit = self::$_decodeTable[$input[$pos++]];
                 $i = $i + ($digit * $w);
 
-                if ($k <= $bias + static::TMIN) {
-                    $t = static::TMIN;
-                } elseif ($k >= $bias + static::TMAX) {
-                    $t = static::TMAX;
+                if ($k <= $bias + self::TMIN) {
+                    $t = self::TMIN;
+                } elseif ($k >= $bias + self::TMAX) {
+                    $t = self::TMAX;
                 } else {
                     $t = $k - $bias;
                 }
@@ -197,7 +218,7 @@ class Punycode
                     break;
                 }
 
-                $w = $w * (static::BASE - $t);
+                $w = $w * (self::BASE - $t);
             }
 
             $bias = $this->_adapt($i - $oldi, ++$outputLength, ($oldi === 0));
@@ -223,17 +244,17 @@ class Punycode
     {
         $delta = (int)(
             ($firstTime)
-                ? $delta / static::DAMP
+                ? $delta / self::DAMP
                 : $delta / 2
             );
         $delta += (int)($delta / $numPoints);
 
         $k = 0;
-        while ($delta > ((static::BASE - static::TMIN) * static::TMAX) / 2) {
-            $delta = (int)($delta / (static::BASE - static::TMIN));
-            $k = $k + static::BASE;
+        while ($delta > ((self::BASE - self::TMIN) * self::TMAX) / 2) {
+            $delta = (int)($delta / (self::BASE - self::TMIN));
+            $k = $k + self::BASE;
         }
-        $k = $k + (int)(((static::BASE - static::TMIN + 1) * $delta) / ($delta + static::SKEW));
+        $k = $k + (int)(((self::BASE - self::TMIN + 1) * $delta) / ($delta + self::SKEW));
 
         return $k;
     }
@@ -305,3 +326,5 @@ class Punycode
         }
     }
 }
+
+endif;

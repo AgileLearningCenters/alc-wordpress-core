@@ -193,7 +193,7 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 		$options[self::RESELLER_ID]['sslverification'] = (int)filter_input( INPUT_POST, 'map_reseller_enom_sslverification', FILTER_VALIDATE_BOOLEAN );
 
 		// validate credentials
-		$options[self::RESELLER_ID]['valid'] = $need_health_check || ( isset( $options[self::RESELLER_ID]['valid'] ) && $options[self::RESELLER_ID]['valid'] == false )
+		$options[self::RESELLER_ID]['valid'] = $need_health_check || ( isset( $options[self::RESELLER_ID]['valid'], $options[self::RESELLER_ID]['uid'], $options[self::RESELLER_ID]['pwd'] ) && $options[self::RESELLER_ID]['valid'] == false )
 			? $this->_validate_credentials( $options[self::RESELLER_ID]['uid'], $options[self::RESELLER_ID]['pwd'], $options[self::RESELLER_ID]['environment'] )
 			: true;
 	}
@@ -344,7 +344,7 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 		$template->gateways = $this->_get_gateways();
 		$template->gateway = $this->_get_gateway( $options );
 		$template->environment = $this->_get_environment( $options );
-		$template->register_link = $register_link;
+		$template->register_link = esc_url( $register_link );
 		$template->errors = get_site_transient( 'enom_errors_' . get_current_user_id() );
 
 		$template->render();
@@ -376,7 +376,7 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 		$this->_log_enom_request( self::REQUEST_GET_TLD_LIST, $xml );
 
 		$tlds = array();
-		if ( $xml && isset( $xml->tldlist->tld ) ) {
+		if ( $xml && isset($xml->tldlist, $xml->tldlist->tld ) ) {
 			$tldlist = json_decode( json_encode( $xml->tldlist ), true );
 			foreach ( $tldlist['tld'] as $tld ) {
 				$tlds[] = $tld['tld'];
@@ -450,37 +450,37 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 		$registrant_fax = '+' . preg_replace( '/[^0-9\.]/', '', filter_input( INPUT_POST, 'registrant_fax' ) );
 
 		$response = $this->_exec_command( self::COMMAND_PURCHASE, array(
-			'sld'                        => $sld,
-			'tld'                        => $tld,
-			'UseDNS'                     => 'default',
-			'ChargeAmount'               => $this->get_tld_price( $tld ),
-			'EndUserIP'                  => self::_get_remote_ip(),
-			'CardType'                   => filter_input( INPUT_POST, 'card_type' ),
-			'CCName'                     => filter_input( INPUT_POST, 'card_cardholder' ),
-			'CreditCardNumber'           => preg_replace( '/[^0-9]/', '', filter_input( INPUT_POST, 'card_number' ) ),
-			'CreditCardExpMonth'         => $expiry[0],
-			'CreditCardExpYear'          => isset( $expiry[1] ) ? "20{$expiry[1]}" : '',
-			'CVV2'                       => filter_input( INPUT_POST, 'card_cvv2' ),
-			'CCAddress'                  => filter_input( INPUT_POST, 'billing_address' ),
-			'CCCity'                     => filter_input( INPUT_POST, 'billing_city' ),
-			'CCStateProvince'            => filter_input( INPUT_POST, 'billing_state' ),
-			'CCZip'                      => filter_input( INPUT_POST, 'billing_zip' ),
-			'CCPhone'                    => $billing_phone,
-			'CCCountry'                  => filter_input( INPUT_POST, 'billing_country' ),
-			'RegistrantFirstName'        => filter_input( INPUT_POST, 'registrant_first_name' ),
-			'RegistrantLastName'         => filter_input( INPUT_POST, 'registrant_last_name' ),
-			'RegistrantOrganizationName' => filter_input( INPUT_POST, 'registrant_organization' ),
-			'RegistrantJobTitle'         => filter_input( INPUT_POST, 'registrant_job_title' ),
-			'RegistrantAddress1'         => filter_input( INPUT_POST, 'registrant_address1' ),
-			'RegistrantAddress2'         => filter_input( INPUT_POST, 'registrant_address2' ),
-			'RegistrantCity'             => filter_input( INPUT_POST, 'registrant_city' ),
-			'RegistrantStateProvince'    => filter_input( INPUT_POST, 'registrant_state' ),
-			'RegistrantPostalCode'       => filter_input( INPUT_POST, 'registrant_zip' ),
-			'RegistrantCountry'          => filter_input( INPUT_POST, 'registrant_country' ),
-			'RegistrantEmailAddress'     => filter_input( INPUT_POST, 'registrant_email' ),
-			'RegistrantPhone'            => $registrant_phone,
-			'RegistrantFax'              => $registrant_fax,
-		) + ( isset( $_POST['ExtendedAttributes'] ) ? (array)$_POST['ExtendedAttributes'] : array() ) );
+			                                                          'sld'                        => $sld,
+			                                                          'tld'                        => $tld,
+			                                                          'UseDNS'                     => 'default',
+			                                                          'ChargeAmount'               => $this->get_tld_price( $tld ),
+			                                                          'EndUserIP'                  => self::_get_remote_ip(),
+			                                                          'CardType'                   => filter_input( INPUT_POST, 'card_type' ),
+			                                                          'CCName'                     => filter_input( INPUT_POST, 'card_cardholder' ),
+			                                                          'CreditCardNumber'           => preg_replace( '/[^0-9]/', '', filter_input( INPUT_POST, 'card_number' ) ),
+			                                                          'CreditCardExpMonth'         => $expiry[0],
+			                                                          'CreditCardExpYear'          => isset( $expiry[1] ) ? "20{$expiry[1]}" : '',
+			                                                          'CVV2'                       => filter_input( INPUT_POST, 'card_cvv2' ),
+			                                                          'CCAddress'                  => filter_input( INPUT_POST, 'billing_address' ),
+			                                                          'CCCity'                     => filter_input( INPUT_POST, 'billing_city' ),
+			                                                          'CCStateProvince'            => filter_input( INPUT_POST, 'billing_state' ),
+			                                                          'CCZip'                      => filter_input( INPUT_POST, 'billing_zip' ),
+			                                                          'CCPhone'                    => $billing_phone,
+			                                                          'CCCountry'                  => filter_input( INPUT_POST, 'billing_country' ),
+			                                                          'RegistrantFirstName'        => filter_input( INPUT_POST, 'registrant_first_name' ),
+			                                                          'RegistrantLastName'         => filter_input( INPUT_POST, 'registrant_last_name' ),
+			                                                          'RegistrantOrganizationName' => filter_input( INPUT_POST, 'registrant_organization' ),
+			                                                          'RegistrantJobTitle'         => filter_input( INPUT_POST, 'registrant_job_title' ),
+			                                                          'RegistrantAddress1'         => filter_input( INPUT_POST, 'registrant_address1' ),
+			                                                          'RegistrantAddress2'         => filter_input( INPUT_POST, 'registrant_address2' ),
+			                                                          'RegistrantCity'             => filter_input( INPUT_POST, 'registrant_city' ),
+			                                                          'RegistrantStateProvince'    => filter_input( INPUT_POST, 'registrant_state' ),
+			                                                          'RegistrantPostalCode'       => filter_input( INPUT_POST, 'registrant_zip' ),
+			                                                          'RegistrantCountry'          => filter_input( INPUT_POST, 'registrant_country' ),
+			                                                          'RegistrantEmailAddress'     => filter_input( INPUT_POST, 'registrant_email' ),
+			                                                          'RegistrantPhone'            => $registrant_phone,
+			                                                          'RegistrantFax'              => $registrant_fax,
+		                                                          ) + ( isset( $_POST['ExtendedAttributes'] ) ? (array)$_POST['ExtendedAttributes'] : array() ) );
 
 		$this->_log_enom_request( self::REQUEST_PURCHASE_DOMAIN, $response );
 
@@ -503,7 +503,7 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 	 * @param string $sld The SLD name.
 	 */
 	private function _populate_dns_records( $tld, $sld ) {
-		global $wpdb;
+		global $wpdb, $blog_id;
 
 		$ips = $args = array();
 		$options = Domainmap_Plugin::instance()->get_options();
@@ -538,10 +538,10 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 			$ajax_url = str_replace( parse_url( $ajax_url, PHP_URL_HOST ), current( $ips ), $ajax_url );
 			restore_current_blog();
 
-			$response = wp_remote_request( add_query_arg( array(
+			$response = wp_remote_request( esc_url_raw( add_query_arg( array(
 				'action' => Domainmap_Plugin::ACTION_HEARTBEAT_CHECK,
 				'check'  => $check,
-			), $ajax_url ) );
+			), $ajax_url ) ) );
 
 			$dedicated = !is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) == 200 && wp_remote_retrieve_body( $response ) == $check;
 		}
@@ -560,7 +560,7 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 			}
 		} else {
 			// network is hosted on shared hosting and we can use DNS CNAME records for it
-			$origin = $wpdb->get_row( "SELECT * FROM {$wpdb->blogs} WHERE blog_id = " . intval( $wpdb->blogid ) );
+			$origin = $wpdb->get_row( "SELECT * FROM {$wpdb->blogs} WHERE blog_id = " . intval( $blog_id ) );
 
 			$args['HostName1'] = "{$sld}.{$tld}";
 			$args['RecordType1'] = 'CNAME';
@@ -660,13 +660,13 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 
 		if ( $psts ) {
 			if ( $this->_get_gateway() == self::GATEWAY_PROSITES ) {
-                /**
-                 * Filter domain mapping locale
-                 *
-                 * @since 4.0.0
-                 * @param string $locale the locale of the blog or from the 'locale' hook.
-                 */
-                $locale = apply_filters( 'domainmap_locale', get_locale() );
+				/**
+				 * Filter domain mapping locale
+				 *
+				 * @since 4.0.0
+				 * @param string $locale the locale of the blog or from the 'locale' hook.
+				 */
+				$locale = apply_filters( 'domainmap_locale', get_locale() );
 				if ( !preg_match( '/^[a-z]{2}_[A-Z]{2}$/', $locale ) ) {
 					$locale = 'en_US';
 				}
@@ -736,7 +736,7 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 			'LOCALECODE'                     => $psts->get_setting( 'pypl_site' ),
 			'NOSHIPPING'                     => 1,
 			'ALLOWNOTE'                      => 0,
-			'RETURNURL'                      => $returnurl,
+			'RETURNURL'                      => esc_url_raw( $returnurl ),
 			'CANCELURL'                      => site_url( "{$cancelurl['path']}?{$cancelurl['query']}" ),
 			'HDRIMG'                         => $psts->get_setting( 'pypl_header_img' ),
 			'HDRBORDERCOLOR'                 => $psts->get_setting( 'pypl_header_border' ),
@@ -972,4 +972,14 @@ class Domainmap_Reseller_Enom extends Domainmap_Reseller {
 		return $response && isset( $response->ErrCount ) && $response->ErrCount == 0;
 	}
 
+	/**
+	 * Returns currenct currency code
+	 *
+	 * @sicne 4.3.1
+	 * @return string
+	 */
+	public function get_currency(){
+		$options = Domainmap_Plugin::instance()->get_options();
+		return isset( $options[self::RESELLER_ID]['currency'] ) ?  $options[self::RESELLER_ID]['currency'] : "USD";
+	}
 }
