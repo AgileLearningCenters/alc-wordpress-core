@@ -12,6 +12,7 @@ class Multisite_Content_Copier_Network_Main_Menu extends Multisite_Content_Copie
 
  		add_action( 'admin_init', array( &$this, 'init_wizard' ), 10 );
  		add_action( 'admin_init', array( &$this, 'validate_form' ) );
+ 		add_action( 'admin_init', array( &$this, 'redirect_search' ) );
 
 
         add_action( 'admin_enqueue_scripts', array( $this, 'add_javascript' ) );
@@ -22,6 +23,9 @@ class Multisite_Content_Copier_Network_Main_Menu extends Multisite_Content_Copie
         add_action( 'wp_ajax_mcc_retrieve_single_blog_data', array( &$this, 'retrieve_single_blog_data' ) );
         add_action( 'wp_ajax_mcc_retrieve_single_user_data', array( &$this, 'retrieve_single_user_data' ) );
         add_action( 'wp_ajax_mcc_retrieve_cpt_selectors_data', array( &$this, 'retrieve_cpt_selectors_data' ) );
+        if ( is_multisite() && is_subdomain_install() )
+        	add_action( 'wp_ajax_nopriv_mcc_retrieve_cpt_selectors_data', array( &$this, 'retrieve_cpt_selectors_data' ) );
+        add_action( 'wp_ajax_mcc_retrieve_cpt_slugs_selector_data', array( &$this, 'retrieve_cpt_slugs_selectors_data' ) );
         add_action( 'wp_ajax_mcc_retrieve_cpt_custom_selector_data', array( &$this, 'retrieve_cpt_custom_selector_data' ) );
         add_action( 'wp_ajax_mcc_remove_item_id_from_list', array( &$this, 'remove_item_id_from_list' ) );
  	}
@@ -42,13 +46,15 @@ class Multisite_Content_Copier_Network_Main_Menu extends Multisite_Content_Copie
  		$this->wizard_start();
 
  		$action = $this->wizard->get_value( 'mcc_action' );
+ 		if ( isset( $_GET['mcc_action'] ) && 'mcc_submit_metabox' == $_GET['mcc_action'] )
+ 			$action = 'mcc_submit_metabox';
 
  		if ( $this->wizard->get_current_step() != '1' && empty( $action ) ) {
  			$this->wizard->go_to_step( '1' );
  		}
 
 
- 		if ( isset( $_GET['mcc_action'] ) && 'mcc_submit_metabox' == $_GET['mcc_action'] && wp_verify_nonce( $_GET['_wpnonce'], 'mcc_submit_meta_box' ) ) {
+ 		if ( isset( $_GET['mcc_action'] ) && 'mcc_submit_metabox' == $_GET['mcc_action'] ) {
  			// The user has submitted the meta box in the post editor
 
  			$content_blog_id = absint( $_GET['content_blog'] );
@@ -283,6 +289,37 @@ class Multisite_Content_Copier_Network_Main_Menu extends Multisite_Content_Copie
 		die();
 	}
 
+	public function retrieve_cpt_slugs_selectors_data() {
+		global $wpdb;
+		$blog_id = absint( $_POST['blog_id'] );
+
+		switch_to_blog( $blog_id );
+		$post_types = mcc_get_registered_cpts();
+		$post_types = $wpdb->get_row( "SELECT DISTINCT( post_type ) FROM $wpdb->posts
+			WHERE post_type NOT IN ( 'post', 'page', 'attachment', 'nav_menu_item', 'revision' ) "
+		);
+
+		if ( empty( $post_types ) ) {
+			echo '<li>' . __( 'There are no custom posts registered for that blog', MULTISTE_CC_LANG_DOMAIN ) . '</li>';
+			die();
+		}
+
+
+		$returning = '';
+		foreach ( $post_types as $post_type ) {
+			$selected = false;
+			$returning .= $this->get_row_cpt_selector_list( $post_type, $post_type, $selected );
+		}
+
+		$returning .= $this->get_row_cpt_selector_list( 'custom', '', false, true );
+
+		restore_current_blog();
+
+		echo $returning;
+
+		die();
+	}
+
 	public function retrieve_cpt_custom_selector_data() {
 		$blog_id = absint( $_POST['blog_id'] );
 
@@ -489,7 +526,7 @@ class Multisite_Content_Copier_Network_Main_Menu extends Multisite_Content_Copie
 					});
 
                     // POSTS/PAGES/CPTs SELECTION
-                    $( '#filter' ).click( function( e ) {
+                    $( '#filter, #search-submit' ).click( function( e ) {
                         isFilter = true;
                     });
 				});
@@ -926,7 +963,7 @@ class Multisite_Content_Copier_Network_Main_Menu extends Multisite_Content_Copie
 		if ( ! empty( $redirect_url ) ) {
 			?>
 			<p>
-				<?php printf( __( 'Click <a href="%s">here</a> to return to your previous page.', MULTISTE_CC_LANG_DOMAIN ), esc_url( $redirect_url ) ); ?>
+				<?php printf( __( 'Click <a href="%s">here</a> to return to the previous page.', MULTISTE_CC_LANG_DOMAIN ), esc_url( $redirect_url ) ); ?>
 			</p>
 			<?php
 		}
@@ -990,6 +1027,14 @@ class Multisite_Content_Copier_Network_Main_Menu extends Multisite_Content_Copie
 			});
 		</script>
 		<?php
+	}
+
+	public function redirect_search() {
+		if ( isset( $_GET['page'] ) && $this->get_menu_slug() == $_GET['page'] && ! empty( $_POST['s'] ) ) {
+			$url = add_query_arg( 's', $_POST['s'] );
+			wp_redirect( esc_url_raw( $url ) );
+			exit();
+		}
 	}
 
 

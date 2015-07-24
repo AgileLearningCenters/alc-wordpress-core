@@ -124,7 +124,7 @@ function mcc_upgrade_122() {
 
 	$group_ids = $wpdb->get_col( "SELECT ID FROM $blogs_groups_table" );
 	foreach ( $group_ids as $group_id ) {
-		$bcount = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( ID ) FROM $blogs_groups_relationship_table WHERE blog_group_id = %d ", $group_id ) );
+		$bcount = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( ID ) FROM $blogs_groups_relationship_table WHERE blog_group_id = %d ", $group_id ) );	  	     		     					
 		$wpdb->query( $wpdb->prepare( "UPDATE $blogs_groups_table SET bcount = $bcount WHERE ID = %d", $group_id ) );
 	}
 }

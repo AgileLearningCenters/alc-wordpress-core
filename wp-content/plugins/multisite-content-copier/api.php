@@ -60,7 +60,7 @@ function mcc_copy_items( $type, $items_ids, $source_blog_id, $dest_blog_ids, $ar
 
 
 		$wpdb->query( "BEGIN;" );
-		$copier = Multisite_Content_Copier_Factory::get_copier( $type, $source_blog_id, $items_ids, $args );	  	     		     					
+		$copier = Multisite_Content_Copier_Factory::get_copier( $type, $source_blog_id, $items_ids, $args );
 		$copier->execute();
 		$wpdb->query( "COMMIT;" );
 

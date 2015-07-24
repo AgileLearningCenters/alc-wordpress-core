@@ -1,11 +1,51 @@
 Plugin Name: Multisite Content Copier
 Author: WPMUDEV
 Requires at least: 3.6
-Tested up to: 3.9.2
+Tested up to: 4.2.1
 
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+1.5.1 - 2015-07-10
+----------------------------------------------------------------------
+- Fixed: WooCommerce gallery was not  being remaped
+
+1.5 - 2015-07-09
+----------------------------------------------------------------------
+- New: WooCommerce integration: Now copying custom and global attributes.
+- New: Added CoursePress Integration
+- Fixed: Several warnings/notices
+
+1.4.1 - 2015-05-27
+----------------------------------------------------------------------
+- Fixed: Warning when switching a theme or deleting a blog and NBT integration was not activated.
+- Fixed: Plugin was not deleting NBT relationships
+
+1.4 - 2015-05-02
+----------------------------------------------------------------------
+- Enhancement: Post galleries are now copied too.
+
+1.3.5 - 2015-04-28
+----------------------------------------------------------------------
+- Fixed: Warning on admin screen on WP 4.2
+- Fixed: XSS Security issue
+
+1.3.4 - 2015-04-17
+----------------------------------------------------------------------
+- Fixed: Removed nonce check when copying from meta box. Some issues appears on mapped domains.
+
+1.3.3 - 2014-12-15
+----------------------------------------------------------------------
+- Fixed: Redirection issue in wizard
+
+1.3.2 - 2014-12-09
+----------------------------------------------------------------------
+- Fixed: HTTP Access Control in a subdomain install when searching post types in wizard
+
+1.3.1 - 2014-10-23
+----------------------------------------------------------------------
+- Fixed: Searching not working when posts list was empty
 
 1.3 - 2014-09-22
 ----------------------------------------------------------------------
@@ -102,4 +142,4 @@ Change Log:
 - Initial Release.
 
 
-327416-1413422150-au
+327416-1437571805-au

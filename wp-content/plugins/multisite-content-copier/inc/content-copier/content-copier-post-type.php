@@ -66,7 +66,7 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 		 * }
 		 * @param Integer $orig_blog_id Source blog ID
 		 */
-		do_action( 'mcc_copy_posts', $this->posts_created, $this->orig_blog_id );
+		do_action( 'mcc_copy_posts', $this->posts_created, $this->orig_blog_id, $this->args );
 
 		return $this->posts_created;
 	}
@@ -297,14 +297,9 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 
 		}
 
-
-
-
-		$attachments = array();
-
-		foreach ( $attachments_ids as $id ) {
-			$attachments[] = get_post( $id );
-		}
+		$gallery_attachments_ids = $this->parse_gallery_attachments( $orig_post->post_content );
+		$attachments_ids = array_merge( $attachments_ids, $gallery_attachments_ids );
+		$attachments = array_map( 'get_post', $attachments_ids );
 
 		// 2. Now the thumbnail
 		$thumbnail = get_post( get_post_thumbnail_id( $orig_post->ID ) );
@@ -397,6 +392,27 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 
 	}
 
+	/**
+	 * Get the attachments IDs inside a gallery shortcode if it exists in the post content
+	 */
+	public function parse_gallery_attachments( $post_content ) {
+		$pattern = $this->get_gallery_pattern();
+		preg_match_all( "/$pattern/s", $post_content, $matches );
+
+		if ( isset( $matches[3][0] ) )
+			$attr = shortcode_parse_atts( $matches[3][0] );
+
+		$ids = array();
+		if ( isset( $attr['ids'] ) )
+			$ids = array_map( 'absint', explode( ',', $attr['ids'] ) );
+
+		return $ids;
+	}
+
+	public function get_gallery_pattern() {
+		return '\[(\[?)(gallery)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)';
+	}
+
 
 
 	/**
@@ -425,7 +441,7 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 		 *
 		 * @param Integer $post_id Source Post ID
 		 */
-		$all_media = apply_filters( 'mcc_copy_media', $all_media, $post_id );
+		$all_media = apply_filters( 'mcc_copy_media', $all_media, $post_id, $new_post_id );
 
 		$images_as_attachments = $all_media['attachments'];
 		$images_as_no_attachments = $all_media['no_attachments'];
@@ -473,6 +489,8 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
             if ( $is_thumbnail )
             	set_post_thumbnail( $new_post_id, $new_attachment_id );
 
+			do_action( 'mcc_copy_attachment', $new_attachment_id, $image->ID, $new_post_id, $post_id );
+
             // First we try with the plain file
 			$new_post_content = str_replace( $image->guid, $new_attachment['guid'], $new_post_content );
 
@@ -486,6 +504,25 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 
 			// Now with the other sizes
 			$new_post_content = str_replace( $from_url, $to_url, $new_post_content );
+
+			// If the image was inside a gallery shortcode, replace the ID inside the shortcode
+			$pattern = $this->get_gallery_pattern();
+
+			preg_match_all( "/$pattern/s", $new_post_content, $matches );
+
+			if ( ! empty( $matches[3][0] ) ) {
+				$attr = shortcode_parse_atts( $matches[3][0] );
+				$new_id = $new_attachment_id;
+				$old_id = $image->ID;
+				$gallery_ids = $this->parse_gallery_attachments( $new_post_content );
+
+				$key = array_search( $old_id, $gallery_ids );
+				if ( $key !== false ) {
+					$gallery_ids[ $key ] = $new_id;
+					$ids_string = ' ids="' . implode( ',', $gallery_ids ) . '"';
+					$new_post_content = str_replace( $matches[3][0], $ids_string, $new_post_content );
+				}
+			}
 
 
 		}
@@ -559,31 +596,31 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
         // request failed
         if ( ! $headers ) {
             @unlink( $upload['file'] );
-            return new WP_Error( 'import_file_error', sprintf( __('Remote server did not respond for file: %s', WPMUDEV_COPIER_LANG_DOMAIN ), $url ) );
+            return new WP_Error( 'import_file_error', sprintf( __('Remote server did not respond for file: %s', MULTISTE_CC_LANG_DOMAIN ), $url ) );
         }
 
         // make sure the fetch was successful
         if ( $headers['response'] != '200' ) {
             @unlink( $upload['file'] );
-            return new WP_Error( 'import_file_error', sprintf( __('Remote server returned error response %1$d %2$s', WPMUDEV_COPIER_LANG_DOMAIN ), esc_html($headers['response']), get_status_header_desc($headers['response']) ) );
+            return new WP_Error( 'import_file_error', sprintf( __('Remote server returned error response %1$d %2$s', MULTISTE_CC_LANG_DOMAIN ), esc_html($headers['response']), get_status_header_desc($headers['response']) ) );
         }
 
         $filesize = filesize( $upload['file'] );
 
         if ( isset( $headers['content-length'] ) && $filesize != $headers['content-length'] ) {
             @unlink( $upload['file'] );
-            return new WP_Error( 'import_file_error', __('Remote file is incorrect size', WPMUDEV_COPIER_LANG_DOMAIN ) );
+            return new WP_Error( 'import_file_error', __('Remote file is incorrect size', MULTISTE_CC_LANG_DOMAIN ) );
         }
 
         if ( 0 == $filesize ) {
             @unlink( $upload['file'] );
-            return new WP_Error( 'import_file_error', __('Zero size file downloaded', WPMUDEV_COPIER_LANG_DOMAIN ) );
+            return new WP_Error( 'import_file_error', __('Zero size file downloaded', MULTISTE_CC_LANG_DOMAIN ) );
         }
 
         $max_size = (int) apply_filters( 'mcc_attachment_size_limit', 0 );
         if ( ! empty( $max_size ) && $filesize > $max_size ) {
             @unlink( $upload['file'] );
-            return new WP_Error( 'import_file_error', sprintf(__('Remote file is too large, limit is %s', WPMUDEV_COPIER_LANG_DOMAIN ), size_format($max_size) ) );
+            return new WP_Error( 'import_file_error', sprintf(__('Remote file is too large, limit is %s', MULTISTE_CC_LANG_DOMAIN ), size_format($max_size) ) );
         }
 
         return $upload;
@@ -691,6 +728,7 @@ class Multisite_Content_Copier_Post_Type_Copier extends Multisite_Content_Copier
 		// Get the source postmeta
 		$model = mcc_get_copier_model();
 		$post_meta = $model->get_post_meta( $post_id );
+
 
 		restore_current_blog();
 

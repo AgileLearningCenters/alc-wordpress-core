@@ -10,10 +10,6 @@ class MCC_NBT_Integrator {
 		add_action( 'deactivate_blogtemplates/blogtemplates.php', array( &$this, 'deactivate_nbt_integration' ) );
 		add_action( 'activate_blogtemplates/blogtemplates.php', array( &$this, 'maybe_show_nbt_integration_notice' ) );
 
-		add_action( 'delete_blog', array( &$this, 'delete_blog_relationships' ), 10, 1 );
-
-		add_action( 'switch_theme', array( &$this, 'delete_blog_relationships_on_switch_theme' ), 10, 1 );
-
 	}
 
 	public function init() {
@@ -28,6 +24,8 @@ class MCC_NBT_Integrator {
 		if ( $settings['blog_templates_integration'] ) {
 			add_action( 'blog_templates-copy-after_copying', array( &$this, 'add_relationship' ), 10, 2 );
 			add_action( 'blog_templates_delete_template', array( &$this, 'delete_template_relationships' ), 10, 1 );
+			add_action( 'delete_blog', array( &$this, 'delete_blog_relationships' ), 10, 1 );
+			add_action( 'switch_theme', array( &$this, 'delete_blog_relationships_on_switch_theme' ), 10, 1 );
 		}
 	}
 
@@ -56,8 +54,13 @@ class MCC_NBT_Integrator {
 	}
 
 	public function add_relationship( $template, $blog_id ) {
+		if ( ! isset( $template['ID'] ) )
+			return false;
+
 		$nbt_model = mcc_get_nbt_model();
 		$nbt_model->insert_relationship( $blog_id, $template['ID'] );
+
+		return true;
 	}
 
 	public function delete_template_relationships( $template_id ) {
