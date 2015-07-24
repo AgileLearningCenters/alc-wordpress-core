@@ -19,7 +19,7 @@ class Bpfb_Admin {
 
 	private function _add_hooks () {
 		add_action(bp_core_admin_hook(), array($this, 'add_menu_page'));
-		add_action('admin_enqueue_scripts', array($this, 'enqueue_dependencies'));
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_dependencies'));	  											     
 	}
 
 	public function add_menu_page () {
@@ -67,7 +67,11 @@ class Bpfb_Admin {
 			? sanitize_html_class($raw['theme'])
 			: ''
 		;
-		
+		$raw['cleanup_images'] = !empty($raw['cleanup_images'])
+			? (int)$raw['cleanup_images']
+			: false
+		;
+
 		update_option('bpfb', $raw);
 		wp_safe_redirect(add_query_arg(array('updated' => true)));
 	}
@@ -77,12 +81,13 @@ class Bpfb_Admin {
 		list($thumb_w,$thumb_h) = Bpfb_Data::get_thumbnail_size();
 		$oembed_width = Bpfb_Data::get('oembed_width', 450);
 		$alignment = Bpfb_Data::get('alignment', 'left');
+		$cleanup_images = Bpfb_Data::get('cleanup_images', false);
 		?>
 <div class="wrap bpfb">
 	<?php screen_icon('buddypress'); ?>
 	<h2><?php echo get_admin_page_title(); ?></h2>
 	<form action="" method="POST">
-		
+
 		<fieldset class="appearance section">
 			<legend><?php _e('Appearance', 'bpfb'); ?></legend>
 
@@ -123,10 +128,10 @@ class Bpfb_Admin {
 			</fieldset>
 		</fieldset>
 
-		
+
 		<fieldset class="functional section">
 			<legend><?php _e('Functional', 'bpfb'); ?></legend>
-			
+
 			<fieldset class="oembed option">
 				<legend><?php _e('oEmbed', 'bpfb'); ?></legend>
 				<?php if (defined('BPFB_THUMBNAIL_IMAGE_SIZE')) { ?>
@@ -153,6 +158,13 @@ class Bpfb_Admin {
 				<label for="bpfb-thumbnail_size-height">
 					<?php _e('Height', 'bpfb') ?>
 					<input type="text" id="bpfb-thumbnail_size-height" name="bpfb[thumbnail_size_height]" size="4" value="<?php echo (int)$thumb_h; ?>" <?php echo (defined('BPFB_THUMBNAIL_IMAGE_SIZE') ? 'disabled="disabled"' : ''); ?> /> px
+				</label>
+			</fieldset>
+			<fieldset class="bpfb-misc option">
+				<legend><?php _e('Misc', 'bpfb'); ?></legend>
+				<label for="bpfb-cleanup_images">
+					<input type="checkbox" id="bpfb-cleanup_images" name="bpfb[cleanup_images]" value="1" <?php checked($cleanup_images, true); ?> />
+					<?php _e('Clean up images?', 'bpfb'); ?>
 				</label>
 			</fieldset>
 		</fieldset>
