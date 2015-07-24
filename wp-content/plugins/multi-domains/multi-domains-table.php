@@ -143,12 +143,12 @@ class Multidomains_Table extends WP_List_Table {
 		$actions = array(
 			'edit'   => sprintf(
 				'<a href="%s">%s</a>',
-				add_query_arg( array( 'edit' => '1', 'name' => $item['domain_name'] ) ),
+				esc_url( add_query_arg( array( 'edit' => '1', 'name' => $item['domain_name'] ) ) ),
 				__( 'Edit', 'multi_domain' )
 			),
 			'delete' => sprintf(
 				'<a href="%s" onclick="return showNotice.warn();">%s</a>',
-				add_query_arg( array( 'delete' => '1', 'name' => $item['domain_name'] ) ),
+				esc_url( add_query_arg( array( 'delete' => '1', 'name' => $item['domain_name'] ) ) ),
 				__( 'Delete', 'multi_domain' )
 			),
 		);
@@ -190,7 +190,7 @@ class Multidomains_Table extends WP_List_Table {
 
 		$transient = 'multi_domain_availability-' . $item['domain_name'];
 		$available = get_site_transient( $transient );
-		if ( $available === false ) {
+		if ( $available == false ) {
 			$response = wp_remote_get( 'http://' . substr( md5( time() ), 0, 6 ) . '.' . $item['domain_name'], array(
 				'timeout'     => 5,
 				'httpversion' => '1.1',

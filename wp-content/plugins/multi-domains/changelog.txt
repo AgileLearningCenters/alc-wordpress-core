@@ -1,3 +1,10 @@
+== 1.3.4.5 ==
+* Fixed: Incorrect or out of date cookie nag
+
+== 1.3.4.4 ==
+* Fixed: vulnerability in add_query_arg and remove_query_arg usage
+* Fixed: Wildcard DNS Availability check
+
 == 1.3.4.3 ==
 * Amended: sunrise inclusion
 
@@ -154,4 +161,4 @@
 * Added instructions on the settings page.
 
 
-327416-1413422149-au
+327416-1437571803-au
