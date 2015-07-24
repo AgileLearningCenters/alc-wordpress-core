@@ -200,7 +200,7 @@ class Wdfb_Model {
 	 * Gets FB profile image and sets it as BuddyPress avatar.
 	 */
 	function set_fb_image_as_bp_avatar( $user_id, $me ) {
-		if ( ! defined( 'BP_VERSION' ) ) {
+		if ( ! defined( 'BP_VERSION' ) || !class_exists('BuddyPress') ) {
 			return true;
 		}
 		if ( ! function_exists( 'bp_core_avatar_upload_path' ) ) {
@@ -224,6 +224,10 @@ class Wdfb_Model {
 			if ( ! realpath( $path ) ) {
 				@wp_mkdir_p( $path );
 			}
+		}
+		//If directory not exists
+		if( !empty( $path) && !file_exists( $path ) ) {
+			@wp_mkdir_p($path);
 		}
 
 		// Get FB picture
@@ -347,13 +351,21 @@ class Wdfb_Model {
 	 * Gets an existing app token for the user.
 	 */
 	function get_user_api_token( $fb_uid ) {
-		$current_user = get_current_user_id();
-		$meta         = get_user_meta( $current_user, 'wdfb_api_accounts', true );
-		$token        = isset( $meta['auth_tokens'] ) ? $meta['auth_tokens'] : array();
-		if ( ! $token ) {
+		$wdfb_api = get_option( 'wdfb_api' );
+		$token    = isset( $wdfb_api['auth_tokens'] ) ? $wdfb_api['auth_tokens'] : array();
+		if ( ! $token || empty( $fb_uid ) ) {
+			if( !$token ) {
+				$message = 'Token not found';
+			}else {
+				$message = 'Missing Facebook user id';
+			}
+			$this->log->error( 'WDFBModel::get_user_api_token', $message );
+
 			return false;
 		}
 		if ( ! isset( $token[ $fb_uid ] ) ) {
+			$this->log->error( 'WDFBModel::get_user_api_token', 'No valid Facebook token found for the given Facebook user id' );
+
 			return false;
 		}
 
@@ -370,6 +382,9 @@ class Wdfb_Model {
 		return $this->db->get_var( $sql );
 	}
 
+	/**
+	 * @return User ID or False
+	 */
 	function get_wp_user_from_fb() {
 		$fb_user_id = $this->fb->getUser();
 
@@ -379,7 +394,7 @@ class Wdfb_Model {
 			return $res[0]['user_id'];
 		}
 
-		// User not yet linked. Try finding her by email.
+		// User not yet linked. Try finding by email.
 		$me = false;
 		try {
 			$me = $this->fb->api( '/me' );
@@ -422,13 +437,36 @@ class Wdfb_Model {
 
 	}
 
+	function registration_allowed() {
+		$registration_allowed = true;
+		//Check if registrations are allowed
+		if ( is_multisite() ) {
+			$reg = get_site_option( 'registration' );
+			//user and blog registrations are not allowed
+			if ( 'all' != $reg && 'user' != $reg ) {
+				$registration_allowed = false;
+			}
+		} else {
+			if ( ! (int) get_option( 'users_can_register' ) ) {
+				$registration_allowed = false;
+			}
+		}
+
+		return $registration_allowed;
+	}
+
 	function register_fb_user() {
 		$uid = $this->get_wp_user_from_fb();
 		if ( $uid ) {
 			return $this->map_fb_to_wp_user( $uid );
 		}
+		$registration_allowed = $this->registration_allowed();
 
-		return $this->create_new_wp_user_from_fb();
+		if ( $registration_allowed ) {
+			return $this->create_new_wp_user_from_fb();
+		} else {
+			return false;
+		}
 	}
 
 	function delete_wp_user( $uid ) {
@@ -438,6 +476,62 @@ class Wdfb_Model {
 		}
 		$this->db->query( "DELETE FROM {$this->db->users} WHERE ID={$uid}" );
 		$this->db->query( "DELETE FROM {$this->db->usermeta} WHERE user_id={$uid}" );
+	}
+	function get_user_token() {
+		$this->data = Wdfb_OptionsRegistry::get_instance();
+		$fb_uid     = $this->fb->getUser();
+		$app_id     = trim( $this->data->get_option( 'wdfb_api', 'app_key' ) );
+		$app_secret = trim( $this->data->get_option( 'wdfb_api', 'secret_key' ) );
+		if ( ! $app_id || ! $app_secret ) {
+			return false;
+		} // Plugin not yet configured
+
+		// Token is now long-term token
+		$token = $this->get_user_api_token( $fb_uid );
+
+		// Make sure it is
+		$user_token = preg_match( '/^' . preg_quote( "{$app_id}|" ) . '/', $token ) ? false : $token;
+
+		// Just force the token reset, for now
+		$token = false;
+		if ( ! $token ) {
+			// Get temporary token
+			$token = $this->fb->getAccessToken();
+
+			$user_token = preg_match( '/^' . preg_quote( "{$app_id}|" ) . '/', $token ) ? $user_token : $token;
+
+			if ( ! $token ) {
+				return false;
+			}
+
+			// Exchange it for the actual long-term token
+			$url  = "https://graph.facebook.com/oauth/access_token?client_id={$app_id}&client_secret={$app_secret}&grant_type=fb_exchange_token&fb_exchange_token={$token}&access_token={$user_token}";
+			$args = array(
+				'method'      => 'GET',
+				'timeout'     => '5',
+				'redirection' => '5',
+				'user-agent'  => 'wdfb',
+				'blocking'    => true,
+				'compress'    => false,
+				'decompress'  => true,
+				'sslverify'   => false
+			);
+			$page = wp_remote_get( $url, $args );
+			if ( is_wp_error( $page ) ) {
+				return false;
+			} // Request fail
+			if ( (int) $page['response']['code'] != 200 ) {
+
+				return false;
+			} // Request fail
+
+			parse_str( $page['body'], $response );
+			$token = isset( $response['access_token'] ) ? $response['access_token'] : false;
+			if ( ! $token ) {
+				return false;
+			}
+			return $token;
+		}
 	}
 
 	function create_new_wp_user_from_fb() {
@@ -451,8 +545,22 @@ class Wdfb_Model {
 			$send_email = true; // we'll need to notify the user
 			$me['id']   = $this->fb->user_id;
 		}
-		if ( ! $me ) {
+
+		if ( ! $me || empty( $me['id'] ) ) {
 			return false;
+		}
+		//Get token
+		$user_token = $this->get_user_token();
+
+		//Get User email
+		try {
+			$me = $this->fb->api( '/' . $me['id'],
+				array(
+					'access_token' => $user_token,
+					'fields' => 'email, first_name, last_name, name, id'
+				) );
+		} catch ( Exception $e ) {
+			$this->log->error( __FUNCTION__, new Exception( $e->get_error_message() ) );
 		}
 		//Validate email
 		if ( empty( $me['email'] ) || ! filter_var( $me['email'], FILTER_VALIDATE_EMAIL ) || email_exists( $me['email'] ) ) {
@@ -466,7 +574,13 @@ class Wdfb_Model {
 			$this->log->error( __FUNCTION__, new Exception( $user_id->get_error_message() ) );
 
 			return false;
-		} else if ( $send_email ) {
+		} else if ( !empty( $user_id ) ) {
+			if( !empty( $me['first_name'] ) ) {
+				update_user_meta($user_id, 'first_name', $me['first_name']);
+			}
+			if( !empty( $me['last_name'] ) ) {
+				update_user_meta($user_id, 'first_name', $me['last_name']);
+			}
 			wp_new_user_notification( $user_id, $password );
 			do_action( 'wdfb-registration_email_sent' );
 		}
@@ -477,7 +591,7 @@ class Wdfb_Model {
 		// Allow other actions - e.g. posting to Facebook, upon registration
 		do_action( 'wdfb-user_registered-postprocess', $user_id, $me, $registration, $this );
 
-		if ( defined( 'BP_VERSION' ) ) {
+		if ( defined( 'BP_VERSION' ) && class_exists('BuddyPress') ) {
 			$this->populate_bp_fields_from_fb( $user_id, $me );
 		} // BuddyPress
 		else {
@@ -612,20 +726,47 @@ class Wdfb_Model {
 		return $this->get_user_data_for( 'me' );
 	}
 
+	/**
+	 * Return a FBid for user with access token
+	 * @return bool|int|mixed|string
+	 */
 	function get_current_user_fb_id() {
+		//Get all details for the blog
+		$wdfb_api = get_option( 'wdfb_api' );
+
 		$fb_uid = $this->fb->getUser();
 		if ( $fb_uid ) {
 			return $fb_uid;
 		} // User is logged into FB, use that
 
-		$user = wp_get_current_user();
-		if ( ! $user || ! $user->ID ) {
-			return false;
-		} // User not logged into WP, skip
+		//If a user is logged in, check if they have authorized app
+		$user = get_current_user_id();
+		//if user logged in and we have a auth token respective th their FB id, return the fb id
+		if ( ! empty( $user ) ) {
+			$fb_uid = get_user_meta( $user, 'wdfb_fb_uid', true );
+			if ( ! empty( $fb_uid ) && ! empty( $wdfb_api['auth_tokens'] ) && ! empty( $wdfb_api['auth_tokens'][ $fb_uid ] ) ) {
+				return $fb_uid;
+			} else {
+				$fb_uid = '';
+			}
+		}
 
-		$fb_uid = get_user_meta( $user->ID, 'wdfb_fb_uid', true );
+		//no auth token available for logged in user
+		if ( empty( $fb_uid ) ) {
+			if ( empty( $wdfb_api ) || empty( $wdfb_api['auth_accounts'] ) ) {
+				return false;
+			}
+			foreach ( $wdfb_api['auth_accounts'] as $id => $auth_account ) {
+				//Search for auth tokens for user, looking for 10120020120 => ME(10120020120) in auth tokens array
+				if ( strpos( $auth_account, $id ) !== false && ! empty( $wdfb_api['auth_tokens'][ $id ] ) ) {
+					return $id;
+				} else {
+					//return the first id, for which we have auth token
+					return key( $wdfb_api['auth_tokens'] );
+				}
+			}
 
-		return $fb_uid;
+		}
 	}
 
 	function get_pages_tokens( $token = false ) {
@@ -738,7 +879,7 @@ class Wdfb_Model {
 			for ( $i = 0; $i < $limit; $i += $page_size ) {
 				$batch[] = json_encode( array(
 					'method'       => 'GET',
-					'relative_url' => "/{$for}/events/?limit={$page_size}&offset={$i}&fields=id,name,description,start_time,end_time,location,venue,picture,ticket_uri,owner,privacy"
+					'relative_url' => "/{$for}/events/?limit={$page_size}&offset={$i}&fields=id,name,description,start_time,end_time,location,venue,picture,ticket_uri,owner,privacy,timezone"
 				) );
 			}
 			try {
@@ -756,8 +897,10 @@ class Wdfb_Model {
 				if ( ! $data || ! isset( $data['body'] ) ) {
 					continue;
 				}
-				$data   = json_decode( $data['body'], true );
-				$return = array_merge( $return, $data['data'] );
+				$data = json_decode( $data['body'], true );
+				if ( ! empty( $data ) && is_array( $data['data'] ) ) {
+					$return = array_merge( $return, $data['data'] );
+				}
 			}
 
 			return array( 'data' => $return );
@@ -784,7 +927,10 @@ class Wdfb_Model {
 		$token  = $tokens[ $for ];
 
 		try {
-			$res = $this->fb->api( '/' . $for . '/albums/?auth_token=' . $token );
+			$res = $this->fb->api( '/' . $for . '/albums/', array(
+					'access_token' => $token
+				)
+			);
 		} catch ( Exception $e ) {
 			return false;
 		}
@@ -812,6 +958,42 @@ class Wdfb_Model {
 	}
 
 	/**
+	 * Fetches a public album details for the provided album id
+	 * @param $albm_id Album id
+	 *
+	 * @return bool|mixed|null Album Content
+	 */
+	function get_album_details( $albm_id, $cover = true ) {
+		if ( empty( $albm_id ) ) {
+			return null;
+		}
+		$fid   = $this->get_current_user_fb_id();
+		$token = $this->get_user_api_token( $fid );
+		try {
+			$res = $this->fb->api( '/' . $albm_id, array(
+				'access_token' => $token
+			) );
+		} catch ( Exception $e ) {
+			$this->log->error( __FUNCTION__, $e );
+
+			return false;
+		}
+		if( !empty( $res['cover_photo'] ) && $cover ) {
+			//Get cover
+			try {
+				$cover_url = $this->fb->api( '/' . $res['cover_photo'] , array(
+					'access_token' => $token
+				) );
+			} catch ( Exception $e ) {
+				$this->log->error( __FUNCTION__, $e );
+
+				return false;
+			}
+		}
+		$res['cover'] = $cover_url;
+		return $res;
+	}
+	/**
 	 * Fetch photos for a provided album ID
 	 *
 	 * @param $aid , Album ID
@@ -831,7 +1013,7 @@ class Wdfb_Model {
 
 		$fid   = $this->get_current_user_fb_id();
 		$token = $this->get_user_api_token( $fid );
-
+		$limit = ! empty( $limit ) ? $limit : 200;
 		if ( $limit && $limit > $page_size ) {
 			$limit = $limit > $max_limit ? $max_limit : $limit;
 			$batch = array();
@@ -842,7 +1024,10 @@ class Wdfb_Model {
 				) );
 			}
 			try {
-				$res = $this->fb->api( '/', 'POST', array( 'access_token' => $token, 'batch' => '[' . implode( ',', $batch ) . ']' ) );
+				$res = $this->fb->api( '/', 'POST', array(
+					'access_token' => $token,
+					'batch'        => '[' . implode( ',', $batch ) . ']'
+				) );
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 
@@ -860,9 +1045,12 @@ class Wdfb_Model {
 
 			return array( 'data' => $return );
 		} else {
-			$limit = $limit ? '?limit=' . $limit . '&access_token=' . $token : '?access_token=' . $token;
 			try {
-				$res = $this->fb->api( '/' . $aid . '/photos/' . $limit );
+				$res = $this->fb->api( '/' . $aid . '/photos/', array(
+					'access_token' => $token,
+					'limit'        => $limit,
+					'fields'       => 'created_time,height,icon,id,images,link,name,picture,source,updated_time,width'
+				) );
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 
@@ -882,9 +1070,8 @@ class Wdfb_Model {
 		$tokens = $this->data->get_option( 'wdfb_api', 'auth_tokens' );
 		$token  = ! empty( $tokens[ $uid ] ) ? $tokens[ $uid ] : reset( $tokens ); // Use any token, if there's no token we need
 
-		$old_token = $this->fb->getAccessToken();
-		$this->fb->setAccessToken( $token );
-
+//		$old_token = $this->fb->getAccessToken();
+//		$this->fb->setAccessToken( $token );
 		try {
 			$res = $this->fb->api( "/{$uid}/feed/{$limit}" );
 		} catch ( Exception $e ) {
@@ -893,7 +1080,7 @@ class Wdfb_Model {
 			return false;
 		}
 
-		$this->fb->setAccessToken( $old_token );
+//		$this->fb->setAccessToken( $old_token );
 
 		return $res;
 	}
@@ -908,12 +1095,10 @@ class Wdfb_Model {
 			( defined( 'WDFB_COMMENTS_MAX_COMMENTS_LIMIT' ) && WDFB_COMMENTS_MAX_COMMENTS_LIMIT ? WDFB_COMMENTS_MAX_COMMENTS_LIMIT : 200 )
 		);
 		if ( $max_limit < $page_size ) {
-			$token = $token ? "?auth_token={$token}" : '';
 			try {
-				$res = $this->fb->api( '/' . $for . '/comments/' . $token );
-				echo "<pre>";
-				print_r($res);
-				echo "</pre>";exit;
+				$res = $this->fb->api( '/' . $for . '/comments/', array(
+					'auth_token' => $token
+				) );
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 
@@ -930,7 +1115,8 @@ class Wdfb_Model {
 				) );
 			}
 			try {
-				$res = $this->fb->api( '/', 'POST', array( 'access_token' => $token, 'batch' => '[' . implode( ',', $batch ) . ']' ) );
+				$res = $this->fb->api( '/', 'POST', array( 'batch' => '[' . implode( ',', $batch ) . ']' ) );
+//				$res = $this->fb->api( '/', 'POST', array( 'access_token' => $token, 'batch' => '[' . implode( ',', $batch ) . ']' ) );
 			} catch ( Exception $e ) {
 				$this->log->error( __FUNCTION__, $e );
 

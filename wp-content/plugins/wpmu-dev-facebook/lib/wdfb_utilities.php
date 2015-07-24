@@ -10,19 +10,13 @@
 function wdfb_get_registration_fields_array() {
 	global $current_site;
 	$data          = Wdfb_OptionsRegistry::get_instance();
+	$model         = new Wdfb_Model;
 	$wp_grant_blog = false;
-	if ( is_multisite() ) {
-		$reg = get_site_option( 'registration' );
-		if ( 'all' == $reg ) {
-			$wp_grant_blog = true;
-		} else if ( 'user' != $reg ) {
-			return array();
-		}
-	} else {
-		if ( ! (int) get_option( 'users_can_register' ) ) {
-			return array();
-		}
+
+	if( !$model->registration_allowed() ) {
+		return array();
 	}
+
 	$fields = array(
 		array( "name" => "name" ),
 		array( "name" => "email" ),
@@ -212,9 +206,9 @@ function wdfb_get_og_image( $id = false ) {
 		$thumb_id = false;
 	}
 	if ( $thumb_id ) {
-		$opt = get_option( 'wdfb_autopost' );
-		$opt['image_size'] = empty( $opt['image_size'] ) ? ( !empty($sizes['large']) ? 'large' : 'full' ) : $opt['image_size'];
-		$image = wp_get_attachment_image_src( $thumb_id, $opt['image_size'] );
+		$opt               = get_option( 'wdfb_autopost' );
+		$opt['image_size'] = empty( $opt['image_size'] ) ? ( ! empty( $sizes['large'] ) ? 'large' : 'full' ) : $opt['image_size'];
+		$image             = wp_get_attachment_image_src( $thumb_id, $opt['image_size'] );
 		if ( $image ) {
 			return apply_filters(
 				'wdfb-opengraph-image',
@@ -229,7 +223,9 @@ function wdfb_get_og_image( $id = false ) {
 	if ( $id ) {
 		$post = get_post( $id );
 		$html = $post->post_content;
-		if ( ! function_exists( 'load_membership_plugins' ) && ! defined( 'GRUNION_PLUGIN_DIR' ) && ! ( defined( 'WDFB_OG_IMAGE_SKIP_CONTENT_FILTER' ) && WDFB_OG_IMAGE_SKIP_CONTENT_FILTER ) ) {
+
+		$apply_the_content_filter = apply_filters( 'wdfb-opengraph_apply_the_content_filter', true );
+		if ( $apply_the_content_filter && ! function_exists( 'load_membership_plugins' ) && ! defined( 'GRUNION_PLUGIN_DIR' ) && ! ( defined( 'WDFB_OG_IMAGE_SKIP_CONTENT_FILTER' ) && WDFB_OG_IMAGE_SKIP_CONTENT_FILTER ) ) {
 			$html = apply_filters( 'the_content', $html );
 		}
 	} else if ( is_home() && $data->get_option( 'wdfb_opengraph', 'fallback_image' ) ) {
@@ -329,6 +325,7 @@ function wdfb_get_fb_plugin_markup_xfbml( $type, $args ) {
 			          $args['links'] . '"></fb:activity>';
 			break;
 	}
+
 	return $markup;
 }
 
@@ -351,12 +348,7 @@ function wdfb_get_fb_plugin_markup_html5( $type, $args ) {
 			break;
 
 		case "login-button":
-			$markup = '<div class="fb-login-button" data-scope="' .
-			          $args['scope'] .
-			          '" data-redirect-url="' .
-			          $args['redirect-url'] . '"  data-onlogin="_wdfb_notifyAndRedirect();">' .
-			          $args['content'] .
-			          '</div>';
+			$markup = '<div class="fb-login-button" data-scope="' . $args['scope'] . '" data-redirect-url="' . $args['redirect-url'] . '"  data-onlogin="_wdfb_notifyAndRedirect();">' . $args['content'] . '</div>';
 			break;
 
 		case "comments":
@@ -385,6 +377,7 @@ function wdfb_get_fb_plugin_markup_html5( $type, $args ) {
 			          $args['links'] . '"></div>';
 			break;
 	}
+
 	return $markup;
 }
 
@@ -407,9 +400,7 @@ function wdfb_get_fb_plugin_markup( $type, $args, $forced_format = false ) {
 		$is_html5 = defined( 'WDFB_USE_HTML5_TAGS' ) && WDFB_USE_HTML5_TAGS;
 	}
 
-	return apply_filters( 'wdfb-tags-use_html5', $is_html5 )
-		? wdfb_get_fb_plugin_markup_html5( $type, $args )
-		: wdfb_get_fb_plugin_markup_xfbml( $type, $args );
+	return apply_filters( 'wdfb-tags-use_html5', $is_html5 ) ? wdfb_get_fb_plugin_markup_html5( $type, $args ) : wdfb_get_fb_plugin_markup_xfbml( $type, $args );
 }
 
 /**
@@ -436,13 +427,13 @@ function wdfb_get_fb_comments() {
 	$scheme = $scheme ? $scheme : 'light';
 
 	return wdfb_get_fb_plugin_markup( 'comments', compact( array(
-				'link',
-				'xid',
-				'num_posts',
-				'width',
-				'reverse',
-				'scheme'
-			) ) );
+		'link',
+		'xid',
+		'num_posts',
+		'width',
+		'reverse',
+		'scheme'
+	) ) );
 }
 
 function wdfb__responsive_fb_comments_hack_style() {
@@ -506,10 +497,10 @@ function wdfb_get_singular_description() {
 	$content = '';
 	if ( wdfb_is_single_bp_activity() ) {
 		$activity = bp_activity_get_specific( array(
-				'activity_ids' => bp_current_action(),
-				'show_hidden'  => true,
-				'spam'         => 'ham_only',
-			) );
+			'activity_ids' => bp_current_action(),
+			'show_hidden'  => true,
+			'spam'         => 'ham_only',
+		) );
 		$activity = empty( $activity['activities'][0] ) || bp_action_variables() ? '' : $activity['activities'][0];
 		$content  = apply_filters_ref_array( 'bp_get_activity_content_body', array( $activity->content, &$activity ) );
 	} else {
@@ -568,7 +559,7 @@ function wdfb_add_email_message( $msg ) {
 	return
 		apply_filters(
 			'wdfb-registration_message-user',
-			__( '<p>An email with your login credentails has been sent to your email address.</p>', 'wdfb' )
+			__( '<p>An email with your login credentials has been sent to your email address.</p>', 'wdfb' )
 		) .
 		$msg;
 }

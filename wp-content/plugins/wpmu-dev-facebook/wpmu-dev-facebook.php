@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Facebook
 Plugin URI: http://premium.wpmudev.org/project/ultimate-facebook
 Description: Easy Facebook integration: share your blog posts, autopost to your wall, login and registration integration, BuddyPress profiles support and more. Please, configure the plugin first.
-Version: 2.7.6
+Version: 2.7.9.6
 Text Domain: wdfb
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
@@ -12,8 +12,6 @@ WDP ID: 228
 Copyright 2009-2011 Incsub (http://incsub.com)
 Author - Ve Bailovity (Incsub)
 Contributor - Umesh Kumar
-Thanks:
-KFUK-KFUM for registration page templating function
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -33,6 +31,7 @@ define ( 'WDFB_PLUGIN_SELF_DIRNAME', basename( dirname( __FILE__ ) ), true );
 define ( 'WDFB_PROTOCOL', ( is_ssl() ? 'https://' : 'http://' ), true );
 define ( 'WDFB_PLUGIN_CORE_URL', plugins_url(), true );
 define ( 'WDFB_PLUGIN_CORE_BASENAME', plugin_basename( __FILE__ ), true );
+define ( 'WDFB_PLUGIN_VERSION', '2.7.9.6' );
 if ( ! defined( 'WDFB_MEMBERSHIP_INSTALLED' ) ) {
 	define ( 'WDFB_MEMBERSHIP_INSTALLED', ( defined( 'MEMBERSHIP_MASTER_ADMIN' ) && defined( 'MEMBERSHIP_SETACTIVATORAS_ADMIN' ) ), true );
 }
@@ -145,25 +144,13 @@ if ( $data->get_option( 'wdfb_widget_pack', 'events_allowed' ) ) {
 	require_once( WDFB_PLUGIN_BASE_DIR . '/lib/class_wdfb_widget_events.php' );
 	add_action( 'widgets_init', create_function( '', "register_widget('Wdfb_WidgetEvents');" ) );
 }
-if ( $data->get_option( 'wdfb_widget_pack', 'facepile_allowed' ) ) {
-	require_once( WDFB_PLUGIN_BASE_DIR . '/lib/class_wdfb_widget_facepile.php' );
-	add_action( 'widgets_init', create_function( '', "register_widget('Wdfb_WidgetFacepile');" ) );
-}
 if ( $data->get_option( 'wdfb_widget_pack', 'likebox_allowed' ) ) {
 	require_once( WDFB_PLUGIN_BASE_DIR . '/lib/class_wdfb_widget_likebox.php' );
 	add_action( 'widgets_init', create_function( '', "register_widget('Wdfb_WidgetLikebox');" ) );
 }
-if ( $data->get_option( 'wdfb_widget_pack', 'recommendations_allowed' ) ) {
-	require_once( WDFB_PLUGIN_BASE_DIR . '/lib/class_wdfb_widget_recommendations.php' );
-	add_action( 'widgets_init', create_function( '', "register_widget('Wdfb_WidgetRecommendations');" ) );
-}
 if ( $data->get_option( 'wdfb_widget_pack', 'connect_allowed' ) ) {
 	require_once( WDFB_PLUGIN_BASE_DIR . '/lib/class_wdfb_widget_connect.php' );
 	add_action( 'widgets_init', create_function( '', "register_widget('Wdfb_WidgetConnect');" ) );
-}
-if ( $data->get_option( 'wdfb_widget_pack', 'activityfeed_allowed' ) ) {
-	require_once( WDFB_PLUGIN_BASE_DIR . '/lib/class_wdfb_widget_activityfeed.php' );
-	add_action( 'widgets_init', create_function( '', "register_widget('Wdfb_WidgetActivityFeed');" ) );
 }
 if ( $data->get_option( 'wdfb_widget_pack', 'recent_comments_allowed' ) ) {
 	require_once( WDFB_PLUGIN_BASE_DIR . '/lib/class_wdfb_widget_recent_comments.php' );
@@ -184,9 +171,12 @@ function wdfb_comment_import() {
 		return;
 	} // Don't import comments
 	Wdfb_CommentsImporter::serve();
+
+	unset( $data );
 }
 
 add_action( 'wdfb_import_comments', 'wdfb_comment_import' ); //array($importer, 'serve'));
+
 if ( ! wp_next_scheduled( 'wdfb_import_comments' ) ) {
 	wp_schedule_event( time() + 600, 'hourly', 'wdfb_import_comments' );
 }
@@ -213,9 +203,20 @@ function _wdfb_initialize() {
 	Wdfb_UniversalWorker::serve();
 }
 
-add_filter( 'comment_text', 'decode_utf_8', 1000 );
-function decode_utf_8( $content ) {
+add_filter( 'get_comment_text', 'decode_utf_8', 1000, 2 );
+function decode_utf_8( $content, $comment ) {
+
+	if( empty( $comment )) {
+		return $content;
+	}
+	$comment_meta = get_comment_meta( $comment->comment_ID, 'wdfb_comment', true );
+	if ( empty( $comment_meta ) ) {
+		//Do not decode wordpress comments
+		return $content;
+	}
+
 	return html_entity_decode( utf8_decode( $content ) );
+
 }
 
 add_action( 'plugins_loaded', '_wdfb_initialize' );

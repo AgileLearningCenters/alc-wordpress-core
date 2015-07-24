@@ -42,7 +42,7 @@ class Wdfb_PublicPages {
 	}
 
 	function js_inject_fb_login_script() {
-		echo '<script type="text/javascript" src="' . WDFB_PLUGIN_URL . '/js/wdfb_facebook_login.js"></script>';
+		echo '<script type="text/javascript" src="' . WDFB_PLUGIN_URL . '/js/wdfb_facebook_login.js?version='. WDFB_PLUGIN_VERSION . '"></script>';
 	}
 
 	function js_setup_ajaxurl() {
@@ -203,20 +203,22 @@ class Wdfb_PublicPages {
 		if ( ! apply_filters( 'wdfb-login-show_wordpress_login_button', apply_filters( 'wdfb-login-show_login_button', true ) ) ) {
 			return false;
 		}
-		echo '<p class="wdfb_login_button">' .
-		     wdfb_get_fb_plugin_markup( 'login-button', array(
-			     'scope'        => Wdfb_Permissions::get_permissions(),
-			     'redirect-url' => wdfb_get_login_redirect( true ),
-			     'content'      => __( "Login with Facebook", 'wdfb' ),
-		     ) ) .
-		     '</p>';
+		if( is_user_logged_in() ) {
+			return;
+		}
+		$args = array(
+			'scope'        => Wdfb_Permissions::get_permissions(),
+			'redirect-url' => wdfb_get_login_redirect( true ),
+			'content'      => __( "Login with Facebook", 'wdfb' ),
+		);
+		echo '<p class="wdfb_login_button">' . wdfb_get_fb_plugin_markup( 'login-button', $args ) . '</p>';
 	}
 
 	function inject_fb_login_return( $content ) {
 		if ( ! apply_filters( 'wdfb-login-show_wordpress_login_button', apply_filters( 'wdfb-login-show_login_button', true ) ) ) {
 			return false;
 		}
-		$content .= '<script type="text/javascript" src="' . WDFB_PLUGIN_URL . '/js/wdfb_facebook_login.js"></script>';
+		$content .= '<script type="text/javascript" src="' . WDFB_PLUGIN_URL . '/js/wdfb_facebook_login.js?version='. WDFB_PLUGIN_VERSION . '"></script>';
 		$content .= '<p class="wdfb_login_button">' .
 		            wdfb_get_fb_plugin_markup( 'login-button', array(
 			            'scope'        => Wdfb_Permissions::get_permissions(),
@@ -330,7 +332,7 @@ EOCOMJS;
 	}
 
 	function bp_inject_form_checkbox() {
-		echo '<span id="wdfb_send_activity-container"><input type="checkbox" name="wdfb_send_activity" id="wdfb_send_activity" value="1" />&nbsp;<label for="wdfb_send_activity">' . __( 'Publish on your facebook wall', 'wdfb' ) . '</label></span>';	  										 			  
+		echo '<span id="wdfb_send_activity-container"><input type="checkbox" name="wdfb_send_activity" id="wdfb_send_activity" value="1" />&nbsp;<label for="wdfb_send_activity">' . __( 'Publish on your facebook wall', 'wdfb' ) . '</label></span>';
 		echo <<<EOBpFormInjection
 <script>
 (function ($) {
@@ -423,12 +425,6 @@ EOBpFormInjection;
 
 		return "<img class='avatar' src='" . WDFB_PROTOCOL . "graph.facebook.com/{$fb_uid}/picture{$fb_size_map}' {$img_size} />";
 	}
-
-	function inject_optional_facebook_registration_button() {
-		$url = add_query_arg( 'fb_registration_page', 1 );
-		echo '<p><a class="wdfb_register_button" href="' . $url . '"><span>' . __( 'Register with Facebook', 'wdfb' ) . '</span></a></p>';
-	}
-
 	function process_facebook_registration() {
 		// Should we even be here?
 		if ( $this->data->get_option( 'wdfb_connect', 'force_facebook_registration' ) ) {
@@ -451,20 +447,13 @@ EOBpFormInjection;
 			return false;
 		}
 
-		// Are registrations allowed?
 		$wp_grant_blog = false;
-		if ( is_multisite() ) {
-			$reg = get_site_option( 'registration' );
-			if ( 'all' == $reg ) {
-				$wp_grant_blog = true;
-			} else if ( 'user' != $reg ) {
-				return false;
-			}
-		} else {
-			if ( ! (int) get_option( 'users_can_register' ) ) {
-				return false;
-			}
+
+		// Are registrations allowed?
+		if ( ! $this->model->registration_allowed() ) {
+			return false;
 		}
+
 		$wp_grant_blog = apply_filters( 'wdfb-registration-allow_blog_creation', $wp_grant_blog );
 
 		$user_id = false;
@@ -647,12 +636,15 @@ EOBpFormInjection;
 				$permalink     = $use_shortlink ? wp_get_shortlink( $post_id ) : get_permalink( $post_id );
 				$permalink     = $permalink ? $permalink : get_permalink( $post_id );
 				$picture       = wdfb_get_og_image( $post_id );
+				$description   = $post->post_excerpt ? $post->post_excerpt : strip_shortcodes( $post->post_content );
+				$description   = htmlspecialchars( wp_strip_all_tags( $description ), ENT_QUOTES );
+				$description   = apply_filters( 'wdfb_fb_post_description', $description );
 				$send          = array(
-					'caption'     => substr( $post_content, 0, 999 ),
+					'caption'     => home_url( '/' ),
 					'message'     => $post_title,
 					'link'        => $permalink,
 					'name'        => $post->post_title,
-					'description' => get_option( 'blogdescription' ),
+					'description' => $description,
 					'actions'     => array(
 						'name' => __( 'Share', 'wdfb' ),
 						'link' => 'http://www.facebook.com/sharer.php?u=' . rawurlencode( $permalink ),
@@ -704,14 +696,6 @@ EOBpFormInjection;
 		add_action( $footer_hook, array( $this, 'inject_fb_root_div' ), 99 );
 		add_action( $footer_hook, array( $this, 'inject_fb_init_js' ), 99 );
 
-		/*
-				// Automatic Facebook button
-				if ('manual' != $this->data->get_option('wdfb_button', 'button_position')) {
-					add_filter('the_content', array($this, 'inject_facebook_button'), 10);
-					if (defined('BP_VERSION')) add_filter('bp_get_activity_content_body', array($this, 'inject_facebook_button_bp'));
-				}
-		*/
-
 		// OpenGraph
 		if ( $this->data->get_option( 'wdfb_opengraph', 'use_opengraph' ) ) {
 			add_action( 'wp_head', array( $this, 'inject_opengraph_info' ) );
@@ -748,38 +732,18 @@ EOBpFormInjection;
 				remove_action( 'bp_init', 'bp_core_wpsignup_redirect' ); // Die already, will you? Pl0x?
 			}
 
-			// New login/register
-			// First, do optionals
 			if ( is_multisite() ) {
-				add_action( 'before_signup_form', array( $this, 'inject_optional_facebook_registration_button' ) );
+				add_action( 'signup_hidden_fields', array( $this, 'inject_fb_login' ) );
+			}else{
+				add_action('register_form', array( $this, 'inject_fb_login' ) );
 			}
 			// Cole's changeset
 			if ( WDFB_MEMBERSHIP_INSTALLED ) {
-				add_action( 'signup_hidden_fields', array( $this, 'inject_optional_facebook_registration_button' ) );
-				add_action( 'bp_before_account_details_fields', array(
-					$this,
-					'inject_optional_facebook_registration_button'
-				) );
-				add_action( 'membership_popover_extend_registration_form', array(
-					$this,
-					'inject_optional_facebook_registration_button'
-				) );
 				add_action( 'signup_extra_fields', array( $this, 'inject_fb_login' ) );
 				add_action( 'membership_popover_extend_login_form', array( $this, 'inject_fb_login' ) );
-			} else {
+			}else {
 				// BuddyPress
-				add_filter( 'bp_before_register_page', array(
-					$this,
-					'inject_optional_facebook_registration_button'
-				) ); // BuddyPress
-			}
-
-			if ( ! is_multisite() && isset( $_GET['action'] ) && 'register' == $_GET['action'] ) {
-				add_action( 'login_head', create_function( '', 'echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"' . WDFB_PLUGIN_URL . '/css/wdfb.css\" />";' ) );
-				// Better registration button placement for single site
-				// Fix by riyaku
-				// Thank you so much!
-				add_action( 'register_form', array( $this, 'inject_optional_facebook_registration_button' ) );
+				add_action( 'bp_before_account_details_fields', array( $this, 'inject_fb_login' ) ); // BuddyPress
 			}
 
 			// Jack the signup

@@ -18,24 +18,6 @@
 		for this shortcode to have any effect. If you dislike the default button placement options, you can set the
 		placement to "Manual" and use this shortcode in your posts to insert the button wherever you wish.</p>
 
-	<!--	Register Shortcode-->
-	<h3>Register shortcode</h3>
-
-	<p><em>Tag:</em> <code>[wdfb_register_button]</code></p>
-
-	<p>
-		<em>Examples:</em>
-	<ul>
-		<li><code>[wdfb_register_button]</code> - will create a Facebook register button with default text (&quot;Register
-			with
-			Facebook&quot;)
-		</li>
-		<li><code>[wdfb_register_button]My Text[/wdfb_register_button]</code> - will create a Facebook Connect button
-			with text (&quot;My Text&quot;)
-		</li>
-	</ul>
-	</p>
-
 	<!--	Connect Shortcode-->
 	<h3>Connect shortcode</h3>
 
@@ -136,6 +118,7 @@
 		<li><code>photo_height</code> - <em>optional.</em> Height of your images in the album.</li>
 		<li><code>crop</code> - <em>optional.</em> Crop images to fit height.</li>
 		<li><code>limit</code> - <em>optional.</em> Limit output to this many photos.</li>
+		<li><code>show_description</code> - <em>optional.</em> Displays the photo description fetched from Facebook, set to false by default.</li>
 	</ul>
 	</p>
 	<p>

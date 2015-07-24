@@ -226,18 +226,6 @@ class Wdfb_AdminFormRenderer {
 		echo $this->_create_checkbox( 'connect', 'allow_facebook_registration', @$opt['allow_facebook_registration'] );
 	}
 
-	function create_force_facebook_registration_box() {
-		$opt = $this->_get_option( 'wdfb_connect' );
-		echo $this->_create_checkbox( 'connect', 'force_facebook_registration', @$opt['force_facebook_registration'] );
-		echo '<span id="wdfb-force_facebook_registration-help"></span>';
-		echo '<br />';
-		echo $this->_create_checkbox( 'connect', 'require_facebook_account', @$opt['require_facebook_account'] );
-		echo ' <label for="require_facebook_account">' . __( 'Require Facebook account', 'wdfb' ) . '</label>';
-		echo '<div><small>' . __( 'By default, Facebook registration form will allow your users to register with their Facebook account, or with their chosen usernames and emails.', 'wdfb' ) . '</small></div>';
-		echo '<div><small>' . __( 'Check this if users will need to have a Facebook account already.', 'wdfb' ) . '</small></div>';
-		echo '<div style="color: #FF8F00; font-size: 13px; font-weight: 600;">' . __( 'As of the latest Facebook API V2.0, signup using facebook is no more supported. We recommend to use the WordPress signup process, as this feature will stop working on 30th April, 2015', 'wdfb' ) . '</small></div>';
-	}
-
 	function create_no_main_site_registration_box() {
 		$opt = $this->_get_option( 'wdfb_connect' );
 		echo $this->_create_checkbox( 'connect', 'no_main_site_registration', @$opt['no_main_site_registration'] );
@@ -286,11 +274,6 @@ class Wdfb_AdminFormRenderer {
 
 		echo $this->_create_text_box( 'connect', 'login_redirect_url', @$opt['login_redirect_url'] );
 		echo '<div><small>' . sprintf( __( 'This is what will happen upon login: my users will be redirected to %s.', 'wdfb' ), $url ) . '</small></div>';
-	}
-
-	function create_captcha_box() {
-		$opt = $this->_get_option( 'wdfb_connect' );
-		echo $this->_create_checkbox( 'connect', 'no_captcha', @$opt['no_captcha'] );
 	}
 
 	function create_autologin_box() {
@@ -387,7 +370,7 @@ class Wdfb_AdminFormRenderer {
 			echo '<label>' . ucfirst( $type->labels->name ) . '</label><br />';
 		}
 		echo '<div id="wdfb-like_button-special_cases">';
-		if ( defined( 'BP_VERSION' ) ) {
+		if ( defined( 'BP_VERSION' ) && class_exists('BuddyPress') ) {
 			echo '<div id="wdfb-like_button-bp_activity-anchor">';
 			echo '<label for="not_in_post_types-_buddypress_activity">' . __( 'Allow &quot;Like&quot; button for BuddyPress Activities', 'wdfb' ) . '</label>: ';
 			echo $this->_create_subcheckbox( 'button', 'not_in_post_types', '_buddypress_activity', @in_array( '_buddypress_activity', $opt['not_in_post_types'] ) );
@@ -421,17 +404,17 @@ class Wdfb_AdminFormRenderer {
 		echo "<table border='0'>";
 
 		echo '<tr>';
-		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="standard" ' . ( ( $opt['button_appearance'] == "standard" ) ? 'checked="checked"' : '' ) . ' /></td>';
+		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="standard" ' . ( ( !empty( $opt['button_appearance'] ) && $opt['button_appearance'] == "standard" ) ? 'checked="checked"' : '' ) . ' /></td>';
 		echo '<td valign="top"><iframe src="' . WDFB_PROTOCOL . 'www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:25px;" allowTransparency="true"></iframe></td>';
 		echo '</tr>';
 
 		echo '<tr>';
-		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="button_count" ' . ( ( $opt['button_appearance'] == "button_count" ) ? 'checked="checked"' : '' ) . ' /></td>';
+		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="button_count" ' . ( ( !empty( $opt['button_appearance'] ) && $opt['button_appearance'] == "button_count" ) ? 'checked="checked"' : '' ) . ' /></td>';
 		echo '<td valign="top"><iframe src="' . WDFB_PROTOCOL . 'www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe></td>';
 		echo '</tr>';
 
 		echo '<tr>';
-		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="box_count" ' . ( ( $opt['button_appearance'] == "box_count" ) ? 'checked="checked"' : '' ) . ' /></td>';
+		echo '<td valign="top"><input type="radio" name="wdfb_button[button_appearance]" value="box_count" ' . ( ( !empty( $opt['button_appearance'] ) && $opt['button_appearance'] == "box_count" ) ? 'checked="checked"' : '' ) . ' /></td>';
 		echo '<td valign="top"><iframe src="' . WDFB_PROTOCOL . 'www.facebook.com/plugins/like.php?href=' . $blog_uri . '&amp;send=false&amp;layout=box_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=65" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:65px;" allowTransparency="true"></iframe></td>';
 		echo '</tr>';
 
@@ -693,6 +676,11 @@ class Wdfb_AdminFormRenderer {
 		echo $this->_create_checkbox( 'autopost', 'allow_autopost', @$opt['allow_autopost'] );
 	}
 
+	function skip_autopost() {
+		$opt = $this->_get_option( 'wdfb_autopost' );
+		echo $this->_create_checkbox( 'autopost', 'allow_skip_autopost', @$opt['allow_skip_autopost'] );
+	}
+
 	function create_allow_frontend_autopost_box() {
 		$opt = $this->_get_option( 'wdfb_autopost' );
 		echo $this->_create_checkbox( 'autopost', 'allow_frontend_autopost', @$opt['allow_frontend_autopost'] );
@@ -705,7 +693,7 @@ class Wdfb_AdminFormRenderer {
 		echo '<div><small>' . __( 'Enabling this will add a new column that shows if the post has already been published on Facebook to your post management pages.', 'wdfb' ) . '</small></div>';
 	}
 
-	function sortByOrder($a, $b) {
+	function sortByOrder( $a, $b ) {
 		return $a['width'] - $b['width'];
 	}
 
@@ -713,39 +701,40 @@ class Wdfb_AdminFormRenderer {
 		//Get all registered image sizes
 		$sizes = $this->get_image_sizes();
 
-		uasort($sizes, array( $this, 'sortByOrder') );
-		$opt = $this->_get_option( 'wdfb_autopost' );
-		$opt['image_size'] = empty( $opt['image_size'] ) ? ( !empty($sizes['large']) ? 'large' : 'full' ) : $opt['image_size'];
+		uasort( $sizes, array( $this, 'sortByOrder' ) );
+		$opt               = $this->_get_option( 'wdfb_autopost' );
+		$opt['image_size'] = empty( $opt['image_size'] ) ? ( ! empty( $sizes['large'] ) ? 'large' : 'full' ) : $opt['image_size'];
 		?>
 		<select name="wdfb_autopost[image_size]"><?php
-			foreach( $sizes as $size=>$details ){
-				$selected = ( $size == @$opt['image_size'] ) ? ' selected="selected"' : ''; ?>
-				<option value="<?php echo $size; ?>" <?php echo $selected; ?> ><?php echo ucfirst( $size ) . ' - ' . $details['width'] . 'x' . $details['height']; ?></option><?php
-			}?>
-	   </select><?php
+		foreach ( $sizes as $size => $details ) {
+			$selected = ( $size == @$opt['image_size'] ) ? ' selected="selected"' : ''; ?>
+			<option value="<?php echo $size; ?>" <?php echo $selected; ?> ><?php echo ucfirst( $size ) . ' - ' . $details['width'] . 'x' . $details['height']; ?></option><?php
+		}?>
+		</select><?php
 	}
+
 	function get_image_sizes( $size = '' ) {
 
 		global $_wp_additional_image_sizes;
 
-		$sizes = array();
+		$sizes                        = array();
 		$get_intermediate_image_sizes = get_intermediate_image_sizes();
 
 		// Create the full array with sizes and crop info
-		foreach( $get_intermediate_image_sizes as $_size ) {
+		foreach ( $get_intermediate_image_sizes as $_size ) {
 
 			if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
 
-				$sizes[ $_size ]['width'] = get_option( $_size . '_size_w' );
+				$sizes[ $_size ]['width']  = get_option( $_size . '_size_w' );
 				$sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
-				$sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
+				$sizes[ $_size ]['crop']   = (bool) get_option( $_size . '_crop' );
 
 			} elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
 
 				$sizes[ $_size ] = array(
-					'width' => $_wp_additional_image_sizes[ $_size ]['width'],
+					'width'  => $_wp_additional_image_sizes[ $_size ]['width'],
 					'height' => $_wp_additional_image_sizes[ $_size ]['height'],
-					'crop' =>  $_wp_additional_image_sizes[ $_size ]['crop']
+					'crop'   => $_wp_additional_image_sizes[ $_size ]['crop']
 				);
 
 			}
@@ -755,7 +744,7 @@ class Wdfb_AdminFormRenderer {
 		// Get only 1 size if found
 		if ( $size ) {
 
-			if( isset( $sizes[ $size ] ) ) {
+			if ( isset( $sizes[ $size ] ) ) {
 				return $sizes[ $size ];
 			} else {
 				return false;
@@ -765,6 +754,7 @@ class Wdfb_AdminFormRenderer {
 
 		return $sizes;
 	}
+
 	function create_autopost_map_box() {
 		$post_types   = get_post_types( array( 'public' => true ), 'objects' );
 		$fb_locations = array(
@@ -814,7 +804,7 @@ class Wdfb_AdminFormRenderer {
 		}
 
 		// BP Activities mappings
-		if ( defined( 'BP_VERSION' ) ) {
+		if ( defined( 'BP_VERSION' ) && class_exists('BuddyPress') ) {
 			$pname     = 'bp_activity';
 			$pval      = __( 'BuddyPress Activity update', 'wdfb' );
 			$fb_action = @$opts["type_{$pname}_fb_type"];
@@ -860,12 +850,14 @@ class Wdfb_AdminFormRenderer {
 	}
 
 	function create_override_all_box() {
-		echo '<input id="_override_all" type="checkbox" name="_override_all" value="1" />';
+		$opt = get_site_option( 'wdfb_network', array() );
+		echo $this->_create_checkbox( 'network', '_override_all', @$opt['_override_all'] );
 		echo '<div><small>' . __( 'If you check this box, all your users individual Facebook settings will be deleted and replaced with what you set here.', 'wdfb' ) . '</small></div>';
 	}
 
 	function create_preserve_api_box() {
-		echo '<input type="checkbox" name="_preserve_api" value="1" checked="checked" />';
+		$opt = get_site_option( 'wdfb_network', array() );
+		echo $this->_create_checkbox( 'network', '_preserve_api', @$opt['_preserve_api'] );
 		echo '<div><small>' . __( 'If you check this box, your users individual Facebook API settings will be <em>preserved</em> when replacing their options.', 'wdfb' ) . '</small></div>';
 	}
 
@@ -891,24 +883,9 @@ class Wdfb_AdminFormRenderer {
 		$this->_create_widget_box( 'events', $description );
 	}
 
-	function create_widget_facepile_box() {
-		$description = sprintf( __( 'Easily display Facebook Facepile. <table> <tr><th>Widget settings preview</th><th>Widget preview<th></tr> <tr><td valign="top"><img src="%s/img/facepile_allowed.png" /></td><td valign="top"><img src="%s/img/facepile_allowed_result.jpg" /></td></tr> </table>', 'wdfb' ), WDFB_PLUGIN_URL, WDFB_PLUGIN_URL );
-		$this->_create_widget_box( 'facepile', $description );
-	}
-
 	function create_widget_likebox_box() {
 		$description = sprintf( __( 'Easily display Facebook Like Box. <table> <tr><th>Widget settings preview</th><th>Widget preview<th></tr> <tr><td valign="top"><img src="%s/img/likebox_allowed.png" /></td><td valign="top"><img src="%s/img/likebox_allowed_result.jpg" /></td></tr> </table>', 'wdfb' ), WDFB_PLUGIN_URL, WDFB_PLUGIN_URL );
 		$this->_create_widget_box( 'likebox', $description );
-	}
-
-	function create_widget_recommendations_box() {
-		$description = sprintf( __( 'Easily display Facebook Recommendations. <table> <tr><th>Widget settings preview</th><th>Widget preview<th></tr> <tr><td valign="top"><img src="%s/img/recommendations_allowed.png" /></td><td valign="top"><img src="%s/img/recommendations_allowed_result.jpg" /></td></tr> </table>', 'wdfb' ), WDFB_PLUGIN_URL, WDFB_PLUGIN_URL );
-		$this->_create_widget_box( 'recommendations', $description );
-	}
-
-	function create_widget_activityfeed_box() {
-		$description = sprintf( __( 'Easily display Facebook Activity Feed. <table> <tr><th>Widget settings preview</th><th>Widget preview<th></tr> <tr><td valign="top"><img src="%s/img/activityfeed_allowed.png" /></td><td valign="top"><img src="%s/img/activityfeed_allowed_result.jpg" /></td></tr> </table>', 'wdfb' ), WDFB_PLUGIN_URL, WDFB_PLUGIN_URL );
-		$this->_create_widget_box( 'activityfeed', $description );
 	}
 
 	function create_widget_recent_comments_box() {
@@ -926,10 +903,13 @@ class Wdfb_AdminFormRenderer {
 	function facebook_publishing_metabox() {
 		global $post;
 
-		$opt = $this->_get_option( 'wdfb_autopost' );
+		$opts = $this->_get_option( 'wdfb_autopost' );
+		$type_post_fb_user = !empty( $opts['type_post_fb_user'] ) ? $opts['type_post_fb_user'] : '';
 
-		$is_published = get_post_meta( $post->ID, 'wdfb_published_on_fb', true );
-		if ( $is_published ) {
+		$wdfb_published_on_fb = get_post_meta( $post->ID, 'wdfb_published_on_fb', true );
+		$post_status          = get_post_status( $post->ID );
+
+		if ( $wdfb_published_on_fb ) {
 			echo '<div style="margin: 5px 0 15px; background-color: #FFFFE0; border-color: #E6DB55; border-radius: 3px 3px 3px 3px; border-style: solid; border-width: 1px; padding: 0 0.6em;">' .
 			     '<p>' . __( "This post has already been published on Facebook", 'wdfb' ) . '</p>' .
 			     '</div>';
@@ -939,15 +919,16 @@ class Wdfb_AdminFormRenderer {
 		$stored                 = is_array( $stored ) ? $stored : array();
 		$title                  = ! empty( $stored['wdfb_metabox_publishing_title'] ) ? $stored['wdfb_metabox_publishing_title'] : '';
 		$stored_publish         = ! empty( $stored['wdfb_metabox_publishing_publish'] );
-		$stored_publishing_user = ! empty( $stored['wdfb_metabox_publishing_account'] ) ? $stored['wdfb_metabox_publishing_account'] : '';
+		$stored_publishing_user = ! empty( $stored['wdfb_metabox_publishing_account'] ) ? $stored['wdfb_metabox_publishing_account'] : $type_post_fb_user;
 
 		echo '<div>';
 		echo '<label for="">' . __( 'Publish on Facebook with different title:', 'wdfb' ) . '</label>';
 		echo '<input type="text" class="widefat" name="wdfb_metabox_publishing_title" id="wdfb_metabox_publishing_title" value="' . esc_attr( $title ) . '" />';
 		echo __( '<p><small>Leave this value blank to use the post title.</small></p>', 'wdfb' );
 		echo '</div>';
-
-		if ( ! @$opt['allow_autopost'] ) {
+		//If post is not already published on facebook, and autopost is off
+		//If post is not already published on facebook, and autopost is on, and its an old post
+		if ( ( ! $wdfb_published_on_fb && ! $opts['allow_autopost'] ) || ( ! $wdfb_published_on_fb && $post_status == 'publish' ) ) {
 			echo '<div>';
 			echo '	<input type="checkbox" name="wdfb_metabox_publishing_publish" id="wdfb_metabox_publishing_publish" value="1" ' . checked( $stored_publish, true, false ) . ' />';
 			echo '	<label for="wdfb_metabox_publishing_publish">' . __( 'I want to publish this post to Facebook', 'wdfb' ) . '</label>';
@@ -974,7 +955,7 @@ class Wdfb_AdminFormRenderer {
 			$fb_accounts = isset($fb_accounts['auth_accounts']) ? $fb_accounts['auth_accounts'] : array();
 			*/
 
-			if ( $fb_accounts ) {
+			if ( $fb_accounts && current_user_can('manage_options') ) {
 				echo '<div>';
 				echo '	<label for="wdfb_metabox_publishing_account">' . __( 'Publish to wall of this Facebook account:', 'wdfb' ) . '</label>';
 				echo '	<select name="wdfb_metabox_publishing_account" id="wdfb_metabox_publishing_account">';
@@ -988,6 +969,14 @@ class Wdfb_AdminFormRenderer {
 				     '<input type="checkbox" name="wdfb_post_as_page" id="post_as_page" value="1" />';
 				echo '</div>';
 				echo '<p class="wdfb_perms_not_granted"><small>' . __( 'Please make sure that you granted extended permissions to your Facebook App', 'wdfb' ) . '</small></p>';
+			}
+		}else{
+			if( !empty( $opts['allow_skip_autopost'] ) && $opts['allow_skip_autopost'] == 1 ) {
+				echo '<div>';
+				echo '	<input type="checkbox" name="wdfb_metabox_publishing_skip_publish" id="wdfb_metabox_publishing_skip_publish" value="1" ' . checked( $stored_publish, true, false ) . ' />';
+				echo '	<label for="wdfb_metabox_publishing_publish">' . __( 'Do not publish this post to Facebook', 'wdfb' ) . '</label>';
+				echo __( '<p><small>If checked, the post will not be published on Facebook</small></p>', 'wdfb' );
+				echo '</div>';
 			}
 		}
 		echo '<script type="text/javascript" src="' . WDFB_PLUGIN_URL . '/js/check_permissions.js"></script>';

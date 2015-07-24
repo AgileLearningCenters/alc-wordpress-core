@@ -5,6 +5,58 @@ Contributor: Umesh Kumar
 Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
+
+2.7.9.6 - 2015-07-22 - Umesh Kumar
+- Fixed: Permissions issue for new APP
+- Fixed: Album selector not working
+- Fixed: Crop Image, if enabled in album widget/shortcode
+- Added: One CLick Registration to signup
+- Removed: Facebook Recommendation, FacePile, Activity Feed (Discontinued by Facebook)
+
+2.7.9.5 - 2015-04-24 - Umesh Kumar
+- Fixed: Settings for like and send button on home page and archive pages
+
+2.7.9.4 - 2015-04-23 - Umesh Kumar
+- Fixed: Updated permissions required for Auto Posting
+
+2.7.9.3 - 2015-04-21 - Umesh Kumar, Jose Jaureguiberry
+- Fixed: Event timezone field not being retrieved
+- Fixed: Use post content for description instead of blog description
+- Fixed (Important - Security): Fix query argument escaping to avoid XSS vulnerability
+
+2.7.9.2 - 2015-01-19 - Umesh Kumar
+- Fixed:    Comment author facebook URL fixed
+- Fixed:    Network Settings - Override all blog settings and Preserve individual blog api settings
+
+2.7.9.1 - 2015-01-08 - Umesh Kumar
+- Fixed:    replaced comment_text filter with get_comment_text to fix notice and warnings
+- Fixed:    Fixed recent comment widget avatar checkbox in backend
+- Fixed:    Comments order in recent comment widget
+
+2.7.9 - 2014-12-15 - Umesh Kumar
+- Updated:  Album widget styling change ( check changes before updating on live )
+- New:      Option to display photo description in facebook albums
+- New:      Validate Facebook APP Secret with APP ID
+- New:      Allow users to display album pictures in widget using thickbox
+- New:      On uninstall : Delete API settings and default tokens list, remove comments import cron
+- Fixed:    Album not displayed if no limit is specified in shortcode
+- Fixed:    User id and token issue ( Albums not showing up, due to invalid token )
+- Fixed:    Permissions logic
+- Fixed:    Disable signup using Facebook if registration is disabled on site
+- Updated:  Facebook registration plugin expiry notice
+
+2.7.8 - 2014-11-24 - Umesh Kumar
+- New: Skip autopost option for individual posts
+- New: 'wdfb-opengraph_apply_the_content_filter' filter added for developers. Returns a boolean.
+- Updated: Manual Publishing on Facebook for posts
+- Fixed: Warnings
+
+2.7.7 - 2014-10-27 - Umesh Kumar
+- Fixed: Autoimport for comments
+- Fixed: Character encoding issue due to emojis
+- Fixed: Autoposting for posts published using Ajax
+- New:   Allow publishing old posts in editor mode
+
 2.7.6 - 2014-09-8 - Umesh Kumar
 - New:  Added support for importing emoji's in Facebook comments
 - New: Support for bigger images in Autoposting
@@ -396,4 +448,4 @@ Change Log:
 - Added date threshold parameter for Facebook Events widget.
 
 
-327416-1413422153-au
+327416-1437659720-au

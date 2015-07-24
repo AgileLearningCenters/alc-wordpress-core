@@ -13,7 +13,6 @@ class Wdfb_MarkerReplacer {
 		'album'           => 'wdfb_album',
 		'connect'         => 'wdfb_connect',
 		'recent_comments' => 'wdfb_recent_comments',
-		'register_button' => 'wdfb_register_button',
 	);
 
 	function __construct() {
@@ -31,26 +30,6 @@ class Wdfb_MarkerReplacer {
 		}
 
 		return '[' . $this->buttons[ $b ] . ']';
-	}
-
-	function process_register_button_code( $atts, $content = '' ) {
-		if ( is_user_logged_in() ) {
-			return '';
-		}
-		if ( ! $this->data->get_option( 'wdfb_connect', 'allow_facebook_registration' ) ) {
-			return '';
-		}
-
-		$content = ! empty( $content ) ? $content : __( 'Register with Facebook', 'wdfb' );
-
-		$base_url = defined( 'BP_VERSION' )
-			? bp_get_signup_page()
-			: apply_filters( 'wdfb-registration-registration_page', site_url( '/wp-signup.php', 'login' ) );
-		$url      = add_query_arg( array(
-			'fb_registration_page' => 1
-		), $base_url );
-
-		return '<p><a class="wdfb_register_button" href="' . $url . '"><span>' . $content . '</span></a></p>';
 	}
 
 	function process_connect_code( $atts, $content = '' ) {
@@ -80,22 +59,22 @@ class Wdfb_MarkerReplacer {
 				$redirect_to = site_url( $wp->request );
 			}
 		}
+		$html = '';
 		if ( ! class_exists( 'Wdfb_WidgetConnect' ) ) {
-			echo '<script type="text/javascript" src="' . WDFB_PLUGIN_URL . '/js/wdfb_facebook_login.js"></script>';
+			$html = '<script type="text/javascript" src="' . WDFB_PLUGIN_URL . '/js/wdfb_facebook_login.js?version=' . WDFB_PLUGIN_VERSION . '"></script>';
 		}
 		$user = wp_get_current_user();
-		$html = '';
 		if ( ! $user->ID ) {
-			$html = '<p class="wdfb_login_button">' .
-			        wdfb_get_fb_plugin_markup( 'login-button', array(
-				        'scope'        => Wdfb_Permissions::get_permissions(),
-				        'redirect-url' => ( $redirect_to
-					        ? apply_filters( 'wdfb-login-redirect_url', $redirect_to )
-					        : wdfb_get_login_redirect()
-				        ),
-				        'content'      => $content,
-			        ) ) .
-			        '</p>';
+			$html .= '<p class="wdfb_login_button">' .
+			         wdfb_get_fb_plugin_markup( 'login-button', array(
+				         'scope'        => Wdfb_Permissions::get_permissions(),
+				         'redirect-url' => ( $redirect_to
+					         ? apply_filters( 'wdfb-login-redirect_url', $redirect_to )
+					         : wdfb_get_login_redirect()
+				         ),
+				         'content'      => $content,
+			         ) ) .
+			         '</p>';
 		} else {
 			$redirect_to = $redirect_to ? apply_filters( 'wdfb-login-redirect_url', $redirect_to ) : home_url();
 			$logout      = wp_logout_url( $redirect_to ); // Props jmoore2026
@@ -132,7 +111,7 @@ class Wdfb_MarkerReplacer {
 			if ( $size ) {
 				$out .= '<img src="' . WDFB_PROTOCOL . 'graph.facebook.com/' . esc_attr( $meta['fb_author_id'] ) . '/picture" class="avatar avatar-' . $size . ' photo" height="' . $size . '" width="' . $size . '" />';
 			}
-			$out .= '<cite class="fn"><a href="' . WDFB_PROTOCOL . 'www.facebook.com/profile.php?id=' . esc_attr( $meta['fb_author_id'] ) . '">' . esc_html( $comment->comment_author ) . '</a></cite>';
+			$out .= '<cite class="fn"><a href="' . WDFB_PROTOCOL . 'www.facebook.com/' . esc_attr( $meta['fb_author_id'] ) . '">' . esc_html( $comment->comment_author ) . '</a></cite>';
 			$out .= '</div>';
 
 			if ( ! $hide_text ) {
@@ -157,7 +136,10 @@ class Wdfb_MarkerReplacer {
 	function process_like_button_code( $atts, $content = '' ) {
 		global $wp_current_filter;
 
-		// Check allowed
+		//Archive page, blog page and latest posts as home page
+		$archive_page = ( ( is_home() || is_archive() ) && ! is_front_page() ) ? true : false;
+
+		// Check if facebook button is allowed
 		$allow = $this->data->get_option( 'wdfb_button', 'allow_facebook_button' );
 		if ( ! apply_filters( 'wdfb-show_facebook_button', $allow ) ) {
 			return '';
@@ -177,8 +159,21 @@ class Wdfb_MarkerReplacer {
 		$in_types  = $this->data->get_option( 'wdfb_button', 'not_in_post_types' );
 		$in_types  = is_array( $in_types ) ? $in_types : array();
 		$post_type = get_post_type();
-		if ( ( $post_type && in_array( get_post_type(), $in_types ) ) && ! $forced ) {
+		if ( ( ( $post_type && in_array( get_post_type(), $in_types ) ) && ! $forced )
+		) {
 			return '';
+		}
+		//If we are on front page, and show on front page is not checked, do not print like and send button
+		if ( is_front_page() ) {
+			if ( ! $this->data->get_option( 'wdfb_button', 'show_on_front_page' ) ) {
+				return '';
+			}
+		}
+		//If we are on Blog or Archive page, and show on archive page is not checked, do not print like and send button
+		if ( $archive_page ) {
+			if ( ! $this->data->get_option( 'wdfb_button', 'show_on_archive_page' ) ) {
+				return '';
+			}
 		}
 
 		$is_activity = defined( 'BP_VERSION' ) && isset( $filters['bp_get_activity_content_body'] );
@@ -202,9 +197,9 @@ class Wdfb_MarkerReplacer {
 		$scheme = $scheme ? $scheme : 'light';
 
 		if (
-			( is_home() && $this->data->get_option( 'wdfb_button', 'show_on_front_page' ) )
+			( is_front_page() && $this->data->get_option( 'wdfb_button', 'show_on_front_page' ) )
 			||
-			( is_archive() && $this->data->get_option( 'wdfb_button', 'show_on_archive_page' ) )
+			( $archive_page && $this->data->get_option( 'wdfb_button', 'show_on_archive_page' ) )
 			||
 			( defined( 'BP_VERSION' ) && $is_activity && ! wdfb_is_single_bp_activity() )
 		) {
@@ -219,9 +214,9 @@ class Wdfb_MarkerReplacer {
 			if (
 				( defined( 'BP_VERSION' ) && $is_activity && ! wdfb_is_single_bp_activity() && $this->data->get_option( 'wdfb_button', 'bp_activity_xfbml' ) )
 				||
-				( is_home() && $this->data->get_option( 'wdfb_button', 'show_on_front_page' ) && $this->data->get_option( 'wdfb_button', 'shared_pages_use_xfbml' ) )
+				( is_front_page() && $this->data->get_option( 'wdfb_button', 'show_on_front_page' ) && $this->data->get_option( 'wdfb_button', 'shared_pages_use_xfbml' ) )
 				||
-				( is_archive() && $this->data->get_option( 'wdfb_button', 'show_on_archive_page' ) && $this->data->get_option( 'wdfb_button', 'shared_pages_use_xfbml' ) )
+				( $archive_page && $this->data->get_option( 'wdfb_button', 'show_on_archive_page' ) && $this->data->get_option( 'wdfb_button', 'shared_pages_use_xfbml' ) )
 			) {
 				$use_xfbml = true;
 			}
@@ -230,13 +225,13 @@ class Wdfb_MarkerReplacer {
 
 			return $use_xfbml
 				? '<div class="wdfb_like_button">' . wdfb_get_fb_plugin_markup( 'like', compact( array(
-							'href',
-							'send',
-							'layout',
-							'width',
-							'scheme'
-						) ) ) . '</div>'
-				: "<div class='wdfb_like_button'><iframe src='http://www.facebook.com/plugins/like.php?&amp;href=" . rawurlencode( $href ) . "&amp;send=false&amp;layout={$layout}&amp;show_faces=false&amp;action=like&amp;colorscheme={$scheme}&amp;font&amp;height={$height}&amp;width={$width}&amp;locale={$locale}' scrolling='no' frameborder='0' style='border:none; overflow:hidden; height:{$height}px; width:{$width}px;' allowTransparency='true'></iframe></div>";
+					'href',
+					'send',
+					'layout',
+					'width',
+					'scheme'
+				) ) ) . '</div>'
+				: "<div class='wdfb_like_button'><iframe src='http://www.facebook.com/plugins/like.php?&amp;href=" . rawurlencode( $href ) . "&amp;send={$send}&amp;layout={$layout}&amp;show_faces=false&amp;action=like&amp;colorscheme={$scheme}&amp;font&amp;height={$height}&amp;width={$width}&amp;locale={$locale}' scrolling='no' frameborder='0' style='border:none; overflow:hidden; height:{$height}px; width:{$width}px;' allowTransparency='true'></iframe></div>";
 		}
 
 		$href = apply_filters( 'wdfb-like_button-href_attribute', WDFB_PROTOCOL . preg_replace( '/^https?:\/\//', '', $url ) );
@@ -302,8 +297,8 @@ class Wdfb_MarkerReplacer {
 				$start_time = isset ( $event['start_time'] ) ? strtotime( $event['start_time'] ) : '';
 				$end_time   = isset ( $event['end_time'] ) ? strtotime( $event['end_time'] ) : '';
 				date_default_timezone_set( $event['timezone'] );
-				$event['start_time'] = !empty ( $start_time ) ?  date( 'Y-m-d H:i:s', $start_time ) : '';
-				$event['end_time']   = !empty ( $end_time ) ?  date( 'Y-m-d H:i:s', $end_time ) : '';
+				$event['start_time'] = ! empty ( $start_time ) ? date( 'Y-m-d H:i:s', $start_time ) : '';
+				$event['end_time']   = ! empty ( $end_time ) ? date( 'Y-m-d H:i:s', $end_time ) : '';
 				date_default_timezone_set( $current_tz );
 			}
 			if ( $date_threshold > strtotime( $event['start_time'] ) ) {
@@ -325,15 +320,16 @@ class Wdfb_MarkerReplacer {
 		}
 
 		$atts = shortcode_atts( array(
-			'id'           => false,
-			'limit'        => false,
-			'photo_class'  => 'thickbox',
-			'album_class'  => false,
-			'photo_width'  => 75,
-			'photo_height' => false,
-			'crop'         => false,
-			'link_to'      => 'source',
-			'columns'      => false,
+			'id'               => false,
+			'limit'            => false,
+			'photo_class'      => 'thickbox',
+			'show_description' => false,
+			'album_class'      => false,
+			'photo_width'      => 75,
+			'photo_height'     => false,
+			'crop'             => false,
+			'link_to'          => 'source',
+			'columns'          => 3,
 		), $atts );
 
 		if ( ! $atts['id'] ) {
@@ -351,30 +347,36 @@ class Wdfb_MarkerReplacer {
 		}
 
 		$ret = false;
-		$i   = 0;
+		$i   = 1;
 
-		$display_idx = ( $img_w >= 130 )
-			? ( ( $img_w >= 180 ) ? 0 : 1 )
-			: ( ( $img_w >= 75 ) ? 2 : 3 );
-
-		$columns = (int) $atts['columns'];
-		$current = 1;
+		$display_idx         = ( $img_w >= 130 ) ? ( ( $img_w >= 180 ) ? 0 : 1 ) : ( ( $img_w >= 75 ) ? 2 : 3 );
+		$columns             = (int) $atts['columns'];
+		$current             = 1;
+		$atts['album_class'] = ! empty( $atts['album_class'] ) ? $atts['album_class'] . ' wdfb_album_photos' : 'wdfb_album_photos';
 		foreach ( $photos as $photo ) {
 			$photo_idx = isset( $photo['images'][ $display_idx ] ) ? $display_idx : count( $photo['images'] ) - 1;
-			$style     = $atts['crop'] ? "style='display:block;float:left;height:{$img_h}px;overflow:hidden'" : '';
-			$url       = $fb_open
-				? WDFB_PROTOCOL . 'www.facebook.com/photo.php?fbid=' . $photo['id']
-				: $photo['images'][0]['source'];
-			$name      = ! empty( $photo['name'] ) ? 'title="' . esc_attr( $photo['name'] ) . '"' : '';
-			$ret .= '<a href="' . $url .
-			        '" class="' . $atts['photo_class'] . '" rel="' . $atts['id'] . '-photo" ' . $style . ' ' . $name . '>' .
-			        '<img src="' . $photo['images'][ $photo_idx ]['source'] . '" ' .
-			        ( $img_w ? "width='{$img_w}'" : '' ) .
-			        ( $img_h && ! $atts['crop'] ? "height='{$img_h}'" : '' ) .
-			        ' />' .
-			        '</a>';
-			if ( $columns && ( ++$i % $columns ) == 0 ) {
-				$ret .= '<br ' . ( $style ? 'style="clear:left"' : '' ) . '/>';
+			$style     = $atts['crop'] ? "style='display:block;float:left;width: {$img_w}px;height:{$img_h}px;overflow:hidden'" : '';
+			$url       = $fb_open ? WDFB_PROTOCOL . 'www.facebook.com/photo.php?fbid=' . $photo['id'] : $photo['images'][0]['source'];
+
+			//Check if photo description is allowed and photo does have a description
+			$photo_desc_full = ! empty( $photo['name'] ) ? esc_attr( $photo['name'] ) : '';
+			$photo_desc_full = apply_filters( 'wdfb_album_photo_desc', $photo_desc_full );
+
+			$character_limit = apply_filters( 'wdfb_album_photo_desc_length', 20 );
+
+			if ( $character_limit ) {
+				$photo_desc = ( strlen( $photo_desc_full ) > 20 ) ? mb_substr( $photo_desc_full, 0, $character_limit ) . '...' : $photo_desc_full;
+			}
+			$div_style = "style='width:{$img_w}px;'";
+
+			$ret .= '<div class="wdfb-album-image-row" ' . $div_style . '>
+					<a href="' . $url . '" class="' . $atts['photo_class'] . '" rel="' . $atts['id'] . '-photo" ' . $style . ' title="' . $photo_desc_full . '">' .
+			        '<img src="' . $photo['images'][ $photo_idx ]['source'] . '" ' . ( $img_w ? "width='{$img_w}'" : '' ) . ( $img_h && ! $atts['crop'] ? "height='{$img_h}'" : '' ) . $style . ' />';
+			$ret .= '</a>';
+			$ret .= ( ! empty( $photo_desc ) && $atts['show_description'] ) ? '<p class="wdfb-photo-desc">' . $photo_desc . "</p>" : '<p></p>';
+			$ret .= "</div>";
+			if ( $columns && ( ( $i ++ % $columns ) == 0 ) ) {
+				$ret .= "<br />";
 			}
 			if ( (int) $atts['limit'] && $current >= (int) $atts['limit'] ) {
 				break;
