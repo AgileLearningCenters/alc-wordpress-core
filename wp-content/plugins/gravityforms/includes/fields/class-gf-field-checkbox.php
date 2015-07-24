@@ -10,7 +10,7 @@ class GF_Field_Checkbox extends GF_Field {
 	public $type = 'checkbox';
 
 	public function get_form_editor_field_title() {
-		return __( 'Checkboxes', 'gravityforms' );
+		return esc_attr__( 'Checkboxes', 'gravityforms' );
 	}
 
 	public function get_form_editor_field_settings() {
@@ -35,7 +35,7 @@ class GF_Field_Checkbox extends GF_Field {
 
 	public function get_field_input( $form, $value = '', $entry = null ) {
 
-		$form_id         = $form['id'];
+		$form_id         = absint( $form['id'] );
 		$is_entry_detail = $this->is_entry_detail();
 		$is_form_editor  = $this->is_form_editor();
 
@@ -43,7 +43,7 @@ class GF_Field_Checkbox extends GF_Field {
 		$field_id      = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 		$disabled_text = $is_form_editor ? 'disabled="disabled"' : '';
 
-		return sprintf( "<div class='ginput_container'><ul class='gfield_checkbox' id='%s'>%s</ul></div>", $field_id, $this->get_checkbox_choices( $value, $disabled_text, $form_id ) );
+		return sprintf( "<div class='ginput_container'><ul class='gfield_checkbox' id='%s'>%s</ul></div>", esc_attr( $field_id ), $this->get_checkbox_choices( $value, $disabled_text, $form_id ) );
 	}
 
 	public function get_first_input_id( $form ) {
@@ -143,7 +143,7 @@ class GF_Field_Checkbox extends GF_Field {
 
 	}
 
-	public function get_value_merge_tag( $value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format ) {
+	public function get_value_merge_tag( $value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format, $nl2br ) {
 		$use_value       = $modifier == 'value';
 		$use_price       = in_array( $modifier, array( 'price', 'currency' ) );
 		$format_currency = $modifier == 'currency';
@@ -237,7 +237,10 @@ class GF_Field_Checkbox extends GF_Field {
 								<label for='choice_{$id}' id='label_{$id}'>{$choice['text']}</label>
 							</li>";
 
-				$choices .= apply_filters( 'gform_field_choice_markup_pre_render_' . $this->formId, apply_filters( 'gform_field_choice_markup_pre_render', $choice_markup, $choice, $this, $value ), $choice, $this, $value );
+				$choices .= gf_apply_filters( 'gform_field_choice_markup_pre_render', array(
+					$this->formId,
+					$this->id
+				), $choice_markup, $choice, $this, $value );
 
 				$is_entry_detail = $this->is_entry_detail();
 				$is_form_editor  = $this->is_form_editor();
@@ -252,11 +255,11 @@ class GF_Field_Checkbox extends GF_Field {
 
 			$total = sizeof( $this->choices );
 			if ( $count < $total ) {
-				$choices .= "<li class='gchoice_total'>" . sprintf( __( '%d of %d items shown. Edit field to view all', 'gravityforms' ), $count, $total ) . '</li>';
+				$choices .= "<li class='gchoice_total'>" . sprintf( esc_html__( '%d of %d items shown. Edit field to view all', 'gravityforms' ), $count, $total ) . '</li>';
 			}
 		}
 
-		return apply_filters( 'gform_field_choices_' . $this->formId, apply_filters( 'gform_field_choices', $choices, $this ), $this );
+		return gf_apply_filters( 'gform_field_choices', $this->formId, $choices, $this );
 
 	}
 

@@ -17,7 +17,7 @@ class GFEntryDetail {
 
 		$form    = RGFormsModel::get_form_meta( absint( $_GET['id'] ) );
 		$form_id = absint( $form['id'] );
-		$form    = apply_filters( 'gform_admin_pre_render_' . $form_id, apply_filters( 'gform_admin_pre_render', $form ) );
+		$form    = gf_apply_filters( 'gform_admin_pre_render', $form_id, $form );
 		$lead_id = absint( rgget( 'lid' ) );
 
 		$filter = rgget( 'filter' );
@@ -97,7 +97,7 @@ class GFEntryDetail {
 		}
 
 		if ( ! $lead ) {
-			_e( "Oops! We couldn't find your entry. Please try again", 'gravityforms' );
+			esc_html_e( "Oops! We couldn't find your entry. Please try again", 'gravityforms' );
 
 			return;
 		}
@@ -116,8 +116,7 @@ class GFEntryDetail {
 				GFFormsModel::$uploaded_files[ $form_id ] = $files;
 				GFFormsModel::save_lead( $form, $lead );
 
-				do_action( 'gform_after_update_entry', $form, $lead['id'] );
-				do_action( "gform_after_update_entry_{$form['id']}", $form, $lead['id'] );
+				gf_do_action( 'gform_after_update_entry', $form['id'], $form, $lead['id'] );
 
 				$lead = RGFormsModel::get_lead( $lead['id'] );
 				$lead = GFFormsModel::set_entry_meta( $lead, $form );
@@ -219,7 +218,7 @@ class GFEntryDetail {
 			});
 
 			function DeleteFile(leadId, fieldId, deleteButton) {
-				if (confirm('<?php echo esc_js( __( "Would you like to delete this file? 'Cancel' to stop. 'OK' to delete", 'gravityforms' ) ); ?>')) {
+				if (confirm(<?php echo json_encode( __( "Would you like to delete this file? 'Cancel' to stop. 'OK' to delete", 'gravityforms' ) ); ?>)) {
 					var fileIndex = jQuery(deleteButton).parent().index();
 					var mysack = new sack("<?php echo admin_url( 'admin-ajax.php' )?>");
 					mysack.execute = 1;
@@ -230,7 +229,7 @@ class GFEntryDetail {
 					mysack.setVar("field_id", fieldId);
 					mysack.setVar("file_index", fileIndex);
 					mysack.onError = function () {
-						alert('<?php echo esc_js( __( 'Ajax error while deleting field.', 'gravityforms' ) ) ?>')
+						alert(<?php echo json_encode( __( 'Ajax error while deleting field.', 'gravityforms' ) ); ?>)
 					};
 					mysack.runAJAX();
 
@@ -285,7 +284,7 @@ class GFEntryDetail {
 				var sendTo = jQuery('#notification_override_email').val();
 
 				if (selectedNotifications.length <= 0) {
-					displayMessage("<?php echo esc_js( 'You must select at least one type of notification to resend.', 'gravityforms' ); ?>", 'error', '#notifications_container');
+					displayMessage(<?php echo json_encode( __( 'You must select at least one type of notification to resend.', 'gravityforms' ) ); ?>, 'error', '#notifications_container');
 					return;
 				}
 
@@ -303,7 +302,7 @@ class GFEntryDetail {
 						if (response) {
 							displayMessage(response, "error", "#notifications_container");
 						} else {
-							displayMessage("<?php echo esc_js( 'Notifications were resent successfully.', 'gravityforms' ); ?>", "updated", "#notifications_container" );
+							displayMessage(<?php echo json_encode( esc_html__( 'Notifications were resent successfully.', 'gravityforms' ) ); ?>, "updated", "#notifications_container" );
 
 							// reset UI
 							jQuery(".gform_notifications").attr( 'checked', false );
@@ -647,7 +646,7 @@ class GFEntryDetail {
 	}
 
 	public static function lead_detail_edit( $form, $lead ) {
-		$form    = apply_filters( 'gform_admin_pre_render_' . $form['id'], apply_filters( 'gform_admin_pre_render', $form ) );
+		$form    = gf_apply_filters( 'gform_admin_pre_render', $form['id'], $form );
 		$form_id = absint( $form['id'] );
 		?>
 		<div class="postbox">
@@ -770,7 +769,7 @@ class GFEntryDetail {
 								<?php esc_html_e( 'added on', 'gravityforms' ); ?> <?php echo esc_html( GFCommon::format_date( $note->date_created, false ) ) ?>
 							</p>
 						</div>
-						<div class="detail-note-content<?php echo $class ?>"><?php echo esc_html( $note->value ) ?></div>
+						<div class="detail-note-content<?php echo $class ?>"><?php echo nl2br( esc_html( $note->value ) ) ?></div>
 					</td>
 
 				</tr>
@@ -914,7 +913,7 @@ class GFEntryDetail {
 				if ( ! empty( $products['products'] ) ) {
 					?>
 					<tr>
-						<td colspan="2" class="entry-view-field-name"><?php echo esc_html( apply_filters( "gform_order_label_{$form_id}", apply_filters( 'gform_order_label', __( 'Order', 'gravityforms' ), $form_id ), $form_id ) ); ?></td>
+						<td colspan="2" class="entry-view-field-name"><?php echo esc_html( gf_apply_filters( 'gform_order_label', $form_id, __( 'Order', 'gravityforms' ), $form_id ) ); ?></td>
 					</tr>
 					<tr>
 						<td colspan="2" class="entry-view-field-value lastrow">
@@ -926,10 +925,10 @@ class GFEntryDetail {
 									<col class="entry-products-col4" />
 								</colgroup>
 								<thead>
-								<th scope="col"><?php echo apply_filters( "gform_product_{$form_id}", apply_filters( 'gform_product', __( 'Product', 'gravityforms' ), $form_id ), $form_id ); ?></th>
-								<th scope="col" class="textcenter"><?php echo esc_html( apply_filters( "gform_product_qty_{$form_id}", apply_filters( 'gform_product_qty', __( 'Qty', 'gravityforms' ), $form_id ), $form_id ) ); ?></th>
-								<th scope="col"><?php echo esc_html( apply_filters( "gform_product_unitprice_{$form_id}", apply_filters( 'gform_product_unitprice', __( 'Unit Price', 'gravityforms' ), $form_id ), $form_id ) ); ?></th>
-								<th scope="col"><?php echo esc_html( apply_filters( "gform_product_price_{$form_id}", apply_filters( 'gform_product_price', __( 'Price', 'gravityforms' ), $form_id ), $form_id ) ); ?></th>
+								<th scope="col"><?php echo gf_apply_filters( 'gform_product', $form_id, __( 'Product', 'gravityforms' ), $form_id ); ?></th>
+								<th scope="col" class="textcenter"><?php echo esc_html( gf_apply_filters( 'gform_product_qty', $form_id, __( 'Qty', 'gravityforms' ), $form_id ) ); ?></th>
+								<th scope="col"><?php echo esc_html( gf_apply_filters( 'gform_product_unitprice', $form_id, __( 'Unit Price', 'gravityforms' ), $form_id ) ); ?></th>
+								<th scope="col"><?php echo esc_html( gf_apply_filters( 'gform_product_price', $form_id, __( 'Price', 'gravityforms' ), $form_id ) ); ?></th>
 								</thead>
 								<tbody>
 								<?php

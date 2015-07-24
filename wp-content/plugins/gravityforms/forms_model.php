@@ -349,8 +349,7 @@ class GFFormsModel {
 		//load notifications to legacy structure to maintain backward compatibility with legacy hooks and functions
 		$form = self::load_notifications_to_legacy( $form );
 
-		$form = apply_filters( 'gform_form_post_get_meta', $form );
-		$form = apply_filters( "gform_form_post_get_meta_{$form_id}", $form );
+		$form = gf_apply_filters( 'gform_form_post_get_meta', $form_id, $form );
 
 		// cached form meta for cheaper retrieval on subsequent requests
 		self::$_current_forms[ $form_id ] = $form;
@@ -463,7 +462,7 @@ class GFFormsModel {
 
 			//assigning this notification to the form_submission action
 			$admin_notification['event'] = 'form_submission';
-			$admin_notification['name']  = __( 'Admin Notification', 'gravityforms' );
+			$admin_notification['name']  = esc_html__( 'Admin Notification', 'gravityforms' );
 			$admin_notification['type']  = 'admin';
 			$admin_notification['id']    = $notification_id;
 
@@ -487,7 +486,7 @@ class GFFormsModel {
 			$notification_id = uniqid();
 			//assigning this notification to the form_submission action
 			$user_notification['event'] = 'form_submission';
-			$user_notification['name']  = __( 'User Notification', 'gravityforms' );
+			$user_notification['name']  = esc_html__( 'User Notification', 'gravityforms' );
 			$user_notification['type']  = 'user';
 			$user_notification['id']    = $notification_id;
 
@@ -763,12 +762,13 @@ class GFFormsModel {
 
 		//Delete from detail long
 		$sql = $wpdb->prepare(
-			" DELETE FROM $lead_detail_long_table
-                                WHERE lead_detail_id IN(
-                                    SELECT ld.id FROM $lead_detail_table ld
-                                    INNER JOIN $lead_table l ON l.id = ld.lead_id
-                                    WHERE l.form_id=%d AND ld.form_id=%d {$status_filter}
-                                )", $form_id, $form_id
+			" 	DELETE $lead_detail_long_table FROM $lead_detail_long_table
+				JOIN (
+					SELECT ld.id FROM $lead_detail_table ld
+					INNER JOIN $lead_table l ON l.id = ld.lead_id
+					WHERE l.form_id=%d AND ld.form_id=%d {$status_filter}
+				) tmp
+				ON tmp.id = $lead_detail_long_table.lead_detail_id", $form_id, $form_id
 		);
 		$wpdb->query( $sql );
 
@@ -875,15 +875,15 @@ class GFFormsModel {
 		global $wpdb;
 
 		if ( ! GFCommon::current_user_can_any( 'gravityforms_create_form' ) ) {
-			die( __( "You don't have adequate permission to create forms.", 'gravityforms' ) );
+			die( esc_html__( "You don't have adequate permission to create forms.", 'gravityforms' ) );
 		}
 
 		//finding unique title
 		$form  = self::get_form( $form_id );
 		$count = 2;
-		$title = $form->title . ' - Copy 1';
+		$title = $form->title . ' - ' . esc_html__( 'Copy 1', 'gravityforms' );
 		while ( ! self::is_unique_title( $title ) ) {
-			$title = $form->title . " - Copy $count";
+			$title = $form->title . ' - ' . sprintf( esc_html__( 'Copy %d', 'gravityforms' ), $count );
 			$count ++;
 		}
 
@@ -953,8 +953,7 @@ class GFFormsModel {
 	public static function update_form_meta( $form_id, $form_meta, $meta_name = 'display_meta' ) {
 		global $wpdb;
 
-		$form_meta = apply_filters( 'gform_form_update_meta', $form_meta, $form_id, $meta_name );
-		$form_meta = apply_filters( "gform_form_update_meta_{$form_id}", $form_meta, $form_id, $meta_name );
+		$form_meta = gf_apply_filters( 'gform_form_update_meta', $form_id, $form_meta, $form_id, $meta_name );
 
 		$meta_table_name = self::get_meta_table_name();
 		$form_meta       = json_encode( $form_meta );
@@ -967,8 +966,7 @@ class GFFormsModel {
 
 		self::$_current_forms[ $form_id ] = null;
 
-		do_action( 'gform_post_update_form_meta', $form_meta, $form_id, $meta_name );
-		do_action( "gform_post_update_form_meta_{$form_id}", $form_meta, $form_id, $meta_name );
+		gf_do_action( 'gform_post_update_form_meta', $form_id, $form_meta, $form_id, $meta_name );
 
 		return $result;
 	}
@@ -980,9 +978,16 @@ class GFFormsModel {
 			$form = self::get_form_meta( $lead['form_id'] );
 		}
 
-		$fields = GFCommon::get_fields_by_type( $form, array( 'fileupload', 'post_image' ) );
+		// Default field types to delete
+		$field_types = array( 'fileupload', 'post_image' );
+
+		// Allow adding more file types to delete
+		$field_types = gf_apply_filters( 'gform_field_types_delete_files', $form['id'], $field_types, $form );
+
+		$fields = self::get_fields_by_type( $form, $field_types );
 		if ( is_array( $fields ) ) {
 			foreach ( $fields as $field ) {
+
 				if ( $field->multipleFiles ) {
 					$value_json = self::get_lead_field_value( $lead, $field );
 					if ( ! empty( $value_json ) ) {
@@ -1004,7 +1009,15 @@ class GFFormsModel {
 	public static function delete_files_by_form( $form_id, $status = '' ) {
 		global $wpdb;
 		$form   = self::get_form_meta( $form_id );
-		$fields = GFCommon::get_fields_by_type( $form, array( 'fileupload', 'post_image' ) );
+		
+		// Default field types to delete
+		$field_types = array( 'fileupload', 'post_image' );
+
+		// Allow adding more file types to delete
+		$field_types = gf_apply_filters( 'gform_field_types_delete_files', $form_id, $field_types, $form );
+
+
+		$fields = self::get_fields_by_type( $form, $field_types );
 		if ( empty( $fields ) ) {
 			return;
 		}
@@ -1157,12 +1170,17 @@ class GFFormsModel {
 
 		//Delete from detail long
 		$sql = $wpdb->prepare(
-			" DELETE FROM $lead_detail_long_table
-                                WHERE lead_detail_id IN(
-                                    SELECT id FROM $lead_detail_table WHERE form_id=%d AND field_number >= %d AND field_number < %d
-                                )", $form_id, $field_id, $field_id + 1
+			"DELETE $lead_detail_long_table FROM $lead_detail_long_table
+				JOIN (
+					SELECT ld.id FROM $lead_detail_table ld
+					WHERE form_id=%d AND field_number >= %d AND field_number < %d
+				) tmp
+				ON tmp.id = $lead_detail_long_table.lead_detail_id",
+			$form_id, $field_id, $field_id + 1
 		);
+
 		$wpdb->query( $sql );
+
 
 		//Delete from lead details
 		$sql = $wpdb->prepare( "DELETE FROM $lead_detail_table WHERE form_id=%d AND field_number >= %d AND field_number < %d", $form_id, $field_id, $field_id + 1 );
@@ -1196,11 +1214,15 @@ class GFFormsModel {
 
 		//Delete from detail long
 		$sql = $wpdb->prepare(
-			" DELETE FROM $lead_detail_long_table
-                                WHERE lead_detail_id IN(
-                                    SELECT id FROM $lead_detail_table WHERE lead_id=%d
-                                )", $lead_id
+			"DELETE $lead_detail_long_table FROM $lead_detail_long_table
+				JOIN (
+					SELECT ld.id FROM $lead_detail_table ld
+					WHERE lead_id=%d
+				) tmp
+				ON tmp.id = $lead_detail_long_table.lead_detail_id",
+			$lead_id
 		);
+
 		$wpdb->query( $sql );
 
 		//Delete from lead details
@@ -1281,7 +1303,7 @@ class GFFormsModel {
 		$is_admin        = $is_form_editor || $is_entry_detail;
 
 		if ( $is_admin && ! GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
-			die( __( "You don't have adequate permission to edit entries.", 'gravityforms' ) );
+			die( esc_html__( "You don't have adequate permission to edit entries.", 'gravityforms' ) );
 		}
 
 		$lead_detail_table = self::get_lead_details_table_name();
@@ -1443,7 +1465,7 @@ class GFFormsModel {
 				$inputs = $field->get_entry_inputs();
 
 				if ( is_array( $inputs ) ) {
-					foreach ( $field->inputs as $input ) {
+					foreach ( $inputs as $input ) {
 						$lead[ (string) $input['id'] ] = self::get_prepared_input_value( $form, $field, $lead, $input['id'] );
 					}
 				} else {
@@ -1884,6 +1906,10 @@ class GFFormsModel {
 		$submitted_values = array();
 		foreach ( $form['fields'] as $field ) {
 			/* @var GF_Field $field */
+			if ( $field->type == 'creditcard' ) {
+				continue;
+			}
+
 			$submitted_values[ $field->id ] = RGFormsModel::get_field_value( $field, $field_values );
 		}
 
@@ -1891,10 +1917,10 @@ class GFFormsModel {
 
 		$submission['submitted_values'] = $submitted_values;
 		$submission['partial_entry']    = $entry;
-		$submission['field_values']    = $field_values;
-		$submission['page_number']     = $page_number;
-		$submission['files']           = $files;
-		$submission['gform_unique_id'] = $form_unique_id;
+		$submission['field_values']     = $field_values;
+		$submission['page_number']      = $page_number;
+		$submission['files']            = $files;
+		$submission['gform_unique_id']  = $form_unique_id;
 
 		// Issue a new token if no longer valid
 		if ( ! empty( $resume_token ) ) {
@@ -2051,7 +2077,7 @@ class GFFormsModel {
 			}
 		}
 
-		return apply_filters( "gform_field_value_$name", apply_filters( 'gform_field_value', $value, $field, $name ), $field, $name );
+		return gf_apply_filters( 'gform_field_value', $name, $value, $field, $name );
 	}
 
 	public static function get_default_value( $field, $input_id ) {
@@ -2091,11 +2117,12 @@ class GFFormsModel {
 	 * @return string
 	 */
 	public static function get_input_type( $field ) {
+		// TODO: Deprecate
 		if ( ! $field instanceof GF_Field ) {
 			return empty( $field['inputType'] ) ? $field['type'] : $field['inputType'];
 		}
 
-		return empty( $field->inputType ) ? $field->type : $field->inputType;
+		return $field->get_input_type();
 	}
 
 	private static function get_post_field_value( $field, $lead ) {
@@ -2427,22 +2454,32 @@ class GFFormsModel {
 
 
 	public static function choice_value_match( $field, $choice, $value ) {
-		$choice_value = GFFormsModel::maybe_trim_input( $choice['value'], $field->formId, $field );
-		$value        = GFFormsModel::maybe_trim_input( $value, $field->formId, $field );
-		if ( $choice_value == $value ) {
+		$choice_value 		= GFFormsModel::maybe_trim_input( $choice['value'], $field->formId, $field );
+		$value        		= GFFormsModel::maybe_trim_input( $value, $field->formId, $field );
+
+		$allowed_protocols	= wp_kses_allowed_html( 'post' );
+		$sanitized_value  	= wp_kses( $value, $allowed_protocols );
+
+
+		if ( $choice_value == $value || $choice_value == $sanitized_value ) {
 			return true;
 		} else if ( $field->enablePrice ) {
 			$ary   = explode( '|', $value );
+
 			$val   = count( $ary ) > 0 ? $ary[0] : '';
+			$sanitized_val = wp_kses( $val, $allowed_protocols );
+
 			$price = count( $ary ) > 1 ? $ary[1] : '';
 
-			if ( $val == $choice['value'] ) {
+			if ( $choice['value'] == $val || $choice['value'] == $sanitized_val ) {
 				return true;
 			}
 		} // add support for prepopulating multiselects @alex
 		else if ( RGFormsModel::get_input_type( $field ) == 'multiselect' ) {
 			$values = explode( ',', $value );
-			if ( in_array( $choice_value, $values ) ) {
+			$sanitized_values = explode( ',', $sanitized_value );
+
+			if ( in_array( $choice_value, $values ) || in_array( $choice_value, $sanitized_values ) ) {
 				return true;
 			}
 		}
@@ -2486,7 +2523,7 @@ class GFFormsModel {
 		$post_data = self::get_post_fields( $form, $lead );
 
 		//allowing users to change post fields before post gets created
-		$post_data = apply_filters( "gform_post_data_{$form['id']}", apply_filters( 'gform_post_data', $post_data, $form, $lead ), $form, $lead );
+		$post_data = gf_apply_filters( 'gform_post_data', $form['id'], $post_data, $form, $lead );
 
 		//adding default title if none of the required post fields are in the form (will make sure wp_insert_post() inserts the post)
 		if ( empty( $post_data['post_title'] ) && empty( $post_data['post_content'] ) && empty( $post_data['post_excerpt'] ) ) {
@@ -2612,8 +2649,8 @@ class GFFormsModel {
 			}
 		}
 
-		$has_content_field = sizeof( GFCommon::get_fields_by_type( $form, array( 'post_content' ) ) ) > 0;
-		$has_title_field   = sizeof( GFCommon::get_fields_by_type( $form, array( 'post_title' ) ) ) > 0;
+		$has_content_field = sizeof( self::get_fields_by_type( $form, array( 'post_content' ) ) ) > 0;
+		$has_title_field   = sizeof( self::get_fields_by_type( $form, array( 'post_title' ) ) ) > 0;
 		$post              = false;
 
 		//if a post field was configured with a content or title template, process template
@@ -2691,7 +2728,7 @@ class GFFormsModel {
 	}
 
 	private static function get_custom_field( $form, $meta_name, $meta_index ) {
-		$custom_fields = GFCommon::get_fields_by_type( $form, array( 'post_custom_field' ) );
+		$custom_fields = self::get_fields_by_type( $form, array( 'post_custom_field' ) );
 
 		$index = 0;
 		foreach ( $custom_fields as $field ) {
@@ -2915,18 +2952,25 @@ class GFFormsModel {
 				}
 			}
 		} else {
+
+
 			//Deleting long field if there is one
-			$sql    = $wpdb->prepare(
-				"DELETE FROM $lead_detail_long_table
-                                    WHERE lead_detail_id IN(
-                                        SELECT id FROM $lead_detail_table WHERE lead_id=%d AND field_number BETWEEN %s AND %s
-                                    )",
+			$sql = $wpdb->prepare(
+				"DELETE $lead_detail_long_table FROM $lead_detail_long_table
+				JOIN (
+					SELECT ld.id FROM $lead_detail_table ld
+					WHERE lead_id=%d AND field_number BETWEEN %s AND %s
+				) tmp
+				ON tmp.id = $lead_detail_long_table.lead_detail_id",
 				$lead_id, doubleval( $input_id ) - 0.0001, doubleval( $input_id ) + 0.0001
 			);
+
 			$result = $wpdb->query( $sql );
-			if ( false === $result ) {
+
+			if ( $result === false ) {
 				return false;
 			}
+
 
 			//Deleting details for this field
 			$sql    = $wpdb->prepare( "DELETE FROM $lead_detail_table WHERE lead_id=%d AND field_number BETWEEN %s AND %s ", $lead_id, doubleval( $input_id ) - 0.0001, doubleval( $input_id ) + 0.0001 );
@@ -3034,7 +3078,7 @@ class GFFormsModel {
 
 		//adding filter to upload root path and url
 		$upload_root_info = array( 'path' => $target_root, 'url' => $target_root_url );
-		$upload_root_info = apply_filters( "gform_upload_path_{$form_id}", apply_filters( 'gform_upload_path', $upload_root_info, $form_id ), $form_id );
+		$upload_root_info = gf_apply_filters( 'gform_upload_path', $form_id, $upload_root_info, $form_id );
 
 		$target_root     = $upload_root_info['path'];
 		$target_root_url = $upload_root_info['url'];
@@ -3189,7 +3233,7 @@ class GFFormsModel {
                 GROUP BY lead_id
                 ORDER BY match_count DESC";
 
-		$count = apply_filters( "gform_is_duplicate_{$form_id}", apply_filters( 'gform_is_duplicate', $wpdb->get_var( $sql ), $form_id, $field, $value ), $form_id, $field, $value );
+		$count = gf_apply_filters( 'gform_is_duplicate', $form_id, $wpdb->get_var( $sql ), $form_id, $field, $value );
 
 		return $count != null && $count >= $input_count;
 	}
@@ -3729,31 +3773,31 @@ class GFFormsModel {
 
 			switch ( $field_id ) {
 				case 'id' :
-					$columns[ $field_id ] = array( 'label' => 'Entry Id', 'type' => 'id' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'Entry Id', 'gravityforms' ), 'type' => 'id' );
 					break;
 				case 'ip' :
-					$columns[ $field_id ] = array( 'label' => 'User IP', 'type' => 'ip' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'User IP', 'gravityforms' ), 'type' => 'ip' );
 					break;
 				case 'date_created' :
-					$columns[ $field_id ] = array( 'label' => 'Entry Date', 'type' => 'date_created' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'Entry Date', 'gravityforms' ), 'type' => 'date_created' );
 					break;
 				case 'source_url' :
-					$columns[ $field_id ] = array( 'label' => 'Source Url', 'type' => 'source_url' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'Source Url', 'gravityforms' ), 'type' => 'source_url' );
 					break;
 				case 'payment_status' :
-					$columns[ $field_id ] = array( 'label' => 'Payment Status', 'type' => 'payment_status' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'Payment Status', 'gravityforms' ), 'type' => 'payment_status' );
 					break;
 				case 'transaction_id' :
-					$columns[ $field_id ] = array( 'label' => 'Transaction Id', 'type' => 'transaction_id' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'Transaction Id', 'gravityforms' ), 'type' => 'transaction_id' );
 					break;
 				case 'payment_date' :
-					$columns[ $field_id ] = array( 'label' => 'Payment Date', 'type' => 'payment_date' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'Payment Date', 'gravityforms' ), 'type' => 'payment_date' );
 					break;
 				case 'payment_amount' :
-					$columns[ $field_id ] = array( 'label' => 'Payment Amount', 'type' => 'payment_amount' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'Payment Amount', 'gravityforms' ), 'type' => 'payment_amount' );
 					break;
 				case 'created_by' :
-					$columns[ $field_id ] = array( 'label' => 'User', 'type' => 'created_by' );
+					$columns[ $field_id ] = array( 'label' => esc_html__( 'User', 'gravityforms' ), 'type' => 'created_by' );
 					break;
 				case ( ( is_string( $field_id ) || is_int( $field_id ) ) && array_key_exists( $field_id, $entry_meta ) ) :
 					$columns[ $field_id ] = array( 'label' => $entry_meta[ $field_id ]['label'], 'type' => $field_id );
@@ -3931,7 +3975,7 @@ class GFFormsModel {
 		// convert confirmation to new confirmations format
 		$confirmation              = rgar( $form, 'confirmation' );
 		$confirmation['id']        = $id;
-		$confirmation['name']      = __( 'Default Confirmation', 'gravityforms' );
+		$confirmation['name']      = esc_html__( 'Default Confirmation', 'gravityforms' );
 		$confirmation['isDefault'] = true;
 
 		$form['confirmations'] = array( $id => $confirmation );
@@ -4850,7 +4894,7 @@ class GFFormsModel {
 	}
 
 	public static function delete_password( $entry, $form ) {
-		$password_fields = GFCommon::get_fields_by_type( $form, array( 'password' ) );
+		$password_fields = self::get_fields_by_type( $form, array( 'password' ) );
 		if ( is_array( $password_fields ) ) {
 			foreach ( $password_fields as $password_field ) {
 				$entry[ $password_field->id ] = '';
@@ -4974,6 +5018,10 @@ class GFFormsModel {
 			return $logic;
 		}
 
+		if ( apply_filters( 'gform_disable_form_settings_sanitization', false ) ) {
+			return $logic;
+		}
+
 		if ( isset( $logic['actionType'] ) && ! in_array( $logic['actionType'], array( 'show', 'hide' ) ) ) {
 			$logic['actionType'] = 'show';
 		}
@@ -4984,11 +5032,12 @@ class GFFormsModel {
 		if ( is_array( $logic['rules'] ) ) {
 			foreach ( $logic['rules'] as &$rule ) {
 				if ( isset( $rule['fieldId'] ) ) {
-					// Strip everything except numbers and dots
-					$rule['fieldId'] = preg_replace( '/[^0-9.]+/', '', $rule['fieldId'] );
+					// Field ID could be meta key
+					$rule['fieldId'] = wp_strip_all_tags( $rule['fieldId'] );
 				}
 				if ( isset( $rule['operator'] ) ) {
-					$rule['operator'] = wp_strip_all_tags( $rule['operator'] );
+					$is_valid_operator = in_array( $rule['operator'], array('is', 'isnot', '>', '<', 'contains', 'starts_with', 'ends_with') );
+					$rule['operator'] = $is_valid_operator ? $rule['operator'] : 'is';
 				}
 
 				if ( isset( $rule['value'] ) ) {
@@ -4999,6 +5048,36 @@ class GFFormsModel {
 		return $logic;
 	}
 
+	/**
+	 * Returns an array containing the form fields of the specified type or types.
+	 *
+	 * @since 1.9.9.10
+	 * @param array $form
+	 * @param array|string $types
+	 * @param bool $use_input_type
+	 *
+	 * @return GF_Field[]
+	 */
+	public static function get_fields_by_type( $form, $types, $use_input_type = false ) {
+		$fields = array();
+		if ( ! is_array( rgar( $form, 'fields' ) ) ) {
+			return $fields;
+		}
+
+		if ( ! is_array( $types ) ) {
+			$types = array( $types );
+		}
+
+		foreach ( $form['fields'] as $field ) {
+			/* @var GF_Field $field */
+			$type = $use_input_type ? $field->get_input_type() : $field->type;
+			if ( in_array( $type, $types ) ) {
+				$fields[] = $field;
+			}
+		}
+
+		return $fields;
+	}
 }
 
 class RGFormsModel extends GFFormsModel {
