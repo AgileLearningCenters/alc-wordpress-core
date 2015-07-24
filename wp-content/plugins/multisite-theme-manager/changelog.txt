@@ -4,6 +4,19 @@ Lead developer: Maniu
 
 == Changelog ==
 
+= 1.1 =
+* added theme deprecation system to smoothly delete themes from network
+* added frontend theme showcase through shortcode (beta): [wmd-theme-showcase preview_site_id="{required - id of site used to live preview themes}" category="{optional - default theme category to display}"]
+* fixed double "customize" button
+
+= 1.0.0.5 =
+* fixed missing translation
+* fixed XSS security issue
+
+= 1.0.0.4 =
+* fixed languages folder paths
+* fixed custom themes folder paths
+
 = 1.0.0.3 =
 * Added option to set target for custom theme and author theme link
 * Added merging of config and site categories
@@ -21,4 +34,4 @@ Lead developer: Maniu
 * Initial Release
 
 
-327416-1413422151-au
+327416-1437571804-au

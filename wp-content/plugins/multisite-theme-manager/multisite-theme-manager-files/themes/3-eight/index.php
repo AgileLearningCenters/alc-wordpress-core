@@ -20,7 +20,7 @@ foreach ( $this->themes_data as $theme ) :
 <div class="theme<?php if ( $theme['active'] ) echo ' active'; ?>" tabindexx="0" aria-describedby="<?php echo $aria_action . ' ' . $aria_name; ?>">
 	<?php if ( ! empty( $theme['screenshot'][0] ) ) { ?>
 		<div class="theme-screenshot">
-			<img src="<?php echo $theme['screenshot'][0]; ?>" alt="" />
+			<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="<?php echo $theme['screenshot'][0]; ?>" alt="" />
 		</div>
 	<?php } else { ?>
 		<div class="theme-screenshot blank"></div>
