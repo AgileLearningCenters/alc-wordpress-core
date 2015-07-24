@@ -175,7 +175,7 @@ class WPMUDEV_Debug {
 
 		$remote_get                               = wp_remote_get( $wpmudev_un->server_url );
 		$remote_post                              = wp_remote_post( $wpmudev_un->server_url );
-		$remote_paypal                            = wp_remote_post( "https://api-3t.paypal.com/nvp", array( 'body' => '"METHOD=SetExpressCheckout&VERSION=63.0&USER=xxxxx&PWD=xxxxx&SIGNATURE=xxxxx' ) );
+		$remote_paypal                            = wp_remote_post( "https://api-3t.paypal.com/nvp", array( 'body' => '"METHOD=SetExpressCheckout&VERSION=63.0&USER=xxxxx&PWD=xxxxx&SIGNATURE=xxxxx' ) );	  								 		 				
 		$this->data['remote']['WPMU DEV: GET']    = is_wp_error( $remote_get ) ? $remote_get->get_error_message() : wp_remote_retrieve_response_message( $remote_get );
 		$this->data['remote']['WPMU DEV: POST']   = is_wp_error( $remote_post ) ? $remote_post->get_error_message() : wp_remote_retrieve_response_message( $remote_post );
 		$this->data['remote']['PayPal API: POST'] = is_wp_error( $remote_paypal ) ? $remote_paypal->get_error_message() : wp_remote_retrieve_response_message( $remote_paypal );

@@ -32,6 +32,7 @@
 		<?php } ?>
 		</section>
 	</section>
+	<!-- no more free projects
 	<section class="user-related-products clearfix">
 		<section class="product-group">
 			<h3><?php _e('free plugins', 'wpmudev'); ?></h3>
@@ -62,6 +63,7 @@
 			</ul>
 		</section>
 	</section>
+	-->
 </section>
 <section class="premium-content">
 	<section class="layer">

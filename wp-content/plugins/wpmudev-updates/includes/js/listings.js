@@ -147,6 +147,25 @@ var devlistings = {
 		devlistings.update_results_count();
 		return false;
 	},
+
+	"toggle_legacy_projects": function () {
+		var $legacy = $('li.listing-item.legacy');
+		if ($legacy.is(":visible")) {
+			$legacy.hide();
+			$(".legacy_projects").each(function () {
+				var $me = $(this);
+				$me.find("input").attr("checked", false).end();
+			});
+		} else {
+			$legacy.show();
+			$(".legacy_projects").each(function () {
+				var $me = $(this);
+				$me.find("input").attr("checked", true).end();
+			});
+		}
+		devlistings.update_results_count();
+		return false;
+	},
 	
 	"sort_projects": function () {
 		var sort = $("#sort_projects").val();
@@ -422,12 +441,70 @@ var devlistings = {
 	
 	"install_theme": function () {
 		var $me = $(this);
+		if ($me.parents("#_install_setup-wrapper").length) return true; // Manual install
+
 		var text = $me.text();
 		var link = $me.attr("href");
-		
+		var $target = $me.parents('span.target');
+
 		$me.html('<img src="' + loading_spinner + '" /> ' + $me.attr("data-downloading"));
 		$('<div />').load(link + " #wpbody-content", function (download_html) {
-			$me.parents('span.target').first().html($("#_installed-placeholder").html());
+
+			//see if Upfront needs to be installed next
+			var $upfront = $(download_html).find('a#install_upfront');
+			if ($upfront.length) {
+				$me.html('<img src="' + loading_spinner + '" />' + $me.attr("data-installing"));
+				$('<div />').load($upfront.attr("href"), function (upfront_html, status, xhr) {
+					//we're not trying to determine errors here yet
+
+					// Re-fetch the data
+					var $parent = $me.closest("li.listing-item"),
+						this_right_here = window.location.toString()
+						;
+					if (!$parent.length) { // Called from the popup
+						var $hub = $me.closest("#listing-install"),
+							project_id = false
+							;
+						if ($hub.length) {
+							project_id = $hub.attr("data-project_id"),
+								$parent = $('li.listing-item[data-project_id="' + project_id + '"]');
+						}
+					}
+					$('<div />').load(this_right_here, function (replacement_html) {
+						var $new_slide = $(replacement_html).find('li.listing-item[data-project_id="' + $parent.attr("data-project_id") + '"]');
+						$parent.replaceWith($new_slide);
+						$(".close-plugin-details").click();
+					});
+				});
+			} else { //not upfront theme, check for errors
+				var $url = $(download_html).find('a[href*="action=activate"]:first');
+				var $url2 = $(download_html).find('a[href*="action=enable"]:first');
+				if (!$url.length && !$url2.length) { // Something went wrong with the download
+					$target.first().html($("#_install_error-placeholder").html());
+					$target.find('.tooltip section').html($(download_html).find(".wrap p:last"));
+					return false;
+				}
+
+				// Re-fetch the data
+				var $parent = $me.closest("li.listing-item"),
+					this_right_here = window.location.toString()
+					;
+				if (!$parent.length) { // Called from the popup
+					var $hub = $me.closest("#listing-install"),
+						project_id = false
+						;
+					if ($hub.length) {
+						project_id = $hub.attr("data-project_id"),
+							$parent = $('li.listing-item[data-project_id="' + project_id + '"]');
+					}
+				}
+				$('<div />').load(this_right_here, function (replacement_html) {
+					var $new_slide = $(replacement_html).find('li.listing-item[data-project_id="' + $parent.attr("data-project_id") + '"]');
+					$parent.replaceWith($new_slide);
+					$(".close-plugin-details").click();
+				});
+			}
+
 		});
 		return false;
 	},
@@ -501,7 +578,8 @@ $(document).ready(function() {
 	devlistings.tooltip($('.tooltip'));
 
 	$("#toggle-free-projects").on("change", devlistings.toggle_paid_projects);
-	
+	$("#toggle-legacy-projects").on("change", devlistings.toggle_legacy_projects);
+
 	// ONLY ACTIVATE SUGGESTIVE SEARCH IF PLACAHOLDER VARS ARE DEFINED
 	if ((typeof suggestedProjects) !== 'undefined') {
 		$('#filter_projects').doubleSuggest({
@@ -605,6 +683,9 @@ $(document).ready(function() {
 		img1 = new Image();
 		img1.src = loading_spinner;
 	}
-	
+
+	//hide legacy themes after initial load (for css grid issues)
+	devlistings.toggle_legacy_projects();
+
 }); // END DOM READY
 })(jQuery);

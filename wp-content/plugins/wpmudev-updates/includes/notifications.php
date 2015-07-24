@@ -14,6 +14,7 @@ class WPMUDEV_Notifications_Output {
 		//add_action( 'all_admin_notices', array( &$this, 'upgrade_notice_output' ), 2);
 		add_action( 'all_admin_notices', array( &$this, 'old_plugin_check' ) );
 		add_action( 'all_admin_notices', array( &$this, 'apikey_notice_output' ) );
+		add_action( 'all_admin_notices', array( &$this, 'upfront_notice_output' ) );
 		add_action( 'all_admin_notices', array( &$this, 'admin_notice_output' ) );
 
 		add_action( 'admin_footer', array( &$this, 'admin_footer_scripts' ) );
@@ -36,6 +37,43 @@ class WPMUDEV_Notifications_Output {
 							<strong><?php _e( 'Get started with WPMU DEV', 'wpmudev' ); ?></strong> &ndash; <?php _e( "it will transform your WordPress experience.", 'wpmudev' ); ?>
 							<a id="api-add" class="wpmu-button" href="<?php echo $link; ?>"><i
 									class="wdvicon-pencil wdvicon-large"></i> <?php _e( 'Get Started', 'wpmudev' ); ?></a>
+						</h4>
+
+						<div class="clear"></div>
+					</div>
+				</div>
+			<?php
+			}
+		}
+	}
+
+	/**
+	 * Outputs a notice when an upfront theme is installed but upfront is not
+	 */
+	function upfront_notice_output() {
+		global $wpmudev_un, $current_screen;
+
+		if ( current_user_can( 'install_themes' ) && $current_screen->id != 'update-network' && $current_screen->id != 'update' ) {
+			if ( ! $wpmudev_un->is_upfront_installed() && $wpmudev_un->upfront_theme_installed() ) {
+				?>
+				<div class="wpmudev-message wpdv-connect" id="message">
+					<div class="squish">
+						<h4>
+							<strong><?php _e( 'The Upfront parent theme is missing!', 'wpmudev' ); ?></strong> &ndash; <?php _e( "Please install it now to use your Upfront child themes.", 'wpmudev' ); ?>
+							<?php if ( ! $wpmudev_un->get_apikey() ) { //no api key yet
+								?><a id="wdv-release-install" href="<?php echo $wpmudev_un->dashboard_url; ?>"
+								     class="wpmu-button button-disabled"
+								     title="<?php _e( 'Setup your WPMU DEV account to install', 'wpmudev' ); ?>"><i
+									class="wdvicon-download-alt wdvicon-large"></i> <?php _e( 'INSTALL', 'wpmudev' ); ?></a><?php
+							} else if ( $url = $wpmudev_un->auto_install_url( $wpmudev_un->upfront ) ) {
+								?><a id="wdv-release-install" href="<?php echo $url; ?>" class="wpmu-button"><i
+									class="wdvicon-download-alt wdvicon-large"></i> <?php _e( 'INSTALL', 'wpmudev' ); ?></a><?php
+							} else { //needs to upgrade
+								?><a id="wdv-release-install"
+								     href="<?php echo apply_filters( 'wpmudev_upgrade_url', 'https://premium.wpmudev.org/membership/' ); ?>"
+								     target="_blank" class="wpmu-button"><i
+									class="wdvicon-arrow-up wdvicon-large"></i> <?php _e( 'Upgrade to Install', 'wpmudev' ); ?></a><?php
+							} ?>
 						</h4>
 
 						<div class="clear"></div>

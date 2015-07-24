@@ -231,7 +231,7 @@ body.toplevel_page_wpmudev { font-size: 14px; height:100%; }
 
 /* MAIN DASH PAGE, USER SIGNED IN STATE */
 
-#wpcontent, #footer { margin-left: 160px; }
+#wpcontent, #footer { margin-left: 160px; padding-left: 0px;}
 /*.toplevel_page_wpmudev .folded #wpcontent, .folded #footer { margin-left: 32px; }
 */
 .profile-user { width:100%; float:left; padding:0 3.7%; }
@@ -1262,7 +1262,6 @@ div.most-popular-topics > ul > li > ul > li table thead tr td {  background-colo
 body.wpmu-dev_page_wpmudev-updates #wpcontent div.wrap { width:100%;margin-left:0;margin-right:0; }
 body.wpmu-dev_page_wpmudev-updates div.wrap h2, h3 { color: #29395B; }
 body.wpmu-dev_page_wpmudev-updates div.wrap a.nav-tab { border-radius:0; padding:14px 30px 15px; font-size:1em; background-color:#f1f2f3; }
-body.wpmu-dev_page_wpmudev-updates div.wrap a.nav-tab:first-child { border-left:0; }
 body.wpmu-dev_page_wpmudev-updates div.wrap a.nav-tab.nav-tab-active { border-bottom:1px solid #f9f9fa; background-color:transparent; }
 body.wpmu-dev_page_wpmudev-updates div.wrap h3 { font-weight:400; }
 body.wpmu-dev_page_wpmudev-updates div.wrap table { background-color: transparent; border-radius:0; border-color:transparent; }
@@ -1486,8 +1485,8 @@ td.wdv-links { font-size: 12px; }
    ================================================== */
 
 /* various small fixes */
-div.listing-form-elements .free_projects label { font-weight: 700; color: #29395B; text-transform: uppercase; }
-.free_projects { position: relative; top: 10px; padding: 4px; border-top: 1px solid #29395B; border-bottom: 1px solid #29395B; float: right; margin-right: 10px; }
+div.listing-form-elements .free_projects label, div.listing-form-elements .legacy_projects label { font-weight: 700; color: #29395B; text-transform: uppercase; }
+.free_projects, .legacy_projects { position: relative; top: 10px; padding: 4px; border-top: 1px solid #29395B; border-bottom: 1px solid #29395B; float: right; margin-right: 10px; }
 .wp-menu-image { position: relative; z-index: 100; }
 a.search-btn, a.btn { text-decoration: none; }
 div.support-container { margin-top: 0; }
@@ -1725,7 +1724,8 @@ div#wpbody #support-form .cta-wrap button { float:right; }
 }
 
 /* ----- New checkbox style ----- */
-div.listing-form-elements table input#toggle-free-projects {
+div.listing-form-elements table input#toggle-free-projects,
+ div.listing-form-elements table input#toggle-legacy-projects {
     width: auto;
     float: none;
 }
@@ -2010,4 +2010,4 @@ input.wpmu-button:disabled {
 #user_name1 { position: relative; right:5px; }
 
 
-/* 327416-1413422157-au */
+/* 327416-1437571804-au */

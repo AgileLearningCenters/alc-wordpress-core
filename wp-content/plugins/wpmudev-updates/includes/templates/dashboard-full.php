@@ -211,7 +211,7 @@
 							<ul class="hover-to-expand">
 								<?php
 								$data = $this->get_updates();
-								$local_projects = get_site_option('wdp_un_local_projects');	  								 		 				
+								$local_projects = get_site_option('wdp_un_local_projects');
 								if ( is_array( $data ) ) {
 									$list = $data['latest_themes'];
 									$projects = $data['projects'];

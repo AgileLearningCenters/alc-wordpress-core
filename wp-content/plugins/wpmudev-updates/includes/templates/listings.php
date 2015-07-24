@@ -14,6 +14,15 @@
 						</span>
 					</td>
 				<?php } */ ?>
+				<?php if ( 'theme' == $page_type ) { ?>
+					<td width="20%">
+						<span class="legacy_projects">
+							<input type="checkbox" id="toggle-legacy-projects" />
+							&nbsp;
+							<label for="toggle-legacy-projects"><?php _e('Legacy Themes', 'wpmudev'); ?></label>
+						</span>
+					</td>
+				<?php } ?>
 					<td width="25%">
 						<label><?php _e('Sort:', 'wpmudev'); ?>
 						<select id="sort_projects">
@@ -114,8 +123,11 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 			//installed?
 			$installed = (isset($local_projects[$project['id']])) ? true : false;
 
+			//skip showing Protected Content and old Membership if not installed
+			if ( ! $installed && in_array( $project['id'], array( 140, 928907 ) ) ) continue;
+
 			//activated?
-			$active = $activate_url = $deactivate_url = false;
+			$active = $activate_url = $deactivate_url = $upfront_install = false;
 			if ($installed) {
 				if ($page_type == 'plugin') {
 					if (is_multisite() && is_network_admin())
@@ -134,9 +146,14 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 					if ( !is_multisite() ) { //only do theme config/activate stuff in single site
 						$active = $local_projects[$project['id']]['filename'] == $current_theme;
 
-						if ( !$active && current_user_can('switch_themes') && $this->project_compatible( $project['id'] ) ) {
+						if ( !$active && current_user_can('switch_themes') && $this->project_compatible( $project['id'] ) && ( $this->is_legacy_theme( $project['id'] )  || ( $this->is_upfront_theme( $project['id'] ) && $this->is_upfront_installed() ) ) ) {
 							$activate_url = wp_nonce_url( "themes.php?action=activate&amp;template=" . urlencode( $local_projects[$project['id']]['filename'] ) . "&amp;stylesheet=" . urlencode( $local_projects[$project['id']]['filename'] ), 'switch-theme_' . $local_projects[$project['id']]['filename'] );
 						}
+					}
+
+					//is it upfront and parent not installed?
+					if ( current_user_can('install_themes') && $this->is_upfront_theme( $project['id'] ) && ! $this->is_upfront_installed() ) {
+						$upfront_install = $this->auto_install_url( $this->upfront );
 					}
 				}
 			}
@@ -174,6 +191,7 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 			$listing_class = '';
 			if ($installed) $listing_class .= ' installed';
 			if ($incompatible) $listing_class .= ' incompatible';
+			if ( 'theme' == $page_type && $this->is_legacy_theme( $project['id'] ) ) $listing_class .= ' legacy';
 			//for free members, add free class to free projects for styling
 			if ((!isset($data['membership']) || 'full' != $data['membership']) && ($project['paid'] == 'free' || $project['paid'] == 'lite')) {
 				$listing_class .= ' free_project';
@@ -227,6 +245,10 @@ if ( $this->get_apikey() && ($data['membership'] == 'full' || is_numeric($data['
 						<?php } else if ($activate_url) { ?>
 						<a href="<?php echo $activate_url; ?>"><i class="wdvicon-off"></i><?php echo is_network_admin() ? __('Network Activate', 'wpmudev') : __('Activate', 'wpmudev'); ?></a>
 						<?php } ?>
+
+						<?php if ($upfront_install) { ?>
+							<a href="<?php echo esc_url($upfront_install); ?>"><i class="wdvicon-download-alt"></i><?php _e('Install Upfront Parent', 'wpmudev'); ?></a>
+						<?php } //end if upfront ?>
 
 						<?php if ($active && $config_url) { ?>
 						<a href="<?php echo esc_url($config_url); ?>"><i class="wdvicon-cog"></i><?php _e('Configure', 'wpmudev'); ?></a>

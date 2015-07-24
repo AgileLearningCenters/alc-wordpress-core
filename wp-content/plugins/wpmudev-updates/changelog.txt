@@ -5,6 +5,40 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+3.5.3 - 6/05/2015 - Aaron
+----------------------------------------------------------------------
+- Fix: Support for transition of old Membership & Protected Content to Membership2
+
+3.5.2 - 2/05/2015 - Aaron
+----------------------------------------------------------------------
+- Fix: View details links on plugins with wp.org slug conflict going to wrong place
+- Fix: Free members incorrectly getting shown install/autoupdate buttons
+
+3.5.1 - 1/21/2015 - Aaron
+----------------------------------------------------------------------
+- Fix: Change activation link for Upfront theme if parent not installed to prevent errors
+- Fix: Don't show activate link prematurely when installing Upfront parent in background
+- New: Give better progress feedback on slow install of Upfront parent
+
+3.5 - 1/20/2015 - Aaron
+----------------------------------------------------------------------
+- New: Support for Upfront themes!
+- New: Toggle/hide legacy themes
+- Fix: URL in connection error text was wrong
+- Fix: Enable error feedback for one-click theme installs
+
+3.4.9 - 11/14/2014 - Aaron
+----------------------------------------------------------------------
+- New: Prompt to grant support access after submitting a ticket
+- Fix: Add workaround for poorly coded Mojo Marketplace/github-plugin-updater
+- Fix: Stop running and deregister crons on subsites in multisite
+- Fix: Remove unused free projects list from single member dashboard
+- Fix: Minor css padding issue in WP 4.0
+
+3.4.8 - 11/6/2014 - Aaron
+----------------------------------------------------------------------
+- New: Support single membership autoupdates for packaged products (CoursePress + MarketPress)
+
 3.4.7 - 10/9/2014 - Aaron
 ----------------------------------------------------------------------
 - Fix: Adjust css to avoid triggering a Comodo firewall rule on some hosts
@@ -238,4 +272,4 @@ Added option to disable admin notices.
 Initial Release.
 
 
-327416-1413422157-au
+327416-1437571804-au

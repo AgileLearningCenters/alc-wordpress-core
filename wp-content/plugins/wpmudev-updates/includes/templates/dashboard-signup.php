@@ -5,7 +5,7 @@ if ($default_name == 'admin')
 	$default_name == '';
 ?>
 	<section id="profile" class="api-key-form step1">
-		<form action="https://premium.wpmudev.org/wdp-un.php?action=get_apikey" method="post" id="api-login" class="clearfix">
+		<form action="<?php echo $this->server_url; ?>?action=get_apikey" method="post" id="api-login" class="clearfix">
 
 			<fieldset>
 				<legend>
@@ -16,7 +16,7 @@ if ($default_name == 'admin')
 				?><div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i>&nbsp;&nbsp;&nbsp;<?php _e('Invalid Username or Password. Please try again.', 'wpmudev'); ?><br /><a href="http://premium.wpmudev.org/wp-login.php?action=lostpassword" target="_blank"><?php _e('Forgot your password?', 'wpmudev'); ?></a></p></div><?php
 			} ?>
 			<?php if (isset($connection_error) && $connection_error) { ?>
-				<div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i> <?php printf(__('Your server had a problem connecting to WPMU DEV: "%s" Please try again.', 'wpmudev'), $this->api_error); ?><br><?php _e('If this problem continues, please contact your host and ask:', 'wpmudev'); ?><br><em><?php _e('"Is php on my server properly configured to be able to contact http://premium.wpmudev.org/wdp-un.php with a GET HTTP request via fsockopen or CURL?"', 'wpmudev'); ?></em></p></div>
+				<div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i> <?php printf(__('Your server had a problem connecting to WPMU DEV: "%s" Please try again.', 'wpmudev'), $this->api_error); ?><br><?php _e('If this problem continues, please contact your host with this error message and ask:', 'wpmudev'); ?><br><em><?php printf( __('"Is php on my server properly configured to be able to contact %s with a GET HTTP request via fsockopen or CURL?"', 'wpmudev'), $this->server_url ); ?></em></p></div>
 			<?php } else if (isset($key_valid) && !$key_valid) { ?>
 				<div class="registered_error"><p><i class="wdvicon-warning-sign wdvicon-large"></i> <?php _e('Your API Key was invalid. Please try again.', 'wpmudev'); ?></p></div>
 			<?php } ?>
@@ -44,7 +44,7 @@ if ($default_name == 'admin')
 			</fieldset>
 		</form>
 
-		<form id="api-signup" class="clearfix" action="https://premium.wpmudev.org/wdp-un.php?action=register-new" method="post" style="display:none;">
+		<form id="api-signup" class="clearfix" action="<?php echo $this->server_url; ?>?action=register-new" method="post" style="display:none;">
 			<fieldset>
 				<legend>
 					<?php _e('Get your <b>free</b> API key', 'wpmudev') ?><br />

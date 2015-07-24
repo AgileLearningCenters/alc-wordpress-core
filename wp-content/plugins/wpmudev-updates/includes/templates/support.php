@@ -290,8 +290,23 @@ switch( $tab ) {
 
 				<div id="success_ajax" style="display:none;">
 					<h1><i class="wdvicon-ok"></i> <?php _e("Success!", 'wpmudev') ?></h1>
-					<p><?php _e("Thanks for contacting Support, we'll get back to you as soon as possible.", 'wpmudev'); ?></p>
-					<p><a href="#" target="_blank"><?php _e('You can view or add to your support request here &raquo;', 'wpmudev'); ?></a></p>
+					<p><?php _e("Thanks for contacting Support, we'll get back to you as soon as possible.", 'wpmudev'); ?>
+						<a href="#" target="_blank"><?php _e('You can view or add to your support request here &raquo;', 'wpmudev'); ?></a>
+					</p>
+					<?php
+					$access = get_site_option('wdp_un_remote_access');
+					if ( ! defined('WPMUDEV_DISABLE_REMOTE_ACCESS') && current_user_can('edit_users') && $this->allowed_user() && !$access ) { //verify permissions
+					?>
+					<form action="<?php echo $this->support_url; ?>&tab=access" method="post">
+						<?php wp_nonce_field( 'wdpun_access' ); ?>
+						<p><strong><?php _e('In order to give you the fastest support possible, we highly recommend granting our support team temporary access to this site so we can quickly debug and fix your issue.', 'wpmudev') ?></strong>
+						<?php _e('This is completely secure, optional, and fully controlled by you.', 'wpmudev') ?>
+						<small><a href="<?php echo $this->support_url; ?>&tab=access"><?php _e('More info', 'wpmudev'); ?> &raquo;</a></small></p>
+						<input type="submit" class="wpmu-button" name="grant-access" value="<?php _e('Grant Access', 'wpmudev') ?>">
+					</form>
+					<?php
+					}
+					?>
 				</div>
 
 				<form id="qa-form" method="post" enctype="multipart/form-data" action="">
