@@ -4,3 +4,6 @@
 [submodule "wp-content/themes/alc-wp-theme-make-child"]
 	path = wp-content/themes/alc-wp-theme-make-child
 	url = git@github.com:AgileLearningCenters/alc-wp-theme-make-child.git
+[submodule "wp-content/themes/alc-wp-theme-network-make-child"]
+	path = wp-content/themes/alc-wp-theme-network-make-child
+	url = git@github.com:AgileLearningCenters/alc-wp-theme-network-make-child.git
