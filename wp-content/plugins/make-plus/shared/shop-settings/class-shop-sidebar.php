@@ -65,6 +65,9 @@ class TTFMP_Shop_Sidebar {
 		add_filter( 'ttfmake_setting_choices', array( $this, 'sidebar_setting_choices' ), 10, 2 );
 		add_action( 'customize_register', array( $this, 'shop_sidebar' ), 20 );
 
+		// Per Page options
+		add_filter( 'ttfmp_perpage_allowed_keys', array( $this, 'perpage_allowed_keys' ) );
+
 		// Add filters to replace the normal sidebar with the Shop
 		add_filter( 'ttfmake_sidebar_left', array( $this, 'display_shop_sidebar' ) );
 		add_filter( 'ttfmake_sidebar_right', array( $this, 'display_shop_sidebar' ) );
@@ -104,6 +107,30 @@ class TTFMP_Shop_Sidebar {
 		}
 
 		return array_merge( $defaults, $new_defaults );
+	}
+
+	/**
+	 * Filter to add shop sidebar layout keys to Per Page component.
+	 *
+	 * @since 1.5.1.
+	 *
+	 * @param  array    $allowed_keys    The array of allowed keys.
+	 *
+	 * @return array                     The modified array of allowed keys.
+	 */
+	public function perpage_allowed_keys( $allowed_keys ) {
+		foreach ( $this->views as $view ) {
+			if ( in_array( $view, array( 'shop', 'product', 'post', 'page' ) ) ) {
+				// Create the array if it doesn't exist yet.
+				if ( ! is_array( $allowed_keys[ $view ] ) ) {
+					$allowed_keys[ $view ] = array();
+				}
+				// Add the key
+				$allowed_keys[ $view ][] = 'layout-' . $view . '-shop-sidebar';
+			}
+		}
+
+		return $allowed_keys;
 	}
 
 	/**

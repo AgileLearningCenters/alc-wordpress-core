@@ -122,11 +122,7 @@ class TTFMP_PerPage {
 	 * @return string
 	 */
 	public function get_view( $post ) {
-		if ( $post->ID === get_option( 'woocommerce_cart_page_id' ) || $post->ID === get_option( 'woocommerce_checkout_page_id' ) ) {
-			$view = 'shop';
-		} else if ( 'product' === $post->post_type ) {
-			$view = 'product';
-		} else if ( 'page' === $post->post_type ) {
+		if ( 'page' === $post->post_type ) {
 			$view = 'page';
 		} else {
 			$view = 'post';
@@ -149,9 +145,13 @@ class TTFMP_PerPage {
 		// Only do this for certain views.
 		if ( is_object( $post ) && in_array( $view, array( 'post', 'page', 'product', 'shop' ) ) ) {
 			if ( $settings = get_post_meta( $post->ID, $this->prefix . 'settings', true ) ) {
+				// Convert old keys
+				if ( ttfmp_get_perpage_options()->has_old_keys( $settings ) ) {
+					$settings = ttfmp_get_perpage_options()->convert_old_keys( $settings, $view );
+				}
+
 				foreach ( (array) $settings as $key => $value ) {
-					$mod_key = 'layout-' . $view . '-' . $key;
-					add_filter( 'theme_mod_' . $mod_key, array( $this, 'filter_mod' ) );
+					add_filter( 'theme_mod_' . $key, array( $this, 'filter_mod' ) );
 				}
 			}
 		}
@@ -172,11 +172,15 @@ class TTFMP_PerPage {
 		// Reverse-engineer the setting key from the filter
 		$filter = current_filter();
 		$mod_key = str_replace( 'theme_mod_', '', $filter );
-		$key = preg_replace( '/layout\-[^\-]+\-/', '', $mod_key );
 
 		// Override the value if it exists in the post meta
 		if ( $settings = get_post_meta( $post->ID, $this->prefix . 'settings', true ) ) {
-			$value = ttfmp_get_perpage_options()->sanitize_post_meta( $key, $settings[$key], $view );
+			// Convert old keys
+			if ( ttfmp_get_perpage_options()->has_old_keys( $settings ) ) {
+				$settings = ttfmp_get_perpage_options()->convert_old_keys( $settings, $view );
+			}
+
+			$value = ttfmp_get_perpage_options()->sanitize_post_meta( $mod_key, $settings[ $mod_key ], $view );
 		}
 
 		return $value;

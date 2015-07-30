@@ -101,11 +101,7 @@ class TTFMP_Style_Kits {
 		add_action( 'wp_head', array( $this, 'head_script' ) );
 
 		// Customizer filters
-		if ( ttfmake_customizer_supports_panels() && function_exists( 'ttfmake_customizer_add_panels' ) ) {
-			add_filter( 'make_customizer_sections', array( $this, 'customizer_sections' ) );
-		} else {
-			add_filter( 'ttfmake_customizer_sections', array( $this, 'legacy_customizer_sections' ) );
-		}
+		add_filter( 'make_customizer_sections', array( $this, 'customizer_sections' ) );
 
 		// Definition filters
 		add_filter( 'ttfmp_style_kit_definitions', array( $this, 'parse_definitions' ), 98 );

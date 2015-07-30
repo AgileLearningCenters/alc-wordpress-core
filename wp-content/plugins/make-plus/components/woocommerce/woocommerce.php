@@ -165,15 +165,30 @@ class TTFMP_WooCommerce {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		// Styles
-		if ( version_compare( $this->wc_version, '2.3', '>=' ) ) {
-			wp_enqueue_style(
-				'ttfmp-woocommerce',
-				trailingslashit( $this->url_base ) . 'css/woocommerce.css',
-				array( 'woocommerce-general', 'woocommerce-smallscreen', 'woocommerce-layout' ),
-				ttfmp_get_app()->version
-			);
-		} else {
+		if ( function_exists( 'ttfmake_is_builder_page' ) && ttfmake_is_builder_page() ) {
+			$sections = ttfmake_get_section_data( get_the_ID() );
+			if ( ! empty( $sections ) ) {
+				// Parse the sections included on the page.
+				$section_types = wp_list_pluck( $sections, 'section-type' );
+				$matched_sections = array_keys( $section_types, 'productgrid' );
+
+				// Only enqueue if there is at least one Panels section.
+				if ( ! empty( $matched_sections ) ) {
+					// Styles
+					if ( version_compare( $this->wc_version, '2.3', '>=' ) ) {
+						wp_enqueue_style(
+							'ttfmp-woocommerce',
+							trailingslashit( $this->url_base ) . 'css/woocommerce.css',
+							array(),
+							ttfmp_get_app()->version
+						);
+					}
+				}
+			}
+		}
+
+		// Legacy styles
+		if ( version_compare( $this->wc_version, '2.3', '<' ) ) {
 			wp_enqueue_style(
 				'ttfmp-woocommerce-legacy',
 				trailingslashit( $this->url_base ) . 'legacy/woocommerce.css',
@@ -232,7 +247,7 @@ class TTFMP_WooCommerce {
 	}
 
 	/**
-	 * Filter to identify per-page views related to EDD.
+	 * Filter to identify per-page views related to WooCommerce.
 	 *
 	 * @since 1.2.0.
 	 *
@@ -334,7 +349,7 @@ class TTFMP_WooCommerce {
 				),
 				array(
 					'cap'    => 'update_plugins',
-					'screen' => array( 'index.php', 'plugins.php' ),
+					'screen' => array( 'dashboard', 'dashboard_page_wc-about', 'woocommerce_page_wc-settings', 'plugins.php' ),
 					'type'   => 'warning',
 				)
 			);

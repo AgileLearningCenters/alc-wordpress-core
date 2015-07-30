@@ -27,15 +27,15 @@
 			callback : function(v) { return ('none' !== v); }
 		}
 	}, function(id, op) {
-		$('#ttfmp_per-page_settings\\[' + id + '\\]').not(':hidden').on('change', function() {
+		$('.ttfmp_per-page_setting[id$="'+id+'\\]"]').not(':hidden').on('change', function() {
 			var selection = $(this).val(),
 				dependents = $('.' + id + '-dependent'),
 				match = op.callback(selection);
 
 			if (true === match) {
-				dependents.show();
+				dependents.show('fast');
 			} else {
-				dependents.hide();
+				dependents.hide('fast');
 			}
 		}).trigger('change');
 	});

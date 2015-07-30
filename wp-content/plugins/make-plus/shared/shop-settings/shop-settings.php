@@ -111,17 +111,15 @@ class TTFMP_Shop_Settings {
 	public function check_theme_support() {
 		// Layout: Shop & Layout: Product
 		if ( current_theme_supports( 'ttfmp-shop-layout-shop' ) || current_theme_supports( 'ttfmp-shop-layout-product' ) ) {
-			if ( ttfmake_customizer_supports_panels() && function_exists( 'ttfmake_customizer_add_panels' ) ) {
-				add_filter( 'make_customizer_sections', array( $this, 'customizer_sections' ), 20 );
-			} else {
-				add_filter( 'ttfmake_customizer_sections', array( $this, 'legacy_customizer_sections' ) );
-			}
+			add_filter( 'make_customizer_sections', array( $this, 'customizer_sections' ), 20 );
 
 			if ( current_theme_supports( 'ttfmp-shop-layout-shop' ) ) {
 				add_filter( 'ttfmake_setting_defaults', array( $this, 'layout_shop_setting_defaults' ) );
+				add_filter( 'ttfmp_perpage_allowed_keys', array( $this, 'shop_perpage_allowed_keys' ) );
 			}
 			if ( current_theme_supports( 'ttfmp-shop-layout-product' ) ) {
 				add_filter( 'ttfmake_setting_defaults', array( $this, 'layout_product_setting_defaults' ) );
+				add_filter( 'ttfmp_perpage_allowed_keys', array( $this, 'product_perpage_allowed_keys' ) );
 			}
 		}
 
@@ -267,40 +265,6 @@ class TTFMP_Shop_Settings {
 	}
 
 	/**
-	 * Filter to add the Layout: Shop section and/or the Layout: Product section to the Customizer.
-	 *
-	 * This function takes the main array of Customizer sections and attempts to insert
-	 * new ones right after the layout-page section.
-	 *
-	 * @since  1.0.0.
-	 *
-	 * @param  array    $sections    The array of sections to add to the Customizer.
-	 * @return array                 The modified array of sections.
-	 */
-	public function legacy_customizer_sections( $sections ) {
-		$new_sections = array();
-
-		if ( current_theme_supports( 'ttfmp-shop-layout-shop' ) ) {
-			$new_sections['layout-shop'] = array( 'title' => __( 'Layout: Shop', 'make-plus' ), 'path' => $this->component_root );
-		}
-		if ( current_theme_supports( 'ttfmp-shop-layout-product' ) ) {
-			$new_sections['layout-product'] = array( 'title' => __( 'Layout: Product', 'make-plus' ), 'path' => $this->component_root );
-		}
-
-		// Get the position of the layout-page section in the array
-		$keys = array_keys( $sections );
-		$positions = array_flip( $keys );
-		$layout_page = absint( $positions[ 'layout-page' ] );
-
-		// Slice the array
-		$front = array_slice( $sections, 0, $layout_page + 1 );
-		$back  = array_slice( $sections, $layout_page + 1 );
-
-		// Combine and return
-		return array_merge( $front, $new_sections, $back );
-	}
-
-	/**
 	 * Filter to add default values for the Layout: Shop section in the Customizer.
 	 *
 	 * @since  1.2.0.
@@ -336,6 +300,50 @@ class TTFMP_Shop_Settings {
 		);
 
 		return array_merge( $defaults, $new_defaults );
+	}
+
+	/**
+	 * Filter to add shop layout keys to Per Page component.
+	 *
+	 * @since 1.5.1.
+	 *
+	 * @param  array    $allowed_keys    The array of allowed keys.
+	 *
+	 * @return array                     The modified array of allowed keys.
+	 */
+	public function shop_perpage_allowed_keys( $allowed_keys ) {
+		$allowed_keys['shop'] = array(
+			'layout-shop-hide-header',
+			'layout-shop-hide-footer',
+			'layout-shop-sidebar-left',
+			'layout-shop-sidebar-right',
+			'header-hide-padding-bottom',
+			'footer-hide-padding-top',
+		);
+
+		return $allowed_keys;
+	}
+
+	/**
+	 * Filter to add product layout keys to Per Page component.
+	 *
+	 * @since 1.5.1.
+	 *
+	 * @param  array    $allowed_keys    The array of allowed keys.
+	 *
+	 * @return array                     The modified array of allowed keys.
+	 */
+	public function product_perpage_allowed_keys( $allowed_keys ) {
+		$allowed_keys['product'] = array(
+			'layout-product-hide-header',
+			'layout-product-hide-footer',
+			'layout-product-sidebar-left',
+			'layout-product-sidebar-right',
+			'header-hide-padding-bottom',
+			'footer-hide-padding-top',
+		);
+
+		return $allowed_keys;
 	}
 
 	/**

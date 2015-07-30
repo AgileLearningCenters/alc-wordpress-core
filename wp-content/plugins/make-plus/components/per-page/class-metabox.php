@@ -41,7 +41,12 @@ class TTFMP_PerPage_Metabox {
 	 *
 	 * @return TTFMP_PerPage_Metabox
 	 */
-	public function __construct() {
+	public function __construct() {}
+
+	/**
+	 *
+	 */
+	public function init() {
 		// Enqueue styles and scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
@@ -135,7 +140,7 @@ class TTFMP_PerPage_Metabox {
 
 		// Determine appropriate render function
 		if ( 'shop' === $view ) {
-			$this->render_metabox_product( $post );
+			$this->render_metabox_shop( $post );
 		} else if ( 'product' === $view ) {
 			$this->render_metabox_product( $post );
 		} else if ( 'page' === $view ) {
@@ -154,136 +159,51 @@ class TTFMP_PerPage_Metabox {
 	 * @return void
 	 */
 	private function render_metabox_post( $post ) {
-		$overrides = ttfmp_get_perpage_options()->get_post_overrides( $post, 'post' );
-		$settings = ttfmp_get_perpage_options()->get_post_settings( $post, 'post' );
-
 		$shop_sidebar_views = get_theme_support( 'ttfmp-shop-sidebar' );
 		?>
 		<ul class="ttfmp-perpage-options">
-			<li class="ttfmp-perpage-header first"><?php _e( 'Header, Footer, Sidebars', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'hide-header';
-				$label = __( 'Hide site header', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'hide-footer';
-				$label = __( 'Hide site footer', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'sidebar-left';
-				$label = __( 'Show left sidebar', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'sidebar-right';
-				$label = __( 'Show right sidebar', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<?php if ( isset( $shop_sidebar_views[0] ) && in_array( 'post', (array) $shop_sidebar_views[0] ) ) : ?>
-			<li class="ttfmp-perpage-header"><?php _e( 'Shop Sidebar Location', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'shop-sidebar';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'product', $overrides[$key] );
-				?>
-			</li>
-			<?php endif; ?>
-			<li class="ttfmp-perpage-header"><?php _e( 'Featured Images', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'featured-images';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header featured-images-dependent"><?php _e( 'Featured Images Alignment', 'make-plus' ); ?></li>
-			<li class="featured-images-dependent">
-				<?php
-				$key = 'featured-images-alignment';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header"><?php _e( 'Post Date', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'post-date';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header post-date-dependent"><?php _e( 'Post Date Location', 'make-plus' ); ?></li>
-			<li class="post-date-dependent">
-				<?php
-				$key = 'post-date-location';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header"><?php _e( 'Post Author', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'post-author';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header post-author-dependent"><?php _e( 'Post Author Location', 'make-plus' ); ?></li>
-			<li class="post-author-dependent">
-				<?php
-				$key = 'post-author-location';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header"><?php _e( 'Post Meta', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'show-categories';
-				$label = __( 'Show categories', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'show-tags';
-				$label = __( 'Show tags', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header"><?php _e( 'Comment Count', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'comment-count';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header comment-count-dependent"><?php _e( 'Comment Count Location', 'make-plus' ); ?></li>
-			<li class="comment-count-dependent">
-				<?php
-				$key = 'comment-count-location';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'post', $overrides[$key] );
-				?>
-			</li>
+			<?php
+			$this->control_heading( __( 'Header, Footer, Sidebars', 'make-plus' ), 'first' );
+			$this->control_item( $post, 'checkbox', 'layout-post-hide-header', __( 'Hide site header', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-post-hide-footer', __( 'Hide site footer', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-post-sidebar-left', __( 'Show left sidebar', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-post-sidebar-right', __( 'Show right sidebar', 'make-plus' ) );
+
+			if ( isset( $shop_sidebar_views[0] ) && in_array( 'post', (array) $shop_sidebar_views[0] ) ) :
+				$this->control_heading( __( 'Shop Sidebar Location', 'make-plus' ) );
+				$this->control_item( $post, 'select', 'layout-post-shop-sidebar' );
+			endif;
+
+			if ( ttfmp_get_perpage_options()->option_exists( 'header-hide-padding-bottom' ) && ttfmp_get_perpage_options()->option_exists( 'footer-hide-padding-top' ) ) :
+				$this->control_heading( __( 'Padding', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'header-hide-padding-bottom', __( 'Remove padding beneath header', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'footer-hide-padding-top', __( 'Remove padding above footer', 'make-plus' ) );
+			endif;
+
+			$this->control_heading( __( 'Featured Images', 'make-plus' ) );
+			$this->control_item( $post, 'select', 'layout-post-featured-images' );
+			$this->control_heading( __( 'Featured Images Alignment', 'make-plus' ), 'featured-images-dependent' );
+			$this->control_item( $post, 'select', 'layout-post-featured-images-alignment', '', 'featured-images-dependent' );
+
+			$this->control_heading( __( 'Post Date', 'make-plus' ) );
+			$this->control_item( $post, 'select', 'layout-post-post-date' );
+			$this->control_heading( __( 'Post Date Location', 'make-plus' ), 'post-date-dependent' );
+			$this->control_item( $post, 'select', 'layout-post-post-date-location', '', 'post-date-dependent' );
+
+			$this->control_heading( __( 'Post Author', 'make-plus' ) );
+			$this->control_item( $post, 'select', 'layout-post-post-author' );
+			$this->control_heading( __( 'Post Author Location', 'make-plus' ), 'post-author-dependent' );
+			$this->control_item( $post, 'select', 'layout-post-post-author-location', '', 'post-author-dependent' );
+
+			$this->control_heading( __( 'Post Meta', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-post-show-categories', __( 'Show categories', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-post-show-tags', __( 'Show tags', 'make-plus' ) );
+
+			$this->control_heading( __( 'Comment Count', 'make-plus' ) );
+			$this->control_item( $post, 'select', 'layout-post-comment-count' );
+			$this->control_heading( __( 'Comment Count Location', 'make-plus' ), 'comment-count-dependent' );
+			$this->control_item( $post, 'select', 'layout-post-comment-count-location', '', 'comment-count-dependent' );
+			?>
 		</ul>
 	<?php
 	}
@@ -297,135 +217,91 @@ class TTFMP_PerPage_Metabox {
 	 * @return void
 	 */
 	private function render_metabox_page( $post ) {
-		$overrides = ttfmp_get_perpage_options()->get_post_overrides( $post, 'page' );
-		$settings = ttfmp_get_perpage_options()->get_post_settings( $post, 'page' );
-
 		$shop_sidebar_views = get_theme_support( 'ttfmp-shop-sidebar' );
 		?>
 		<ul class="ttfmp-perpage-options">
-			<li class="ttfmp-perpage-header default-only first"><?php _e( 'Header, Footer, Sidebars', 'make-plus' ); ?></li>
-			<li class="ttfmp-perpage-header builder-only first"><?php _e( 'Header, Footer', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'hide-header';
-				$label = __( 'Hide site header', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'hide-footer';
-				$label = __( 'Hide site footer', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li class="default-only">
-				<?php
-				$key = 'sidebar-left';
-				$label = __( 'Show left sidebar', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li class="default-only">
-				<?php
-				$key = 'sidebar-right';
-				$label = __( 'Show right sidebar', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<?php if ( isset( $shop_sidebar_views[0] ) && in_array( 'page', (array) $shop_sidebar_views[0] ) ) : ?>
-			<li class="ttfmp-perpage-header default-only"><?php _e( 'Shop Sidebar Location', 'make-plus' ); ?></li>
-			<li class="default-only">
-				<?php
-				$key = 'shop-sidebar';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'product', $overrides[$key] );
-				?>
-			</li>
-			<?php endif; ?>
-			<li class="ttfmp-perpage-header"><?php _e( 'Page Title', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'hide-title';
-				$label = __( 'Hide title', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header default-only"><?php _e( 'Featured Images', 'make-plus' ); ?></li>
-			<li class="default-only">
-				<?php
-				$key = 'featured-images';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header featured-images-dependent default-only"><?php _e( 'Featured Images Alignment', 'make-plus' ); ?></li>
-			<li class="featured-images-dependent default-only">
-				<?php
-				$key = 'featured-images-alignment';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header"><?php _e( 'Post Date', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'post-date';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header post-date-dependent"><?php _e( 'Post Date Location', 'make-plus' ); ?></li>
-			<li class="post-date-dependent">
-				<?php
-				$key = 'post-date-location';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header"><?php _e( 'Post Author', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'post-author';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header post-author-dependent"><?php _e( 'Post Author Location', 'make-plus' ); ?></li>
-			<li class="post-author-dependent">
-				<?php
-				$key = 'post-author-location';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header"><?php _e( 'Comment Count', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'comment-count';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
-			<li class="ttfmp-perpage-header comment-count-dependent"><?php _e( 'Comment Count Location', 'make-plus' ); ?></li>
-			<li class="comment-count-dependent">
-				<?php
-				$key = 'comment-count-location';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'page', $overrides[$key] );
-				?>
-			</li>
+			<?php
+			$this->control_heading( __( 'Header, Footer, Sidebars', 'make-plus' ), 'default-only first' );
+			$this->control_heading( __( 'Header, Footer', 'make-plus' ), 'builder-only first' );
+			$this->control_item( $post, 'checkbox', 'layout-page-hide-header', __( 'Hide site header', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-page-hide-footer', __( 'Hide site footer', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-page-sidebar-left', __( 'Show left sidebar', 'make-plus' ), 'default-only' );
+			$this->control_item( $post, 'checkbox', 'layout-page-sidebar-right', __( 'Show right sidebar', 'make-plus' ), 'default-only' );
+
+			if ( isset( $shop_sidebar_views[0] ) && in_array( 'page', (array) $shop_sidebar_views[0] ) ) :
+				$this->control_heading( __( 'Shop Sidebar Location', 'make-plus' ), 'default-only' );
+				$this->control_item( $post, 'select', 'layout-page-shop-sidebar', '', 'default-only' );
+			endif;
+
+			if ( ttfmp_get_perpage_options()->option_exists( 'header-hide-padding-bottom' ) && ttfmp_get_perpage_options()->option_exists( 'footer-hide-padding-top' ) ) :
+				$this->control_heading( __( 'Padding', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'header-hide-padding-bottom', __( 'Remove padding beneath header', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'footer-hide-padding-top', __( 'Remove padding above footer', 'make-plus' ) );
+			endif;
+
+			$this->control_heading( __( 'Page Title', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-page-hide-title', __( 'Hide title', 'make-plus' ) );
+
+			$this->control_heading( __( 'Featured Images', 'make-plus' ), 'default-only' );
+			$this->control_item( $post, 'select', 'layout-page-featured-images', '', 'default-only' );
+			$this->control_heading( __( 'Featured Images Alignment', 'make-plus' ), 'featured-images-dependent default-only' );
+			$this->control_item( $post, 'select', 'layout-page-featured-images-alignment', '', 'featured-images-dependent default-only' );
+
+			$this->control_heading( __( 'Post Date', 'make-plus' ) );
+			$this->control_item( $post, 'select', 'layout-page-post-date' );
+			$this->control_heading( __( 'Post Date Location', 'make-plus' ), 'post-date-dependent' );
+			$this->control_item( $post, 'select', 'layout-page-post-date-location', '', 'post-date-dependent' );
+
+			$this->control_heading( __( 'Post Author', 'make-plus' ) );
+			$this->control_item( $post, 'select', 'layout-page-post-author' );
+			$this->control_heading( __( 'Post Author Location', 'make-plus' ), 'post-author-dependent' );
+			$this->control_item( $post, 'select', 'layout-page-post-author-location', '', 'post-author-dependent' );
+
+			$this->control_heading( __( 'Comment Count', 'make-plus' ) );
+			$this->control_item( $post, 'select', 'layout-page-comment-count' );
+			$this->control_heading( __( 'Comment Count Location', 'make-plus' ), 'comment-count-dependent' );
+			$this->control_item( $post, 'select', 'layout-page-comment-count-location', '', 'comment-count-dependent' );
+			?>
 		</ul>
 	<?php
 	}
 
 	/**
-	 * Render the metabox for a product or shop page.
+	 * Render the metabox for a shop page.
+	 *
+	 * @since  1.5.1.
+	 *
+	 * @param  object    $post    The current post.
+	 * @return void
+	 */
+	private function render_metabox_shop( $post ) {
+		$shop_sidebar_views = get_theme_support( 'ttfmp-shop-sidebar' );
+		?>
+		<ul class="ttfmp-perpage-options">
+			<?php
+			$this->control_heading( __( 'Header, Footer, Sidebars', 'make-plus' ), 'first' );
+			$this->control_item( $post, 'checkbox', 'layout-shop-hide-header', __( 'Hide site header', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-shop-hide-footer', __( 'Hide site footer', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-shop-sidebar-left', __( 'Show left sidebar', 'make-plus' ), 'default-only' );
+			$this->control_item( $post, 'checkbox', 'layout-shop-sidebar-right', __( 'Show right sidebar', 'make-plus' ), 'default-only' );
+
+			if ( isset( $shop_sidebar_views[0] ) && in_array( 'shop', (array) $shop_sidebar_views[0] ) ) :
+				$this->control_heading( __( 'Shop Sidebar Location', 'make-plus' ) );
+				$this->control_item( $post, 'select', 'layout-shop-shop-sidebar' );
+			endif;
+
+			if ( ttfmp_get_perpage_options()->option_exists( 'header-hide-padding-bottom' ) && ttfmp_get_perpage_options()->option_exists( 'footer-hide-padding-top' ) ) :
+				$this->control_heading( __( 'Padding', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'header-hide-padding-bottom', __( 'Remove padding beneath header', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'footer-hide-padding-top', __( 'Remove padding above footer', 'make-plus' ) );
+			endif;
+			?>
+		</ul>
+	<?php
+	}
+
+	/**
+	 * Render the metabox for a product.
 	 *
 	 * @since  1.0.0.
 	 *
@@ -433,59 +309,76 @@ class TTFMP_PerPage_Metabox {
 	 * @return void
 	 */
 	private function render_metabox_product( $post ) {
-		$overrides = ttfmp_get_perpage_options()->get_post_overrides( $post, 'product' );
-		$settings = ttfmp_get_perpage_options()->get_post_settings( $post, 'product' );
-
-		$view = ttfmp_get_perpage()->get_view( $post );
 		$shop_sidebar_views = get_theme_support( 'ttfmp-shop-sidebar' );
 		?>
 		<ul class="ttfmp-perpage-options">
-			<li class="ttfmp-perpage-header first"><?php _e( 'Header, Footer, Sidebars', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'hide-header';
-				$label = __( 'Hide site header', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'hide-footer';
-				$label = __( 'Hide site footer', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'sidebar-left';
-				$label = __( 'Show left sidebar', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<li>
-				<?php
-				$key = 'sidebar-right';
-				$label = __( 'Show right sidebar', 'make-plus' );
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_checkbox( $key, $settings[$key], $label, $overrides[$key] );
-				?>
-			</li>
-			<?php if ( isset( $shop_sidebar_views[0] ) && in_array( $view, (array) $shop_sidebar_views[0] ) ) : ?>
-			<li class="ttfmp-perpage-header"><?php _e( 'Shop Sidebar Location', 'make-plus' ); ?></li>
-			<li>
-				<?php
-				$key = 'shop-sidebar';
-				$this->control_override( $key, $overrides[$key] );
-				$this->control_setting_select( $key, $settings[$key], 'product', $overrides[$key] );
-				?>
-			</li>
-			<?php endif; ?>
+			<?php
+			$this->control_heading( __( 'Header, Footer, Sidebars', 'make-plus' ), 'first' );
+			$this->control_item( $post, 'checkbox', 'layout-product-hide-header', __( 'Hide site header', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-product-hide-footer', __( 'Hide site footer', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-product-sidebar-left', __( 'Show left sidebar', 'make-plus' ) );
+			$this->control_item( $post, 'checkbox', 'layout-product-sidebar-right', __( 'Show right sidebar', 'make-plus' ) );
+
+			if ( isset( $shop_sidebar_views[0] ) && in_array( 'product', (array) $shop_sidebar_views[0] ) ) :
+				$this->control_heading( __( 'Shop Sidebar Location', 'make-plus' ) );
+				$this->control_item( $post, 'select', 'layout-product-shop-sidebar' );
+			endif;
+
+			if ( ttfmp_get_perpage_options()->option_exists( 'header-hide-padding-bottom' ) && ttfmp_get_perpage_options()->option_exists( 'footer-hide-padding-top' ) ) :
+				$this->control_heading( __( 'Padding', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'header-hide-padding-bottom', __( 'Remove padding beneath header', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'footer-hide-padding-top', __( 'Remove padding above footer', 'make-plus' ) );
+			endif;
+			?>
 		</ul>
 	<?php
 	}
+
+	/**
+	 * Render a heading for a metabox control.
+	 *
+	 * @since 1.5.1.
+	 *
+	 * @param string    $label    The content of the heading.
+	 * @param string    $class    Optional classes to add to the list item.
+	 *
+	 * @return void
+	 */
+	private function control_heading( $label, $class = '' ) { ?>
+		<li class="ttfmp-perpage-header <?php echo esc_attr( $class ); ?>"><?php echo ttfmake_sanitize_text( $label ); ?></li>
+	<?php }
+
+	/**
+	 * Render a metabox list item containing controls.
+	 *
+	 * @since 1.5.1.
+	 *
+	 * @param object    $post     The current post object.
+	 * @param string    $type     The type of control to render.
+	 * @param string    $key      The setting key.
+	 * @param string    $label    The label for a checkbox control.
+	 * @param string    $class    Optional classes to add to the list item.
+	 *
+	 * @return void
+	 */
+	private function control_item( $post, $type, $key, $label = '', $class = '' ) {
+		$view = ttfmp_get_perpage()->get_view( $post );
+
+		$overrides = ttfmp_get_perpage_options()->get_post_overrides( $post );
+		$settings = ttfmp_get_perpage_options()->get_post_settings( $post );
+
+		$override = absint( $overrides[ $key ] );
+		$value    = ttfmp_get_perpage_options()->sanitize_post_meta( $key, $settings[ $key ], $view );
+		?>
+		<li<?php if ( '' !== $class ) echo ' class="' . esc_attr( $class ) . '"'; ?>>
+			<?php $this->control_override( $key, $override ); ?>
+			<?php if ( 'checkbox' === $type ) : ?>
+				<?php $this->control_setting_checkbox( $key, $value, $label, $override ); ?>
+			<?php elseif ( 'select' === $type ) : ?>
+				<?php $this->control_setting_select( $key, $value, null, $override ); ?>
+			<?php endif; ?>
+		</li>
+	<?php }
 
 	/**
 	 * Render the Override checkbox control.
@@ -533,17 +426,17 @@ class TTFMP_PerPage_Metabox {
 	 *
 	 * @param  string    $key         The setting
 	 * @param  bool      $value       The value of the selected option
-	 * @param  string    $view        The view type
+	 * @param  string    $deprecated  Deprecated parameter
 	 * @param  bool      $override    1 = true
 	 * @return void
 	 */
-	private function control_setting_select( $key, $value, $view, $override ) {
+	private function control_setting_select( $key, $value, $deprecated, $override ) {
 		$id = ttfmp_get_perpage()->prefix . 'settings[' . $key . ']';
-		$choices = ttfmake_get_choices( 'layout-' . $view . '-' . $key );
+		$choices = ttfmake_get_choices( $key );
 		?>
-		<select class="<?php echo esc_attr( ttfmp_get_perpage()->prefix . 'setting' ); ?>" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>" <?php if ( ! $override ) echo ' disabled="disabled"'; ?>>
+		<select class="<?php echo esc_attr( ttfmp_get_perpage()->prefix . 'setting' ); ?>" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $id ); ?>"<?php if ( ! $override ) echo ' disabled="disabled"'; ?>>
 			<?php foreach ( $choices as $opt_value => $opt_label ) : ?>
-			<option value="<?php echo esc_attr( $opt_value ); ?>" <?php selected( $opt_value, $value ); ?>><?php echo esc_html( $opt_label ); ?></option>
+			<option value="<?php echo esc_attr( $opt_value ); ?>"<?php selected( $opt_value, $value ); ?>><?php echo esc_html( $opt_label ); ?></option>
 			<?php endforeach; ?>
 		</select>
 	<?php
@@ -613,4 +506,4 @@ function ttfmp_get_perpage_metabox() {
 }
 endif;
 
-ttfmp_get_perpage_metabox();
+ttfmp_get_perpage_metabox()->init();

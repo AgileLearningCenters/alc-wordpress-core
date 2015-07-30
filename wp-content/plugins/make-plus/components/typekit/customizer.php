@@ -52,11 +52,8 @@ class TTFMP_Typekit_Customizer {
 	 */
 	public function __construct() {
 		// Add the sections
-		if ( ttfmake_customizer_supports_panels() && function_exists( 'ttfmake_customizer_add_panels' ) ) {
-			add_filter( 'make_customizer_typography_sections', array( $this, 'customize_register' ), 20 );
-		} else {
-			add_action( 'customize_register', array( $this, 'legacy_customize_register' ), 20 );
-		}
+		add_filter( 'make_customizer_typography_sections', array( $this, 'customize_register' ), 20 );
+		add_filter( 'make_setting_defaults', array( $this, 'defaults' ), 20 );
 
 		// Add scripts and styles
 		add_action( 'wp_head', array( $this, 'print_typekit' ), 0 );
@@ -99,7 +96,6 @@ class TTFMP_Typekit_Customizer {
 			'options' => array(
 				'typekit-id' => array(
 					'setting' => array(
-						'default'			=> '',
 						'sanitize_callback'	=> array( $this, 'sanitize_typekit_id' ),
 					),
 					'control' => array(
@@ -135,60 +131,20 @@ class TTFMP_Typekit_Customizer {
 	}
 
 	/**
-	 * Add the Typekit ID input.
+	 * Add setting defaults.
 	 *
-	 * @since  1.0.0.
+	 * @since 1.6.2.
 	 *
-	 * @param  WP_Customize_Manager    $wp_customize    Theme Customizer object.
-	 * @return void
+	 * @param  array    $defaults    The array of setting defaults.
+	 *
+	 * @return array                 The modified array of setting defaults.
 	 */
-	public function legacy_customize_register( $wp_customize ) {
-		// Site title font size
-		$wp_customize->add_setting(
-			'typekit-id',
-			array(
-				'default'           => '',
-				'type'              => 'theme_mod',
-				'sanitize_callback' => array( $this, 'sanitize_typekit_id' ),
-			)
+	public function defaults( $defaults ) {
+		$new_defaults = array(
+			'typekit-id' => '',
 		);
 
-		$wp_customize->add_control(
-			'ttfmp-typekit-id',
-			array(
-				'settings' => 'typekit-id',
-				'section'  => 'ttfmake_font',
-				'label'    => __( 'Typekit Kit ID', 'make-plus' ),
-				'type'     => 'text',
-				'priority' => 450
-			)
-		);
-
-		$wp_customize->add_control(
-			new TTFMAKE_Customize_Misc_Control(
-				$wp_customize,
-				'ttfmp-typekit-load-fonts',
-				array(
-					'section'     => 'ttfmake_font',
-					'type'        => 'text',
-					'description' => '<a href="#">' . __( 'Reset', 'make-plus' ) . '</a><a href="#">' . __( 'Load Typekit Fonts', 'make-plus' ) . '</a>',
-					'priority'    => 460
-				)
-			)
-		);
-
-		$wp_customize->add_control(
-			new TTFMAKE_Customize_Misc_Control(
-				$wp_customize,
-				'ttfmp-typekit-documentation',
-				array(
-					'section'     => 'ttfmake_font',
-					'type'        => 'text',
-					'description' => sprintf( __( 'For more information about Typekit integration, please see <a href="%s">Make Plus\' documentation</a>.', 'make-plus' ), 'https://thethemefoundry.com/docs/make-docs/customizer/typography/' ),
-					'priority'    => 470
-				)
-			)
-		);
+		return array_merge( $defaults, $new_defaults );
 	}
 
 	/**
@@ -216,11 +172,8 @@ class TTFMP_Typekit_Customizer {
 	 */
 	public function is_typekit_used() {
 		// Grab the font choices
-		if ( ttfmake_customizer_supports_panels() && function_exists( 'ttfmake_get_font_property_option_keys' ) ) {
-			$font_keys = ttfmake_get_font_property_option_keys( 'family' );
-		} else {
-			$font_keys = array( 'font-site-title', 'font-header', 'font-body', );
-		}
+		$font_keys = ttfmake_get_font_property_option_keys( 'family' );
+
 		$fonts = array();
 		foreach ( $font_keys as $key ) {
 			$fonts[] = get_theme_mod( $key, ttfmake_get_default( $key ) );
@@ -302,7 +255,7 @@ class TTFMP_Typekit_Customizer {
 		);
 
 		$typekit_choices = get_theme_mod( 'typekit-choices', array() );
-		$option_keys = ( ttfmake_customizer_supports_panels() && function_exists( 'ttfmake_get_font_property_option_keys' ) ) ? ttfmake_get_font_property_option_keys( 'family' ) : array( 'font-site-title', 'font-header', 'font-body', );
+		$option_keys = ttfmake_get_font_property_option_keys( 'family' );
 
 		wp_localize_script(
 			'ttfmp-typekit-customizer',
@@ -446,7 +399,7 @@ class TTFMP_Typekit_Customizer {
 			$this->remove_temp_mods();
 
 			$saved_fonts = array();
-			$option_keys = ( ttfmake_customizer_supports_panels() && function_exists( 'ttfmake_get_font_property_option_keys' ) ) ? ttfmake_get_font_property_option_keys( 'family' ) : array( 'font-site-title', 'font-header', 'font-body', );
+			$option_keys = ttfmake_get_font_property_option_keys( 'family' );
 			foreach ( $option_keys as $key ) {
 				$saved_fonts[ $key ] = ttfmake_sanitize_font_choice( get_theme_mod( $key, ttfmake_get_default( $key ) ) );
 			}
