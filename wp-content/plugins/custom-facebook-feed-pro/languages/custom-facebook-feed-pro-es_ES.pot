@@ -1,0 +1,2259 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Custom Facebook Feed\n"
+"POT-Creation-Date: 2014-08-26 17:31-0600\n"
+"PO-Revision-Date: 2014-09-18 13:14+0100\n"
+"Last-Translator: jelena kovacevic <jecajeca260@gmail.com>\n"
+"Language-Team:  <hey@smashballoon.com>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-Basepath: ../\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:165
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:351
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1556
+msgid "Settings saved."
+msgstr "Configuración guardada."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:172
+msgid "Extensions"
+msgstr "Extensiones"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:177
+msgid ""
+"The following extensions can be used to extend the functionality of the "
+"Custom Facebook Feed Pro plugin."
+msgstr ""
+"Las extensiones siguientes se pueden utilizar para ampliar la funcionalidad "
+"del plugin Facebook Custom Feed Pro."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:356
+msgid "Custom Facebook Feed Settings"
+msgstr "Configuración Custom Facebook Feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:365
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:376
+msgid "Configuration"
+msgstr "Configuración"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:366
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1561
+msgid "Customize"
+msgstr "Personalizar"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:367
+msgid "License"
+msgstr "Licencia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:368
+msgid "Support"
+msgstr "Soporte"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:382
+msgid "Facebook Page IDs"
+msgstr "IDs Página Facebook"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:382
+msgid "Separate multiple IDs with commas</i>"
+msgstr "múltiples IDs separados por comas </i>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:384
+msgid ""
+"Facebook Page ID<br /><i style=\"font-weight: normal; font-size: 12px;\">ID "
+"of your Facebook Page or Group</i>"
+msgstr ""
+"ID Página de Facebook<br /> < i style=\"font-weight: normal; font-size: 12px;"
+"\"> ID de su página de Facebook o grupo </i>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:394
+msgid "What's my Page ID?"
+msgstr "¿Cuál es mi ID de Página?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:395
+msgid "Eg. 1234567890123"
+msgstr "Eg. 1234567890123"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:398
+msgid ""
+"If you have a Facebook <b>page</b> with a URL like this: <code>https://www."
+"facebook.com/your_page_name</code> then the Page ID is just "
+"<b>your_page_name</b>. If your page URL is structured like this: "
+"<code>https://www.facebook.com/pages/your_page_name/123654123654123</code> "
+"then the Page ID is actually the number at the end, so in this case "
+"<b>123654123654123</b>.</li>"
+msgstr ""
+"Si usted tiene una <b>página </b> Facebook con una URL como esta: <code> "
+"https://www.facebook.com/your_page_name </code>, entonces el ID de página es "
+"sólo <b> your_page_name </b>. Si la URL de la página se estructura así: "
+"<code> https://www.facebook.com/pages/your_page_name/123654123654123 </"
+"code>, entonces el ID de la página es en realidad el número al final, por lo "
+"que en este caso <b>123654123654123</b>.</li>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:399
+msgid ""
+"If you have a Facebook <b>group</b> then use <a href=\"http://lookup-id.com/"
+"\" target=\"_blank\" title=\"Find my ID\">this tool</a> to find your ID."
+msgstr ""
+"Si usted tiene un<b>group</b>Facebook, entonces utilice <a href=\"http://"
+"lookup-id.com/\" target=\"_blank\" title=\"Find my ID\">this tool</a> esta "
+"herramienta  para encontrar su ID."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:400
+msgid ""
+"You can copy and paste your ID into the <a href=\"http://smashballoon.com/"
+"custom-facebook-feed/demo/\" target=\"_blank\">demo</a> to test it."
+msgstr ""
+"Puede copiar y pegar su ID en la <a href=\"http://smashballoon.com/custom-"
+"facebook-feed/demo/\" target=\"_blank\">demo</a> demostración </a> para "
+"probarlo."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:409
+msgid ""
+"Enter my own Access Token <i style=\"font-weight: normal; font-size: 12px;"
+"\">This is Optional</i>"
+msgstr ""
+"Entra en mi propio Token de acceso <i style=\"font-weight: normal; font-"
+"size: 12px;\">Esto es opcional </i>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:411
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2883
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3037
+msgid "What is this?"
+msgstr "¿Qué es esto?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:412
+msgid ""
+"A Facebook Access Token is not required to use this plugin, but if you have "
+"your own that you'd like to use then you can check this box and enter it "
+"here. To get your own Access Token you can follow these <a href='https://"
+"smashballoon.com/custom-facebook-feed/access-token/' target='_blank'>step-by-"
+"step instructions</a>"
+msgstr ""
+"Una Facebook Token de acceso no requiere utilizar este plugin, pero si usted "
+"tiene uno propio que desea utilizar, entonces puede marcar esta casilla y "
+"escribir aquí. Para obtener su propio Token de acceso puede seguir estas "
+"target='_blank'> <a href='https://smashballoon.com/custom-facebook-feed/"
+"access-token/' target=’_blank’>instrucciones paso a paso </a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:417
+msgid "Facebook Access Token"
+msgstr "Token Acceso Facebook"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:422
+msgid ""
+"<p>This doesn't appear to be an Access Token. Please be sure that you didn't "
+"enter your App Secret instead of your Access Token.<br />Your App ID and App "
+"Secret are used to obtain your Access Token; simply paste them into the "
+"fields in the last step of the <a href='https://smashballoon.com/custom-"
+"facebook-feed/access-token/' target='_blank'>Access Token instructions</a> "
+"and click '<b>Get my Access Token</b>'.</p>"
+msgstr ""
+"<p> Esto no parece ser un Token de acceso. Por favor, asegúrese de que no ha "
+"introducido su App Secret en lugar de su acceso Token <br /> Su ID y App App "
+"Secret se utilizan para obtener el token de acceso; simplemente péguelos en "
+"los campos en el último paso de la <a href='https://smashballoon.com/custom-"
+"facebook-feed/access-token/'instrucciones target='_blank'>Token de acceso </"
+"a> y haga clic en '<b> Obtener mi Token de acceso</b>'. </p>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:432
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3450
+msgid "Settings"
+msgstr "Configuración"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:434
+msgid "Is this a page, group or profile?"
+msgstr "¿Es esta una página, grupo o perfil?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:437
+msgid "Page"
+msgstr "Página"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:438
+msgid "Group"
+msgstr "Grupo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:439
+msgid "Profile"
+msgstr "Perfil"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:442
+msgid ""
+"<p>Due to Facebook's privacy policy you're not able to display posts from a "
+"personal profile, only from a public page or group.</p><p>If you're using a "
+"profile to represent a business, organization, product, public figure or the "
+"like, then Facebook recommends <a href='http://www.facebook.com/"
+"help/175644189234902/' target='_blank'>converting your profile to a page</"
+"a>. There are many advantages to using pages over profiles, and once you've "
+"converted then the plugin will be able to successfully retrieve and display "
+"all of your posts.</p>"
+msgstr ""
+"<p> Debido a la política de privacidad de Facebook no eres capaz de mostrar "
+"mensajes desde un perfil personal, sólo de una página pública o grupo </p> "
+"<p> Si estás utilizando un perfil para representar a una empresa, "
+"organización, producto, persona pública o similares, entonces, Facebook "
+"recomienda <a href = \"http: //www.facebook.com/help/175644189234902/ "
+"'target =' _blank '> la conversión de su perfil para una </a> página. Hay "
+"muchas ventajas de utilizar las páginas en lugar de perfiles, y una vez que "
+"haya convertido, luego el plugin podrá recuperar y mostrar todos sus "
+"mensajes con éxito </p>."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:448
+msgid "Show posts on my page by:"
+msgstr "Mostrar mensajes en mi página por:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:452
+msgid "Only the page owner (me)"
+msgstr "Sólo el propietario de la página (yo)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:453
+msgid "Page owner + other people"
+msgstr "Propietario de la página + otras personas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:454
+msgid "Only other people"
+msgstr "Sólo otras personas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:466
+msgid "Number of posts to display"
+msgstr "Número de mensajes para mostrar"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:469
+msgid "Why aren't this many posts showing up?"
+msgstr "¿Por qué no se muestran tantos mensajes arriba?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:470
+msgid ""
+"If too many posts are being filtered out then you may need to set the "
+"'Change the post limit' option below to be 10-15 higher than the amount of "
+"posts you want to display."
+msgstr ""
+"Si demasiados mensajes están siendo filtrados entonces es posible que tenga "
+"que configurar la opción 'Cambiar el límite de publicaciones\"para que sea "
+"10 15 mayor que la cantidad de mensajes que desea mostrar."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:475
+msgid "Change the post limit"
+msgstr "Cambie el límite de publicaciones"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:478
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:492
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1828
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2874
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3029
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3046
+msgid "What does this mean?"
+msgstr "¿Qué significa esto?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:479
+msgid ""
+"The 'limit' is the number of posts retrieved from the Facebook API. By "
+"default the plugin retrieves 7 posts more from the Facebook API than you "
+"specify in the 'Number of posts to display' field above, as some posts are "
+"filtered out. You can alter how many posts are retrieved by manually setting "
+"this value. If you choose to retrieve a high number of posts then it will "
+"take longer for Facebook to return the posts when the plugin checks for new "
+"ones."
+msgstr ""
+"El \"límite\" es el número de mensajes recuperados de la API de Facebook. "
+"Por defecto el plugin recupera 7 mensajes más de la API de Facebook que "
+"usted indica en el campo 'Número de mensajes para mostrar' de arriba, ya que "
+"algunos mensajes se filtran. Usted puede alterar la cantidad de mensajes que "
+"se recuperan manualmente ajustando este valor. Si opta por recuperar un "
+"número elevado de publicaciones entonces se necesitará más tiempo para que "
+"Facebook devuelva los mensajes cuando el plugin revise para nuevos."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:484
+msgid "Check for new Facebook posts every"
+msgstr "Compruebe si hay nuevos mensajes de Facebook cada"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:488
+msgid "Minutes"
+msgstr "Minutos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:489
+msgid "Hours"
+msgstr "Horas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:490
+msgid "Days"
+msgstr "Días"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:493
+msgid ""
+"Your Facebook posts and comments data is temporarily cached by the plugin in "
+"your WordPress database. You can choose how long this data should be cached "
+"for. If you set the time to 60 minutes then the plugin will clear the cached "
+"data after that length of time, and the next time the page is viewed it will "
+"check for new data."
+msgstr ""
+"Los datos de sus mensajes y comentarios Facebook están almacenados "
+"temporalmente por el plugin en su base de datos de WordPress. Usted puede "
+"elegir el tiempo que estos datos deben almacenarce en caché. Si se establece "
+"el tiempo de 60 minutos entonces el plugin borrará los datos almacenados en "
+"caché después de ese periodo de tiempo, y la próxima vez que la página se "
+"vea va a comprobar los nuevos datos."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:498
+msgid "Localization"
+msgstr "Localización"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:501
+msgid "Afrikaans"
+msgstr "Africano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:502
+msgid "Arabic"
+msgstr "Arábe"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:503
+msgid "Azerbaijani"
+msgstr "Azerbaijano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:504
+msgid "Belarusian"
+msgstr "Belaruso"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:505
+msgid "Bulgarian"
+msgstr "Búlgaro"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:506
+msgid "Bengali"
+msgstr "Bengalí"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:507
+msgid "Bosnian"
+msgstr "Bosnio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:508
+msgid "Catalan"
+msgstr "Catalán"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:509
+msgid "Czech"
+msgstr "Checo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:510
+msgid "Welsh"
+msgstr "Welsh"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:511
+msgid "Danish"
+msgstr "Danés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:512
+msgid "German"
+msgstr "Alemán"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:513
+msgid "Greek"
+msgstr "Griego"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:514
+msgid "English (UK)"
+msgstr "Inglés (Reino Unido)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:515
+msgid "English (Pirate)"
+msgstr "Inglés (Pirata)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:516
+msgid "English (Upside Down)"
+msgstr "Inglés (Al revés)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:517
+msgid "English (US)"
+msgstr "Inglés (EE.UU.)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:518
+msgid "Esperanto"
+msgstr "Esperanto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:519
+msgid "Spanish (Spain)"
+msgstr "Español (España)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:520
+msgid "Spanish"
+msgstr "Español"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:521
+msgid "Estonian"
+msgstr "Estonio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:522
+msgid "Basque"
+msgstr "Vasco"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:523
+msgid "Persian"
+msgstr "Pérsico"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:524
+msgid "Leet Speak"
+msgstr "Leet Speak"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:525
+msgid "Finnish"
+msgstr "Finlandés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:526
+msgid "Faroese"
+msgstr "Feroés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:527
+msgid "French (Canada)"
+msgstr "Francés (Canadá)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:528
+msgid "French (France)"
+msgstr "Francés (Francia)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:529
+msgid "Frisian"
+msgstr "Frisiano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:530
+msgid "Irish"
+msgstr "Irlandés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:531
+msgid "Galician"
+msgstr "Galiciano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:532
+msgid "Hebrew"
+msgstr "Hebreo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:533
+msgid "Hindi"
+msgstr "Hindú"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:534
+msgid "Croatian"
+msgstr "Croaciano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:535
+msgid "Hungarian"
+msgstr "Húngaro"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:536
+msgid "Armenian"
+msgstr "Armenio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:537
+msgid "Indonesian"
+msgstr "Indonesio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:538
+msgid "Icelandic"
+msgstr "Islándico"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:539
+msgid "Italian"
+msgstr "Italiano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:540
+msgid "Japanese"
+msgstr "Japonés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:541
+msgid "Georgian"
+msgstr "Georgiano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:542
+msgid "Khmer"
+msgstr "Khmer"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:543
+msgid "Korean"
+msgstr "Coreano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:544
+msgid "Kurdish"
+msgstr "Kurdo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:545
+msgid "Latin"
+msgstr "Latín"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:546
+msgid "Lithuanian"
+msgstr "Lituaniano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:547
+msgid "Latvian"
+msgstr "Latviano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:548
+msgid "Macedonian"
+msgstr "Macedonio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:549
+msgid "Malayalam"
+msgstr "Malayo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:550
+msgid "Malay"
+msgstr "Malayo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:551
+msgid "Norwegian (bokmal)"
+msgstr "Noruego (Bokmal)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:552
+msgid "Nepali"
+msgstr "Nepalí"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:553
+msgid "Dutch"
+msgstr "Holandés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:554
+msgid "Norwegian (nynorsk)"
+msgstr "Noruego (nynorsk)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:555
+msgid "Punjabi"
+msgstr "Punjabi"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:556
+msgid "Polish"
+msgstr "Polaco"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:557
+msgid "Pashto"
+msgstr "Pashto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:558
+msgid "Portuguese (Brazil)"
+msgstr "Portugués (Brasil)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:559
+msgid "Portuguese (Portugal)"
+msgstr "Portugués (Portugal)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:560
+msgid "Romanian"
+msgstr "Rumano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:561
+msgid "Russian"
+msgstr "Ruso"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:562
+msgid "Slovak"
+msgstr "Eslovaco"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:563
+msgid "Slovenian"
+msgstr "Esloveno"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:564
+msgid "Albanian"
+msgstr "Albano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:565
+msgid "Serbian"
+msgstr "Serbio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:566
+msgid "Swedish"
+msgstr "Sueco"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:567
+msgid "Swahili"
+msgstr "Swahili"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:568
+msgid "Tamil"
+msgstr "Tamil"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:569
+msgid "Telugu"
+msgstr "Telugu"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:570
+msgid "Thai"
+msgstr "Tailandés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:571
+msgid "Filipino"
+msgstr "Filipino"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:572
+msgid "Turkish"
+msgstr "Turco"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:573
+msgid "Ukrainian"
+msgstr "Ucraniano"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:574
+msgid "Vietnamese"
+msgstr "Vietnamés"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:575
+msgid "Simplified Chinese (China)"
+msgstr "Chino Simplificado (China)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:576
+msgid "Traditional Chinese (Hong Kong)"
+msgstr "ChinoTradicional (Hong Kong)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:577
+msgid "Traditional Chinese (Taiwan)"
+msgstr "Chino tradicional (Taiwán)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:579
+msgid "Select a language"
+msgstr "Seleccione un idioma"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:588
+msgid "Displaying your Feed"
+msgstr "Mostrando su RSS"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:589
+msgid ""
+"Copy and paste this shortcode directly into the page, post or widget where "
+"you'd like the feed to show up:"
+msgstr ""
+"Copie y pegue este código corto directamente en la página, correo o control "
+"donde se desea que aparezca la alimentación:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:590
+msgid "To copy, click the field then press Ctrl + C (PC) or Cmd + C (Mac)."
+msgstr ""
+"Para copiar, haga clic en el campo a continuación, pulse Ctrl + C (PC) o Cmd "
+"+ C (Mac)."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:592
+msgid "Customizing your Feed"
+msgstr "Personalización de tu “Feed”"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:593
+msgid ""
+"Use the <a href='admin.php?page=cff-style'>Customize</a> page to customize "
+"your feed. If you're displaying multiple feeds then you can override your "
+"settings directly in the shortcode like so:"
+msgstr ""
+"Usa la página <a href='admin.php?page=cff-style'> Personalizar </a> para "
+"personalizar el feed. Si estás mostrando múltiples alimentaciones entonces "
+"puedes anular la configuración directamente en el shortcode así:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:595
+msgid "See a full list of shortcode options"
+msgstr "Vea una lista completa de opciones shortcode"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:634
+msgid "Custom Facebook Feed Pro"
+msgstr "Custom Facebook Feed Pro"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:640
+msgid "Deactivate License"
+msgstr "Desactivar Licencia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:643
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:653
+msgid "Expired"
+msgstr "Caducada"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:645
+msgid "Active"
+msgstr "Activa"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:650
+msgid "Activate License"
+msgstr "Activar licencia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:655
+msgid "Inactive"
+msgstr "Inactiva"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:661
+msgid "The license key you received when purchasing the plugin."
+msgstr "La clave de licencia que recibió al adquirir el plugin"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:663
+msgid "Renew your license"
+msgstr "Renueve su Licencia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:663
+msgid "Upgrade your license"
+msgstr "Actualice su licencia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:667
+msgid ""
+"<p>You can upgrade your license in two ways:</p>\n"
+"                                <p>&bull;&nbsp; Log into <a href='https://"
+"smashballoon.com/account' target='_blank'>your Account</a> and click on the "
+"'Upgrade my License' tab<br />\n"
+"                                &bull;&nbsp; <a href='https://smashballoon."
+"com/contact/' target='_blank'>Contact us directly</a></p>"
+msgstr ""
+"<p> Usted puede actualizar su licencia de dos maneras: </p>\n"
+"<p>&bull;&nbsp; Acceda a <a href='https://smashballoon.com/account' "
+"target='_blank'> su </a> su cuenta y haga clic en la pestaña \"Actualizar mi "
+"licencia '<br />\n"
+" &bull; &nbsp; <a href='https://smashballoon.com/contact/' target='_blank'> "
+"Contáctenos  directamente </a></p>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:687
+msgid "FAQs and Troubleshooting"
+msgstr "Preguntas frecuentes y solución de problemas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:690
+msgid ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/faq/general/\" target="
+"\"_blank\">General Questions</a>"
+msgstr ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/faq/general/\" target="
+"\"_blank\">Preguntas generales </a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:691
+msgid ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/faq/setup/\" target="
+"\"_blank\">Setting Up &amp; Displaying your Feed</a>"
+msgstr ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/faq/setup/\" target="
+"\"_blank\">Configuración de & amp; Viendo tu RSS </a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:692
+msgid ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/faq/troubleshooting/"
+"\" target=\"_blank\">Troubleshooting &amp; Common Support Questions</a>"
+msgstr ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/faq/troubleshooting/"
+"\" target=\"_blank\"> Solución de problemas y &amp; Preguntas comunes de "
+"Soporte</a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:698
+msgid ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/docs/wordpress/\" "
+"target=\"_blank\">Installation and Configuration</a>"
+msgstr ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/docs/wordpress/\" "
+"target=\"_blank\">Instalación y Configuración</a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:699
+msgid ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/docs/shortcodes/\" "
+"target=\"_blank\">Shortcode Reference</a>"
+msgstr ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/docs/shortcodes/\" "
+"target=\"_blank\">Referencia Código Corto</a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:700
+msgid ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/docs/snippets/\" "
+"target=\"_blank\">Custom CSS and JavaScript Snippets</a>"
+msgstr ""
+"<a href=\"http://smashballoon.com/custom-facebook-feed/docs/snippets/\" "
+"target=\"_blank\">CSS personalizado y fragmentos de JavaScript </a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:704
+msgid ""
+"Still need help? <a href=\"http://smashballoon.com/custom-facebook-feed/"
+"support/\" target=\"_blank\">Request support</a>."
+msgstr ""
+"¿Todavía necesita ayuda? <a href=\"http://smashballoon.com/custom-facebook-"
+"feed/support/\" target=\"_blank\"> Solicitud de soporte</a>."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:707
+msgid "System Info"
+msgstr "Información del Sistema"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1572
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1583
+msgid "General"
+msgstr "General"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1573
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1780
+msgid "Post Layout"
+msgstr "Diseño de Publicación"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1574
+msgid "Typography"
+msgstr "Tipografía"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1575
+msgid "Misc"
+msgstr "Varios"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1576
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3061
+msgid "Custom Text / Translate"
+msgstr "Texto Personalizado / Traducir"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1585
+msgid "Feed Width"
+msgstr "Ancho del Feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1588
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2943
+msgid "Default is 100%"
+msgstr "Por defecto es 100%"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1592
+msgid "Feed Height"
+msgstr "Altura del Feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1595
+msgid ""
+"Leave empty to set no maximum height. If the feed exceeds this height then a "
+"scroll bar will be used."
+msgstr ""
+"Deje vacío para establecer sin altura máxima. Si el feed es superior a esta "
+"altura, se utilizará una barra de desplazamiento."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1598
+msgid "Feed Padding"
+msgstr "Relleno del Feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1601
+msgid ""
+"This is the amount of padding/spacing that goes around the feed. This is "
+"particularly useful if you intend to set a background color on the feed."
+msgstr ""
+"Esta es la cantidad de relleno / separación que va alrededor del Feed. Esto "
+"es particularmente útil si usted tiene la intención de establecer un color "
+"de fondo en el feed."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1605
+msgid "Feed Background Color"
+msgstr "Color de Fondo del Feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1611
+msgid "Add CSS class to feed"
+msgstr "Agregar clase CSS al feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1614
+msgid ""
+"To add multiple classes separate each with a space, Eg. classone classtwo "
+"classthree"
+msgstr ""
+"Para agregar múltiples clases separe cada una con un espacio, P.Ej. classone "
+"classtwo classthree"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1623
+msgid "Post Types"
+msgstr "Tipos de Publicación"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1625
+msgid "Only show these types of posts:"
+msgstr "Sólo mostrar estos tipos de publicación:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1629
+msgid "Statuses"
+msgstr "Estados"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1633
+msgid "Events"
+msgstr "Eventos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1637
+msgid "Display events from your "
+msgstr "Mostrar los eventos de su"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1639
+msgid "Events page"
+msgstr "Página de Eventos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1640
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1679
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1718
+msgid "Timeline"
+msgstr "Cronología"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1642
+msgid "What's the difference?"
+msgstr "¿Cuál es la diferencia?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1643
+msgid ""
+"<p><b>Events page</b><br />Events displayed from your Events page are in "
+"chronological order, have larger images and slightly more information "
+"available for each event. However, only upcoming events can be shown, past "
+"events cannot be shown using this method.</p>\n"
+"                                        <p><b>Timeline</b><br />Events "
+"displayed from your timeline are shown in the order that they were created "
+"and display small thumbnail images. However, past events are able to be "
+"shown using this method.</p>\n"
+"                                        <p>If you're not sure which to "
+"choose then choose <b>Events page</b>.</p>"
+msgstr ""
+"<p> <b>Página de Eventos</b><br /> Eventos que se muestran en su página de "
+"eventos son por orden cronológico, orden, tienen imágenes más grandes y un "
+"poco más de información disponible para cada evento. Sin embargo, sólo los "
+"próximos eventos se pueden mostrar, eventos pasados ​​no pueden mostrarse "
+"utilizando este método. </p>\n"
+"<p><b> Línea de tiempo </b> <br /> Eventos mostrados de su línea de tiempo "
+"se muestran en el orden en que que fueron creados y muestran imágenes en "
+"miniatura. Sin embargo, los eventos pasados ​​son capaces de ser mostrados con "
+"este método. </p>\n"
+"<p> Si usted no está seguro de cuál elegir a continuación, elija <b>Página "
+"de Eventos </b></p>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1649
+msgid "Display events for "
+msgstr "Mostrar eventos para"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1651
+msgid " hours after their start time"
+msgstr "horas después de su tiempo de inicio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1652
+msgid "Maximum is 168 hours (1 week)"
+msgstr "Máximo es de 168 horas (1 semana)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1656
+msgid "Event image size: "
+msgstr "tamaño de la imagen el evento:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1658
+msgid "Full event image"
+msgstr "imagen de evento completa"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1659
+msgid "Square cropped"
+msgstr "Cuadrado recortado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1664
+msgid ""
+"In order for these changes to take effect please clear the cache by clicking "
+"'Save Changes' on the <a href='admin.php?page=cff-top'>Settings</a> page"
+msgstr ""
+"Para que estos cambios surtan efecto por favor borre la caché haciendo clic "
+"en \"Guardar cambios\" en la página <a href = admin.php ' ? page = CFF-top "
+"'> Configuración </a>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1666
+msgid ""
+"<b>Please note</b> that these options are only available if Events is the "
+"only post type selected."
+msgstr ""
+"<b> Tome nota </b> que estas opciones sólo están disponibles si Events es el "
+"único tipo de mensaje seleccionado."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1672
+msgid "Photos"
+msgstr "Fotos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1677
+msgid "Display photos from your "
+msgstr "Mostrar fotos de su"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1680
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1717
+msgid "Photos page"
+msgstr "Página  de Fotos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1686
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1732
+msgid "Number of columns: "
+msgstr "Número de columnas:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1688
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1734
+msgid "1"
+msgstr "1"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1689
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1735
+msgid "2"
+msgstr "2"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1690
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1736
+msgid "3"
+msgstr "3"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1691
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1737
+msgid "4"
+msgstr "4"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1696
+msgid ""
+"<b>Please note</b> that these options are only available if Photos is the "
+"only post type selected."
+msgstr ""
+"<b> Tome nota </ b> que estas opciones sólo están disponibles si Photos es "
+"el único tipo de mensaje seleccionado."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1702
+msgid "Videos"
+msgstr "Videos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1706
+msgid "Links"
+msgstr "Enlaces"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1710
+msgid "Albums"
+msgstr "Álbumes"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1715
+msgid "Display albums from your "
+msgstr "Mostrar álbumes de su"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1724
+msgid "Show the album title"
+msgstr "Mostrar el título del álbum"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1728
+msgid "Show the number of photos"
+msgstr "Mostrar el número de fotos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1742
+msgid ""
+"<b>Please note</b> that these options are only available if Albums is the "
+"only post type selected."
+msgstr ""
+"<b> Tome nota </b> que estas opciones sólo están disponibles si Álbumes es "
+"el único tipo de mensaje seleccionado."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1755
+msgid "Filter by String"
+msgstr "Filtrar por Cadena"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1757
+msgid "Only show posts containing:"
+msgstr "Mostrar sólo los mensajes que contengan:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1761
+msgid ""
+"Only display posts containing these text strings. Separate multiple strings "
+"using commas."
+msgstr ""
+"Sólo muestre los mensajes que contienen estas cadenas de texto. Separe las "
+"distintas cadenas por comas."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1765
+msgid "Don't show posts containing:"
+msgstr "No mostrar mensajes que contengan:"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1768
+msgid ""
+"Do not display any posts containing these text strings. Separate multiple "
+"strings using commas."
+msgstr ""
+"No mostrar ningún mensaje que contenga estas cadenas de texto. Separe las "
+"cadenas  con comas."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1785
+msgid ""
+"Choose a layout from the 3 below. Please note that these layouts don't apply "
+"to shared links."
+msgstr ""
+"Elija un diseño de los 3 a continuación. Tenga en cuenta que estos diseños "
+"no se aplican a los enlaces compartidos."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1786
+msgid "Why?"
+msgstr "¿Por qué?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1787
+msgid ""
+"Shared links only have small thumbnail sized images associated with them "
+"which wouldn't look good blown up to a half-width or full-width size. For "
+"this reason they are displayed using the thumbnail layout by default. To "
+"change this you can use a <a href='http://smashballoon.com/custom-facebook-"
+"feed/docs/snippets/' target='_blank'>Custom CSS snippet</a>."
+msgstr ""
+"Enlaces compartidos sólo tienen imágenes de tamaño pequeño en miniatura "
+"asociados con ellos, que no se verían bien expandidas hasta un ancho medio o "
+"tamaño de ancho completo. Por esta razón, se muestran utilizando el diseño "
+"en miniatura de forma predeterminada. Para cambiar esto, puede utilizar un "
+"<a href='http://smashballoon.com/custom-facebook-feed/docs/snippets/' "
+"target='_blank'> Snippet CSS Personalizado</a>."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1795
+msgid "Thumbnail"
+msgstr "Miniatura"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1800
+msgid "Half-width"
+msgstr "Ancho medio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1805
+msgid "Full-width"
+msgstr "Ancho completo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1814
+msgid "Photo/Video Position"
+msgstr "Posición Foto / Video"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1824
+msgid "Always use the Full-width layout when feed is narrow?"
+msgstr ""
+"¿Utilizar siempre el diseño de ancho completo cuando el feed es estrecho?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1827
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1939
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1946
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2189
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2195
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2204
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2542
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2616
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2873
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2890
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2903
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2918
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2956
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2963
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3028
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3045
+msgid "Yes"
+msgstr "Sí"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1829
+msgid ""
+"When displaying posts in either a narrow column or on a mobile device the "
+"plugin will automatically default to using the 'Full-width' layout as it's "
+"better suited to narrow sizes."
+msgstr ""
+"Cuando se visualizan los mensajes en una columna estrecha o en un "
+"dispositivo móvil el plugin utilizará de forma predeterminada el diseño "
+"\"Ancho complet”, ya que es más adecuado para reducir tamaños."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1836
+msgid "Show/Hide"
+msgstr "Mostrar / Ocultar"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1840
+msgid ""
+"Include the following in posts: <i style=\"font-size: 11px;\">(when "
+"applicable)</i>"
+msgstr ""
+"Incluya lo siguiente en los mensajes: <i style=\"font-size: 11px;\">(cuando "
+"sea aplicable)</i>"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1844
+msgid "Author name and avatar"
+msgstr "Nombre y avatar del autor"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1848
+msgid "Post text"
+msgstr "Publicar texto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1852
+msgid "Photo/Video/Link description"
+msgstr "Descripción Enlace Foto / Video /"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1856
+msgid "Shared links"
+msgstr "Enlaces compartidos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1860
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3156
+msgid "Date"
+msgstr "Fecha"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1864
+msgid "Photos/videos"
+msgstr "Fotos / vídeos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1869
+msgid "Event title"
+msgstr "Título de evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1873
+msgid "Event details"
+msgstr "Detalles evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1877
+msgid "Like/shares/comments"
+msgstr "gustar / compartidos /comentarios"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1881
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3102
+msgid "View on Facebook"
+msgstr "Ver en Facebook"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1889
+msgid "Post Style"
+msgstr "Estilo de Publicación"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1893
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1958
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2865
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2923
+msgid "Background Color"
+msgstr "Color de fondo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1899
+msgid "Rounded Corner Size"
+msgstr "Tamaño con esquinas redondeadas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1905
+msgid "Separating Line Color"
+msgstr "Color de Línea de Separación"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1907
+msgid "Doesn't apply if you have a background color applied to your posts"
+msgstr ""
+"No se aplica si usted tiene un color de fondo aplicado a sus publicaciones"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1911
+msgid "Separating Line Thickness"
+msgstr "Grosor de línea de separación"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1913
+msgid "Leave empty to hide"
+msgstr "Deje vacío para ocultar"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1924
+msgid ""
+"\"Inherit\" means that the text will inherit the styles from your theme."
+msgstr ""
+"\"Heredar\" significa que el texto va a heredar los estilos de su tema."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1932
+msgid "Feed Header"
+msgstr "Encabezado del Feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1937
+msgid "Show Feed Header"
+msgstr "Mostrar Encabezado del Feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1940
+msgid "This will show a header at the top of your feed"
+msgstr "Este mostrará un encabezado en la parte superior del feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1944
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2916
+msgid "Display outside the scrollable area"
+msgstr "Mostrar fuera del área de desplazamiento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1947
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2919
+msgid "Only applicable if you have set a height on the feed"
+msgstr "Sólo aplicable si ha configurado una altura sobre el feed"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1951
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2818
+msgid "Text"
+msgstr "Texto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1964
+msgid "Padding"
+msgstr "Relleno"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1967
+msgid "This is the amount of padding/spacing that goes around the header."
+msgstr ""
+"Esta es la cantidad de relleno / separación que va alrededor del encabezado."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1971
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2080
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2142
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2225
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2290
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2575
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2631
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2719
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2778
+msgid "Text Size"
+msgstr "Tamaño del Texto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:1995
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2166
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2249
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2314
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2599
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2655
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2743
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2802
+msgid "Text Weight"
+msgstr "Peso del Texto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2005
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2104
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2176
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2259
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2324
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2609
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2665
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2753
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2812
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2853
+msgid "Text Color"
+msgstr "Color del Texto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2011
+msgid "Icon Type"
+msgstr "Tipo de icono"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2039
+msgid "Icon Color"
+msgstr "Color del Icono"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2045
+msgid "Icon Size"
+msgstr "Tamaño del Icono"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2075
+msgid "Post Author"
+msgstr "Publicar Autor"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2119
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3074
+msgid "Post Text"
+msgstr "Publicar Texto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2124
+msgid "Maximum Post Text Length"
+msgstr "Longitud máxima del texto de la publicación"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2126
+msgid "Characters."
+msgstr "Caracteres."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2126
+msgid ""
+"If the post text exceeds this length then a \"See More\" button will be "
+"added. Leave empty to set no maximum length."
+msgstr ""
+"Si el texto del mensaje excede esta longitud entonces un botón \"Ver Más\" "
+"será añadido. Dejar en blanco para no establecer ninguna longitud máxima."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2130
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2562
+msgid "Format"
+msgstr "Formatear"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2182
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2759
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2859
+msgid "Link Color"
+msgstr "Color del Enlace"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2188
+msgid "Link Text to Facebook Post?"
+msgstr "¿Enlazar Texto a una Publicación Facebook?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2193
+msgid "Link Post Tags?"
+msgstr "¿Enlazar a Etiquetas de Publicación?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2196
+msgid "What are Post Tags?"
+msgstr "¿Qué son Etiquetas de Publicación?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2197
+msgid ""
+"When you tag another Facebook page or user in your post using the @ symbol "
+"it creates a post tag, which is a link to either that Facebook page or user "
+"profile."
+msgstr ""
+"Cuando se etiqueta otra página de Facebook o usuario en su mensaje "
+"utilizando el símbolo @ se crea una etiqueta de mensaje, que es un enlace "
+"para la página de Facebook o perfil de usuario."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2202
+msgid "Link Hashtags?"
+msgstr "¿Enlazar Hashtags?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2214
+msgid "Link, Photo and Video Description"
+msgstr "Enlazar Descripción Foto y Video"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2219
+msgid "Maximum Description Length"
+msgstr "Longitud máxima de la Descripción"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2221
+msgid "Characters. Eg. 200"
+msgstr "Caracteres. P.Ej. 200"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2221
+msgid "Leave empty to set no maximum length"
+msgstr "Dejar en blanco para no establecer ninguna longitud máxima"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2275
+msgid "Post Date"
+msgstr "Fecha del Mensaje"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2280
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2907
+msgid "Position"
+msgstr "Posición"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2331
+msgid "Date formatting"
+msgstr "Formato de Fecha"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2335
+msgid "2 days ago"
+msgstr "Hace 2 días"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2352
+msgid "Timezone"
+msgstr "Zona Horaria"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2355
+msgid "(GMT-11:00) Midway Island, Samoa"
+msgstr "(GMT-11: 00) Isla Midway, Samoa"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2356
+msgid "(GMT-10:00) Hawaii-Aleutian"
+msgstr "(GMT-10: 00) Hawaii-Aleutianas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2357
+msgid "(GMT-10:00) Hawaii"
+msgstr "(GMT-10: 00) Hawaii"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2358
+msgid "(GMT-09:30) Marquesas Islands"
+msgstr "(GMT-09 : 30) Islas Marquesas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2359
+msgid "(GMT-09:00) Gambier Islands"
+msgstr "(GMT-09: 00) Islas Gambier"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2360
+msgid "(GMT-09:00) Alaska"
+msgstr "(GMT-09: 00) Alaska"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2361
+msgid "(GMT-08:00) Tijuana, Baja California"
+msgstr "(GMT-08: 00) Tijuana, Baja California"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2362
+msgid "(GMT-08:00) Pitcairn Islands"
+msgstr "(GMT-08: 00) Islas Pitcairn"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2363
+msgid "(GMT-08:00) Pacific Time (US & Canada)"
+msgstr "(GMT-08: 00) Hora del Pacífico (EE.UU. y Canadá)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2364
+msgid "(GMT-07:00) Mountain Time (US & Canada)"
+msgstr "(GMT-07: 00) Hora de la Montaña (EE.UU. y Canadá)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2365
+msgid "(GMT-07:00) Chihuahua, La Paz, Mazatlan"
+msgstr "(GMT-07: 00) Chihuahua, La Paz, Mazatlán"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2366
+msgid "(GMT-07:00) Arizona"
+msgstr "(GMT-07: 00) Arizona"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2367
+msgid "(GMT-06:00) Saskatchewan, Central America"
+msgstr "(GMT-06: 00) Saskatchewan, América Central"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2368
+msgid "(GMT-06:00) Guadalajara, Mexico City, Monterrey"
+msgstr "(GMT-06: 00) Guadalajara, Ciudad de México, Monterrey"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2369
+msgid "(GMT-06:00) Easter Island"
+msgstr "(GMT-06: 00) Isla de Pascua"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2370
+msgid "(GMT-06:00) Central Time (US & Canada)"
+msgstr "(GMT-06: 00) Hora central (EE.UU. y Canadá)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2371
+msgid "(GMT-05:00) Eastern Time (US & Canada)"
+msgstr "(GMT-05: 00) Hora del Este (Estados Unidos y Canadá)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2372
+msgid "(GMT-05:00) Cuba"
+msgstr "(GMT-05: 00) Cuba"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2373
+msgid "(GMT-05:00) Bogota, Lima, Quito, Rio Branco"
+msgstr "(GMT-05: 00) Bogotá, Lima, Quito, Rio Branco"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2374
+msgid "(GMT-04:30) Caracas"
+msgstr "(GMT-04: 30) Caracas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2375
+msgid "(GMT-04:00) Santiago"
+msgstr "(GMT-04: 00) Santiago"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2376
+msgid "(GMT-04:00) La Paz"
+msgstr "(GMT-04: 00) La Paz"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2377
+msgid "(GMT-04:00) Faukland Islands"
+msgstr "(GMT-04: 00) Islas Faukland"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2378
+msgid "(GMT-04:00) Brazil"
+msgstr "(GMT-04: 00) Brasil"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2379
+msgid "(GMT-04:00) Atlantic Time (Goose Bay)"
+msgstr "(GMT-04: 00) Hora del Atlántico (Goose Bay)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2380
+msgid "(GMT-04:00) Atlantic Time (Canada)"
+msgstr "(GMT-04: 00) Hora del Atlántico (Canadá)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2381
+msgid "(GMT-03:30) Newfoundland"
+msgstr "(GMT-03: 30) Terranova"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2382
+msgid "(GMT-03:00) UTC-3"
+msgstr "(GMT-03: 00) UTC-3"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2383
+msgid "(GMT-03:00) Montevideo"
+msgstr "(GMT-03: 00) Montevideo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2384
+msgid "(GMT-03:00) Miquelon, St. Pierre"
+msgstr "(GMT-03: 00) Miquelón, San Pedro"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2385
+msgid "(GMT-03:00) Greenland"
+msgstr "(GMT-03: 00) Groenlandia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2386
+msgid "(GMT-03:00) Buenos Aires"
+msgstr "(GMT-03: 00) Buenos Aires"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2387
+msgid "(GMT-03:00) Brasilia"
+msgstr "(GMT- 3:00) Brasilia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2388
+msgid "(GMT-02:00) Mid-Atlantic"
+msgstr "(GMT-02: 00) Atlántico"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2389
+msgid "(GMT-01:00) Cape Verde Is."
+msgstr "(GMT-01:. 00) Islas Cabo Verde"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2390
+msgid "(GMT-01:00) Azores"
+msgstr "(GMT-01: 00) Azores"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2391
+msgid "(GMT) Greenwich Mean Time : Belfast"
+msgstr "(GMT) Hora de Greenwich: Belfast"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2392
+msgid "(GMT) Greenwich Mean Time : Dublin"
+msgstr "(GMT) Hora de Greenwich: Dublin"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2393
+msgid "(GMT) Greenwich Mean Time : Lisbon"
+msgstr "(GMT) Hora de Greenwich: Lisboa"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2394
+msgid "(GMT) Greenwich Mean Time : London"
+msgstr "(GMT) Hora de Greenwich: Londres"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2395
+msgid "(GMT) Monrovia, Reykjavik"
+msgstr "(GMT) Monrovia, Reykjavik"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2396
+msgid "(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+msgstr "(GMT + 01: 00) Amsterdam, Berlín, Berna, Roma, Estocolmo, Viena"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2397
+msgid "(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+msgstr "(GMT + 01: 00) Belgrado, Bratislava , Budapest, Ljubljana, Prague"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2398
+msgid "(GMT+01:00) Brussels, Copenhagen, Madrid, Paris"
+msgstr "(GMT + 01: 00) Bruselas, Copenhague, Madrid, París"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2399
+msgid "(GMT+01:00) West Central Africa"
+msgstr "(GMT + 01: 00) Africa Central Occidental"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2400
+msgid "(GMT+01:00) Windhoek"
+msgstr "(GMT + 01: 00) Windhoek"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2401
+msgid "(GMT+02:00) Beirut"
+msgstr "(GMT + 02: 00) Beirut"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2402
+msgid "(GMT+02:00) Cairo"
+msgstr "(GMT + 02 : 00) El Cairo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2403
+msgid "(GMT+02:00) Gaza"
+msgstr "(GMT + 02: 00) Gaza"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2404
+msgid "(GMT+02:00) Harare, Pretoria"
+msgstr "(GMT + 02: 00) Harare, Pretoria"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2405
+msgid "(GMT+02:00) Jerusalem"
+msgstr "(GMT + 02: 00) Jerusalén"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2406
+msgid "(GMT+02:00) Minsk"
+msgstr "(GMT + 02: 00) Minsk"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2407
+msgid "(GMT+02:00) Syria"
+msgstr "(GMT + 02: 00) Siria"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2408
+msgid "(GMT+03:00) Moscow, St. Petersburg, Volgograd"
+msgstr "(GMT + 03 : 00) Moscú, San Petersburgo, Volgogrado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2409
+msgid "(GMT+03:00) Nairobi"
+msgstr "(GMT + 03: 00) Nairobi"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2410
+msgid "(GMT+03:30) Tehran"
+msgstr "(GMT + 03: 30) Teherán"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2411
+msgid "(GMT+04:00) Abu Dhabi, Muscat"
+msgstr "(GMT + 04: 00) Abu Dabi, Muscat"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2412
+msgid "(GMT+04:00) Yerevan"
+msgstr "(GMT + 04: 00) Yerevan"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2413
+msgid "(GMT+04:30) Kabul"
+msgstr "(GMT + 04: 30) Kabul"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2414
+msgid "(GMT+05:00) Ekaterinburg"
+msgstr "(GMT + 05: 00) Ekaterinburg"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2415
+msgid "(GMT+05:00) Tashkent"
+msgstr "(GMT + 05: 00) Tashkent"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2416
+msgid "(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+msgstr "(GMT + 05: 30) Chennai, Kolkata, Mumbai, Nueva Delhi"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2417
+msgid "(GMT+05:45) Kathmandu"
+msgstr "(GMT + 05: 45) Katmandú"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2418
+msgid "(GMT+06:00) Astana, Dhaka"
+msgstr "(GMT + 06: 00) Astana , Dacca"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2419
+msgid "(GMT+06:00) Novosibirsk"
+msgstr "(GMT + 06: 00) Novosibirsk"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2420
+msgid "(GMT+06:30) Yangon (Rangoon)"
+msgstr "(GMT + 06: 30) Yangon (Rangoon)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2421
+msgid "(GMT+07:00) Bangkok, Hanoi, Jakarta"
+msgstr "(GMT + 07: 00) Bangkok, Hanoi, Yakarta"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2422
+msgid "(GMT+07:00) Krasnoyarsk"
+msgstr "(GMT + 07: 00) Krasnoyarsk"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2423
+msgid "(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+msgstr "(GMT + 08: 00) Beijing, Chongqing, Hong Kong, Urumqi"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2424
+msgid "(GMT+08:00) Irkutsk, Ulaan Bataar"
+msgstr "(GMT + 08: 00) Irkutsk, Ulan Bator"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2425
+msgid "(GMT+08:00) Perth"
+msgstr "(GMT + 08: 00) Perth"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2426
+msgid "(GMT+08:45) Eucla"
+msgstr "(GMT + 08: 45) Eucla"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2427
+msgid "(GMT+09:00) Osaka, Sapporo, Tokyo"
+msgstr "(GMT + 09: 00) Osaka, Sapporo, Tokio"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2428
+msgid "(GMT+09:00) Seoul"
+msgstr "(GMT + 09: 00) Seúl"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2429
+msgid "(GMT+09:00) Yakutsk"
+msgstr "(GMT + 09: 00) Yakutsk"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2430
+msgid "(GMT+09:30) Adelaide"
+msgstr "(GMT + 09: 30) Adelaida"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2431
+msgid "(GMT+09:30) Darwin"
+msgstr "(GMT + 09: 30) Darwin"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2432
+msgid "(GMT+10:00) Brisbane"
+msgstr "(GMT + 10: 00) Brisbane"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2433
+msgid "(GMT+10:00) Hobart"
+msgstr "(GMT + 10: 00) Hobart"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2434
+msgid "(GMT+10:00) Vladivostok"
+msgstr "(GMT + 10: 00) Vladivostok"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2435
+msgid "(GMT+10:30) Lord Howe Island"
+msgstr "(GMT + 10: 30) Isla Lord Howe"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2436
+msgid "(GMT+11:00) Solomon Is., New Caledonia"
+msgstr "(GMT + 11: 00). Islas Salomón, Nueva Caledonia"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2437
+msgid "(GMT+11:00) Magadan"
+msgstr "(GMT + 11: 00) Magadan"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2438
+msgid "(GMT+11:30) Norfolk Island"
+msgstr "(GMT + 11: 30) Isla Norfolk"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2439
+msgid "(GMT+12:00) Anadyr, Kamchatka"
+msgstr "(GMT + 12: 00) Anadyr, Kamchatka"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2440
+msgid "(GMT+12:00) Auckland, Wellington"
+msgstr "(GMT + 12: 00) Auckland, Wellington"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2441
+msgid "(GMT+12:00) Fiji, Kamchatka, Marshall Is."
+msgstr "(GMT + 12: 00) Fiji, Kamchatka, Marshall Is45)."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2442
+msgid "(GMT+12:45) Chatham Islands"
+msgstr "(GMT + 12:  Islas Chatham"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2443
+msgid "(GMT+13:00) Nuku'alofa"
+msgstr "(GMT + 13: 00) Nuku'alofa"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2444
+msgid "(GMT+14:00) Kiritimati"
+msgstr "(GMT + 14: 00 ) Kiritimati"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2450
+msgid "Custom format"
+msgstr "Formato personalizado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2453
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2704
+msgid "Examples"
+msgstr "Ejemplos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2457
+msgid "Text before date"
+msgstr "Texto antes de la fecha"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2461
+msgid "Text after date"
+msgstr "Texto después de la fecha"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2472
+msgid "Shared Links"
+msgstr "Enlaces compartidos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2478
+msgid "Link Title Format"
+msgstr "Formato Titulo del Enlace"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2490
+msgid "Link Title Size"
+msgstr "Tamaño Titulo del Enlace"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2514
+msgid "Link Title Color"
+msgstr "Color Titulo del Enlace"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2520
+msgid "Link URL Color"
+msgstr "TColor URL del Enlace"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2527
+msgid "Link Box Background Color"
+msgstr "Enlazar Color de cuadro de fondo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2534
+msgid "Link Box Border Color"
+msgstr "Enlace Color del borde del cuadro"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2541
+msgid "Remove Background/Border"
+msgstr "Eliminar fondo /borde"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2556
+msgid "Event Title"
+msgstr "Título del evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2615
+msgid "Link title to Facebook event page?"
+msgstr "¿Enlazar título a la página del evento en Facebook?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2625
+msgid "Event Date"
+msgstr "Fecha Evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2671
+msgid "Date Position"
+msgstr "Posición de la Fecha"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2674
+msgid "Below event title"
+msgstr "Debajo del título del evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2675
+msgid "Above event title"
+msgstr "Encima del título del evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2680
+msgid "Event date formatting"
+msgstr "Formato Fecha del evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2701
+msgid "Custom event date format"
+msgstr "Formato de fecha de eventos personalizado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2713
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3087
+msgid "Event Details"
+msgstr "Detalles del evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2772
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3100
+msgid "Link to Facebook"
+msgstr "Enlace a Facebook"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2840
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3107
+msgid "Likes, Shares and Comments"
+msgstr "Me Gusta, Acciones y Comentarios"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2844
+msgid "Icon Style"
+msgstr "Estilo del Icono"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2847
+msgid "Light (for light backgrounds)"
+msgstr "Claro (para los fondos ligeros)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2848
+msgid "Dark (for dark backgrounds)"
+msgstr "Oscuro (para los fondos oscuros)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2871
+msgid "Expand comments box initially"
+msgstr "Expandir cuadro de comentarios inicialmente"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2875
+msgid ""
+"Checking this box will automatically expand the comments box beneath each "
+"post. Unchecking this box will mean that users will need to click the number "
+"of comments below each post in order to expand the comments box."
+msgstr ""
+"Marcando esta casilla se ampliará automáticamente el cuadro de comentarios "
+"debajo de cada publicación. Al desmarcar esta casilla significa que los "
+"usuarios tendrán que hacer clic en el número de comentarios debajo de cada "
+"mensaje con el fin de ampliar el apartado de comentarios."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2879
+msgid "Number of comments to show initially"
+msgstr "Número de comentarios para mostrar inicialmente"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2882
+msgid "25 max"
+msgstr "25 max"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2884
+msgid ""
+"The number of comments to show initially when the comments box is expanded."
+msgstr ""
+"El número de comentarios para mostrar inicialmente cuando se amplía el "
+"apartado de comentarios."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2888
+msgid "Hide comment avatars?"
+msgstr "¿Ocultar avatares de comentario?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2897
+msgid "Like Box"
+msgstr "Casilla de Me Gusta"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2901
+msgid "Show the Like Box"
+msgstr "Mostrar Casilla de Me Gusta"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2910
+msgid "Bottom"
+msgstr "Abajo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2911
+msgid "Top"
+msgstr "Arriba"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2929
+msgid "Color of page name"
+msgstr "Color del nombre de la página"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2932
+msgid "Blue"
+msgstr "Azul"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2933
+msgid "White"
+msgstr "Blanco"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2935
+msgid "Why only these 2 colors?"
+msgstr "¿Por qué sólo estos 2 colores?"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2936
+msgid ""
+"The styling of the Facebook Like box widget is restricted by Facebook. This "
+"means that the only two text colors available are blue and white, intended "
+"for either a light of dark color scheme respectively."
+msgstr ""
+"El estilo del widget de casilla de Me Gusta en Facebook está restringido por "
+"Facebook. Esto significa que los dos únicos colores de texto disponibles son "
+"azul y blanco, destinados ya sea para una vista de esquema de color oscuro o "
+"claro, respectivamente."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2940
+msgid "Custom Like Box Width"
+msgstr "Ancho Personalizado de Casilla Me Gusta"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2947
+msgid "Custom Like Box Height"
+msgstr "Altura de Casilla Me Gusta Personalizada"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2954
+msgid "Show faces of fans"
+msgstr "Mostrar caras de los fans"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2957
+msgid "Show thumbnail photos of fans who like your page"
+msgstr "Mostrar fotos en miniatura de los fans a los que les gusta su página"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2961
+msgid "Show the Like Box border"
+msgstr "Mostrar el borde de la casilla Me Gusta"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2964
+msgid "Only applicable if you are showing faces of fans"
+msgstr "Sólo aplicable si está mostrando caras de los fans"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2972
+msgid "Custom CSS"
+msgstr "CSS personalizado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2977
+msgid "Enter your own custom CSS in the box below"
+msgstr "Escriba su propio CSS personalizado en el cuadro de abajo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2987
+msgid "Custom JavaScript"
+msgstr "JavaScript Personalizado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:2992
+msgid "Enter your own custom JavaScript/jQuery in the box below"
+msgstr ""
+"Escriba su propio JavaScript /jQuery personalizado en la casilla de abajo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3003
+msgid "Video"
+msgstr "Vídeo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3007
+msgid "Non-embedded Video"
+msgstr "Vídeo no incrustado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3010
+msgid "Embed using HTML5 video player"
+msgstr "Incrustar utilizando reproductor de vídeo HTML5"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3012
+msgid "Link to the video"
+msgstr "Enlace al vídeo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3021
+msgid "Misc Settings"
+msgstr "Ajustes Varios"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3025
+msgid "Is your theme loading the feed via Ajax?"
+msgstr ""
+"¿Su tema carga el feed a través de Ajax?Algunos temas de WordPress modernos "
+"utilizan Ajax para cargar contenido en la página después de que se haya "
+"cargado. Si su tema utiliza Ajax para cargar el contenido RSS personalizado "
+"de Facebook en la página de comprobación, entonces marque esta casilla. Si "
+"no "
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3030
+msgid ""
+"Some modern WordPress themes use Ajax to load content into the page after it "
+"has loaded. If your theme uses Ajax to load the Custom Facebook Feed content "
+"into the page then check this box. If you are not sure then please check "
+"with the theme author."
+msgstr ""
+"Algunos temas de WordPress modernos utilizan Ajax para cargar contenido en "
+"la página después de que se haya cargado. Si su tema utiliza Ajax para "
+"cargar el contenido RSS personalizado de Facebook en la página de "
+"comprobación, entonces marque esta casilla. Si no está seguro, por favor, "
+"consulte con el autor del tema."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3034
+msgid "Facebook App ID"
+msgstr "ID de Facebook Appo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3038
+msgid ""
+"If you've registered as a Facebook developer and have an App ID then you can "
+"enter it here. You can add your website to your Facebook App by going to "
+"your App Settings, clicking 'Add Platform' and then entering your website "
+"URL."
+msgstr ""
+"Si te has registrado como desarrollador de Facebook y tienes una ID de "
+"aplicación, entonces puedes entrar aquí. Puedes agregar tu sitio web a tu "
+"aplicación de Facebook, yendo a la Configuración de la aplicación, hacer "
+"clic en \"Agregar Plataforma” y luego entrar en la URL de su sitio web."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3042
+msgid "Preserve settings when plugin is removed"
+msgstr "Preservar el ajuste cuando se quita el plugin"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3047
+msgid ""
+"When removing the plugin your settings are automatically deleted from your "
+"database. Checking this box will prevent any settings from being deleted. "
+"This means that you can uninstall and reinstall the plugin without losing "
+"your settings."
+msgstr ""
+"Al retirar el plugin sus ajustes se borrarán automáticamente de su base de "
+"datos. Al marcar esta casilla evitará que los ajustes se eliminen. Esto "
+"significa que usted puede desinstalar y volver a instalar el plug-in sin "
+"perder la configuración."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3062
+msgid ""
+"Enter custom text for the words below, or translate it into the language you "
+"would like to use."
+msgstr ""
+"Introduzca el texto personalizado para las palabras de abajo, o tradúzcalo "
+"al idioma que desea utilizar."
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3068
+msgid "Original Text"
+msgstr "Texto Original"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3069
+msgid "Custom Text / Translation"
+msgstr "Texto / Traducción personalizado"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3070
+msgid "Context"
+msgstr "Contexto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3076
+msgid "See More"
+msgstr "Ver más"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3078
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3084
+msgid "Used when truncating the post text"
+msgstr "Usado cuando se trunca el texto del mensaje"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3082
+msgid "See Less"
+msgstr "Ver Menos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3089
+msgid "Map"
+msgstr "Mapa"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3091
+msgid "Added after the address of an event"
+msgstr "Agregado después de la dirección de un evento"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3095
+msgid "Buy Tickets"
+msgstr "Comprar entradas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3097
+msgid "Added at the bottom of an event (when applicable)"
+msgstr "Añadido en la parte inferior de un evento (en su caso)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3104
+msgid "Links to the post on Facebook"
+msgstr "Enlaces al mensaje en Facebook"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3109
+msgid "View previous comments"
+msgstr "Ver comentarios anteriores"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3111
+msgid "Used in the comments section (when applicable)"
+msgstr "Usados ​​en la sección de comentarios (en su caso)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3115
+msgid "Comment on Facebook"
+msgstr "Comentar en Facebook"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3117
+msgid "Used at the bottom of the comments section"
+msgstr "Utilizado en la parte inferior de la sección comentarios"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3121
+msgid "photos"
+msgstr "fotos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3123
+msgid "Added to the end of an album name. Eg. (6 photos)"
+msgstr "Agregado al final de un nombre de álbum. P.Ej. (6 fotos)"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3127
+msgid "like this"
+msgstr "como este"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3129
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3141
+msgid "Eg. __ and __ like this"
+msgstr "P.Ej. __ Y __ como éste"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3133
+msgid "likes this"
+msgstr "le gusta este"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3135
+msgid "Eg. __ likes this"
+msgstr "P.Ej. __ Le gusta esto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3139
+msgid "and"
+msgstr "y"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3145
+msgid "other"
+msgstr "otro"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3147
+msgid "Eg. __, __ and 1 other like this"
+msgstr "P.Ej. __, __ Y 1 otro como éste"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3151
+msgid "others"
+msgstr "otros"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3153
+msgid "Eg. __, __ and 10 others like this"
+msgstr "Eg. __, __ Y otros 10 como este"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3158
+msgid "\"Posted _ hours ago\" text"
+msgstr "Texto \"Publicado hace _ horas\""
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3161
+msgid "second"
+msgstr "segundo"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3164
+msgid "seconds"
+msgstr "segundos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3167
+msgid "minute"
+msgstr "minuto"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3170
+msgid "minutes"
+msgstr "minutos"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3173
+msgid "hour"
+msgstr "hora"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3176
+msgid "hours"
+msgstr "horas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3179
+msgid "day"
+msgstr "día"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3182
+msgid "days"
+msgstr "días"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3185
+msgid "week"
+msgstr "semana"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3188
+msgid "weeks"
+msgstr "semanas"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3191
+msgid "month"
+msgstr "mes"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3194
+msgid "months"
+msgstr "meses"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3197
+msgid "year"
+msgstr "Año"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3200
+msgid "years"
+msgstr "Años"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3203
+msgid "ago"
+msgstr "Hace"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3206
+msgid "Used to translate the \"Posted _ days ago\" date text"
+msgstr "Usado para traducir el texto de la fecha  \"Publicado hace _ días \""
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3296
+msgid ""
+"\n"
+"        <div class='"
+msgstr ""
+"\n"
+" <div class='"
+
+#: ../custom-facebook-feed-pro/custom-facebook-feed-admin.php:3394
+msgid ""
+"\n"
+"                <div class='"
+msgstr ""
+"\n"
+" <div class='"
