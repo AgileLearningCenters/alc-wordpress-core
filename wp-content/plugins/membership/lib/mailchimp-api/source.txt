@@ -1,0 +1,5 @@
+Library source:
+https://bitbucket.org/mailchimp/mailchimp-api-php/
+
+
+327416-1438811578-ai
