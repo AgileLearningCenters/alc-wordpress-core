@@ -1,0 +1,19 @@
+{"vendor":{"plugins/itro-popup-plugin":"4.6.4"},
+	"admin-config":{
+		"options-general":{
+			"pages":{"options-general.php":"page=itro-popup"},
+			"anchors":{"genOption":{"where":"before after"},"customHtmlForm":{"where":"before after"}},
+			"forms":{
+				"optionForm":{
+					"fields":{
+						"enter_button_text":{"name":"enter_button_text"},
+						"leave_button_text":{"name":"leave_button_text"},
+						"enter_button_url":{"name":"enter_button_url"},
+						"leave_button_url":{"name":"leave_button_url"},
+						"custom_html":{"name":"custom_html"}
+					}
+				}
+			}
+		}
+	}
+}

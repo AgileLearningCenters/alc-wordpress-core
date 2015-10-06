@@ -46,6 +46,7 @@ if( !isset($submitted_form ))
 	/*opt 31*/'popup_padding',
 	/*opt 32*/'disable_mobile',
 	/*opt 33*/'cross_selected',
+	/*opt 34*/'enter_button_url',
 	);
 	$field_name=array(
 	/*fld 0*/'custom_html',
@@ -172,7 +173,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 				<p>
 					<h3><?php _e("DECIDE WHERE POPUP WILL BE DISPLAYED","itro-plugin")?></h3>
 					<fieldset>
-						<input type="radio" id="only_selected" name="<?php echo $opt_name[18];?>" value="some"<?php if($opt_val[18]=='some'){echo 'checked="checked"';} ?>/><?php _e("Only selected pages", 'itro-plugin' ); ?><img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>" title="<?php _e("Multiple choise with CTRL+Click or SHIFT+Arrow up or down",'itro-plugin');?>">&nbsp;&nbsp;&nbsp;
+						<input type="radio" id="only_selected" name="<?php echo $opt_name[18];?>" value="some"<?php if($opt_val[18]=='some'){echo 'checked="checked"';} ?>/><?php _e("Only selected pages", 'itro-plugin' ); ?><img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>" title="<?php _e("Multiple choices with CTRL+Click or SHIFT+Arrow up or down",'itro-plugin');?>">&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="<?php echo $opt_name[18];?>" value="all" <?php if($opt_val[18]=='all' ){echo 'checked="checked"';} ?>/><?php _e("All pages", 'itro-plugin' ); ?>&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="<?php echo $opt_name[18];?>" value="none" <?php if($opt_val[18]=='none' || $opt_val[18]== NULL){echo 'checked="checked"';} ?>/><?php _e("No page", 'itro-plugin' ); ?>
 					</fieldset>
@@ -198,7 +199,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 					&nbsp;&nbsp;&nbsp;
 					<input type="checkbox" id="<?php echo $opt_name[24]; ?>" name="<?php echo $opt_name[24]; ?>" value="yes" <?php if($opt_val[24] == 'yes' ){echo 'checked="checked"';} ?> />
 					<span onclick="itro_mutual_check('<?php echo $opt_name[24]; ?>','','')"><?php _e("Disable ESC key", 'itro-plugin' ); ?></span>
-					<img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>"title="<?php _e('If you set this option popup can not be closed with ESC button of keyboard.','itro-plugin');?>" >
+					<img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>"title="<?php _e('If you set this option, popup can not be closed with ESC button of keyboard.','itro-plugin');?>" >
 				</p>
 				
 				<!-- popup seconds!-->
@@ -324,7 +325,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 					<p>
 						<input id="<?php echo $opt_name[30]; ?>" type="checkbox" name="<?php echo $opt_name[30]; ?>" value="yes" <?php if(itro_get_option($opt_name[30])=='yes' ){echo 'checked="checked"';} ?> />
 						<span id="span_<?php echo $opt_name[30]; ?>" onclick="itro_mutual_check('<?php echo $opt_name[30]; ?>','','');"><?php _e("Automatic top margin:", 'itro-plugin' ); ?></span>
-						<img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>" title="<?php _e("The system will try to auto center the popup, in case of problem deselect this option",'itro-plugin');?>" >
+						<img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>" title="<?php _e("The system will try to center the popup automatically, unselect it if you encounter any issues",'itro-plugin');?>" >
 					</p>
 					
 					<!-- popup top margin !-->
@@ -388,6 +389,9 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 					<p><?php _e("Enter button text:", 'itro-plugin' ); ?> 
 						<input type="text" name="<?php echo $opt_name[7]; ?>" value="<?php echo $opt_val[7]; ?>" placeholder="<?php _e("i.e.: I AM OVER 18 - ENTER", 'itro-plugin' ); ?>"  size="40">
 					</p>
+					<p><?php _e("Enter button url:", 'itro-plugin' ); ?> 
+						<input type="text" name="<?php echo $opt_name[34]; ?>" value="<?php echo $opt_val[34]; ?>" placeholder="<?php _e("i.e.: http://www.mysite.com/enter.html", 'itro-plugin' ); ?>" size="40">
+					</p>
 					
 					<div id="<?php echo $opt_name[6] . '_advanced_1'; ?>">				
 						<p><?php _e("Enter button background color:", 'itro-plugin' ); ?> 
@@ -440,7 +444,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 		
 		<input type="hidden" name="<?php echo $submitted_form; ?>" value="Y">
 		<!------- Custom html field -------->
-		<p class="wpstyle" onClick="jQuery('#customHtmlForm').toggle();"><?php _e("Your text (or HTML code:)", 'itro-plugin' ); ?> </p>
+		<p class="wpstyle" onClick="jQuery('#customHtmlForm').toggle();"><?php _e("Your text (or HTML code):", 'itro-plugin' ); ?> </p>
 		<div id="customHtmlForm">
 			<?php					
 			$content = stripslashes($field_value[0]);
@@ -476,7 +480,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 	<hr>
 	<input type="hidden" name="delete_data_hidden" value="Y">
 	<input type="checkbox" id="delete_data" name="delete_data" value="yes" <?php if(itro_get_option('delete_data')=='yes' ){echo 'checked="checked"';} ?> />
-	<span><?php _e("DELETE ALL DATA ON PLUGIN UNISTALL", 'itro-plugin' ); ?></span>
+	<span><?php _e("DELETE ALL DATA ON PLUGIN UNINSTALL", 'itro-plugin' ); ?></span>
 	<img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>"title="<?php _e('Check this box if you want to delete or maintain database tables. It is usefull if you have to try to install again the plugin, without lost your settings.','itro-plugin');?>" >
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />&nbsp;&nbsp;&nbsp;&nbsp;

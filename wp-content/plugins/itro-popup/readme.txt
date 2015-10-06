@@ -1,10 +1,10 @@
 ﻿=== ITRO Popup Plugin ===
 Contributors: ITRO
-Donate link: http://www.itro.eu/index.php/donate/
+Donate link: http://www.itro.eu/
 Tags: popup, popup message, popup box, popup ads, popup advertising, jquery popup, popup jquery, automatic popup, age restriction, popup block, popup violence, age validation popup, adult, adult content, content warning, content warning popup, fancy box, fancy popup, custom popup, advertising popup, pop-up, lightbox, lightbox popup
 Requires at least: 3.0.1
-Tested up to: 4.0
-Stable tag: 4.6.2
+Tested up to: 4.3.1
+Stable tag: 4.7.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -47,15 +47,17 @@ Simply the best Wordpress popup plugin!
 TRANSLATED IN FOLLOWING LANGUAGES:
 - Italian
 - English
-- French
+- French (thanks to Patrice CHASSAING)
+- Serbo-Croatian (thanks to Andrijana Nikolic www.webhostinggeeks.com)
+- Nederlands (thanks to Descamps Gino)
 
 FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.itro.eu/?page_id=390)
-DONATE NOW! - KEEP IT FREE! [DONATE NOW](http://www.itro.eu/?page_id=396)
+DONATE NOW! [DONATE NOW](http://www.itro.eu/?page_id=396)
 
 For any problem, please contact us at our site: [CONTACT US](http://www.itro.eu/?page_id=247)
 
 Want a more powerful marketing tools?
-Try ITRO Wordpress Marketing PRO with a 7 days free trial.
+Try ITRO Wordpress Marketing PRO with a 14 days free trial.
 	
     ★ MULTIPLE POPUPS
     ★ ON-CLICK POPUP
@@ -91,9 +93,27 @@ DONATE NOW! - HELP US TO DEVELOP FOR YOU! [DONATE NOW](http://www.itro.eu/?page_
 
 == Screenshots ==
 
-VIEW NOW DEMOS ON OUR OFFICIAL SITE - [CLICK HERE!](http://www.itro.eu/?page_id=3056)
+VIEW NOW DEMOS ON OUR OFFICIAL SITE - [CLICK HERE!](http://www.itro.eu/index.php/itro-wordpress-plugins-demos/)
 
 == Changelog ==
+= 4.7.2 =
+FIXED: Popup closing by clicking outside with age restriction.
+
+= 4.7.1 =
+FIXED: shortcodes not working in the popup contents
+
+= 4.7 =
+ADDED: Multilingual compatibility with qtranslate X.
+ADDED: Url for the enter button of age validation.
+
+= 4.6.4 =
+ADDED: Nederlands translation, thanks to Descamps Gino.
+
+= 4.6.3 =
+ADDED: Popup closing by outside clicking.
+ADDED: Serbo-Croatian language translation, thanks to Andrijana Nikolic www.webhostinggeeks.com
+FIXED: Improved French and English transaltion thanks to Patrice CHASSAING.
+
 = 4.6.2 =
 FIXED: visualization bugs.
 FIXED: "only selected pages" doesn't work for pages set as blog hompage in Settings->Reading.
@@ -279,15 +299,15 @@ bug fixed: color table now works in admin pannel.
 First released version.
 
 == Upgrade Notice ==
-= 4.6 =
-database error fixed
+= 4.7.2 =
+FIXED: Popup closing by clicking outside with age restriction.
 
-= 4.5.9 =
-improved caching compatibility
+= 4.7.1 =
+FIXED: shortcodes not working in the popup contents
 
-= 4.5.8 =
-wp_ prefix bug fixed. Now the table has the right wordpress table prefix.
-Caching issue resolved (W3 super cache and similar) now "Next visualization time" works
+= 4.7 =
+ADDED: Multilingual compatibility with qtranslate X.
+ADDED: Url for the enter button of age validation.
 
 == Notes ==
 FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.itro.eu/?page_id=390)

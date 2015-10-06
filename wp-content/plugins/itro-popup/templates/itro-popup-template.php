@@ -28,18 +28,19 @@ function itro_popup_template()
 		}?>
 		<div id="popup_content"><?php
 			$custom_field = stripslashes(itro_get_field('custom_html')); /* insert custom html code  */
-			echo do_shortcode( str_replace("\r\n",'',$custom_field) ); /* return the string whitout new line */
+			$custom_field = str_replace("\r\n",'',$custom_field);
+			_e( do_shortcode( $custom_field) ); /* return the string whitout new line */
 			if ( itro_get_option('age_restriction') == 'yes' ) 
 			{?>
 				<p id="age_button_area" style="text-align: center;">
-					<input type="button" id="ageEnterButton" onClick="itro_set_cookie('popup_cookie','one_time_popup',<?php echo itro_get_option('cookie_time_exp'); ?>); jQuery('#itro_popup').fadeOut(function(){itro_opaco.style.visibility='hidden';})" value="<?php echo itro_get_option('enter_button_text');?>">
-					<input type="button" id="ageLeaveButton" onClick="javascript:window.open('<?php echo itro_get_option('leave_button_url')?>','_self');" value="<?php echo itro_get_option('leave_button_text');?>">
+					<input type="button" id="ageEnterButton" onClick="itro_set_cookie('popup_cookie','one_time_popup',<?php echo itro_get_option('cookie_time_exp'); ?>); jQuery('#itro_popup').fadeOut(function(){itro_opaco.style.visibility='hidden';}); javascript:window.open('<?php _e(itro_get_option('enter_button_url')) ?>','_self');" value="<?php _e(itro_get_option('enter_button_text'));?>">
+					<input type="button" id="ageLeaveButton" onClick="javascript:window.open('<?php _e(itro_get_option('leave_button_url')) ?>','_self');" value="<?php _e(itro_get_option('leave_button_text'));?>">
 				</p><?php
 			}
 			?>
 		</div> 
 	</div>
-	<div id="itro_opaco" style="visibility:hidden"></div>
+	<div id="itro_opaco" style="visibility:hidden"  <?php if ( itro_get_option('age_restriction') != 'yes' ){ ?> onclick="jQuery('#itro_popup').fadeOut(function(){itro_opaco.style.visibility='hidden';})" <?php } ?> ></div>
 <?php
 }
 ?>
