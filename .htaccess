@@ -1,3 +1,9 @@
+<IfModule mod_security.c>
+SecFilterRemove 000784
+</IfModule> 
+
+Allow from 181.224.147.227
+
 RewriteEngine On
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
