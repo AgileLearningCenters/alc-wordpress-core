@@ -103,7 +103,7 @@ class GFUserSignups {
         return self::is_manual_activation( $key ) ? false : $user;
     }
 
-    public function maybe_suppress_signup_blog_notification( $domain, $path, $title, $user, $user_email, $key ) {
+    public static function maybe_suppress_signup_blog_notification( $domain, $path, $title, $user, $user_email, $key ) {
         return self::is_manual_activation( $key ) ? false : $user;
     }
 
@@ -119,14 +119,14 @@ class GFUserSignups {
             return false;
 
         $url = add_query_arg(array('page' => 'gf_activation', 'key' => $key), get_site_url() . '/' );
-	    $url = esc_url_raw ( $url );
+
         // BP replaces URL before passing the message, get the BP activation URL and replace
         if( GFUser::is_bp_active() ) {
-            $activate_url = esc_url(bp_get_activation_page() . "?key=$key");
+            $activate_url = esc_url_raw(bp_get_activation_page() . "?key=$key");
             $message = str_replace($activate_url, '%s', $message);
         }
 
-        return sprintf($message, $url);
+        return sprintf($message, esc_url_raw($url));
     }
 
     public static function modify_signup_blog_notification_message($message, $domain, $path, $title, $user, $user_email, $key) {
@@ -136,15 +136,14 @@ class GFUserSignups {
             return false;
 
         $url = add_query_arg(array('page' => 'gf_activation', 'key' => $key), get_site_url());
-	    $url = esc_url( $url );
 
         // BP replaces URL before passing the message, get the BP activation URL and replace
         if(GFUser::is_bp_active()) {
-            $activate_url = esc_url(bp_get_activation_page() . "?key=$key");
+            $activate_url = esc_url_raw(bp_get_activation_page() . "?key=$key");
             $message = str_replace($activate_url, '%s', $message);
         }
 
-        return sprintf($message, $url, esc_url("http://{$domain}{$path}"), $key);
+        return sprintf($message, esc_url_raw($url), esc_url_raw("http://{$domain}{$path}"), $key);
     }
 
     public static function add_site_name_filter( $return ) {
