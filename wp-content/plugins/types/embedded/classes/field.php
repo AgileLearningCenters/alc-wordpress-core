@@ -358,7 +358,7 @@ class WPCF_Field
         /**
          * apply filters
          */
-		$_value = $this->_filter_save_postmeta_value( $value );
+        $_value = $this->_filter_save_postmeta_value( $value );
         $_value = $this->_filter_save_value( $_value );
         /**
          * Save field if needed
@@ -405,18 +405,18 @@ class WPCF_Field
 
         return $value;
     }
-	
-	function _filter_save_postmeta_value( $value )
-	{
-		$value = apply_filters( 'wpcf_fields_postmeta_value_save', $value, $this->cf['type'], $this->cf['slug'], $this->cf, $this );
-		return $value;
-	}
-	
-	function _filter_save_usermeta_value( $value )
-	{
-		$value = apply_filters( 'wpcf_fields_usermeta_value_save', $value, $this->cf['type'], $this->cf['slug'], $this->cf, $this );
-		return $value;
-	}
+
+    function _filter_save_postmeta_value( $value )
+    {
+        $value = apply_filters( 'wpcf_fields_postmeta_value_save', $value, $this->cf['type'], $this->cf['slug'], $this->cf, $this );
+        return $value;
+    }
+
+    function _filter_save_usermeta_value( $value )
+    {
+        $value = apply_filters( 'wpcf_fields_usermeta_value_save', $value, $this->cf['type'], $this->cf['slug'], $this->cf, $this );
+        return $value;
+    }
 
     /**
      * Use these hooks to add future functionality.

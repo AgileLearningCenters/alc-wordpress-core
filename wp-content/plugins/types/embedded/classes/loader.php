@@ -30,8 +30,7 @@ class WPCF_Loader
         self::__registerScripts();
         self::__registerStyles();
         self::__toolset();
-        add_action( 'admin_print_scripts',
-                array('WPCF_Loader', 'renderJsSettings'), 5 );
+        add_action( 'admin_print_scripts', array('WPCF_Loader', 'renderJsSettings'), 5 );
 		add_filter( 'the_posts', array('WPCF_Loader', 'wpcf_cache_complete_postmeta') );
 		add_filter( 'wpcf_fields_postmeta_value_save', array( 'WPCF_Loader', 'wpcf_sanitize_postmeta_values_on_save' ) );
 		add_filter( 'wpcf_fields_usermeta_value_save', array( 'WPCF_Loader', 'wpcf_sanitize_usermeta_values_on_save' ) );

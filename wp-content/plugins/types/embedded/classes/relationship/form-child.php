@@ -126,6 +126,16 @@ class WPCF_Relationship_Child_Form
             }
         }
         unset($post_types);
+        /**
+         * wp_enqueue_media allways
+         */
+        add_action('admin_enqueue_scripts', array($this, 'wp_enqueue_media'), PHP_INT_MAX);
+    }
+
+    public function wp_enqueue_media()
+    {
+        global $post;
+        wp_enqueue_media(array('post' => $post->ID));
     }
 
     function getParamsQuery() {
@@ -285,6 +295,14 @@ class WPCF_Relationship_Child_Form
             ) {
                 $this->headers[] = '_wp_excerpt';
                 $row[] = $this->excerpt();
+            }
+            // Set thumbnail
+            if (
+                isset( $this->data['fields']['_wp_featured_image'] )
+                && post_type_supports( $this->child_post_type_object->slug, 'thumbnail' )
+            ) {
+                $this->headers[] = '_wp_featured_image';
+                $row[] = $this->thumbnail();
             }
 
             /**
@@ -511,6 +529,26 @@ class WPCF_Relationship_Child_Form
     }
 
     /**
+     * Returns HTML formatted post thumbnail field.
+     *
+     * @return type
+     */
+    function thumbnail()
+    {
+        return wpcf_form_simple(
+            array('field' => array(
+                '#type' => 'thumbnail',
+                '#id' => 'wpcf_post_relationship_'
+                . $this->child->ID . '_wp_featured_image',
+                '#name' => 'wpcf_post_relationship['
+                . $this->parent->ID . ']['
+                . $this->child->ID . '][_wp_featured_image]',
+                '#value' => get_post_thumbnail_id($this->child->ID),
+            )
+        )
+    );
+    }
+    /**
      * Returns HTML formatted taxonomy form.
      *
      * @param type $taxonomy
@@ -694,8 +732,7 @@ class WPCF_Relationship_Child_Form
                         $parent, $belongs_data );
 
                 if ( empty( $temp_form ) ) {
-                    return '<span class="types-small-italic">' . __( 'No parents available',
-                                    'wpcf' ) . '</span>';
+                    return '<span class="types-small-italic">' . __( 'No parents available', 'wpcf' ) . '</span>';
                 }
                 unset(
                         $temp_form[$parent]['#suffix'],
@@ -709,8 +746,7 @@ class WPCF_Relationship_Child_Form
                 return wpcf_form_simple( $temp_form );
             }
         }
-        return '<span class="types-small-italic">' . __( 'No parents available',
-                        'wpcf' ) . '</span>';
+        return '<span class="types-small-italic">' . __( 'No parents available', 'wpcf' ) . '</span>';
     }
 
     /**
@@ -765,7 +801,7 @@ class WPCF_Relationship_Child_Form
                     $headers[$header] .= '<a href="' . admin_url( 'admin-ajax.php?action=wpcf_ajax&amp;wpcf_action=pr_sort&amp;field='
                         . '_wp_title&amp;sort=' . $title_dir . '&amp;post_id=' . $post->ID . '&amp;post_type='
                         . $post_type . '&amp;_wpnonce='
-                        . wp_create_nonce( 'pr_sort' ) ) . '">' . __( 'Post Title' ) . '</a>';
+                        . wp_create_nonce( 'pr_sort' ) ) . '">' . __( 'Post Title', 'wpcf' ) . '</a>';
                 } else {
                     $headers[$header] = 'ID';
                 }
@@ -776,9 +812,12 @@ class WPCF_Relationship_Child_Form
                 $headers[$header] .= '<a href="' . admin_url( 'admin-ajax.php?action=wpcf_ajax&amp;wpcf_action=pr_sort&amp;field='
                                 . '_wp_body&amp;sort=' . $body_dir . '&amp;post_id=' . $post->ID . '&amp;post_type='
                                 . $post_type . '&amp;_wpnonce='
-                                . wp_create_nonce( 'pr_sort' ) ) . '">' . __( 'Post Body' ) . '</a>';
-            } else if ( $header == '_wp_excerpt' ) {
-                $headers[$header] = __( 'Post excerpt' );
+                                . wp_create_nonce( 'pr_sort' ) ) . '">' . __( 'Post Body', 'wpcf' ) . '</a>';
+            } else if (
+                $header == '_wp_excerpt'
+                || $header == '_wp_featured_image'
+            ) {
+                $headers[$header] = $this->get_header($header);
             } else if ( strpos( $header, WPCF_META_PREFIX ) === 0
                     && isset( $wpcf_fields[str_replace( WPCF_META_PREFIX, '',
                                     $header )] ) ) {
@@ -800,7 +839,7 @@ class WPCF_Relationship_Child_Form
                                 . $header . '&amp;sort=' . $field_dir . '&amp;post_id=' . $post->ID . '&amp;post_type='
                                 . $post_type . '&amp;_wpnonce='
                                 . wp_create_nonce( 'pr_sort' ) ) . '">'
-                        . stripslashes( $header ) . '</a>';
+                        . $this->get_header($header) . '</a>';
             }
         }
         if ( !empty( $this->headers['__parents'] ) ) {
@@ -828,6 +867,19 @@ class WPCF_Relationship_Child_Form
             }
         }
         return $headers;
+    }
+
+    public function get_header($header)
+    {
+        switch( $header) {
+        case '_wp_featured_image':
+            $header = __('Feature Image', 'wpcf');
+            break;
+        case '_wp_excerpt':
+            $header = __('Post excerpt', 'wpcf');
+            break;
+        }
+        return stripslashes($header);
     }
 
 }
