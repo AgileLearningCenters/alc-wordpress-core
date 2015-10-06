@@ -1,0 +1,115 @@
+.wdf-minimal .wdf_levels {
+	clear: both;
+	list-style: none;
+	margin: 10px 0 0 0;
+	padding: 0;
+	background-color: #EEE;
+	border: 1px solid #E5E5E5;
+	padding: 10px;
+}
+.wdf-minimal .wdf_levels li{
+	cursor: pointer;
+	padding: 10px;
+	margin: 0 10px;
+}
+.wdf-minimal .wdf_levels li.item:hover {
+	background: #fff;
+	cursor: pointer;
+}
+.wdf-minimal .wdf_content {
+	margin: 0;
+	padding: 0;
+}
+.wdf-minimal .wdf_send_amount {
+	width: 50px;
+}
+.wdf-minimal .wdf_progress_info {
+	margin-bottom: 10px;
+	font-style: italic;
+	font-size: 1.4em;
+}
+.wdf-minimal .wdf_donate_now input[type="text"], textarea {
+	margin: 0 0 0 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.wdf-minimal .wdf_level_amount {
+	float: right;
+}
+.wdf-minimal .wdf_send_donation,
+.wdf-minimal .wdf_button {
+	color: #333;
+    cursor: pointer;
+    display: inline-block;
+    line-height: normal;
+	text-decoration:none;
+	background: #eaeaea;
+	padding: 5px 9px 6px;
+	box-shadow: none;
+	text-shadow:none;
+}
+.wdf-minimal .wdf_send_donation:hover {
+
+}
+.wdf-minimal .wdf_levels .reward {
+	padding-left: 30px;
+}
+.wdf-minimal.wdf_fundraiser_panel > div {
+	margin: 10px 0px;
+}
+.wdf-minimal .wdf_big_num, .wdf-minimal .wdf_time_left {
+	font-size: 2em;
+}
+.wdf-minimal .ui-progressbar{
+	height: 1em;
+	margin: 10px 0 0 0;
+}
+.wdf-minimal div.wdf_backer_button {
+	margin: 20px 0px 20px 0px;
+}
+.wdf-minimal .wdf_reward_item  {
+	margin: 10px 0px 10px 0px;
+}
+.wdf_fundraiser_panel.wdf-minimal .wdf_level_amount {
+	float: left;
+	font-size: 2em;
+	padding-right: 8px;
+}
+.wdf-minimal .wdf_bp_show_on_activity {
+
+}
+.wdf-minimal .wdf_reward_item {
+	cursor: pointer;
+}
+.wdf-minimal .wdf_reward_item_disabled {
+	cursor: default !important;
+	opacity: 0.7;
+}
+.wdf_fundraiser_panel.wdf-minimal .wdf_reward_item {
+	padding: 5px;
+}
+.wdf-minimal .wdf_choose_reward_title {
+	font-size: 2.5em;
+	margin-top: 15px;
+}
+.wdf-minimal .ui-progressbar{
+	height: 1em;
+	margin: 10px 0 0 0;
+}
+
+.wdf-minimal .wdf_reward_limit {
+	font-size: 0.7em;
+	font-weight: normal;
+	background: #fff7ce;
+	display: inline-block;
+	padding: 2px 4px;
+	color: #000;
+	margin: 2px;
+}
+.wdf-minimal .wdf_reward_limit_gone {
+	background: #f7d4d4;
+}
+
+
+/* 327416-1438811768-ai */

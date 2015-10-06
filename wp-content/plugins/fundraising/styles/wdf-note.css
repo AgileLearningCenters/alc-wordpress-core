@@ -1,0 +1,140 @@
+.wdf-note .wdf_rewards {
+	clear: both;
+	list-style: none;
+	margin: 10px 0 0 0;
+	padding: 0;
+	background: #ffffe8;
+	border: 1px dashed #efef1a;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	padding: 10px;
+}
+.wdf-note .wdf_rewards .wdf_reward_item {
+	cursor: pointer;
+	padding: 10px;
+	border-bottom: 1px dashed #efef1a;
+}
+.wdf-note .wdf_rewards .wdf_reward_item:hover {
+	background: #fff;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+.wdf-note .wdf_content {
+	margin: 0;
+	padding 0;
+}
+.wdf-note .wdf_send_amount {
+	width: 50px;
+}
+.wdf-note .wdf_progress_info {
+	margin-bottom: 10px;
+	font-style: italic;
+	font-size: 1.4em;
+}
+.wdf-note .wdf_donate_now input[type="text"], textarea {
+	margin: 0 0 0 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.wdf-note .wdf_level_amount {
+	font-size: 2em;
+}
+.wdf-note .wdf_reward_description {
+	font-size: 1em;
+}
+.wdf-note .wdf_send_donation,
+.wdf-note .wdf_button {
+	color: #fff;
+    cursor: pointer;
+    display: inline-block;
+	background-color: #6eb850;
+	background-image: -moz-linear-gradient(top, #62C462, #51A351);
+	background-image: -ms-linear-gradient(top, #62C462, #51A351);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62C462), to(#51A351));
+	background-image: -webkit-linear-gradient(top, #62C462, #51A351);
+	background-image: -o-linear-gradient(top, #62C462, #51A351);
+	background-image: linear-gradient(top, #62C462, #51A351);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#62c462', endColorstr='#51a351', GradientType=0);
+	border-color: #51A351 #51A351 #387038;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    padding: 5px 9px 6px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    line-height: normal;
+    border: 1px solid #5BB75B;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -webkit-transition: 0.1s linear all;
+    -moz-transition: 0.1s linear all;
+    -ms-transition: 0.1s linear all;
+    -o-transition: 0.1s linear all;
+    transition: 0.1s linear all;
+	text-decoration:none;
+}
+.wdf-note .wdf_send_donation:hover {
+	background: #6eb850;
+}
+.wdf-note.wdf_fundraiser_panel > div {
+	margin: 10px 0px;
+}
+.wdf-note .wdf_big_num, .wdf-note .wdf_time_left {
+	font-size: 2em;
+}
+.wdf-note .ui-progressbar{
+	height: 1em;
+	margin: 10px 0 0 0;
+}
+.wdf-note div.wdf_backer_button {
+	margin: 20px 0px 20px 0px;
+}
+.wdf-note .wdf_reward_item  {
+	margin: 10px 0px 10px 0px;
+}
+.wdf_fundraiser_panel.wdf-note .wdf_level_amount {
+	font-size: 2em;
+	padding-right: 8px;
+}
+.wdf-note .wdf_bp_show_on_activity {
+
+}
+.wdf-note .wdf_reward_item {
+	cursor: pointer;
+}
+.wdf-note .wdf_reward_item_disabled {
+	cursor: default !important;
+	opacity: 0.7;
+}
+.wdf_fundraiser_panel.wdf-note .wdf_reward_item {
+	padding: 5px;
+}
+.wdf-note .wdf_choose_reward_title {
+	font-size: 2.5em;
+	margin-top: 15px;
+}
+.wdf-note .ui-progressbar{
+	height: 1em;
+	margin: 10px 0 0 0;
+}
+.wdf-note .wdf_reward_limit {
+	font-size: 0.7em;
+	font-weight: normal;
+	background: #fff7ce;
+	display: inline-block;
+	padding: 2px 4px;
+	color: #000;
+	margin: 2px;
+}
+.wdf-note .wdf_reward_limit_gone {
+	background: #f7d4d4;
+}
+
+
+/* 327416-1438811768-ai */
