@@ -436,7 +436,8 @@
 					$cff.addClass('narrow');
 					//Use full-size shared link images on narrow layout, unless setting is unchecked
 					$('.cff-shared-link .cff-link').each(function(){
-						$(this).find('img').attr('src', $(this).attr('data-full') );
+						// $(this).find('img').attr('src', $(this).attr('data-full') );
+						// Commented this out for now as it was forcing full-size images on narrow feeds with no way to disable them. Now full-size images will only show in the narrow feed if they're enabled on the Typography page.
 					});
 				}
 			} else {

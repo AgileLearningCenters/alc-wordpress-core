@@ -358,11 +358,6 @@ function cff_settings_page() {
         update_option( $cff_featured_post_id, $cff_featured_post_id_val );
         update_option( $cff_lightbox, $cff_lightbox_val );
 
-        
-        //Delete the transient for the main page ID
-        delete_transient( 'cff_' .$page_id_val. '_photospage' );
-        delete_transient( 'cff_' .$page_id_val. '_timeline' );
-        delete_transient( 'cff_events_json_' . $page_id_val );
         //Delete ALL transients
         global $wpdb;
         $table_name = $wpdb->prefix . "options";
@@ -374,17 +369,17 @@ function cff_settings_page() {
         $wpdb->query( "
             DELETE
             FROM $table_name
-            WHERE `option_name` LIKE ('%cff\_events\_json\_%')
+            WHERE `option_name` LIKE ('%\_transient\_cff\_ej\_%')
             " );
         $wpdb->query( "
             DELETE
             FROM $table_name
-            WHERE `option_name` LIKE ('%cff\_tl\_event\_json\_%')
+            WHERE `option_name` LIKE ('%\_transient\_cff\_tle\_%')
             " );
         $wpdb->query( "
             DELETE
             FROM $table_name
-            WHERE `option_name` LIKE ('%cff\_album\_json\_%')
+            WHERE `option_name` LIKE ('%\_transient\_cff\_album\_%')
             " );
         $wpdb->query( "
             DELETE
@@ -707,7 +702,7 @@ function cff_settings_page() {
                                     <option value="Australia/Adelaide" <?php if($cff_timezone == "Australia/Adelaide") echo 'selected="selected"' ?> ><?php _e('(GMT+09:30) Adelaide'); ?></option>
                                     <option value="Australia/Darwin" <?php if($cff_timezone == "Australia/Darwin") echo 'selected="selected"' ?> ><?php _e('(GMT+09:30) Darwin'); ?></option>
                                     <option value="Australia/Brisbane" <?php if($cff_timezone == "Australia/Brisbane") echo 'selected="selected"' ?> ><?php _e('(GMT+10:00) Brisbane'); ?></option>
-                                    <option value="Australia/Hobart" <?php if($cff_timezone == "Australia/Hobart") echo 'selected="selected"' ?> ><?php _e('(GMT+10:00) Hobart'); ?></option>
+                                    <option value="Australia/Hobart" <?php if($cff_timezone == "Australia/Hobart") echo 'selected="selected"' ?> ><?php _e('(GMT+10:00) Sydney'); ?></option>
                                     <option value="Asia/Vladivostok" <?php if($cff_timezone == "Asia/Vladivostok") echo 'selected="selected"' ?> ><?php _e('(GMT+10:00) Vladivostok'); ?></option>
                                     <option value="Australia/Lord_Howe" <?php if($cff_timezone == "Australia/Lord_Howe") echo 'selected="selected"' ?> ><?php _e('(GMT+10:30) Lord Howe Island'); ?></option>
                                     <option value="Etc/GMT-11" <?php if($cff_timezone == "Etc/GMT-11") echo 'selected="selected"' ?> ><?php _e('(GMT+11:00) Solomon Is., New Caledonia'); ?></option>

@@ -1006,7 +1006,49 @@ function display_cff($atts, $content = null) {
 
 
             if ($cff_cache_time != 0){
-                $transient_name = 'cff_events_json_' . $page_id . '_' . strtotime($atts['from']) . strtotime($atts['until']) . $atts['featuredpost'] . $cff_past_events . $cff_page_type;
+
+
+
+                $events_trans_items_arr = array(
+                    'page_id' => $page_id,
+                    'post_limit' => substr($cff_post_limit, 0, 3),
+                    'page_type' => $cff_page_type
+                );
+
+                $trans_arr_item_count = 1;
+                // $cff_ext_date_active = true;
+                if($cff_ext_date_active){
+                    $events_trans_items_arr['from'] = $atts['from'];
+                    $events_trans_items_arr['until'] = $atts['until'];
+                    // $events_trans_items_arr['from'] = '1234567890';
+                    // $events_trans_items_arr['until'] = '0987654321';
+                    $trans_arr_item_count = $trans_arr_item_count+2;
+                }
+                if( $cff_featured_post_active && !empty($atts['featuredpost']) ){
+                    $events_trans_items_arr['featured_post'] = $atts['featuredpost'];
+                    // $events_trans_items_arr['featured_post'] = '123124432144_2343253253253253552521512352';
+                    $trans_arr_item_count++;
+                }
+                if($cff_past_events) $events_trans_items_arr['past_events'] = $cff_past_events;
+
+                $arr_item_max_length = floor( 32/$trans_arr_item_count ); //Max length of 45 accounting for the 'cff_ej_' prefix and other options below
+                $arr_item_max_length_half = floor($arr_item_max_length/2);
+
+                $transient_name = 'cff_ej_';
+                foreach ($events_trans_items_arr as $key => $value) {
+                    if($value !== false){
+                        if( $key == 'page_id' || $key == 'featured_post' || $key == 'from' || $key == 'until' ){
+                        $transient_name .= substr($value, 0, $arr_item_max_length_half) . substr($value, $arr_item_max_length_half*-1);  //-10
+                    }
+                        if( $key == 'post_limit' ) $transient_name .= substr($value, 0, 3);
+                        if( $key == 'page_type' || $key == 'past_events' ) $transient_name .= substr($value, 0, 1);
+                    }
+                }
+                //Make sure it's not more than 45 chars
+                $transient_name = substr($transient_name, 0, 45);
+
+
+                // $transient_name = 'cff_ej_' . $page_id . '_' . strtotime($atts['from']) . strtotime($atts['until']) . $atts['featuredpost'] . $cff_past_events . $cff_page_type;
 
                 if ( false === ( $events_json = get_transient( $transient_name ) ) || $events_json === null ) {
                     //Get the contents of the events page
@@ -1274,7 +1316,9 @@ function display_cff($atts, $content = null) {
                 //Don't use caching if the cache time is set to zero
                 if ($cff_cache_time != 0){
                     // Get any existing copy of our transient data
-                    $transient_name = 'cff_album_json_' . $cff_album_id;
+                    $transient_name = 'cff_album_' . $cff_album_id;
+                    $transient_name = substr($transient_name, 0, 45);
+
                     if ( false === ( $album_json = get_transient( $transient_name ) ) || $album_json === null ) {
                         //Get the contents of the Facebook page
                         $album_json = cff_fetchUrl($cff_album_json_url);
@@ -1292,8 +1336,47 @@ function display_cff($atts, $content = null) {
 
             //Don't use caching if the cache time is set to zero
             if ($cff_cache_time != 0){
+
+                $trans_items_arr = array(
+                    'page_id' => $page_id,
+                    'post_limit' => substr($cff_post_limit, 0, 3),
+                    'show_posts_by' => substr($show_posts_by, 0, 2)
+                );
+
+                $trans_arr_item_count = 1;
+                if($cff_ext_date_active){
+                    $trans_items_arr['from'] = $atts['from'];
+                    $trans_items_arr['until'] = $atts['until'];
+                    // $trans_items_arr['from'] = '12342316172134';
+                    // $trans_items_arr['until'] = '3434565463663456';
+                    $trans_arr_item_count = $trans_arr_item_count+2;
+                }
+                if( $cff_featured_post_active && !empty($atts['featuredpost']) ){
+                    $trans_items_arr['featured_post'] = $atts['featuredpost'];
+                    $trans_arr_item_count++;
+                }
+                if($cff_albums_only) $trans_items_arr['albums_source'] = $cff_albums_source;
+                $trans_items_arr['albums_only'] = intval($cff_albums_only);
+                $trans_items_arr['photos_only'] = intval($cff_photos_only);
+                $trans_items_arr['videos_only'] = intval($cff_videos_only);
+
+                $arr_item_max_length = floor( 30/$trans_arr_item_count ); //40 minus the 10 needed for the other 6 values shown below equals 30
+                $arr_item_max_length_half = floor($arr_item_max_length/2);
+
+                $transient_name = 'cff_';
+                foreach ($trans_items_arr as $key => $value) {
+                    if($value !== false){
+                        if( $key == 'page_id' || $key == 'featured_post' || $key == 'from' || $key == 'until' ) $transient_name .= substr($value, 0, $arr_item_max_length_half) . substr($value, $arr_item_max_length_half*-1);  //-10
+                        if( $key == 'post_limit' || $key == 'show_posts_by' ) $transient_name .= substr($value, 0, 3);
+                        if( $key == 'albums_only' || $key == 'photos_only' || $key == 'videos_only' || $key == 'albums_source' ) $transient_name .= substr($value, 0, 1);
+                    }
+                }
+                //Make sure it's not more than 45 chars
+                $transient_name = substr($transient_name, 0, 45);
+
                 // Get any existing copy of our transient data
-                $transient_name = 'cff_' . $page_id . '_' . strtotime($atts['from']) . strtotime($atts['until']) . $atts['featuredpost'] . $cff_albums_only . $cff_albums_source . $cff_photos_only . $cff_videos_only . $cff_post_limit . $show_posts_by;
+                // $transient_name = 'cff_' . $page_id . '_' . strtotime($atts['from']) . strtotime($atts['until']) . $atts['featuredpost'] . $cff_albums_only . $cff_albums_source . $cff_photos_only . $cff_videos_only . $cff_post_limit . $show_posts_by;
+                // $transient_name = 'cff_' . $page_id . '_' . $cff_post_limit . '12ikfhsjkfhsjkfhnjksdnfskldnf';
                 if ( false === ( $posts_json = get_transient( $transient_name ) ) || $posts_json === null ) {
                     //Get the contents of the Facebook page
                     $posts_json = cff_fetchUrl($cff_posts_json_url);
@@ -2054,7 +2137,6 @@ function display_cff($atts, $content = null) {
                                 } //End soundcloud check
 
                             }
-
                             //EVENT
                             $cff_event = '';
                             if ($cff_show_event_title || $cff_show_event_details) {
@@ -2076,11 +2158,13 @@ function display_cff($atts, $content = null) {
                                     //Get the contents of the event
                                     // $event_json_url = 'https://graph.facebook.com/'.$eventID.'?access_token=' . $access_token . $cff_ssl;
                                     $event_json_url = 'https://graph.facebook.com/v2.2/'.$eventID.'?fields=description,location,name,owner,start_time,timezone,venue,id,likes,comments&access_token=' . $access_token . $cff_ssl;
-
+                                    
                                     //Don't use caching if the cache time is set to zero
                                     if ($cff_cache_time != 0){
                                         // Get any existing copy of our transient data
-                                        $transient_name = 'cff_tl_event_json_' . $eventID;
+                                        $transient_name = 'cff_tle_' . $eventID;
+                                        $transient_name = substr($transient_name, 0, 45);
+
                                         if ( false === ( $event_json = get_transient( $transient_name ) ) || $event_json === null ) {
                                             //Get the contents of the Facebook page
                                             $event_json = cff_fetchUrl($event_json_url);
@@ -2428,12 +2512,21 @@ function display_cff($atts, $content = null) {
                             $cff_meta .= '<a href="javaScript:void(0);" class="cff-view-comments" ' . $cff_meta_styles . ' id="'.$orig_post_id.'"><ul class="cff-meta ';
                             $cff_meta .= $cff_icon_style;
                             $cff_meta .= '"><li class="cff-likes"><span class="cff-icon">Likes:</span> <span class="cff-count">';
+                            
                             //How many likes are there?
                             if (!empty($news->likes)) {
                                 $like_count = count($news->likes->data);
                             } else {
                                 $like_count = '0';
                             }
+                            if( $cff_post_type == 'event' ){
+                                if (!empty($news_event->likes)) {
+                                    $like_count = count($news_event->likes->data);
+                                } else {
+                                    $like_count = '0';
+                                }
+                            }
+
                             //If there is no likes then display zero
                             if ($like_count == 0) {
                                 $cff_meta .= '0';
@@ -2574,6 +2667,10 @@ function display_cff($atts, $content = null) {
                             //Number of comments to show initially
                             $cff_comments .= ' data-num="' . $cff_comments_num . '"';
                             $cff_comments .= '>';
+
+
+                            //If it's a timeline event then change the $news object to be the original news object before it was changed to get the event comment count above
+                            if( $cff_post_type == 'event' ) $news = $news_event;
                             
                             //Get the likes
                             if (!empty($news->likes->data)){
@@ -2601,6 +2698,9 @@ function display_cff($atts, $content = null) {
                                 if ($like_count > 0) $cff_comments .= '</p>';
 
                             }
+
+                            //If it's a timeline event then change the $news object to be the event object to get the event comment count above
+                            if( $cff_post_type == 'event' ) $news = $event_object;
 
                             //Show more comments
                             if ( $comment_count > $cff_comments_num ) $cff_comments .= '<p class="cff-comments cff-show-more-comments" ' . $cff_meta_styles . '><a href="javascript:void(0);" '.$cff_meta_link_color.'><span class="cff-icon"></span>'.$cff_translate_view_previous_comments_text.'</a></p>';
@@ -3121,7 +3221,7 @@ function cff_fetchUrl($url){
 
     //Style options
     $options = get_option('cff_style_settings');
-    $cff_request_method = $options['cff_request_method'];
+    isset( $options['cff_request_method'] ) ? $cff_request_method = $options['cff_request_method'] : $cff_request_method = 'auto';
 
     if($cff_request_method == '1'){
         //Use cURL
@@ -3131,7 +3231,7 @@ function cff_fetchUrl($url){
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_TIMEOUT, 20);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch');
+            curl_setopt($ch, CURLOPT_ENCODING, '');
             $feedData = curl_exec($ch);
             curl_close($ch);
         }
@@ -3158,7 +3258,7 @@ function cff_fetchUrl($url){
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_TIMEOUT, 20);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch');
+            curl_setopt($ch, CURLOPT_ENCODING, '');
             $feedData = curl_exec($ch);
             curl_close($ch);
         } elseif ( (ini_get('allow_url_fopen') == 1 || ini_get('allow_url_fopen') === TRUE ) && in_array('https', stream_get_wrappers()) ) {

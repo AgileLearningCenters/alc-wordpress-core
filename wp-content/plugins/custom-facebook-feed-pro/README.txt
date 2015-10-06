@@ -3,7 +3,7 @@ Author: Smash Balloon
 Support Website: http://smashballoon/custom-facebook-feed/
 Requires at least: 3.0
 Tested up to: 4.2.2
-Version: 2.5.9
+Version: 2.5.10
 License: Non-distributable, Not for resale
 
 The Custom Facebook Feed allows you to display a completely customizable Facebook feed of any public Facebook page or group on your website.
@@ -34,6 +34,10 @@ Display a **completely customizable**, **responsive** and **search engine crawla
 5. You can display multiple feeds of different Facebook pages by specifying a Page ID directly in the shortcode: [custom-facebook-feed id=smashballoon num=5].
 
 == Changelog ==
+= 2.5.10 =
+* Fix: Fixed an issue caused by the WordPress 4.3 update where feeds from longer page IDs wouldn't update correctly due to the cache not clearing when expired
+* Fix: Fixed an issue where the number of likes wasn't appearing correctly below timeline events
+
 = 2.5.9 =
 * New: Added comments replies. If a comment has replies then a link is displayed beneath it which allows you to show them. The 'Reply' and 'Replies' text can be translated on the plugin's 'Custom Text / Translate' tab.
 * Tweak: Added a setting which allows you to manually change the request method used to fetch Facebook posts which is necessary for some server setups
