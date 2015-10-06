@@ -1,3 +1,44 @@
+## 1.6.4
+
+* New feature: Support for Yoast SEO's breadcrumb functionality.
+  * Choose which views display the breadcrumb in the Customizer's Layout panel.
+* Improved: Better responsive layout for the WooCommerce product grid, as well as cart and checkout pages.
+* Bug fix: The Detail color option was not correctly setting the color for post categories and tags.
+
+## 1.6.3
+
+* Improved: Reduced the top margin on the Gallery Slider when it is displaying the navigation dots.
+* Improved: Better translation strings and notes in the EXIF template tag.
+* Updated: The latest list of Google fonts. Added Tamil and Thai font subset options.
+* Changed: The EXIF data markup no longer wraps each data label in a span.
+* Changed: Renamed the Menu locations to use the word "Navigation" instead of "Menu".
+* Changed: Removed the `ttfmake` prefix from most 3rd party script IDs when registering them.
+* Bug fix: FitVids was not successfully getting added as a script dependency. This caused some embedded videos to not scale correctly.
+* Bug fix: Builder sections receiving focus due to an anchor tag were outlined in blue in Webkit browsers.
+
+## 1.6.2.1
+
+* Bug fix: Undefined function fatal error.
+* Bug fix: Customizer control classes will now attempt to autoload if they have not been defined yet.
+
+## 1.6.2
+
+* Updated: Ensure compatibility with upcoming 4.3 version of WordPress:
+  * Deprecate Make's Favicon and Apple Touch Icon options in favor of the new Site Icon option.
+  * Adjust styling of Customizer sections.
+* Updated: Font Awesome icon library updated to version 4.4.0.
+* Updated: The latest list of Google fonts.
+* Improved: Pages using the Builder template can now set a featured image (though it will not render on the page by default).
+* Improved: Better handling of localization:
+  * Parent and child themes have separate text domains.
+  * Translation files for the parent theme can be stored in the child theme directory to prevent loss during updates.
+  * Improved translator notes for some strings.
+  * Ensure that all translated strings are escaped for security hardening.
+* Improved: The Format Builder now uses the Global color scheme for color defaults.
+* Bug fix: PHP fatal error in RSS feed when feed item contained embedded video.
+* Bux fix: The `make_sanitize_text_allowed_tags` filter was not applied correctly.
+* Bug fix: In rare cases, some WooCommerce pages were not rendering correctly if they used the Builder template.
+
 ## 1.6.1
 
 * New feature: All default sections now have background image and background color options.

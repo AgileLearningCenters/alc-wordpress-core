@@ -6,10 +6,10 @@
 /**
  * The current version of the theme.
  */
-define( 'TTFMAKE_VERSION', '1.6.1' );
+define( 'TTFMAKE_VERSION', '1.6.4' );
 
 /**
- * The minimum version of WordPress required for Finder.
+ * The minimum version of WordPress required for Make.
  */
 define( 'TTFMAKE_MIN_WP_VERSION', '4.0' );
 
@@ -42,6 +42,8 @@ function ttfmake_require_files() {
 		get_template_directory() . '/inc/activation.php',
 		// Compatibility
 		get_template_directory() . '/inc/compatibility.php',
+		// Localization
+		get_template_directory() . '/inc/l10n.php',
 		// Customizer
 		get_template_directory() . '/inc/customizer/bootstrap.php',
 		// Gallery slider
@@ -142,10 +144,8 @@ if ( ! function_exists( 'ttfmake_setup' ) ) :
  * @return void
  */
 function ttfmake_setup() {
-	// Attempt to load text domain from child theme first
-	if ( ! load_theme_textdomain( 'make', get_stylesheet_directory() . '/languages' ) ) {
-		load_theme_textdomain( 'make', get_template_directory() . '/languages' );
-	}
+	// Load translation strings
+	ttfmake_load_textdomains();
 
 	// Feed links
 	add_theme_support( 'automatic-feed-links' );
@@ -176,9 +176,9 @@ function ttfmake_setup() {
 
 	// Menu locations
 	register_nav_menus( array(
-		'primary'    => __( 'Primary Menu', 'make' ),
+		'primary'    => __( 'Primary Navigation', 'make' ),
 		'social'     => __( 'Social Profile Links', 'make' ),
-		'header-bar' => __( 'Header Bar Menu', 'make' ),
+		'header-bar' => __( 'Header Bar Navigation', 'make' ),
 	) );
 
 	// Editor styles
@@ -187,11 +187,14 @@ function ttfmake_setup() {
 		$editor_styles[] = $google_request;
 	}
 
-	$editor_styles[] = 'css/font-awesome.css';
-	$editor_styles[] = 'css/editor-style.css';
+	$editor_styles[] = add_query_arg( 'ver', '4.4.0', esc_url( get_template_directory_uri() . '/css/font-awesome.css' ) );
+	$editor_styles[] = add_query_arg( 'ver', TTFMAKE_VERSION, esc_url( get_template_directory_uri() . '/css/editor-style.css' ) );
 
 	// Another editor stylesheet is added via ttfmake_mce_css() in inc/customizer/bootstrap.php
 	add_editor_style( $editor_styles );
+
+	// Yoast SEO breadcrumbs
+	add_theme_support( 'yoast-seo-breadcrumbs' );
 }
 endif;
 
@@ -326,12 +329,12 @@ function ttfmake_scripts() {
 
 	// Font Awesome
 	wp_enqueue_style(
-		'ttfmake-font-awesome',
+		'font-awesome',
 		get_template_directory_uri() . '/css/font-awesome' . TTFMAKE_SUFFIX . '.css',
 		$style_dependencies,
-		'4.3.0'
+		'4.4.0'
 	);
-	$style_dependencies[] = 'ttfmake-font-awesome';
+	$style_dependencies[] = 'font-awesome';
 
 	// Parent stylesheet, if child theme is active
 	// @link http://justintadlock.com/archives/2014/11/03/loading-parent-styles-for-child-themes
@@ -378,7 +381,7 @@ function ttfmake_scripts() {
 	// FitVids
 	// Register only. Enqueued when necessary by the embed shortcode.
 	wp_register_script(
-		'ttfmake-fitvids',
+		'fitvids',
 		get_template_directory_uri() . '/js/libs/fitvids/jquery.fitvids' . TTFMAKE_SUFFIX . '.js',
 		array( 'jquery' ),
 		'1.1',
@@ -459,7 +462,7 @@ if ( ! function_exists( 'ttfmake_cycle2_script_setup' ) ) :
 function ttfmake_cycle2_script_setup( $script_dependencies ) {
 	if ( defined( 'TTFMAKE_SUFFIX' ) && '.min' === TTFMAKE_SUFFIX ) {
 		wp_register_script(
-			'ttfmake-cycle2',
+			'cycle2',
 			get_template_directory_uri() . '/js/libs/cycle2/jquery.cycle2' . TTFMAKE_SUFFIX . '.js',
 			$script_dependencies,
 			TTFMAKE_VERSION,
@@ -468,7 +471,7 @@ function ttfmake_cycle2_script_setup( $script_dependencies ) {
 	} else {
 		// Core script
 		wp_register_script(
-			'ttfmake-cycle2',
+			'cycle2',
 			get_template_directory_uri() . '/js/libs/cycle2/jquery.cycle2.js',
 			$script_dependencies,
 			'2.1.6',
@@ -477,18 +480,18 @@ function ttfmake_cycle2_script_setup( $script_dependencies ) {
 
 		// Vertical centering
 		wp_register_script(
-			'ttfmake-cycle2-center',
+			'cycle2-center',
 			get_template_directory_uri() . '/js/libs/cycle2/jquery.cycle2.center.js',
-			'ttfmake-cycle2',
+			array( 'cycle2' ),
 			'20140121',
 			true
 		);
 
 		// Swipe support
 		wp_register_script(
-			'ttfmake-cycle2-swipe',
+			'cycle2-swipe',
 			get_template_directory_uri() . '/js/libs/cycle2/jquery.cycle2.swipe.js',
-			'ttfmake-cycle2',
+			array( 'cycle2' ),
 			'20121120',
 			true
 		);
@@ -508,17 +511,20 @@ function ttfmake_head_late() {
 	// Pingback link ?>
 		<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 <?php
-	// Favicon
-	$logo_favicon = get_theme_mod( 'logo-favicon', ttfmake_get_default( 'logo-favicon' ) );
-	if ( ! empty( $logo_favicon ) ) : ?>
-		<link rel="icon" href="<?php echo esc_url( $logo_favicon ); ?>" />
-	<?php endif;
+	// Core Site Icon option overrides Make's deprecated Favicon and Apple Touch Icon settings
+	if ( false === get_option( 'site_icon', false ) ) :
+		// Favicon
+		$logo_favicon = get_theme_mod( 'logo-favicon', ttfmake_get_default( 'logo-favicon' ) );
+		if ( ! empty( $logo_favicon ) ) : ?>
+			<link rel="icon" href="<?php echo esc_url( $logo_favicon ); ?>" />
+		<?php endif;
 
-	// Apple Touch icon
-	$logo_apple_touch = get_theme_mod( 'logo-apple-touch', ttfmake_get_default( 'logo-apple-touch' ) );
-	if ( ! empty( $logo_apple_touch ) ) : ?>
-		<link rel="apple-touch-icon" href="<?php echo esc_url( $logo_apple_touch ); ?>" />
-	<?php endif;
+		// Apple Touch icon
+		$logo_apple_touch = get_theme_mod( 'logo-apple-touch', ttfmake_get_default( 'logo-apple-touch' ) );
+		if ( ! empty( $logo_apple_touch ) ) : ?>
+			<link rel="apple-touch-icon" href="<?php echo esc_url( $logo_apple_touch ); ?>" />
+		<?php endif;
+	endif;
 }
 endif;
 
@@ -649,6 +655,5 @@ add_action( 'customize_controls_print_styles', 'ttfmake_plus_styles', 20 );
  * @return string                   The link.
  */
 function ttfmake_get_plus_link( $deprecated = '' ) {
-	$url = 'https://thethemefoundry.com/make-buy/';
-	return esc_url( $url );
+	return 'https://thethemefoundry.com/make-buy/';
 }

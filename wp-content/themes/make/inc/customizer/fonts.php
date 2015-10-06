@@ -44,15 +44,15 @@ function ttfmake_get_standard_fonts() {
 	 */
 	return apply_filters( 'make_get_standard_fonts', array(
 		'serif' => array(
-			'label' => _x( 'Serif', 'font style', 'make' ),
+			'label' => __( 'Serif', 'make' ),
 			'stack' => 'Georgia,Times,"Times New Roman",serif'
 		),
 		'sans-serif' => array(
-			'label' => _x( 'Sans Serif', 'font style', 'make' ),
+			'label' => __( 'Sans Serif', 'make' ),
 			'stack' => '"Helvetica Neue",Helvetica,Arial,sans-serif'
 		),
 		'monospace' => array(
-			'label' => _x( 'Monospaced', 'font style', 'make' ),
+			'label' => __( 'Monospaced', 'make' ),
 			'stack' => 'Monaco,"Lucida Sans Typewriter","Lucida Typewriter","Courier New",Courier,monospace'
 		)
 	) );
@@ -227,7 +227,9 @@ function ttfmake_get_google_font_subsets() {
 		'khmer'        => __( 'Khmer', 'make' ),
 		'latin'        => __( 'Latin', 'make' ),
 		'latin-ext'    => __( 'Latin Extended', 'make' ),
+		'tamil'        => __( 'Tamil', 'make' ),
 		'telugu'       => __( 'Telugu', 'make' ),
+		'thai'         => __( 'Thai', 'make' ),
 		'vietnamese'   => __( 'Vietnamese', 'make' ),
 	) );
 }
