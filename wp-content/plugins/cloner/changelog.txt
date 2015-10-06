@@ -1,0 +1,97 @@
+Plugin Name: Cloner
+Author: WPMU DEV
+Tags: multisite plugin, wordpress plugin, wordpress multisite, multisite, new blogs and users
+Requires at least: 3.8
+Tested up to: 4.2
+
+
+Change Log:
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+
+1.6.2 - 2015-07-21
+----------------------------------------------------------------------
+- Enhancement: Added WooCommerce integration
+
+1.6.2 - 2015-07-16
+----------------------------------------------------------------------
+- Fixed: Redirecting issue in subfolders installations
+
+1.6.1 - 2015-07-13
+----------------------------------------------------------------------
+- New: Added Multi Domains Plugin integration
+- Fixed: Menus copier was not copying CSS classes
+
+1.6 - 2014-12-01
+----------------------------------------------------------------------
+- Enhancement: Terms are now inserted trying to respect the source blog term ID
+- Enhancement: Added new hooks
+- Fixed: If "Update dates" parameter was passed to the posts copier, the dates were not being updated
+
+1.5.2 - 2014-11-03
+----------------------------------------------------------------------
+- Fixed: Bug with Custom Sidebars Pro
+
+1.5.1 - 2014-10-28
+----------------------------------------------------------------------
+- Fixed: Custom subelements in menus were not copying their URLs
+- Fixed:  Menus were not keeping the order in some cases
+- Fixed: Autoblog integration bug
+- Fixed: issue with file extension in integration.php
+- Enhancement: Added new filter before inserting new post
+- Enhancement: Using list of modules instead of readdir to save resources
+
+1.5 - 2014-10-01
+----------------------------------------------------------------------
+- Fixed: Settings>Reading options were not preserved.
+- Fixed: Images links were not replaced correctly in some cases.
+- Fixed: Privacy settings were not copied correctly.
+- Fixed: Header/Background adn context meta for attachments were not copied.
+- Enhanced: Widgets are now copied separate to avoid some cache issues.
+- Enhanced: SSL Verify parameter removed when copying images.
+- Enhanced: Better UI styles.
+- Enhanced: Added PHP 5.3 support.
+- Enhanced: Added more filters.
+
+1.4 - 2014-09-15
+----------------------------------------------------------------------
+- New: New option to override or keep the cloned site name
+- New: New option to select the cloned site privacy
+- New: Ultimate Shortcodes Integration.
+- New: Custom Sidebars Pro integration.
+- Enhanced: Posts/Pages/CPTs and Attachments IDs are now preserved in the cloned site
+- Enhanced: Menus are now cloned one by one to avoid timeouts.
+- Minor bugs fixes
+
+1.3 - 2014-09-08
+----------------------------------------------------------------------
+- Fixed: Warning when creating a new site.
+- Fixed: Issue in autocomplete for some sites setup.
+- Enhanced: Added Ultimate Shortcodes integration.
+- Enhanced: Added new hooks.
+- Enhanced: Attachments in destination blog are now deleted before cloning.
+- Enhanced: Attachments can now be cloned based only on URL instead of attachment IDs
+- Other minor bugfixes.
+
+1.2 - 2014-08-27
+----------------------------------------------------------------------
+- Enhanced: UI revamped.
+- Enhanced: New "Copy Custom Post Types" option.
+- Enhanced: Main site is now available to copy.
+- Enhanced: Posts are now copy with any status.
+- Enhanced: Autocomplete in Cloner screen has been improved.
+- Enhanced: Better memory usage.
+- Enhanced: New hooks added.
+- Fixed: Blog status were not copied.
+- Fixed minor issues.
+
+1.1 - 2014-08-18
+----------------------------------------------------------------------
+- Added BuddyPress integration
+
+1.0 - 2014-08-14
+----------------------------------------------------------------------
+- First release
+
+
+327416-1438811645-ai
