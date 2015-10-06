@@ -1434,8 +1434,11 @@ abstract class GFAddOn {
 		$field_attributes   = $this->get_field_attributes( $field, array() );
 		$horizontal         = rgar( $field, 'horizontal' ) ? ' gaddon-setting-inline' : '';
 
+
+
 		$html = '';
 		$default_choice_attributes = array( 'onclick' => 'jQuery(this).siblings("input[type=hidden]").val(jQuery(this).prop("checked") ? 1 : 0);' );
+		$is_first_choice = true;
 		if ( is_array( $field['choices'] ) ) {
 			foreach ( $field['choices'] as $choice ) {
 				$choice['id']      = sanitize_title( $choice['name'] );
@@ -1443,13 +1446,16 @@ abstract class GFAddOn {
 				$value             = $this->get_setting( $choice['name'], rgar( $choice, 'default_value' ) );
 				$tooltip           = isset( $choice['tooltip'] ) ? gform_tooltip( $choice['tooltip'], rgar( $choice, 'tooltip_class' ), true ) : '';
 
-				$html .= $this->checkbox_item( $choice, $horizontal, $choice_attributes, $value, $tooltip );
+				//displaying error message after first checkbox item
+				$error_icon = '';
+				if ( $is_first_choice ){
+					$error_icon = $this->field_failed_validation( $field ) ? $this->get_error_icon( $field ) : '';
+				}
 
+				$html .= $this->checkbox_item( $choice, $horizontal, $choice_attributes, $value, $tooltip, $error_icon );
+
+				$is_first_choice = false;
 			}
-		}
-
-		if ( $this->field_failed_validation( $field ) ) {
-			$html .= $this->get_error_icon( $field );
 		}
 
 		if ( $echo ) {
@@ -1471,7 +1477,7 @@ abstract class GFAddOn {
 	 *
 	 * @return string - The markup of an individual checkbox item
 	 */
-	protected function checkbox_item( $choice, $horizontal_class, $attributes, $value, $tooltip ) {
+	protected function checkbox_item( $choice, $horizontal_class, $attributes, $value, $tooltip, $error_icon='' ) {
 		$hidden_field_value = $value == '1' ? '1' : '0';
 		$checkbox_item = '
                     <div id="gaddon-setting-checkbox-choice-' . $choice['id'] . '" class="gaddon-setting-checkbox' . $horizontal_class . '">
@@ -1483,7 +1489,7 @@ abstract class GFAddOn {
 			$markup = $this->checkbox_input( $choice, $attributes, $value, $tooltip );
 		}
 
-		$checkbox_item .= $markup . '</div>';
+		$checkbox_item .= $markup . $error_icon . '</div>';
 
 		return $checkbox_item;
 	}
@@ -2390,7 +2396,11 @@ abstract class GFAddOn {
 	 */
 	protected function get_field_attributes( $field, $default = array() ) {
 
-		// each nonstandard property will be extracted from the $props array so it is not auto-output in the field HTML
+		/**
+		 * Each nonstandard property will be extracted from the $props array so it is not auto-output in the field HTML
+		 *
+		 * @param array $field The current field meta to be parsed
+		 */
 		$no_output_props = apply_filters(
 			'gaddon_no_output_field_properties',
 			array(
@@ -3453,14 +3463,14 @@ abstract class GFAddOn {
 	 * @return bool
 	 */
 	public function has_plugin_settings_page() {
-		return $this->method_is_overridden( 'plugin_settings_fields' ) || $this->method_is_overridden( 'plugin_settings' );
+		return $this->method_is_overridden( 'plugin_settings_fields' ) || $this->method_is_overridden( 'plugin_settings_page' ) || $this->method_is_overridden( 'plugin_settings' );
 	}
 
 	/**
 	 * Returns the currently saved plugin settings
 	 * @return mixed
 	 */
-	protected function get_plugin_settings() {
+	public function get_plugin_settings() {
 		return get_option( 'gravityformsaddon_' . $this->_slug . '_settings' );
 	}
 
@@ -3472,7 +3482,7 @@ abstract class GFAddOn {
 	 *
 	 * @return mixed  - Returns the specified plugin setting or null if the setting doesn't exist
 	 */
-	protected function get_plugin_setting( $setting_name ) {
+	public function get_plugin_setting( $setting_name ) {
 		$settings = $this->get_plugin_settings();
 
 		return isset( $settings[ $setting_name ] ) ? $settings[ $setting_name ] : null;
@@ -4197,35 +4207,29 @@ abstract class GFAddOn {
 				break;
 
 			default:
-				$field      = GFFormsModel::get_field( $form, $field_id );
-				$is_integer = $field_id == intval( $field_id );
-				$input_type = GFFormsModel::get_input_type( $field );
+				$field = GFFormsModel::get_field( $form, $field_id );
 
-				if ( $is_integer && $input_type == 'address' ) {
+				if ( is_object( $field ) ) {
+					$is_integer = $field_id == intval( $field_id );
+					$input_type = $field->get_input_type();
 
-					$field_value = $this->get_full_address( $entry, $field_id );
+					if ( $is_integer && $input_type == 'address' ) {
 
-				} elseif ( $is_integer && $input_type == 'name' ) {
+						$field_value = $this->get_full_address( $entry, $field_id );
 
-					$field_value = $this->get_full_name( $entry, $field_id );
+					} elseif ( $is_integer && $input_type == 'name' ) {
 
-				} elseif ( $is_integer && $input_type == 'checkbox' ) {
+						$field_value = $this->get_full_name( $entry, $field_id );
 
-					$selected = array();
+					} elseif ( $input_type == 'list' ) {
 
-					foreach ( $field->inputs as $input ) {
-						$index = (string) $input['id'];
-						if ( ! rgempty( $index, $entry ) ) {
-							$selected[] = rgar( $entry, $index );
-						}
+						$field_value = $this->get_list_field_value( $entry, $field_id, $field );
+
+					} else {
+
+						$field_value = $field->get_value_export( $entry, $field_id );
+
 					}
-
-					$field_value = implode( ', ', $selected );
-
-				} elseif ( $input_type == 'list' ) {
-
-					$field_value = $this->get_list_field_value( $entry, $field_id, $field );
-
 				} else {
 
 					$field_value = rgar( $entry, $field_id );
@@ -4266,22 +4270,8 @@ abstract class GFAddOn {
 	 * @return string
 	 */
 	protected function get_full_address( $entry, $field_id ) {
-		$street_value  = str_replace( '  ', ' ', trim( rgar( $entry, $field_id . '.1' ) ) );
-		$street2_value = str_replace( '  ', ' ', trim( rgar( $entry, $field_id . '.2' ) ) );
-		$city_value    = str_replace( '  ', ' ', trim( rgar( $entry, $field_id . '.3' ) ) );
-		$state_value   = str_replace( '  ', ' ', trim( rgar( $entry, $field_id . '.4' ) ) );
-		$zip_value     = trim( rgar( $entry, $field_id . '.5' ) );
-		$country_value = GF_Fields::get( 'address' )->get_country_code( trim( rgar( $entry, $field_id . '.6' ) ) );
 
-		$address = $street_value;
-		$address .= ! empty( $address ) && ! empty( $street2_value ) ? "  $street2_value" : $street2_value;
-		$address .= ! empty( $address ) && ( ! empty( $city_value ) || ! empty( $state_value ) ) ? ", $city_value," : $city_value;
-		$address .= ! empty( $address ) && ! empty( $city_value ) && ! empty( $state_value ) ? "  $state_value" : $state_value;
-		$address .= ! empty( $address ) && ! empty( $zip_value ) ? "  $zip_value," : $zip_value;
-		$address .= ! empty( $address ) && ! empty( $country_value ) ? "  $country_value" : $country_value;
-
-
-		return $address;
+		return GF_Fields::get( 'address' )->get_value_export( $entry, $field_id );
 	}
 
 	/**
@@ -4294,26 +4284,7 @@ abstract class GFAddOn {
 	 */
 	protected function get_full_name( $entry, $field_id ) {
 
-		//If field is simple (one input), simply return full content
-		$name = rgar( $entry, $field_id );
-		if ( ! empty( $name ) ) {
-			return $name;
-		}
-
-		//Complex field (multiple inputs). Join all pieces and create name
-		$prefix = trim( rgar( $entry, $field_id . '.2' ) );
-		$first  = trim( rgar( $entry, $field_id . '.3' ) );
-		$middle = trim( rgar( $entry, $field_id . '.4' ) );
-		$last   = trim( rgar( $entry, $field_id . '.6' ) );
-		$suffix = trim( rgar( $entry, $field_id . '.8' ) );
-
-		$name = $prefix;
-		$name .= ! empty( $name ) && ! empty( $first ) ? ' ' . $first : $first;
-		$name .= ! empty( $name ) && ! empty( $middle ) ? ' ' . $middle : $middle;
-		$name .= ! empty( $name ) && ! empty( $last ) ? ' ' . $last : $last;
-		$name .= ! empty( $name ) && ! empty( $suffix ) ? ' ' . $suffix : $suffix;
-
-		return $name;
+		return GF_Fields::get( 'name' )->get_value_export( $entry, $field_id );
 	}
 
 	/**
@@ -4326,30 +4297,8 @@ abstract class GFAddOn {
 	 * @return string
 	 */
 	protected function get_list_field_value( $entry, $field_id, $field ) {
-		if ( ! ctype_digit( $field_id ) ) {
-			$field_id_array = explode( '.', $field_id );
-			$field_id       = rgar( $field_id_array, 0 );
-			$column_num     = rgar( $field_id_array, 1 );
-		}
 
-		$value = rgar( $entry, $field_id );
-		if ( empty( $value ) ) {
-			return '';
-		}
-
-		$list_values = $column_values = unserialize( $value );
-
-		if ( ! empty( $column_num ) && $field->enableColumns ) {
-			$column        = rgars( $field->choices, "{$column_num}/text" );
-			$column_values = array();
-			foreach ( $list_values as $value ) {
-				$column_values[] = rgar( $value, $column );
-			}
-		} elseif ( $field->enableColumns ) {
-			return $value;
-		}
-
-		return GFCommon::implode_non_blank( ', ', $column_values );
+		return $field->get_value_export( $entry, $field_id );
 	}
 	
 	/**

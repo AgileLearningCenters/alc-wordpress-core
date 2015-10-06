@@ -496,6 +496,19 @@ class GF_Field_FileUpload extends GF_Field {
 
 	}
 
+	public function get_value_export( $entry, $input_id = '', $use_text = false, $is_csv = false ) {
+		if ( empty( $input_id ) ) {
+			$input_id = $this->id;
+		}
+
+		$value = rgar( $entry, $input_id );
+		if ( $this->multipleFiles && ! empty( $value ) ) {
+			return implode( ' , ', json_decode( $value, true ) );
+		}
+
+		return $value;
+	}
+
 }
 
 GF_Fields::register( new GF_Field_FileUpload() );

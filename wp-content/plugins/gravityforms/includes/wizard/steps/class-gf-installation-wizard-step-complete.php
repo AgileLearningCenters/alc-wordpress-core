@@ -7,9 +7,6 @@ class GF_Installation_Wizard_Step_Complete extends GF_Installation_Wizard_Step {
 	function display() {
 
 		?>
-		<h3>
-			<?php esc_html_e( '', 'gravityforms' ); ?>
-		</h3>
 		<p>
 			<?php
 			esc_html_e( "Congratulations! Click the 'Create A Form' button to get started.", 'gravityforms' );

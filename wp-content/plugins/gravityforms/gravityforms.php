@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms
 Plugin URI: http://www.gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 1.9.12.1
+Version: 1.9.13
 Author: rocketgenius
 Author URI: http://www.rocketgenius.com
 Text Domain: gravityforms
@@ -112,10 +112,13 @@ add_action( 'plugins_loaded', array( 'GFForms', 'loaded' ) );
 
 class GFForms {
 
-	public static $version = '1.9.12.1';
+	public static $version = '1.9.13';
 
 	public static function loaded() {
 
+		/**
+		 * Fires when Gravity Forms has loaded. When developing Add-Ons, use this hook to initialize any functionality that depends on Gravity Forms functionality
+		 */
 		do_action( 'gform_loaded' );
 
 		//initializing Add-Ons if necessary
@@ -2853,6 +2856,11 @@ class GFForms {
 		$enabled = get_option( 'gform_enable_background_updates' );
 		GFCommon::log_debug( 'GFForms::is_auto_update_disabled() - $enabled: ' . var_export( $enabled, true ) );
 
+		/**
+		 * Filter to disable Gravity Forms Automatic updates
+		 *
+		 * @param bool $enabled Check if automatic updates are enabled, and then disable it
+		 */
 		$disabled = apply_filters( 'gform_disable_auto_update', ! $enabled );
 		GFCommon::log_debug( 'GFForms::is_auto_update_disabled() - $disabled: ' . var_export( $disabled, true ) );
 

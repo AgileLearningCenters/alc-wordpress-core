@@ -2669,7 +2669,13 @@ class GFCommon {
 	}
 
 	public static function get_disallowed_file_extensions() {
-		return array( 'php', 'asp', 'aspx', 'cmd', 'csh', 'bat', 'html', 'hta', 'jar', 'exe', 'com', 'js', 'lnk', 'htaccess', 'phtml', 'ps1', 'ps2', 'php3', 'php4', 'php5', 'php6', 'py', 'rb', 'tmp' );
+
+		$extensions = array( 'php', 'asp', 'aspx', 'cmd', 'csh', 'bat', 'html', 'hta', 'jar', 'exe', 'com', 'js', 'lnk', 'htaccess', 'phtml', 'ps1', 'ps2', 'php3', 'php4', 'php5', 'php6', 'py', 'rb', 'tmp' );
+
+		// Intended for internal use - not to be included in the documentation.
+		$extensions = apply_filters( 'gform_disallowed_file_extensions', $extensions );
+
+		return $extensions;
 	}
 
 	public static function match_file_extension( $file_name, $extensions ) {
@@ -2920,7 +2926,7 @@ class GFCommon {
 				$shipping_price    = RGFormsModel::get_lead_field_value( $lead, $shipping_field[0] );
 				$shipping_name     = $shipping_field[0]['label'];
 				$shipping_field_id = $shipping_field[0]['id'];
-				if ( $shipping_field[0]['inputType'] != 'singleshipping' ) {
+				if ( $shipping_field[0]['inputType'] != 'singleshipping' && ! empty( $shipping_price ) ) {
 					list( $shipping_method, $shipping_price ) = explode( '|', $shipping_price );
 					$shipping_name = $shipping_field[0]['label'] . " ($shipping_method)";
 				}
@@ -3608,19 +3614,19 @@ class GFCommon {
 		$gf_vars['hide']                    = esc_html__( 'Hide', 'gravityforms' );
 		$gf_vars['all']                     = esc_html( _x( 'All', 'Conditional Logic', 'gravityforms' ) );
 		$gf_vars['any']                     = esc_html( _x( 'Any', 'Conditional Logic', 'gravityforms' ) );
-		$gf_vars['ofTheFollowingMatch']     = esc_html( 'of the following match:', 'gravityforms' );
-		$gf_vars['is']                      = esc_html( 'is', 'gravityforms' );
-		$gf_vars['isNot']                   = esc_html( 'is not', 'gravityforms' );
-		$gf_vars['greaterThan']             = esc_html( 'greater than', 'gravityforms' );
-		$gf_vars['lessThan']                = esc_html( 'less than', 'gravityforms' );
-		$gf_vars['contains']                = esc_html( 'contains', 'gravityforms' );
-		$gf_vars['startsWith']              = esc_html( 'starts with', 'gravityforms' );
-		$gf_vars['endsWith']                = esc_html( 'ends with', 'gravityforms' );
+		$gf_vars['ofTheFollowingMatch']     = esc_html__( 'of the following match:', 'gravityforms' );
+		$gf_vars['is']                      = esc_html__( 'is', 'gravityforms' );
+		$gf_vars['isNot']                   = esc_html__( 'is not', 'gravityforms' );
+		$gf_vars['greaterThan']             = esc_html__( 'greater than', 'gravityforms' );
+		$gf_vars['lessThan']                = esc_html__( 'less than', 'gravityforms' );
+		$gf_vars['contains']                = esc_html__( 'contains', 'gravityforms' );
+		$gf_vars['startsWith']              = esc_html__( 'starts with', 'gravityforms' );
+		$gf_vars['endsWith']                = esc_html__( 'ends with', 'gravityforms' );
 
-		$gf_vars['thisConfirmation']                 = esc_html( 'Use this confirmation if', 'gravityforms' );
-		$gf_vars['thisNotification']                 = esc_html( 'Send this notification if', 'gravityforms' );
-		$gf_vars['confirmationSave']                 = esc_html( 'Save', 'gravityforms' );
-		$gf_vars['confirmationSaving']               = esc_html( 'Saving...', 'gravityforms' );
+		$gf_vars['thisConfirmation']                 = esc_html__( 'Use this confirmation if', 'gravityforms' );
+		$gf_vars['thisNotification']                 = esc_html__( 'Send this notification if', 'gravityforms' );
+		$gf_vars['confirmationSave']                 = esc_html__( 'Save', 'gravityforms' );
+		$gf_vars['confirmationSaving']               = esc_html__( 'Saving...', 'gravityforms' );
 		$gf_vars['confirmationAreYouSure']           = __( 'Are you sure you wish to cancel these changes?', 'gravityforms' );
 		$gf_vars['confirmationIssueSaving']          = __( 'There was an issue saving this confirmation.', 'gravityforms' );
 		$gf_vars['confirmationConfirmDelete']        = __( 'Are you sure you wish to delete this confirmation?', 'gravityforms' );
@@ -3821,7 +3827,7 @@ class GFCommon {
 					$sub_filters[]                 = $sub_filter;
 				}
 				$field_filter['filters'] = $sub_filters;
-			} elseif ( $input_type == 'name' && $field->nameFormat == '' || $input_type == 'address' ) {
+			} elseif ( ( $input_type == 'name' && $field->nameFormat !== '' && $field->nameFormat !== 'simple') || $input_type == 'address' ) {
 				// standard two input name field
 				$field_filter['key']   = $key;
 				$field_filter['group'] = true;

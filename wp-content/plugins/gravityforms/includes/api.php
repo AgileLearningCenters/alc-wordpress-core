@@ -740,12 +740,12 @@ class GFAPI {
 		}
 
 		/**
-		 * Fires after the Entry is updated
+		 * Fires after the Entry is updated.
 		 *
-		 * @param array $entry    The new Entry object
-		 * @param array $original_entry    The Original Entry object
+		 * @param array $lead The entry object after being updated.
+		 * @param array $original_entry The entry object before being updated.
 		 */
-		do_action( 'gform_post_update_entry', $entry, $original_entry );
+		gf_do_action( 'gform_post_update_entry', $form_id, $entry, $original_entry );
 
 		return true;
 	}

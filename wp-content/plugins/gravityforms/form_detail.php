@@ -2367,12 +2367,24 @@ class GFFormDetail {
 					if ( GFCommon::current_user_can_any( 'gravityforms_delete_forms' ) ) {
 						$trash_link = '<a class="submitdelete" title="' . __( 'Move this form to the trash', 'gravityforms' ) . '" onclick="if(confirm(\'' . __( "Would you like to move this form to the trash? \'Cancel\' to stop. \'OK\' to continue", 'gravityforms' ) . '\')){ gf_vars.isFormTrash = true; jQuery(\'#form_trash\')[0].submit();} else{return false;}">' . __( 'Move to Trash', 'gravityforms' ) . '</a>';
 						$trash_link = apply_filters( 'gform_form_delete_link', $trash_link ); // deprecated
+
+						/**
+						 * Allows for modification of the Form Trash Link
+						 *
+						 * @param string $trash_link The Trash link HTML
+						 */
 						echo apply_filters( 'gform_form_trash_link', $trash_link );
 					}
 
 					$button_text = rgar( $form, 'id' ) > 0 ? __( 'Update Form', 'gravityforms' ) : __( 'Save Form', 'gravityforms' );
 					$isNew = rgar( $form, 'id' ) > 0 ? 0 : 1;
 					$save_button = '<input type="button" class="button button-large button-primary update-form" value="' . $button_text . '" onclick="SaveForm(' . $isNew . ');" />';
+
+					/**
+					 * A filter to aloow you to modify the Form Save button
+					 *
+					 * @param string $save_button The Form Save button HTML
+					 */
 					$save_button = apply_filters( 'gform_save_form_button', $save_button );
 					echo $save_button;
 					?>

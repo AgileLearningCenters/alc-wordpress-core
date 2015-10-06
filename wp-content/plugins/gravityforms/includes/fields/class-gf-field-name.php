@@ -391,6 +391,39 @@ class GF_Field_Name extends GF_Field {
 			}
 		}
 	}
+
+	public function get_value_export( $entry, $input_id = '', $use_text = false, $is_csv = false ) {
+		if ( empty( $input_id ) ) {
+			$input_id = $this->id;
+		}
+
+		if ( absint( $input_id ) == $input_id ) {
+			//If field is simple (one input), simply return full content
+			$name = rgar( $entry, $input_id );
+			if ( ! empty( $name ) ) {
+				return $name;
+			}
+
+			//Complex field (multiple inputs). Join all pieces and create name
+			$prefix = trim( rgar( $entry, $input_id . '.2' ) );
+			$first  = trim( rgar( $entry, $input_id . '.3' ) );
+			$middle = trim( rgar( $entry, $input_id . '.4' ) );
+			$last   = trim( rgar( $entry, $input_id . '.6' ) );
+			$suffix = trim( rgar( $entry, $input_id . '.8' ) );
+
+			$name = $prefix;
+			$name .= ! empty( $name ) && ! empty( $first ) ? ' ' . $first : $first;
+			$name .= ! empty( $name ) && ! empty( $middle ) ? ' ' . $middle : $middle;
+			$name .= ! empty( $name ) && ! empty( $last ) ? ' ' . $last : $last;
+			$name .= ! empty( $name ) && ! empty( $suffix ) ? ' ' . $suffix : $suffix;
+
+			return $name;
+		} else {
+
+			return rgar( $entry, $input_id );
+		}
+	}
+
 }
 
 GF_Fields::register( new GF_Field_Name() );

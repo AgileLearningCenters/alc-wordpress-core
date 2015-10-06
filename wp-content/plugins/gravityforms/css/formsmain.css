@@ -1373,3 +1373,6 @@ body .gform_wrapper img.add_list_item, body .gform_wrapper img.delete_list_item 
 }
 .gform_wrapper ul li.gfield.field_sublabel_above.field_description_below + li.gfield { margin-top: 1em }
 .gform_wrapper li.gfield ul.gfield_radio li input[type="radio"] + input[type="text"] { width: 45.25% }
+.gform_wrapper table.recaptchatable {
+    table-layout: auto;
+}

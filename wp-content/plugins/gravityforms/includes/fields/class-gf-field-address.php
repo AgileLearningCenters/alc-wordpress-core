@@ -934,6 +934,34 @@ class GF_Field_Address extends GF_Field {
 		}
 
 	}
+
+	public function get_value_export( $entry, $input_id = '', $use_text = false, $is_csv = false ) {
+		if ( empty( $input_id ) ) {
+			$input_id = $this->id;
+		}
+
+		if ( absint( $input_id ) == $input_id ) {
+			$street_value  = str_replace( '  ', ' ', trim( rgar( $entry, $input_id . '.1' ) ) );
+			$street2_value = str_replace( '  ', ' ', trim( rgar( $entry, $input_id . '.2' ) ) );
+			$city_value    = str_replace( '  ', ' ', trim( rgar( $entry, $input_id . '.3' ) ) );
+			$state_value   = str_replace( '  ', ' ', trim( rgar( $entry, $input_id . '.4' ) ) );
+			$zip_value     = trim( rgar( $entry, $input_id . '.5' ) );
+			$country_value = $this->get_country_code( trim( rgar( $entry, $input_id . '.6' ) ) );
+
+			$address = $street_value;
+			$address .= ! empty( $address ) && ! empty( $street2_value ) ? "  $street2_value" : $street2_value;
+			$address .= ! empty( $address ) && ( ! empty( $city_value ) || ! empty( $state_value ) ) ? ", $city_value," : $city_value;
+			$address .= ! empty( $address ) && ! empty( $city_value ) && ! empty( $state_value ) ? "  $state_value" : $state_value;
+			$address .= ! empty( $address ) && ! empty( $zip_value ) ? "  $zip_value," : $zip_value;
+			$address .= ! empty( $address ) && ! empty( $country_value ) ? "  $country_value" : $country_value;
+
+			return $address;
+		} else {
+
+			return rgar( $entry, $input_id );
+		}
+	}
+
 }
 
 GF_Fields::register( new GF_Field_Address() );

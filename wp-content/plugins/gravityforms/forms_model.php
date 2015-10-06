@@ -164,8 +164,8 @@ class GFFormsModel {
 
 		$sql = $wpdb->prepare(
 			" SELECT sum(payment_amount) revenue, count(l.id) orders
-                                 FROM $lead_table_name l
-                                 WHERE form_id=%d AND payment_amount IS NOT null", $form_id
+             FROM $lead_table_name l
+             WHERE form_id=%d AND payment_amount IS NOT null", $form_id
 		);
 
 		$totals = $wpdb->get_row( $sql, ARRAY_A );
@@ -173,8 +173,8 @@ class GFFormsModel {
 		$active = $wpdb->get_var(
 			$wpdb->prepare(
 				" SELECT count(id) as active
-                                                 FROM $lead_table_name
-                                                 WHERE form_id=%d AND payment_status='Active'", $form_id
+                 FROM $lead_table_name
+                 WHERE form_id=%d AND payment_status='Active'", $form_id
 			)
 		);
 
@@ -316,9 +316,10 @@ class GFFormsModel {
 	public static function get_form_meta( $form_id ) {
 		global $wpdb;
 
+		$key = get_current_blog_id() . '_' . $form_id;
 		// return cached version if form meta has been previously retrieved for this form
-		if ( isset( self::$_current_forms[ $form_id ] ) ) {
-			return self::$_current_forms[ $form_id ];
+		if ( isset( self::$_current_forms[ $key ] ) ) {
+			return self::$_current_forms[ $key ];
 		}
 
 		$table_name = self::get_meta_table_name();
@@ -703,9 +704,9 @@ class GFFormsModel {
 				is_fulfilled=%d,
 				transaction_type={$transaction_type},
 				payment_method=%s,
-				status='{$status}'
+				status=%s
 		   WHERE id=%d", rgar( $lead, 'form_id' ), rgar( $lead, 'post_id' ), rgar( $lead, 'is_starred' ), rgar( $lead, 'is_read' ), rgar( $lead, 'ip' ), $source_url, $user_agent,
-			rgar( $lead, 'currency' ), rgar( $lead, 'payment_status' ), rgar( $lead, 'transaction_id' ), rgar( $lead, 'is_fulfilled' ), rgar( $lead, 'payment_method' ), rgar( $lead, 'id' )
+			rgar( $lead, 'currency' ), rgar( $lead, 'payment_status' ), rgar( $lead, 'transaction_id' ), rgar( $lead, 'is_fulfilled' ), rgar( $lead, 'payment_method' ), $status, rgar( $lead, 'id' )
 		);
 		$wpdb->query( $sql );
 
@@ -803,6 +804,12 @@ class GFFormsModel {
 		$sql = $wpdb->prepare( "DELETE FROM $lead_table WHERE form_id=%d {$status_filter}", $form_id );
 		$wpdb->query( $sql );
 	}
+
+
+
+
+
+
 
 	public static function delete_views( $form_id ) {
 		global $wpdb;
@@ -1316,7 +1323,7 @@ class GFFormsModel {
 			$user_id = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
 
 			$lead_table = RGFormsModel::get_lead_table_name();
-			$user_agent = self::truncate( $_SERVER['HTTP_USER_AGENT'], 250 );
+			$user_agent = self::truncate( rgar( $_SERVER, 'HTTP_USER_AGENT' ), 250 );
 			$currency   = GFCommon::get_currency();
 			$source_url = self::truncate( self::get_current_page_url(), 200 );
 
@@ -2722,7 +2729,7 @@ class GFFormsModel {
 		GFCommon::log_debug( 'GFFormsModel::create_post(): Updating entry with post id.' );
 		self::update_lead_property( $lead['id'], 'post_id', $post_id );
 
-		do_action( 'gform_after_create_post', $post_id );
+		gf_do_action( 'gform_after_create_post', $form['id'], $post_id, $lead, $form );
 
 		return $post_id;
 	}
@@ -3309,7 +3316,7 @@ class GFFormsModel {
 			$lead_field_keys = array_keys( $lead );
 			natsort( $lead_field_keys );
 			foreach ( $lead_field_keys as $input_id ) {
-				if ( is_numeric( $input_id ) && absint( $input_id ) == absint( $field->id ) ) {
+				if ( is_numeric( $input_id ) && absint( $input_id ) == absint( $field_id ) ) {
 					$val = $lead[ $input_id ];
 					if ( strlen( $val ) >= ( $max_length - 10 ) ) {
 						if ( empty( $form ) ) {
@@ -3426,6 +3433,8 @@ class GFFormsModel {
 
 		$lead_detail_table_name = self::get_lead_details_table_name();
 		$lead_table_name        = self::get_lead_table_name();
+
+		$sort_direction = strtolower( $sort_direction ) == 'desc' ? 'DESC' : 'ASC' ;
 
 		$orderby    = $is_numeric_sort ? "ORDER BY query, (value+0) $sort_direction" : "ORDER BY query, value $sort_direction";
 		$is_default = false;
@@ -4137,6 +4146,8 @@ class GFFormsModel {
 		$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
 		$lead_table_name        = GFFormsModel::get_lead_table_name();
 
+		$sort_direction = strtolower( $sort_direction ) == 'desc' ? 'DESC' : 'ASC' ;
+
 		$orderby = $is_numeric_sort ? "ORDER BY query, (value+0) $sort_direction" : "ORDER BY query, value $sort_direction";
 
 		$form_id_where = self::get_form_id_where( $form_id );
@@ -4369,7 +4380,9 @@ class GFFormsModel {
 			}
 
 			$val      = rgar( $search, 'value' );
-			$operator = isset( $search['operator'] ) ? strtolower( $search['operator'] ) : '=';
+
+			$operator = self::is_valid_operator( rgar( $search, 'operator' ) ) ? strtolower( $search['operator'] ) : '=';
+
 			if ( 'is' == $operator ) {
 				$operator = '=';
 			}
@@ -4633,7 +4646,7 @@ class GFFormsModel {
 				continue;
 			}
 
-			$operator = isset( $filter['operator'] ) ? strtolower( $filter['operator'] ) : '=';
+			$operator = self::is_valid_operator( rgar( $filter, 'operator' ) ) ? strtolower( $filter['operator'] ) : '=';
 
 			$value = rgar( $filter, 'value' );
 
@@ -4685,9 +4698,9 @@ class GFFormsModel {
 		$detail_table_name = self::get_lead_details_table_name();
 		$lead_table_name   = self::get_lead_table_name();
 
-		$sql = "SELECT count(id)
-	            FROM $lead_table_name
-	            WHERE status='{$status}'";
+		$sql = $wpdb->prepare( "SELECT count(id)
+								FROM $lead_table_name
+								WHERE status=%s", $status );
 
 		return $wpdb->get_var( $sql );
 	}
@@ -5029,14 +5042,14 @@ class GFFormsModel {
 			$logic['logicType'] = 'all';
 		}
 
-		if ( is_array( $logic['rules'] ) ) {
+		if ( isset( $logic['rules'] ) && is_array( $logic['rules'] ) ) {
 			foreach ( $logic['rules'] as &$rule ) {
 				if ( isset( $rule['fieldId'] ) ) {
 					// Field ID could be meta key
 					$rule['fieldId'] = wp_strip_all_tags( $rule['fieldId'] );
 				}
 				if ( isset( $rule['operator'] ) ) {
-					$is_valid_operator = in_array( $rule['operator'], array('is', 'isnot', '>', '<', 'contains', 'starts_with', 'ends_with') );
+					$is_valid_operator = self::is_valid_operator( $rule['operator'] );
 					$rule['operator'] = $is_valid_operator ? $rule['operator'] : 'is';
 				}
 
@@ -5077,6 +5090,10 @@ class GFFormsModel {
 		}
 
 		return $fields;
+	}
+
+	public static function is_valid_operator( $operator ){
+		return in_array( strtolower( $operator ) , array('is', 'isnot', '<>', 'not in', 'in', '>', '<', 'contains', 'starts_with', 'ends_with') );
 	}
 }
 
