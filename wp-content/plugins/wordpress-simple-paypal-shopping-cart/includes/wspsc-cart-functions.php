@@ -15,7 +15,7 @@ function print_wp_shopping_cart($args = array()) {
         }
         $cart_products_page_url = get_option('cart_products_page_url');
         if (!empty($cart_products_page_url)) {
-            $output .= '<div class="wp_cart_visit_shop_link"><a rel="nofollow" href="' . $cart_products_page_url . '">' . (__("Visit The Shop", "WSPSC")) . '</a></div>';
+            $output .= '<div class="wp_cart_visit_shop_link"><a rel="nofollow" href="' . $cart_products_page_url . '">' . (__("Visit The Shop", "wordpress-simple-paypal-shopping-cart")) . '</a></div>';
         }
         return $output;
     }
@@ -27,11 +27,11 @@ function print_wp_shopping_cart($args = array()) {
     if (!empty($defaultCurrency))
         $paypal_currency = $defaultCurrency;
     else
-        $paypal_currency = __("USD", "WSPSC");
+        $paypal_currency = __("USD", "wordpress-simple-paypal-shopping-cart");
     if (!empty($defaultSymbol))
         $paypal_symbol = $defaultSymbol;
     else
-        $paypal_symbol = __("$", "WSPSC");
+        $paypal_symbol = __("$", "wordpress-simple-paypal-shopping-cart");
 
     if (!empty($defaultEmail))
         $email = $defaultEmail;
@@ -51,12 +51,12 @@ function print_wp_shopping_cart($args = array()) {
     $urls .= '<input type="hidden" name="notify_url" value="' . $notify . '" />';
 
     $title = get_option('wp_cart_title');
-    //if (empty($title)) $title = __("Your Shopping Cart", "WSPSC");
+    //if (empty($title)) $title = __("Your Shopping Cart", "wordpress-simple-paypal-shopping-cart");
 
     global $plugin_dir_name;
     $output .= '<div class="shopping_cart">';
     if (!get_option('wp_shopping_cart_image_hide')) {
-        $output .= "<img src='" . WP_CART_URL . "/images/shopping_cart_icon.png' value='" . (__("Cart", "WSPSC")) . "' title='" . (__("Cart", "WSPSC")) . "' />";
+        $output .= "<img src='" . WP_CART_URL . "/images/shopping_cart_icon.png' class='wspsc_cart_header_image' value='" . (__("Cart", "wordpress-simple-paypal-shopping-cart")) . "' title='" . (__("Cart", "wordpress-simple-paypal-shopping-cart")) . "' />";
     }
     if (!empty($title)) {
         $output .= '<h2>';
@@ -64,7 +64,7 @@ function print_wp_shopping_cart($args = array()) {
         $output .= '</h2>';
     }
 
-    $output .= '<br /><span id="pinfo" style="display: none; font-weight: bold; color: red;">' . (__("Hit enter to submit new Quantity.", "WSPSC")) . '</span>';
+    $output .= '<span id="pinfo" style="display: none; font-weight: bold; color: red;">' . (__("Hit enter to submit new Quantity.", "wordpress-simple-paypal-shopping-cart")) . '</span>';
     $output .= '<table style="width: 100%;">';
 
     $count = 1;
@@ -74,7 +74,7 @@ function print_wp_shopping_cart($args = array()) {
     if ($_SESSION['simpleCart'] && is_array($_SESSION['simpleCart'])) {
         $output .= '
         <tr>
-        <th class="wspsc_cart_item_name_th">' . (__("Item Name", "WSPSC")) . '</th><th class="wspsc_cart_qty_th">' . (__("Quantity", "WSPSC")) . '</th><th class="wspsc_cart_price_th">' . (__("Price", "WSPSC")) . '</th><th></th>
+        <th class="wspsc_cart_item_name_th">' . (__("Item Name", "wordpress-simple-paypal-shopping-cart")) . '</th><th class="wspsc_cart_qty_th">' . (__("Quantity", "wordpress-simple-paypal-shopping-cart")) . '</th><th class="wspsc_cart_price_th">' . (__("Price", "wordpress-simple-paypal-shopping-cart")) . '</th><th></th>
         </tr>';
         $item_total_shipping = 0;
         $postage_cost = 0;
@@ -113,7 +113,7 @@ function print_wp_shopping_cart($args = array()) {
 	        <td><form method=\"post\" action=\"\" class=\"wp_cart_remove_item_form\">
 	        <input type=\"hidden\" name=\"wspsc_product\" value=\"" . $item['name'] . "\" />
 	        <input type='hidden' name='delcart' value='1' />
-	        <input type='image' src='" . WP_CART_URL . "/images/Shoppingcart_delete.png' value='" . (__("Remove", "WSPSC")) . "' title='" . (__("Remove", "WSPSC")) . "' /></form></td></tr>
+	        <input type='image' src='" . WP_CART_URL . "/images/Shoppingcart_delete.png' value='" . (__("Remove", "wordpress-simple-paypal-shopping-cart")) . "' title='" . (__("Remove", "wordpress-simple-paypal-shopping-cart")) . "' /></form></td></tr>
 	        ";
 
             $form .= "
@@ -138,11 +138,11 @@ function print_wp_shopping_cart($args = array()) {
     if ($count) {
         if ($postage_cost != 0) {
             $output .= "
-                <tr><td colspan='2' style='font-weight: bold; text-align: right;'>" . (__("Subtotal", "WSPSC")) . ": </td><td style='text-align: center'>" . print_payment_currency($total, $paypal_symbol, $decimal) . "</td><td></td></tr>
-                <tr><td colspan='2' style='font-weight: bold; text-align: right;'>" . (__("Shipping", "WSPSC")) . ": </td><td style='text-align: center'>" . print_payment_currency($postage_cost, $paypal_symbol, $decimal) . "</td><td></td></tr>";
+                <tr><td colspan='2' style='font-weight: bold; text-align: right;'>" . (__("Subtotal", "wordpress-simple-paypal-shopping-cart")) . ": </td><td style='text-align: center'>" . print_payment_currency($total, $paypal_symbol, $decimal) . "</td><td></td></tr>
+                <tr><td colspan='2' style='font-weight: bold; text-align: right;'>" . (__("Shipping", "wordpress-simple-paypal-shopping-cart")) . ": </td><td style='text-align: center'>" . print_payment_currency($postage_cost, $paypal_symbol, $decimal) . "</td><td></td></tr>";
         }
 
-        $output .= "<tr><td colspan='2' style='font-weight: bold; text-align: right;'>" . (__("Total", "WSPSC")) . ": </td><td style='text-align: center'>" . print_payment_currency(($total + $postage_cost), $paypal_symbol, $decimal) . "</td><td></td></tr>";
+        $output .= "<tr><td colspan='2' style='font-weight: bold; text-align: right;'>" . (__("Total", "wordpress-simple-paypal-shopping-cart")) . ": </td><td style='text-align: center'>" . print_payment_currency(($total + $postage_cost), $paypal_symbol, $decimal) . "</td><td></td></tr>";
 
         if (isset($_SESSION['wpspsc_cart_action_msg']) && !empty($_SESSION['wpspsc_cart_action_msg'])) {
             $output .= '<tr><td colspan="4"><span class="wpspsc_cart_action_msg">' . $_SESSION['wpspsc_cart_action_msg'] . '</span></td></tr>';
@@ -151,10 +151,10 @@ function print_wp_shopping_cart($args = array()) {
         if (get_option('wpspsc_enable_coupon') == '1') {
             $output .= '<tr><td colspan="4">
                 <div class="wpspsc_coupon_section">
-                <span class="wpspsc_coupon_label">' . (__("Enter Coupon Code", "WSPSC")) . '</span>
+                <span class="wpspsc_coupon_label">' . (__("Enter Coupon Code", "wordpress-simple-paypal-shopping-cart")) . '</span>
                 <form  method="post" action="" >
                 <input type="text" name="wpspsc_coupon_code" value="" size="10" />
-                <span class="wpspsc_coupon_apply_button"><input type="submit" name="wpspsc_apply_coupon" class="wpspsc_apply_coupon" value="' . (__("Apply", "WSPSC")) . '" /></span>
+                <span class="wpspsc_coupon_apply_button"><input type="submit" name="wpspsc_apply_coupon" class="wpspsc_apply_coupon" value="' . (__("Apply", "wordpress-simple-paypal-shopping-cart")) . '" /></span>
                 </form>
                 </div>
                 </td></tr>';
@@ -174,7 +174,7 @@ function print_wp_shopping_cart($args = array()) {
         $output .= '<form action="' . $paypal_checkout_url . '" method="post" ' . $form_target_code . '>';
         $output .= $form;
         if ($count)
-            $output .= '<input type="image" src="' . WP_CART_URL . '/images/' . (__("paypal_checkout_EN.png", "WSPSC")) . '" name="submit" class="wp_cart_checkout_button" alt="' . (__("Make payments with PayPal - it\'s fast, free and secure!", "WSPSC")) . '" />';
+            $output .= '<input type="image" src="' . WP_CART_URL . '/images/' . (__("paypal_checkout_EN.png", "wordpress-simple-paypal-shopping-cart")) . '" name="submit" class="wp_cart_checkout_button" alt="' . (__("Make payments with PayPal - it\'s fast, free and secure!", "wordpress-simple-paypal-shopping-cart")) . '" />';
 
         $output .= $urls . '
             <input type="hidden" name="business" value="' . $email . '" />

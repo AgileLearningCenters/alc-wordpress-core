@@ -14,8 +14,8 @@ class paypal_ipn_handler {
    var $fields = array();           // array holds the fields to submit to paypal
    var $sandbox_mode = false;
 
-   	function paypal_ipn_handler()
-   	{
+    function __construct()
+    {
         $this->paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
       	$this->last_error = '';
       	$this->ipn_log_file = WP_CART_PATH.'ipn_handle_debug.log';
@@ -131,7 +131,7 @@ class paypal_ipn_handler {
         $ip_address = $custom_values['ip'];
         $applied_coupon_code = $custom_values['coupon_code'];
         $currency_symbol = get_option('cart_currency_symbol');
-        $this->debug_log('custom values',true);
+        $this->debug_log('Custom values',true);
         $this->debug_log_array($custom_values,true);
         $this->debug_log('Order post id: '.$post_id,true);
         
@@ -178,11 +178,12 @@ class paypal_ipn_handler {
         
         $orig_individual_item_total = round($orig_individual_item_total,2);
         $individual_paid_item_total = round($individual_paid_item_total,2);
-        if($orig_individual_item_total < $individual_paid_item_total){
+        $this->debug_log('Checking price. Original price: ' . $orig_individual_item_total . '. Paid price: '.$individual_paid_item_total, true);
+        if($individual_paid_item_total < $orig_individual_item_total){  //Paid price is less so block this transaction.      
             $this->debug_log('Error! Post payment price validation failed. The price amount may have been altered. This transaction will not be processed.', false);
             $this->debug_log('Original total price: ' . $orig_individual_item_total . '. Paid total price: '.$individual_paid_item_total, false);
             return;
-        }        
+        }
         //*** End of security check ***
 
         $updated_wpsc_order = array(
@@ -235,12 +236,13 @@ class paypal_ipn_handler {
         update_post_meta( $post_id, 'wpsc_shipping_amount', $shipping);
         $args = array();
         $args['product_details'] = $product_details;
+        $args['order_id'] = $post_id;
+        $args['coupon_code'] = $applied_coupon_code;        
         update_post_meta($post_id, 'wpspsc_items_ordered', $product_details);
         $from_email = get_option('wpspc_buyer_from_email');
         $subject = get_option('wpspc_buyer_email_subj');
         $body = get_option('wpspc_buyer_email_body');
         $args['email_body'] = $body;
-        $args['coupon_code'] = $applied_coupon_code;
         $body = wpspc_apply_dynamic_tags_on_email_body($this->ipn_data, $args);
 
         $this->debug_log('Applying filter - wspsc_buyer_notification_email_body', true);
@@ -260,8 +262,6 @@ class paypal_ipn_handler {
         $seller_email_subject = get_option('wpspc_seller_email_subj');
         $seller_email_body = get_option('wpspc_seller_email_body');
         $args['email_body'] = $seller_email_body;
-        $args['order_id'] = $post_id;
-        $args['coupon_code'] = $applied_coupon_code;
         $seller_email_body = wpspc_apply_dynamic_tags_on_email_body($this->ipn_data, $args);
 
         $this->debug_log('Applying filter - wspsc_seller_notification_email_body', true);

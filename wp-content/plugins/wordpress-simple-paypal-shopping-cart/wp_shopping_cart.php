@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: WP Simple Paypal Shopping cart
-Version: 4.1.0
+Version: 4.1.4
 Plugin URI: https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768
 Author: Tips and Tricks HQ, Ruhul Amin
 Author URI: https://www.tipsandtricks-hq.com/
 Description: Simple WordPress Shopping Cart Plugin, very easy to use and great for selling products and services from your blog!
-Text Domain: WSPSC
+Text Domain: wordpress-simple-paypal-shopping-cart
 Domain Path: /languages/
 */
 
@@ -22,7 +22,7 @@ if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
     }
 }
 
-define('WP_CART_VERSION', '4.1.0');
+define('WP_CART_VERSION', '4.1.4');
 define('WP_CART_FOLDER', dirname(plugin_basename(__FILE__)));
 define('WP_CART_PATH', plugin_dir_path(__FILE__));
 define('WP_CART_URL', plugins_url('', __FILE__));
@@ -37,9 +37,9 @@ define('WP_CART_MAIN_MENU_SLUG', 'wspsc-main');
 
 // loading language files
 //Set up localisation. First loaded overrides strings present in later loaded file
-$locale = apply_filters( 'plugin_locale', get_locale(), 'WSPSC' );
-load_textdomain( 'WSPSC', WP_LANG_DIR . "/WSPSC-$locale.mo" );
-load_plugin_textdomain('WSPSC', false, WP_CART_FOLDER . '/languages');
+$locale = apply_filters( 'plugin_locale', get_locale(), 'wordpress-simple-paypal-shopping-cart' );
+load_textdomain( 'wordpress-simple-paypal-shopping-cart', WP_LANG_DIR . "/wordpress-simple-paypal-shopping-cart-$locale.mo" );
+load_plugin_textdomain('wordpress-simple-paypal-shopping-cart', false, WP_CART_FOLDER . '/languages');
 
 include_once('wp_shopping_cart_utility_functions.php');
 include_once('wp_shopping_cart_shortcodes.php');
@@ -187,7 +187,7 @@ function wpspc_cart_actions_handler() {
             if (isset($_SESSION['simple_cart_id']) && !empty($_SESSION['simple_cart_id'])) {
                 wpspc_update_cart_items_record();
             } else {
-                echo "<p>" . (__("Error! Your session is out of sync. Please reset your session.", "WSPSC")) . "</p>";
+                echo "<p>" . (__("Error! Your session is out of sync. Please reset your session.", "wordpress-simple-paypal-shopping-cart")) . "</p>";
             }
         }
 
@@ -195,7 +195,7 @@ function wpspc_cart_actions_handler() {
         if (get_option('wp_shopping_cart_auto_redirect_to_checkout_page')) {
             $checkout_url = get_option('cart_checkout_page_url');
             if (empty($checkout_url)) {
-                echo "<br /><strong>" . (__("Shopping Cart Configuration Error! You must specify a value in the 'Checkout Page URL' field for the automatic redirection feature to work!", "WSPSC")) . "</strong><br />";
+                echo "<br /><strong>" . (__("Shopping Cart Configuration Error! You must specify a value in the 'Checkout Page URL' field for the automatic redirection feature to work!", "wordpress-simple-paypal-shopping-cart")) . "</strong><br />";
             } else {
                 $redirection_parameter = 'Location: ' . $checkout_url;
                 header($redirection_parameter);
@@ -284,7 +284,7 @@ function wp_cart_add_custom_field() {
 function print_wp_cart_button_new($content) {
     $addcart = get_option('addToCartButtonName');
     if (!$addcart || ($addcart == ''))
-        $addcart = __("Add to Cart", "WSPSC");
+        $addcart = __("Add to Cart", "wordpress-simple-paypal-shopping-cart");
 
     $pattern = '#\[wp_cart:.+:price:.+:end]#';
     preg_match_all($pattern, $content, $matches);
@@ -359,7 +359,7 @@ function print_wp_cart_button_new($content) {
         }
 
         if (preg_match("/http/", $addcart)) { // Use the image as the 'add to cart' button
-            $replacement .= '<input type="image" src="' . $addcart . '" class="wp_cart_button" alt="' . (__("Add to Cart", "WSPSC")) . '"/>';
+            $replacement .= '<input type="image" src="' . $addcart . '" class="wp_cart_button" alt="' . (__("Add to Cart", "wordpress-simple-paypal-shopping-cart")) . '"/>';
         } else {
             $replacement .= '<input type="submit" value="' . $addcart . '" />';
         }
@@ -425,7 +425,7 @@ function wp_cart_add_read_form_javascript() {
 function print_wp_cart_button_for_product($name, $price, $shipping = 0, $var1 = '', $var2 = '', $var3 = '', $atts = array()) {
     $addcart = get_option('addToCartButtonName');
     if (!$addcart || ($addcart == ''))
-        $addcart = __("Add to Cart", "WSPSC");
+        $addcart = __("Add to Cart", "wordpress-simple-paypal-shopping-cart");
 
     $var_output = "";
     if (!empty($var1)) {
@@ -467,11 +467,11 @@ function print_wp_cart_button_for_product($name, $price, $shipping = 0, $var1 = 
 
     if (isset($atts['button_image']) && !empty($atts['button_image'])) {
         //Use the custom button image for this shortcode
-        $replacement .= '<input type="image" src="' . $atts['button_image'] . '" class="wp_cart_button" alt="' . (__("Add to Cart", "WSPSC")) . '"/>';
+        $replacement .= '<input type="image" src="' . $atts['button_image'] . '" class="wp_cart_button" alt="' . (__("Add to Cart", "wordpress-simple-paypal-shopping-cart")) . '"/>';
     } else {
         //Use the button text or image value from the settings
         if (preg_match("/http:/", $addcart) || preg_match("/https:/", $addcart)) { // Use the image as the 'add to cart' button
-            $replacement .= '<input type="image" src="' . $addcart . '" class="wp_cart_button" alt="' . (__("Add to Cart", "WSPSC")) . '"/>';
+            $replacement .= '<input type="image" src="' . $addcart . '" class="wp_cart_button" alt="' . (__("Add to Cart", "wordpress-simple-paypal-shopping-cart")) . '"/>';
         } else {
             $replacement .= '<input type="submit" value="' . apply_filters('wspsc_add_cart_submit_button_value', $addcart, $price) . '" />';
         }
@@ -562,13 +562,13 @@ function simple_cart_total() {
 // Handle the options page display
 function wp_cart_options_page() {
     include_once('wp_shopping_cart_settings.php');
-    add_options_page(__("WP Paypal Shopping Cart", "WSPSC"), __("WP Shopping Cart", "WSPSC"), WP_CART_MANAGEMENT_PERMISSION, 'wordpress-paypal-shopping-cart', 'wp_cart_options');
+    add_options_page(__("WP Paypal Shopping Cart", "wordpress-simple-paypal-shopping-cart"), __("WP Shopping Cart", "wordpress-simple-paypal-shopping-cart"), WP_CART_MANAGEMENT_PERMISSION, 'wordpress-paypal-shopping-cart', 'wp_cart_options');
     
     //Main menu - Complete this when the dashboard menu is ready
     //$menu_icon_url = '';//TODO - use 
-    //add_menu_page(__('Simple Cart', 'WSPSC'), __('Simple Cart', 'WSPSC'), WP_CART_MANAGEMENT_PERMISSION, WP_CART_MAIN_MENU_SLUG , 'wp_cart_options', $menu_icon_url);
-    //add_submenu_page(WP_CART_MAIN_MENU_SLUG, __('Settings', 'WSPSC'),  __('Settings', 'WSPSC') , WP_CART_MANAGEMENT_PERMISSION, WP_CART_MAIN_MENU_SLUG, 'wp_cart_options');
-    //add_submenu_page(WP_CART_MAIN_MENU_SLUG, __('Bla', 'WSPSC'),  __('Bla', 'WSPSC') , WP_CART_MANAGEMENT_PERMISSION, 'wspsc-bla', 'wp_cart_options');
+    //add_menu_page(__('Simple Cart', 'wordpress-simple-paypal-shopping-cart'), __('Simple Cart', 'wordpress-simple-paypal-shopping-cart'), WP_CART_MANAGEMENT_PERMISSION, WP_CART_MAIN_MENU_SLUG , 'wp_cart_options', $menu_icon_url);
+    //add_submenu_page(WP_CART_MAIN_MENU_SLUG, __('Settings', 'wordpress-simple-paypal-shopping-cart'),  __('Settings', 'wordpress-simple-paypal-shopping-cart') , WP_CART_MANAGEMENT_PERMISSION, WP_CART_MAIN_MENU_SLUG, 'wp_cart_options');
+    //add_submenu_page(WP_CART_MAIN_MENU_SLUG, __('Bla', 'wordpress-simple-paypal-shopping-cart'),  __('Bla', 'wordpress-simple-paypal-shopping-cart') , WP_CART_MANAGEMENT_PERMISSION, 'wspsc-bla', 'wp_cart_options');
             
 }
 
@@ -578,8 +578,8 @@ function wp_paypal_shopping_cart_load_widgets() {
 
 class WP_PayPal_Cart_Widget extends WP_Widget {
 
-    function WP_PayPal_Cart_Widget() {
-        parent::WP_Widget('wp_paypal_shopping_cart_widgets', 'WP Paypal Shopping Cart', array('description' => 'WP Paypal Shopping Cart Widget'));
+    function __construct() {
+        parent::__construct('wp_paypal_shopping_cart_widgets', 'WP Paypal Shopping Cart', array('description' => 'WP Paypal Shopping Cart Widget'));
     }
 
     function form($instance) {
@@ -596,7 +596,7 @@ class WP_PayPal_Cart_Widget extends WP_Widget {
 
         $cart_title = get_option('wp_cart_title');
         if (empty($cart_title))
-            $cart_title = __("Shopping Cart", "WSPSC");
+            $cart_title = __("Shopping Cart", "wordpress-simple-paypal-shopping-cart");
 
         echo $before_widget;
         echo $before_title . $cart_title . $after_title;
@@ -629,7 +629,7 @@ register_activation_hook(__FILE__, 'wpspc_plugin_install');
 // Add the settings link
 function wp_simple_cart_add_settings_link($links, $file) {
     if ($file == plugin_basename(__FILE__)) {
-        $settings_link = '<a href="options-general.php?page=wordpress-paypal-shopping-cart">' . (__("Settings", "WSPSC")) . '</a>';
+        $settings_link = '<a href="options-general.php?page=wordpress-paypal-shopping-cart">' . (__("Settings", "wordpress-simple-paypal-shopping-cart")) . '</a>';
         array_unshift($links, $settings_link);
     }
     return $links;

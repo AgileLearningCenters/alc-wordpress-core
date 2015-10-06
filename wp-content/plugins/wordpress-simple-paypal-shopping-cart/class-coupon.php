@@ -3,7 +3,7 @@ class WPSPSC_Coupons_Collection
 {
     var $coupon_items = array();
     
-    function WPSPSC_Coupons_Collection()
+    function __construct()
     {
         
     }
@@ -16,7 +16,7 @@ class WPSPSC_Coupons_Collection
     function find_coupon_by_code($coupon_code)
     {
         if(empty($this->coupon_items)){
-            echo "<br />".(__("Admin needs to configure some discount coupons before it can be used", "WSPSC"));
+            echo "<br />".(__("Admin needs to configure some discount coupons before it can be used", "wordpress-simple-paypal-shopping-cart"));
             return new stdClass();
         }
         foreach($this->coupon_items as $key => $coupon)
@@ -73,7 +73,7 @@ class WPSPSC_COUPON_ITEM
     var $coupon_code;
     var $discount_rate;
     var $expiry_date;
-    function WPSPSC_COUPON_ITEM($coupon_code, $discount_rate, $expiry_date)
+    function __construct($coupon_code, $discount_rate, $expiry_date)
     {
         $this->id = uniqid();
         $this->coupon_code = $coupon_code;
@@ -83,10 +83,10 @@ class WPSPSC_COUPON_ITEM
     
     function print_coupon_item_details()
     {
-        echo "<br />".(__("Coupon ID: ", "WSPSC")).$this->id;
-        echo "<br />".(__("Coupon Code: ", "WSPSC")).$this->coupon_code;
-        echo "<br />".(__("Discount Amt: ", "WSPSC")).$this->discount_rate;
-        echo "<br />".(__("Expiry date: ", "WSPSC")).$this->expiry_date;
+        echo "<br />".(__("Coupon ID: ", "wordpress-simple-paypal-shopping-cart")).$this->id;
+        echo "<br />".(__("Coupon Code: ", "wordpress-simple-paypal-shopping-cart")).$this->coupon_code;
+        echo "<br />".(__("Discount Amt: ", "wordpress-simple-paypal-shopping-cart")).$this->discount_rate;
+        echo "<br />".(__("Expiry date: ", "wordpress-simple-paypal-shopping-cart")).$this->expiry_date;
     }
 }
 
@@ -95,19 +95,19 @@ function wpspsc_apply_cart_discount($coupon_code)
     $collection_obj = WPSPSC_Coupons_Collection::get_instance();
     $coupon_item = $collection_obj->find_coupon_by_code($coupon_code);
     if(!isset($coupon_item->id)){
-        $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_error_message">'.__("Coupon code used does not exist!", "WSPSC").'</div>';
+        $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_error_message">'.__("Coupon code used does not exist!", "wordpress-simple-paypal-shopping-cart").'</div>';
         return;
     }
     $coupon_expiry_date = $coupon_item->expiry_date;
     if(!empty($coupon_expiry_date)){
         $current_date = date("Y-m-d");
         if($current_date > $coupon_expiry_date){
-            $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_error_message">'.__("Coupon code expired!", "WSPSC").'</div>';
+            $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_error_message">'.__("Coupon code expired!", "wordpress-simple-paypal-shopping-cart").'</div>';
             return;
         }
     }
     if (isset($_SESSION['wpspsc_discount_applied_once']) && $_SESSION['wpspsc_discount_applied_once'] == '1'){
-        $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_error_message">'.__("Discount can only be applied once per checkout!", "WSPSC").'</div>';
+        $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_error_message">'.__("Discount can only be applied once per checkout!", "wordpress-simple-paypal-shopping-cart").'</div>';
         return;
     }
     
@@ -129,7 +129,7 @@ function wpspsc_apply_cart_discount($coupon_code)
     }
     $_SESSION['simpleCart'] = $products;
     $disct_amt_msg = print_payment_currency($discount_total, $curr_symbol);
-    $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_success_message">'.__("Discount applied successfully! Total Discount: ", "WSPSC").$disct_amt_msg.'</div>';
+    $_SESSION['wpspsc_cart_action_msg'] = '<div class="wpspsc_success_message">'.__("Discount applied successfully! Total Discount: ", "wordpress-simple-paypal-shopping-cart").$disct_amt_msg.'</div>';
     $_SESSION['wpspsc_discount_applied_once'] = '1';
     $_SESSION['wpspsc_applied_coupon_code'] = $coupon_code;
 }

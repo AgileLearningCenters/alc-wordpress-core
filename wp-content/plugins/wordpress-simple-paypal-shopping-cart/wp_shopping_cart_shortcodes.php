@@ -16,10 +16,10 @@ function wp_cart_button_handler($atts){
 	), $atts));
 
 	if(empty($name)){
-            return '<div style="color:red;">'.(__("Error! You must specify a product name in the shortcode.", "WSPSC")).'</div>';
+            return '<div style="color:red;">'.(__("Error! You must specify a product name in the shortcode.", "wordpress-simple-paypal-shopping-cart")).'</div>';
 	}
 	if(empty($price)){
-            return '<div style="color:red;">'.(__("Error! You must specify a price for your product in the shortcode.", "WSPSC")).'</div>';
+            return '<div style="color:red;">'.(__("Error! You must specify a price for your product in the shortcode.", "wordpress-simple-paypal-shopping-cart")).'</div>';
 	}
         $price = wspsc_strip_char_from_price_amount($price);
         $shipping = wspsc_strip_char_from_price_amount($shipping);
@@ -46,13 +46,13 @@ function wp_cart_display_product_handler($atts)
     ), $atts));
 
     if(empty($name)){
-        return '<div style="color:red;">'.(__("Error! You must specify a product name in the shortcode.", "WSPSC")).'</div>';
+        return '<div style="color:red;">'.(__("Error! You must specify a product name in the shortcode.", "wordpress-simple-paypal-shopping-cart")).'</div>';
     }
     if(empty($price)){
-        return '<div style="color:red;">'.(__("Error! You must specify a price for your product in the shortcode.", "WSPSC")).'</div>';
+        return '<div style="color:red;">'.(__("Error! You must specify a price for your product in the shortcode.", "wordpress-simple-paypal-shopping-cart")).'</div>';
     }
     if(empty($thumbnail)){
-        return '<div style="color:red;">'.(__("Error! You must specify a thumbnail image for your product in the shortcode.", "WSPSC")).'</div>';
+        return '<div style="color:red;">'.(__("Error! You must specify a thumbnail image for your product in the shortcode.", "wordpress-simple-paypal-shopping-cart")).'</div>';
     }
     $price = wspsc_strip_char_from_price_amount($price);
     $shipping = wspsc_strip_char_from_price_amount($shipping);
@@ -104,12 +104,12 @@ function wspsc_compact_cart_handler($args)
             $output .= $num_items . " " . $item_message;		
             $output .= '<span class="wpsps_compact_cart_price"> '. print_payment_currency($cart_total,$curSymbol).'</span>';
             if(!empty($checkout_url)){
-                $output .= '<a class="wpsps_compact_cart_co_btn" href="'.$checkout_url.'">'.__("View Cart", "WSPSC").'</a>';
+                $output .= '<a class="wpsps_compact_cart_co_btn" href="'.$checkout_url.'">'.__("View Cart", "wordpress-simple-paypal-shopping-cart").'</a>';
             }
     }
     else{
             $cart_total = 0;
-            $output .= __("Cart is empty", "WSPSC");
+            $output .= __("Cart is empty", "wordpress-simple-paypal-shopping-cart");
             $output .= '<span class="wpsps_compact_cart_price"> '. print_payment_currency($cart_total,$curSymbol).'</span>';
     }
     $output .= '</div>';

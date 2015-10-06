@@ -1,15 +1,6 @@
 <?php
 
-/* TODO
-- Create a dashbaord menu then complete the new menu system
-- Add a reset cart button
-- A stats addon or interface. Show graph using the orders data.
-- After processing an IPN, call a function to clear all trash orders that are older than 6 hours.
-- A new fancy cart shortcode (new icons and nice CSS styles)
-- Create github repository.
-*/
-
-/* this function gets called when init is fired */
+/* This function gets called when init is executed */
 function wp_cart_init_handler()
 {
     $orders_menu_permission = apply_filters('wspsc_orders_menu_permission', 'manage_options');
@@ -18,7 +9,7 @@ function wp_cart_init_handler()
     {
         wpspc_create_orders_page();
     }
-    else//Init hook handing code for front end
+    else//Init hook handling code for front end
     {
         wpspc_cart_actions_handler();
         add_filter('ngg_render_template','wp_cart_ngg_template_handler',10,2);
@@ -166,8 +157,8 @@ function wpspc_apply_dynamic_tags_on_email_body($ipn_data, $args)
 function wpspc_run_activation()
 {
     //General options
-    add_option('wp_cart_title', __("Your Shopping Cart", "WSPSC"));
-    add_option('wp_cart_empty_text', __("Your cart is empty", "WSPSC"));
+    add_option('wp_cart_title', __("Your Shopping Cart", "wordpress-simple-paypal-shopping-cart"));
+    add_option('wp_cart_empty_text', __("Your cart is empty", "wordpress-simple-paypal-shopping-cart"));
     add_option('cart_return_from_paypal_url', get_bloginfo('wpurl'));
 
     //Add Confirmation Email Settings
@@ -201,8 +192,8 @@ function wpspsc_settings_menu_footer()
 {
     ?>
     <div style="background: none repeat scroll 0 0 #FFF6D5;border: 1px solid #D1B655;color: #3F2502;margin: 10px 0;padding: 5px 5px 5px 10px;text-shadow: 1px 1px #FFFFFF;">	
-    <p><?php _e("Need a shopping cart plugin with a lot of features and good support? Check out our ", "WSPSC"); ?>
-    <a href="https://www.tipsandtricks-hq.com/?p=1059" target="_blank"><?php _e("WP eStore Plugin", "WSPSC"); ?></a></p>
+    <p><?php _e("Need a shopping cart plugin with a lot of features and good support? Check out our ", "wordpress-simple-paypal-shopping-cart"); ?>
+    <a href="https://www.tipsandtricks-hq.com/?p=1059" target="_blank"><?php _e("WP eStore Plugin", "wordpress-simple-paypal-shopping-cart"); ?></a></p>
     </div>
     <?php
 }

@@ -7,19 +7,19 @@ function wpspc_create_orders_page()
       register_post_type( 'wpsc_cart_orders',
         array(
             'labels' => array(
-                'name' => __("Cart Orders", "WSPSC"),
-                'singular_name' => __("Cart Order", "WSPSC"),
-                'add_new' => __("Add New", "WSPSC"),
-                'add_new_item' => __("Add New Order", "WSPSC"),
-                'edit' => __("Edit", "WSPSC"),
-                'edit_item' => __("Edit Order", "WSPSC"),
-                'new_item' => __("New Order", "WSPSC"),
-                'view' => __("View", "WSPSC"),
-                'view_item' => __("View Order", "WSPSC"),
-                'search_items' => __("Search Order", "WSPSC"),
-                'not_found' => __("No order found", "WSPSC"),
-                'not_found_in_trash' => __("No order found in Trash", "WSPSC"),
-                'parent' => __("Parent Order", "WSPSC")
+                'name' => __("Cart Orders", "wordpress-simple-paypal-shopping-cart"),
+                'singular_name' => __("Cart Order", "wordpress-simple-paypal-shopping-cart"),
+                'add_new' => __("Add New", "wordpress-simple-paypal-shopping-cart"),
+                'add_new_item' => __("Add New Order", "wordpress-simple-paypal-shopping-cart"),
+                'edit' => __("Edit", "wordpress-simple-paypal-shopping-cart"),
+                'edit_item' => __("Edit Order", "wordpress-simple-paypal-shopping-cart"),
+                'new_item' => __("New Order", "wordpress-simple-paypal-shopping-cart"),
+                'view' => __("View", "wordpress-simple-paypal-shopping-cart"),
+                'view_item' => __("View Order", "wordpress-simple-paypal-shopping-cart"),
+                'search_items' => __("Search Order", "wordpress-simple-paypal-shopping-cart"),
+                'not_found' => __("No order found", "wordpress-simple-paypal-shopping-cart"),
+                'not_found_in_trash' => __("No order found in Trash", "wordpress-simple-paypal-shopping-cart"),
+                'parent' => __("Parent Order", "wordpress-simple-paypal-shopping-cart")
             ),
 
             'public' => true,
@@ -35,7 +35,7 @@ function wpspc_create_orders_page()
 function wpspc_add_meta_boxes()
 {
     add_meta_box( 'order_review_meta_box',
-        __("Order Review", "WSPSC"),
+        __("Order Review", "wordpress-simple-paypal-shopping-cart"),
         'wpspc_order_review_meta_box',
         'wpsc_cart_orders', 
         'normal', 
@@ -67,52 +67,52 @@ function wpspc_order_review_meta_box($wpsc_cart_orders)
     $applied_coupon = get_post_meta( $wpsc_cart_orders->ID, 'wpsc_applied_coupon', true );
     ?>
     <table>
-        <p><?php _e("Order ID: #", "WSPSC"); echo $order_id;?></p>
+        <p><?php _e("Order ID: #", "wordpress-simple-paypal-shopping-cart"); echo $order_id;?></p>
         <?php if($txn_id){?>
-        <p><?php _e("Transaction ID: #", "WSPSC"); echo $txn_id;?></p>
+        <p><?php _e("Transaction ID: #", "wordpress-simple-paypal-shopping-cart"); echo $txn_id;?></p>
         <?php } ?>
         <tr>
-            <td><?php _e("First Name", "WSPSC");?></td>
+            <td><?php _e("First Name", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="40" name="wpsc_first_name" value="<?php echo $first_name; ?>" /></td>
         </tr>
         <tr>
-            <td><?php _e("Last Name", "WSPSC");?></td>
+            <td><?php _e("Last Name", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="40" name="wpsc_last_name" value="<?php echo $last_name; ?>" /></td>
         </tr>
         <tr>
-            <td><?php _e("Email Address", "WSPSC");?></td>
+            <td><?php _e("Email Address", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="40" name="wpsc_email_address" value="<?php echo $email; ?>" /></td>
         </tr>
         <tr>
-            <td><?php _e("IP Address", "WSPSC");?></td>
+            <td><?php _e("IP Address", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="40" name="wpsc_ipaddress" value="<?php echo $ip_address; ?>" /></td>
         </tr>
         <tr>
-            <td><?php _e("Total", "WSPSC");?></td>
+            <td><?php _e("Total", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="20" name="wpsc_total_amount" value="<?php echo $total_amount; ?>" /></td>
         </tr>
         <tr>
-            <td><?php _e("Shipping", "WSPSC");?></td>
+            <td><?php _e("Shipping", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="20" name="wpsc_shipping_amount" value="<?php echo $shipping_amount; ?>" /></td>
         </tr>
         <tr>
-            <td><?php _e("Address", "WSPSC");?></td>
+            <td><?php _e("Address", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><textarea name="wpsc_address" cols="83" rows="2"><?php echo $address;?></textarea></td>
         </tr>
         <tr>
-            <td><?php _e("Phone", "WSPSC");?></td>
+            <td><?php _e("Phone", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="40" name="wpspsc_phone" value="<?php echo $phone; ?>" /></td>
         </tr>
         <tr>
-            <td><?php _e("Buyer Email Sent?", "WSPSC");?></td>
+            <td><?php _e("Buyer Email Sent?", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="80" name="wpsc_buyer_email_sent" value="<?php echo $email_sent_field_msg; ?>" readonly /></td>
         </tr>  
         <tr>
-            <td><?php _e("Item(s) Ordered:", "WSPSC");?></td>
+            <td><?php _e("Item(s) Ordered:", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><textarea name="wpspsc_items_ordered" cols="83" rows="5"><?php echo $items_ordered;?></textarea></td>
         </tr>
         <tr>
-            <td><?php _e("Applied Coupon Code:", "WSPSC");?></td>
+            <td><?php _e("Applied Coupon Code:", "wordpress-simple-paypal-shopping-cart");?></td>
             <td><input type="text" size="20" name="wpsc_applied_coupon" value="<?php echo $applied_coupon; ?>" readonly /></td>
         </tr>
         
@@ -161,13 +161,13 @@ function wpspc_orders_display_columns( $columns )
     unset( $columns['comments'] );
     unset( $columns['date'] );
     //$columns['wpsc_order_id'] = 'Order ID';
-    $columns['title'] = __("Order ID", "WSPSC");
-    $columns['wpsc_first_name'] = __("First Name", "WSPSC");
-    $columns['wpsc_last_name'] = __("Last Name", "WSPSC");
-    $columns['wpsc_email_address'] = __("Email", "WSPSC");
-    $columns['wpsc_total_amount'] = __("Total", "WSPSC");
-    $columns['wpsc_order_status'] = __("Status", "WSPSC");
-    $columns['date'] = __("Date", "WSPSC");
+    $columns['title'] = __("Order ID", "wordpress-simple-paypal-shopping-cart");
+    $columns['wpsc_first_name'] = __("First Name", "wordpress-simple-paypal-shopping-cart");
+    $columns['wpsc_last_name'] = __("Last Name", "wordpress-simple-paypal-shopping-cart");
+    $columns['wpsc_email_address'] = __("Email", "wordpress-simple-paypal-shopping-cart");
+    $columns['wpsc_total_amount'] = __("Total", "wordpress-simple-paypal-shopping-cart");
+    $columns['wpsc_order_status'] = __("Status", "wordpress-simple-paypal-shopping-cart");
+    $columns['date'] = __("Date", "wordpress-simple-paypal-shopping-cart");
     return $columns;
 }
 

@@ -1,129 +1,127 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WSPSC v2.8.9\n"
+"Project-Id-Version: wordpress-simple-paypal-shopping-cart v2.8.9\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-16 21:50+0100\n"
-"PO-Revision-Date: 2014-03-06 20:57+0100\n"
-"Last-Translator: Gregor Jakub <gregorjakub@xc.pl>\n"
-"Language-Team: Patrick Skiebe <patrick@skiebe.eu>\n"
+"POT-Creation-Date: 2011-03-16 21:49+0100\n"
+"PO-Revision-Date: 2014-11-10 02:12+0100\n"
+"Language-Team: Ruhul Amin\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _e;__\n"
 "X-Poedit-Basepath: .\n"
-"Language: de_DE\n"
-"X-Generator: Poedit 1.5.4\n"
+"Last-Translator: \n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.6.10\n"
 "X-Poedit-SearchPath-0: ..\n"
 
 #: ../wp_shopping_cart.php:33
 msgid "Your Shopping Cart"
-msgstr "Twój Koszyk"
+msgstr "Din indkøbskurv"
 
 #: ../wp_shopping_cart.php:34
 msgid "Your cart is empty"
-msgstr "Twój Koszyk jest pusty"
+msgstr "Din indkøbskurv er tom"
 
 #: ../wp_shopping_cart.php:140
 msgid ""
 "Shopping Cart Configuration Error! You must specify a value in the 'Checkout "
 "Page URL' field for the automatic redirection feature to work!"
 msgstr ""
-"Błędna konfiguracja Koszyka! Aby działało automatyczne przekierowanie, "
-"trzeba w polu 'Koszyk - Strona' wpisać adres URL strony z Koszykiem!"
+"Indkøbskurv Konfiguration Error! Du skal angive en værdi i feltet 'Checkout "
+"Page URL' feltet for automatisk omdirigering funktion til at arbejde!"
 
 #: ../wp_shopping_cart.php:197
 msgid "Visit The Shop"
-msgstr "Wchodzę do sklepu"
+msgstr "Besøge butikken"
 
 #: ../wp_shopping_cart.php:209 ../wp_shopping_cart.php:606
 msgid "USD"
-msgstr "PLN"
+msgstr "DKK"
 
 #: ../wp_shopping_cart.php:213 ../wp_shopping_cart.php:609
 msgid "$"
-msgstr "zł"
+msgstr "DKK"
 
 #: ../wp_shopping_cart.php:242
 msgid "Cart"
-msgstr "Koszyk"
+msgstr "Kurv"
 
 #: ../wp_shopping_cart.php:251
 msgid "Hit enter to submit new Quantity."
-msgstr "Proszę nacisnąć ENTER żeby zatwierdzić nową ilość artykułów."
+msgstr "Tryk enter for at indsende ny mængde."
 
 #: ../wp_shopping_cart.php:262
 msgid "Item Name"
-msgstr "Artykuł"
+msgstr "Produktnavn"
 
 #: ../wp_shopping_cart.php:262
 msgid "Quantity"
-msgstr "Ilość"
+msgstr "Mængde"
 
 #: ../wp_shopping_cart.php:262
 msgid "Price"
-msgstr "Cena"
+msgstr "Pris"
 
 #: ../wp_shopping_cart.php:299
 msgid "Remove"
-msgstr "Usuń"
+msgstr "fjern"
 
 #: ../wp_shopping_cart.php:329
 msgid "Subtotal"
-msgstr "Razem"
+msgstr "Subtotal"
 
 #: ../wp_shopping_cart.php:330
 msgid "Shipping"
-msgstr "Wysyłka"
+msgstr "Forsendelse"
 
 #: ../wp_shopping_cart.php:334
 msgid "Total"
-msgstr "Do zapłaty"
+msgstr "Total"
 
 #: ../wp_shopping_cart.php:339
 msgid "paypal_checkout_EN.png"
-msgstr "paypal_checkout_PL.png"
+msgstr "paypal_checkout_EN.png"
 
 #: ../wp_shopping_cart.php:339
 msgid "Make payments with PayPal - it\\'s fast, free and secure!"
-msgstr "Płatność PayPal - szybko, bezpłatnie i bezpiecznie!"
+msgstr "Foretag betalinger med PayPal - er hurtig, gratis og sikkert!"
 
 #: ../wp_shopping_cart.php:387 ../wp_shopping_cart.php:469
 #: ../wp_shopping_cart.php:528 ../wp_shopping_cart.php:534
 #: ../wp_shopping_cart.php:622
 msgid "Add to Cart"
-msgstr "Kupuję"
+msgstr "Tilføj til indkøbsvogn"
 
 #: ../wp_shopping_cart.php:602
 msgid "Options Updated!"
-msgstr "Zaktualizowano ustawienia!"
+msgstr "Options Updated!"
 
 #: ../wp_shopping_cart.php:662
 msgid "Simple Paypal Shopping Cart Settings"
-msgstr "Ustawienia Simple Paypal Shopping Cart"
+msgstr "Simple Paypal indkøbskurv Indstillinger"
 
 #: ../wp_shopping_cart.php:664
 msgid "For information, updates and detailed documentation, please visit:"
 msgstr ""
-"Aby uzyskać informacje, aktualizacje i dokładną dokumentację, proszę "
-"odwiedzić:"
+"For information, opdateringer og detaljeret dokumentation, kan du besøge:"
 
 #: ../wp_shopping_cart.php:668
 msgid "Usage:"
-msgstr "Przeznaczenie:"
+msgstr "Anvendelse:"
 
 #: ../wp_shopping_cart.php:670
 msgid "1. To add the 'Add to Cart' button simply add the trigger text"
 msgstr ""
-"1. Aby dodać przycisk 'Dodaj do Koszyka' na stronie lub przy artykule, "
-"należy użyć skrótu"
+"1. For at tilføje knappen 'indkøbskurven' blot tilføje aftrækkeren tekst"
 
 #: ../wp_shopping_cart.php:670
 msgid "PRODUCT-NAME"
-msgstr "NAZWA-PRODUKTU"
+msgstr "PRODUCT-NAME"
 
 #: ../wp_shopping_cart.php:670
 msgid "PRODUCT-PRICE"
-msgstr "CENA-PRODUKTU"
+msgstr "PRODUCT-PRICE"
 
 #: ../wp_shopping_cart.php:670
 msgid ""
@@ -131,66 +129,66 @@ msgid ""
 "PRICE with the actual name and price. For example: [wp_cart:Test Product:"
 "price:15.00:end]"
 msgstr ""
-"w artykule lub na stronie obok produktu. Proszę zamienić NAZWA-PRODUKTU oraz "
-"CENA-PRODUKTU przez faktyczną nazwę i rzeczywistą cenę produktu. Na "
-"przykład: [wp_cart:Produkt-testowy:price:15.00:end]"
+"til et indlæg eller side ved siden af produktet. Udskift produktnavn og "
+"PRODUCT-pris med det faktiske navn og pris. For eksempel: [wp_cart: Test "
+"Produkt: pris: 15.00: afslutning]"
 
 #: ../wp_shopping_cart.php:671
 msgid ""
 "2. To add the shopping cart to a post or page (eg. checkout page) simply add "
 "the shortcode"
 msgstr ""
-"2. Aby pokazać koszyk na stronie lub w artykule (np. na stronie 'Koszyk') "
-"należy użyć skrótu"
+"2. Du kan tilføje indkøbskurv til et indlæg eller side (f.eks. Kassen side) "
+"blot tilføje kortkode"
 
 #: ../wp_shopping_cart.php:671
 msgid ""
 "to a post or page or use the sidebar widget to add the shopping cart to the "
 "sidebar."
 msgstr ""
-"w artykule lub na stronie. Można również zaktywować Sidebar Widget aby "
-"pokazać Koszyk w Sidebarze."
+"til et indlæg eller side eller bruge sidebar widget til at tilføje "
+"indkøbskurv til indholdsoversigten."
 
 #: ../wp_shopping_cart.php:679
 msgid "PayPal and Shopping Cart Settings"
-msgstr "Ustawienia PayPal i Koszyka"
+msgstr "PayPal og indkøbskurv Indstillinger"
 
 #: ../wp_shopping_cart.php:685
 msgid "Paypal Email Address"
-msgstr "Adres e-mail w Paypal"
+msgstr "Paypal e-mail adresse"
 
 #: ../wp_shopping_cart.php:689
 msgid "Shopping Cart title"
-msgstr "Nazwa Koszyka"
+msgstr "Indkøbskurv titel"
 
 #: ../wp_shopping_cart.php:693
 msgid "Text/Image to Show When Cart Empty"
-msgstr "Tekst/Obrazek dla pustego Koszyka"
+msgstr "Tekst / billede at vise, hvornår Indkøbskurven er tom"
 
 #: ../wp_shopping_cart.php:694
 msgid ""
 "You can either enter plain text or the URL of an image that you want to show "
 "when the shopping cart is empty"
 msgstr ""
-"Można wpisać zwykły tekst lub podać adres URL obrazka (będzie wyświetlony "
-"przy pustym stanie Koszyka)"
+"Du kan enten indtaste almindelig tekst eller en URL til et billede, som du "
+"vil vise, når Indkøbskurven er tom"
 
 #: ../wp_shopping_cart.php:697
 msgid "Currency"
-msgstr "Waluta"
+msgstr "Valuta"
 
 #: ../wp_shopping_cart.php:698 ../wp_shopping_cart.php:702
 #: ../wp_shopping_cart.php:728
 msgid "e.g."
-msgstr "np."
+msgstr "fx"
 
 #: ../wp_shopping_cart.php:701
 msgid "Currency Symbol"
-msgstr "Symbol waluty"
+msgstr "Valuta Symbol"
 
 #: ../wp_shopping_cart.php:707
 msgid "Base Shipping Cost"
-msgstr "Podstawowa koszta wysyłki"
+msgstr "Almindelig Forsendelse"
 
 #: ../wp_shopping_cart.php:708
 msgid ""
@@ -198,99 +196,99 @@ msgid ""
 "products shipping cost. Put 0 if you do not want to charge shipping cost or "
 "use base shipping cost."
 msgstr ""
-"Podstawowe koszta wysyłki zostają dodane do kwoty indywidualnych kosztów "
-"wysyłki każdego produktu. Proszę wpisać 0 jeśli nie życzą sobie Państwo "
-"podstawowych lub żadnych kosztów wysyłki."
+"Dette er shipping cost base, der vil blive tilføjet til den samlede "
+"individuelle produkter shipping cost. Put 0, hvis du ikke ønsker at opkræve "
+"fragtpris eller bruge basen shipping cost."
 
 #: ../wp_shopping_cart.php:708
 msgid "Learn More on Shipping Calculation"
-msgstr "Więcej informacji o obliczeniu kosztów wysyłki"
+msgstr "Lær mere om Forsendelse Beregning"
 
 #: ../wp_shopping_cart.php:712
 msgid "Free Shipping for Orders Over"
-msgstr "Bez dodatkowych kosztów wysyłki dla zamówień powyżej"
+msgstr "Gratis levering på køb over"
 
 #: ../wp_shopping_cart.php:713
 msgid ""
 "When a customer orders more than this amount he/she will get free shipping. "
 "Leave empty if you do not want to use it."
 msgstr ""
-"Jeśli zamówienie klienta przekroczy tą kwotę, koszta wysyłki wynoszą zero. "
-"Proszę zostawić polę pustę, jeśli nie chcą Państwo używać tej funkcji."
+"Når en kunde bestiller mere end dette beløb, han / hun vil få gratis "
+"forsendelse. Efterlad tom, hvis du ikke ønsker at bruge det."
 
 #: ../wp_shopping_cart.php:717
 msgid "Must Collect Shipping Address on PayPal"
-msgstr "Klient musi podać w PayPal swój adres wysyłkowy"
+msgstr "Skal indsamle Forsendelsesadresse om PayPal"
 
 #: ../wp_shopping_cart.php:718
 msgid ""
 "If checked the customer will be forced to enter a shipping address on PayPal "
 "when checking out."
 msgstr ""
-"Jeśli ta opcja jest aktywna, klient musi podać przy zamówieniu przez PayPal "
-"swój adres wysyłki."
+"Hvis markeret vil kunden blive tvunget til at indtaste en leveringsadresse "
+"på PayPal, når du tjekker."
 
 #: ../wp_shopping_cart.php:722
 msgid "Use PayPal Profile Based Shipping"
-msgstr "Użyj kalkulatora kosztów wysyłki PayPal"
+msgstr "Brug PayPal Profile Baseret Shipping"
 
 #: ../wp_shopping_cart.php:723
 msgid "Check this if you want to use"
-msgstr "Tą opcję należy zaktywować aby używać"
+msgstr "Markér dette hvis du ønsker at bruge"
 
 #: ../wp_shopping_cart.php:723
 msgid "PayPal profile based shipping"
-msgstr "koszta wysyłki obliczone przez PayPal"
+msgstr "PayPal-profil baseret skibsfart"
 
 #: ../wp_shopping_cart.php:723
 msgid ""
 "Using this will ignore any other shipping options that you have specified in "
 "this plugin."
 msgstr ""
-"Zaznaczenie tej opcji zdezaktywuje wszystkie inne opcje kosztów wysyłki tej "
-"wtyczki."
+"Brug af denne vil ignorere alle andre shipping muligheder, som du har "
+"angivet i dette plugin."
 
 #: ../wp_shopping_cart.php:727
 msgid "Add to Cart button text or Image"
-msgstr "Tekst lub zdjęcie dla przycisku \"Dodaj do koszyka\""
+msgstr "Indkøbskurven knap tekst eller billede"
 
 #: ../wp_shopping_cart.php:728
 msgid ""
 "To use a customized image as the button simply enter the URL of the image "
 "file."
 msgstr ""
-"Aby użyć własnego obrazka dla tego przycisku, należy podać adres URL obrazka."
+"For at bruge et tilpasset billede som knap blot indtaste webadressen på "
+"billedfilen."
 
 #: ../wp_shopping_cart.php:732
 msgid "Return URL"
-msgstr "Powrotny URL"
+msgstr "Tilbage URL"
 
 #: ../wp_shopping_cart.php:733
 msgid ""
 "This is the URL the customer will be redirected to after a successful payment"
 msgstr ""
-"Klient zostanie przeniesiony na ten URL jeśli proces zamówienia zakończył "
-"się sukcesem"
+"Dette er URL kunden vil blive omdirigeret til efter en vellykket betaling"
 
 #: ../wp_shopping_cart.php:737
 msgid "Products Page URL"
-msgstr "Adres URL strony z produktami"
+msgstr "Produkter side URL"
 
 #: ../wp_shopping_cart.php:738
 msgid ""
 "This is the URL of your products page if you have any. If used, the shopping "
 "cart widget will display a link to this page when cart is empty"
 msgstr ""
-"Jeśli posiadają Państwo osobną stronę z produktami, należy tu podać jej "
-"adres URL. Zostanie on wyświetlona w Koszyku, jeśli koszyk będzie pusty."
+"Dette er URL af dine produkter side, hvis du har nogen. Hvis det bruges, vil "
+"indkøbskurv widget vise et link til denne side, når vognen er tom"
 
 #: ../wp_shopping_cart.php:742
 msgid "Automatic redirection to checkout page"
-msgstr "Automatyczne przekierowanie do Koszyka"
+msgstr "Automatisk omdirigering til kassen side"
 
 #: ../wp_shopping_cart.php:744
 msgid "Checkout Page URL"
-msgstr "Adres strony z Koszykiem"
+msgstr "Tjek ud side URL"
 
 #: ../wp_shopping_cart.php:745
 msgid ""
@@ -298,83 +296,96 @@ msgid ""
 "product is added to the cart. You must enter a URL in the Checkout Page URL "
 "field for this to work."
 msgstr ""
-"Jeśli ta opcja jest aktywna, klienci zostają przekierowani do strony z "
-"Koszykiem po dodaniu produktu do Koszyka. Należy podać adres URL strony z "
-"Koszykiem, aby korzystać z tej funkcji."
+"Hvis markeret den besøgende vil blive omdirigeret til kassen siden efter et "
+"produkt er tilføjet til indkøbskurven. Du skal indtaste en URL i feltet "
+"Checkout Page URL for at dette virker."
 
 #: ../wp_shopping_cart.php:749
 msgid "Reset Cart After Redirection to Return Page"
-msgstr "Wyzerować Koszyk po przekierowaniu na stronę powrotną sklepu"
+msgstr "Nulstil Kurv Efter omdirigering til Return Side"
 
 #: ../wp_shopping_cart.php:751
 msgid ""
 "If checked the shopping cart will be reset when the customer lands on the "
 "return URL (Thank You) page."
 msgstr ""
-"Jeśli ta opcja jest aktywna, Koszyk zostanie wyzerowany po powrocie klienta "
-"do sklepu z serwisu PayPal (\"Dziękujemy za dokonane zakupy\")."
+"Hvis markeret indkøbskurv, vil blive nulstillet når kunden lander på "
+"afkastet URL (tak) side."
 
 #: ../wp_shopping_cart.php:758
 msgid "Hide Shopping Cart Image"
-msgstr "Nie wyświetlać symbolu Koszyka"
+msgstr "Skjul Indkøbskurv Billede"
 
 #: ../wp_shopping_cart.php:759
 msgid "If ticked the shopping cart image will not be shown."
-msgstr "Jeśli ta opcja jest aktywna, symbol Koszyka nie zostanie wyświetlony."
+msgstr "Hvis afkrydset indkøbsvognen billedet vil ikke blive vist."
 
 #: ../wp_shopping_cart.php:765
 msgid "Use WP Affiliate Platform"
-msgstr "Biorę udział w programie WP Affiliate Platform"
+msgstr "Brug WP Affiliate Platform"
 
 #: ../wp_shopping_cart.php:767
 msgid "Check this if using with the"
-msgstr "Tą opcję należy zaznaczyć, aby użyć wtyczki w"
+msgstr "Markér dette hvis du bruger den med"
 
 #: ../wp_shopping_cart.php:767
 msgid ""
 "This plugin lets you run your own affiliate campaign/program and allows you "
 "to reward (pay commission) your affiliates for referred sales"
 msgstr ""
-"Wtyczka umożliwia prowadzenie własnego programu afiliacyjnego i nagradzanie "
-"partnerów dystrybucyjnych poprzez system prowizji."
+"Dette plugin kan du køre dit eget affiliate kampagne / program og giver dig "
+"mulighed for at belønne (pay provision) din søsterselskaber for omhandlede "
+"salg"
 
 #: ../wp_shopping_cart.php:772
 msgid "Update Options &raquo;"
-msgstr "Zapisz ustawienia &raquo;"
+msgstr "Opdater Options &raquo;"
 
 #: ../wp_shopping_cart.php:776
 msgid "Like the Simple WordPress Shopping Cart Plugin?"
-msgstr "Podoba się Państwu wtyczka Simple WordPress Shopping Cart Plugin?"
+msgstr "Ligesom Simple WordPress Indkøbskurv Plugin?"
 
 #: ../wp_shopping_cart.php:776
 msgid "Give it a good rating"
-msgstr "Oddaj dobrą ocenę"
+msgstr "Giv det en god rating"
 
 #: ../wp_shopping_cart.php:781
 msgid "WP Paypal Shopping Cart Options"
-msgstr "WP Paypal Ustawienia Koszyka"
+msgstr "WP Paypal indkøbskurv Options"
 
 #: ../wp_shopping_cart.php:791 ../wp_shopping_cart.php:819
 #: ../wp_shopping_cart.php:820
 msgid "WP Paypal Shopping Cart"
-msgstr "WP Paypal Koszyk"
+msgstr "WP Paypal indkøbskurv"
 
 #: ../wp_shopping_cart.php:791
 msgid "WP Shopping Cart"
-msgstr "WP Koszyk"
+msgstr "WP Indkøbskurv"
 
 #: ../wp_shopping_cart.php:799
 msgid "Shopping Cart"
-msgstr "Koszyk"
+msgstr "Indkøbskurv"
 
 #: ../wp_shopping_cart.php:811
 msgid "Set the Plugin Settings from the Settings menu"
-msgstr "Konfigurację wtyczki należy zmienić w ustawieniach"
+msgstr "Indstil plugin-indstillinger fra menuen Indstillinger"
 
 #: ../wp_shopping_cart.php:818
 msgid "Display WP Paypal Shopping Cart."
-msgstr "WP Paypal Pokaż Koszyk."
+msgstr "Display WP Paypal indkøbskurv."
 
 #: ../wp_shopping_cart.php:832
 msgid "Settings"
-msgstr "Ustawienia"
+msgstr "Indstillinger"
+
+#~ msgid "show-wp-shopping-cart"
+#~ msgstr "show-wp-shopping-cart"
+
+#~ msgid ""
+#~ "2. To add the shopping cart to a post or page (eg. checkout page) simply "
+#~ "add the shortcode <strong>[show_wp_shopping_cart]</strong> to a post or "
+#~ "page or use the sidebar widget to add the shopping cart to the sidebar."
+#~ msgstr ""
+#~ "2. To add the shopping cart to a post or page (eg. checkout page) simply "
+#~ "add the shortcode <strong>[show_wp_shopping_cart]</strong> to a post or "
+#~ "page or use the sidebar widget to add the shopping cart to the sidebar."
