@@ -1,3 +1,10 @@
+/* settings pages */
+#mc4wp-admin .page-title {
+	background: url( "../img/icon-large.png" ) no-repeat left center;
+	padding-left: 42px;
+	line-height: 32px;
+	margin-bottom: 20px;
+}
 
 #mc4wp-content{ 
 	float:left; 
@@ -19,8 +26,12 @@
 	vertical-align: top !important; 
 }
 
-#mc4wp-admin .mc4wp-box{
+.mc4wp-box{
 	margin-bottom:20px; 
+}
+
+.mc4wp-box label {
+	font-weight: bold;
 }
 
 #mc4wp-upgrade-box { 
@@ -136,7 +147,7 @@
 	border:1px solid #ccc;
 }
 
-.mc4wp-title{ 
+.mc4wp-title{
 	font-size: 1.4em; 
 	margin:1.6em 0 1em; 
 	padding:0 0 6px 0; 
@@ -166,6 +177,32 @@ table.mc4wp-help tr:hover {
 	float:right;
 }
 
+.mc4wp-lists-overview {
+	border-collapse: collapse;
+	background: white;
+	padding: 20px;
+	max-height: 500px;
+	overflow-y: scroll;
+}
+
+.mc4wp-lists-overview table {
+	border: 0;
+}
+
+.mc4wp-lists-overview th {
+	font-weight: bold;
+	vertical-align: top;
+}
+
+.mc4wp-lists-overview th,
+.mc4wp-lists-overview td {
+	border: 1px solid #efefef;
+}
+
+.mc4wp-lists-overview h3{
+	margin: 0 !important;
+}
+
 @media(max-width: 1279px) {
 
 	#mc4wp-sidebar, 
@@ -188,7 +225,7 @@ table.mc4wp-help tr:hover {
 	
 }
 
-@media(max-width: 719px) {
+@media(max-width: 860px) {
 
 	.mc4wp-hide-smallscreens{ 
 		display: none;
