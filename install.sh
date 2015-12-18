@@ -43,3 +43,6 @@ apache
 # add site and restart apache
 sudo a2ensite alc
 sudo service apache2 restart
+
+# set up MySQL database
+mysql -uroot -proot -e "create database alc_wordpress"
