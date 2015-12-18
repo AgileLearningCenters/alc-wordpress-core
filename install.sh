@@ -1,3 +1,5 @@
+# vagrant install script
+# adapted from https://gist.github.com/danielpataki/0861bf91430bf2be73da
 sudo apt-get update
 
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
@@ -19,3 +21,25 @@ sudo service apache2 restart
 
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
+
+# ALC specific setup
+
+# create available site for /var/www/alc.org
+sudo cat > /etc/apache2/sites-available/alc.conf <<'apache'
+<VirtualHost *:80>
+ServerName alc.dev
+ServerAlias *.alc.dev
+DocumentRoot /var/www/alc-dev
+
+<Directory /var/www/alc-dev>
+  Options -Indexes +FollowSymLinks
+  DirectoryIndex index.php
+  AllowOverride All
+  Require all granted
+</Directory>
+</VirtualHost>
+apache
+
+# add site and restart apache
+sudo a2ensite alc
+sudo service apache2 restart
