@@ -1,10 +1,10 @@
-=== Donation Thermometer ===
+﻿=== Donation Thermometer ===
 Contributors: henryp
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8NVX34E692T34
 Tags: donate, donation, thermometer, progress, meter, red, fundraising, funds, money, charity, non-profit, farbtastic
 Requires at least: 2.7
-Tested up to: 3.9
-Stable tag: 1.3.9
+Tested up to: 4.3
+Stable tag: 1.3.13
 License: GPL3
 
 Displays a custom thermometer image charting the amount of donations raised.
@@ -64,9 +64,23 @@ Visit the [the plugin homepage](http://henrypatton.org/donation-thermometer) and
 
 == Changelog ==
 
+= 1.3.13 =
+* Fixed minor bug regarding centre alignment of the thermometer.
+
+= 1.3.12 =
+* Fixed minor bug with default values when updating from < version 1.3.
+
+= 1.3.11 =
+* Error in database changes on upgrade in 1.3.10.
+
+= 1.3.10 =
+* Various backend improvements of the code and handling of errors.
+* Added more options for the thousands separator.
+* Confirmed compatibility up to Wordpress 4.3.*
+
 = 1.3.9 =
 * Move width and height parameters into CSS code.
-* ‘px’ units can now be defined in the shortcode, instead of having to just use a number value. 
+* 'px' units can now be defined in the shortcode, instead of having to just use a number value. 
 
 = 1.3.8 =
 * Fixed encoding for currency symbols in the filename.

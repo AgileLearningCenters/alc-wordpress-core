@@ -3,12 +3,12 @@
 Plugin Name: Donation Thermometer
 Plugin URI: http://henrypatton.org/donation-thermometer
 Description: Displays custom thermometers charting the amount of donations raised using the shortcode <code>[thermometer raised=?? target=??]</code>. Shortcodes for raised and target text values are also available for posts/pages/text widgets: <code>[therm_r]</code> and <code>[therm_t]</code>.
-Version: 1.3.9
+Version: 1.3.13
 Author: Henry Patton
 Author URI: http://henrypatton.org
 License: GPL3
 
-Copyright 2012  Henry Patton  (email : henry@henrypatton.org)
+Copyright 2015  Henry Patton  (email : henry@henrypatton.org)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,33 +36,33 @@ function set_plugin_meta_dt($links, $file) {
     $plugin = plugin_basename(__FILE__);
     // create link
     if ($file == $plugin) {
-    return array_merge(
-    $links,
-    array( (sprintf( '<a href="options-general.php?page=%s">%s</a>', $plugin, __('Settings') ) ),
-	  sprintf('<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8NVX34E692T34">%s</a>', __('Donate') ) )
-    );
+		return array_merge(
+			$links,
+			array( (sprintf( '<a href="options-general.php?page=%s">%s</a>', $plugin, __('Settings') ) ),
+			  sprintf('<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8NVX34E692T34">%s</a>', __('Donate') ) )
+		);
     }
     return $links;
-    }
-    add_filter( 'plugin_row_meta', 'set_plugin_meta_dt', 10, 2 );
+}
+add_filter( 'plugin_row_meta', 'set_plugin_meta_dt', 10, 2 );
     
 // Register settings
 function thermometer_init_fn(){
 	wp_register_style( 'thermStylesheet', plugins_url('style.css', __FILE__) );
-	register_setting('plugin_options', 'plugin_options', 'thermometer_options_validate' );
-	add_settings_section('main_section', '', 'section_text_fn', __FILE__);
-	add_settings_field('colour_picker1', 'Fill colour', 'fill_colour_fn', __FILE__, 'main_section');
-	add_settings_field('plugin_chk1', 'Show percentage?', 'setting_chk1_fn', __FILE__, 'main_section');
-	add_settings_field('colour_picker2', 'Percentage text colour', 'text_colour_fn', __FILE__, 'main_section');
-	add_settings_field('plugin_chk2', 'Show target?', 'setting_chk2_fn', __FILE__, 'main_section');
-	add_settings_field('colour_picker3', 'Target text colour', 'target_colour_fn', __FILE__, 'main_section');
-	add_settings_field('plugin_chk3', 'Show amount raised?', 'setting_chk3_fn', __FILE__, 'main_section');
-	add_settings_field('colour_picker4', 'Raised text colour', 'raised_colour_fn', __FILE__, 'main_section');
-	add_settings_field('currency', 'Currency', 'setting_dropdown_fn', __FILE__, 'main_section');
-	add_settings_field('trailing', 'Currency symbol follows value?', 'setting_trailing_fn', __FILE__, 'main_section');
-	add_settings_field('thousands', 'Thousands separator', 'setting_thousands_fn', __FILE__, 'main_section');
-	add_settings_field('target_string', 'Target value', 'target_string_fn', __FILE__, 'main_section');
-	add_settings_field('raised_string', 'Raised value', 'raised_string_fn', __FILE__, 'main_section');
+	register_setting('thermometer_options', 'thermometer_options', 'thermometer_options_validate' );
+	add_settings_section('thermometer_section', '', 'section_text_fn', __FILE__);
+	add_settings_field('colour_picker1', 'Fill colour', 'fill_colour_fn', __FILE__, 'thermometer_section');
+	add_settings_field('chkbox1', 'Show percentage?', 'setting_chk1_fn', __FILE__, 'thermometer_section');
+	add_settings_field('colour_picker2', 'Percentage text colour', 'text_colour_fn', __FILE__, 'thermometer_section');
+	add_settings_field('chkbox2', 'Show target?', 'setting_chk2_fn', __FILE__, 'thermometer_section');
+	add_settings_field('colour_picker3', 'Target text colour', 'target_colour_fn', __FILE__, 'thermometer_section');
+	add_settings_field('chkbox3', 'Show amount raised?', 'setting_chk3_fn', __FILE__, 'thermometer_section');
+	add_settings_field('colour_picker4', 'Raised text colour', 'raised_colour_fn', __FILE__, 'thermometer_section');
+	add_settings_field('currency', 'Currency', 'setting_dropdown_fn', __FILE__, 'thermometer_section');
+	add_settings_field('trailing', 'Currency symbol follows value?', 'setting_trailing_fn', __FILE__, 'thermometer_section');
+	add_settings_field('thousands', 'Thousands separator', 'setting_thousands_fn', __FILE__, 'thermometer_section');
+	add_settings_field('target_string', 'Target value', 'target_string_fn', __FILE__, 'thermometer_section');
+	add_settings_field('raised_string', 'Raised value', 'raised_string_fn', __FILE__, 'thermometer_section');
 }
 
 // Add sub page to the Settings Menu
@@ -75,18 +75,37 @@ function thermometer_add_page_fn() {
 // Define default option settings when activate
 function add_thermdefaults_fn() {
     $retrieved_options = array();
-    $defaults = array("colour_picker1"=>"#FF0000", "chkbox1"=>1, "colour_picker2"=>"#000000", "chkbox2"=>1, "colour_picker3"=>"#000000", "chkbox3"=>1, "colour_picker4"=>"#000000", "currency"=>"£","target_string"=>"", "raised_string"=>"", "thousands"=>", (comma)");
-    $retrieved_options = maybe_unserialize( get_option( 'plugin_options' ) );
+	$all_options = array("colour_picker1", "chkbox1", "colour_picker2", "chkbox2", "colour_picker3", "chkbox3", "colour_picker4", "currency","target_string", "raised_string", "thousands", "trailing");
+    $defaults = array('colour_picker1'=>'#FF0000', 'chkbox1'=>1, 'colour_picker2'=>'#000000', 'chkbox2'=>1, 'colour_picker3'=>'#000000', 'chkbox3'=>1, 'colour_picker4'=>'#000000',
+					  'currency'=>'£','target_string'=>'', 'raised_string'=>'', 'thousands'=>', (comma)', 'trailing'=>0);
+    $retrieved_options = maybe_unserialize( get_option( 'thermometer_options' ) );
+	$retrieve_old_options = array();
+	$retrieve_old_options = maybe_unserialize( get_option( 'plugin_options' ) );
+	
+	if (!empty($retrieve_old_options) && ($retrieved_options == '' || empty($retrieved_options))){ //copy old options to new database entry if is empty
+		add_option('thermometer_options', $defaults);
+		$copied_option = array();
+		foreach ($all_options as $option){
+			if (isset($retrieve_old_options[$option])){
+				$copied_option[$option] = $retrieve_old_options[$option];
+			}
+			else{
+				$copied_option[$option] = $defaults[$option];
+			}
+		}
+		update_option('thermometer_options',$copied_option);
+	}
 
     if ($retrieved_options == ''){
-	add_option('plugin_options', $defaults);
+		add_option('thermometer_options', $defaults);
     }
     elseif ( count($retrieved_options) == 0){
-	update_option('plugin_options', $defaults);
+		update_option('thermometer_options', $defaults);
     }
 }
 
 register_activation_hook(__FILE__, 'add_thermdefaults_fn');
+add_action( 'plugins_loaded', 'add_thermdefaults_fn' ); // double-check database is updated. no upgrade hook?
 
 function my_admin_scripts() {
     wp_enqueue_style( 'farbtastic' );
@@ -118,101 +137,92 @@ function  section_text_fn() {
 	Currency symbols can be set to follow numeric values using <code>trailing=true</code>, or set globally below. <br>
 	The alt and title attributes of the image can also be modified, or toggled off. Use apostrophes to input a custom string, e.g. <code>[thermometer alt='Raised £1523']</code></p>
 	<h2>Default plugin values:</h2>";
-	
 }
 
 
 // TEXTBOX - Name: plugin_options[fill_colour]
 function fill_colour_fn() {
-	$options = get_option('plugin_options');
+	$options = get_option('thermometer_options');
 	$fill = ($options['colour_picker1'] != '') ? $options['colour_picker1'] : '#FF0000';
-	echo "<div class='form-item'><label for='color1'></label><input type='text' id='color1' name='plugin_options[colour_picker1]' value='".$fill."' class='colorwell' />";
+	echo "<div class='form-item'><label for='color1'></label><input type='text' id='color1' name='thermometer_options[colour_picker1]' value='".$fill."' class='colorwell' />";
 	echo "  e.g. red hex value = <code>#FF0000</code>";
 	echo '<div id="picker" style="float: right; position: absolute; left:600px;"></div>';
 }
 
 // DROP-DOWN-BOX - Name: plugin_options[currency]
 function  setting_dropdown_fn() {
-	$options = get_option('plugin_options');
-	$items = array("","£","$","€","¥");
-	echo "<input id='currency' name='plugin_options[currency]' size='5' type='text' value='".$options['currency']."' />";
+	$options = get_option('thermometer_options');
+	echo "<input id='currency' name='thermometer_options[currency]' size='5' type='text' value='".$options['currency']."' />";
 	echo ' define a custom global currency value (also works by entering <code>currency=$</code> in the shortcode).';
-    }
+}
     
 function  setting_thousands_fn() {
-	$options = get_option('plugin_options');
-	$sep = ($options['thousands'] != '') ? $options['thousands'] : ',';
-	$items = array(", (comma)",". (point)");
-	echo "<select id='drop_down2' name='plugin_options[thousands]'>";
+	$options = get_option('thermometer_options');
+	//$sep = ($options['thousands'] != '') ? $options['thousands'] : ',';
+	$sep = ($options['thousands'] != '') ? substr($options['thousands'],0,1) : ',';
+	$items = array(", (comma)",". (point)"," (space)","(none)");
+	echo "<select id='drop_down2' name='thermometer_options[thousands]'>";
 	foreach($items as $item) {
-		$selected = ($item==$sep) ? 'selected="selected"' : '';
+		$selected = (substr($item,0,1)==$sep) ? 'selected="selected"' : '';
 		echo "<option value='".$item."' ".$selected.">$item</option>";
 	}
 	echo "</select>";
-    }
-// CHECK-BOX - Name: plugin_options[trailing]
+}
+// CHECK-BOX - Name: thermometer_options[trailing]
 function setting_trailing_fn() {
-	$options = get_option('plugin_options');
-	if($options['trailing']) { $trailing1 = ' checked="checkbox" '; }
-	echo "<input ".$trailing1." id='plugin_trailing' value='1' name='plugin_options[trailing]' type='checkbox' />";
-    }
-     
+	$options = get_option('thermometer_options');
+	$trailing1 = (isset($options['trailing']) && $options['trailing'] == 1) ? ' checked="checked" ' : '';
+	echo "<input ".$trailing1." id='plugin_trailing' name='thermometer_options[trailing]' type='checkbox' />";
+}    
 // CHECKBOX - Name: plugin_options[chkbox1] percentage
 function setting_chk1_fn() {
-	$options = get_option('plugin_options');
-	if($options['chkbox1']) { $checked1 = ' checked="checked" '; }
-	echo "<input ".$checked1." id='plugin_chk1' value='1' name='plugin_options[chkbox1]' type='checkbox' />";
-    }
+	$options = get_option('thermometer_options');
+	$checked1 = (isset($options['chkbox1']) && $options['chkbox1'] == 1) ? ' checked="checked" ' : '';
+	echo "<input ".$checked1." id='plugin_chk1' name='thermometer_options[chkbox1]' type='checkbox' />";
+}
 // TEXTBOX - Name: plugin_options[text_colour] 
 function text_colour_fn() {
-	$options = get_option('plugin_options');
+	$options = get_option('thermometer_options');
 	$text = ($options['colour_picker2'] != '') ? $options['colour_picker2'] : '#000000';
-	echo "<div class='form-item'><label for='color2'></label><input type='text' id='color2' name='plugin_options[colour_picker2]' value='".$text."' class='colorwell' />";
+	echo "<div class='form-item'><label for='color2'></label><input type='text' id='color2' name='thermometer_options[colour_picker2]' value='".$text."' class='colorwell' />";
 	echo "  e.g. black hex value = <code>#000000</code>";
-    }
-
+}
 // CHECKBOX - Name: plugin_options[chkbox2] target
 function setting_chk2_fn() {
-	$options = get_option('plugin_options');
-	if($options['chkbox2']) { $checked2 = ' checked="checked" '; }
-	echo "<input ".$checked2." id='plugin_chk2' value='1' name='plugin_options[chkbox2]' type='checkbox' />";
-    }
-
+	$options = get_option('thermometer_options');
+	$checked2 = (isset($options['chkbox2']) && $options['chkbox2'] == 1) ? ' checked="checked" ' : '';
+	echo "<input ".$checked2." id='plugin_chk2' name='thermometer_options[chkbox2]' type='checkbox' />";
+}
 // CHECKBOX - Name: plugin_options[chkbox3] raised
 function setting_chk3_fn() {
-	$options = get_option('plugin_options');
-	if($options['chkbox3']) { $checked3 = ' checked="checked" '; }
-	echo "<input ".$checked3." id='plugin_chk3' value='1' name='plugin_options[chkbox3]' type='checkbox' />";
-    }
-    
+	$options = get_option('thermometer_options');
+	$checked3 = (isset($options['chkbox3']) && $options['chkbox3'] == 1) ? ' checked="checked" ' : '';
+	echo "<input ".$checked3." id='plugin_chk3' name='thermometer_options[chkbox3]' type='checkbox' />";
+} 
 // TEXTBOX - Name: plugin_options[target_colour] 
 function target_colour_fn() {
-	$options = get_option('plugin_options');
+	$options = get_option('thermometer_options');
 	$target = ($options['colour_picker3'] != '') ? $options['colour_picker3'] : '#000000';
-	echo "<div class='form-item'><label for='color3'></label><input type='text' id='color3' name='plugin_options[colour_picker3]' value='".$target."' class='colorwell' />";
+	echo "<div class='form-item'><label for='color3'></label><input type='text' id='color3' name='thermometer_options[colour_picker3]' value='".$target."' class='colorwell' />";
 	echo "  e.g. black hex value = <code>#000000</code>";
-    }
-
+}
 // TEXTBOX - Name: plugin_options[raised_colour] 
 function raised_colour_fn() {
-	$options = get_option('plugin_options');
+	$options = get_option('thermometer_options');
 	$raised = ($options['colour_picker4'] != '') ? $options['colour_picker4'] : '#000000';
-	echo "<div class='form-item'><label for='color4'></label><input type='text' id='color4' name='plugin_options[colour_picker4]' value='".$raised."' class='colorwell' />";
+	echo "<div class='form-item'><label for='color4'></label><input type='text' id='color4' name='thermometer_options[colour_picker4]' value='".$raised."' class='colorwell' />";
 	echo "  e.g. black hex value = <code>#000000</code>";
-    }
-    
+}
 // TEXTBOX - Name: plugin_options[target_string]
 function target_string_fn() {
-	$options = get_option('plugin_options');
-	//$therm_t = ($options['target_string'] != '') ? $options['target_string'] : '';
-	echo "<input id='target_string' name='plugin_options[target_string]' size='15' type='number' value='".$options['target_string']."' />";
+	$options = get_option('thermometer_options');
+	echo "<input id='target_string' name='thermometer_options[target_string]' size='15' type='number' value='".$options['target_string']."' />";
 	echo '  (also <code>[therm_t]</code> value)';
 }
 // TEXTBOX - Name: plugin_options[raised_string]
 function raised_string_fn() {
-	$options = get_option('plugin_options');
-	//$therm_r = ($options['raised_string'] != '') ? $options['raised_string'] : '';
-	echo "<input id='raised_string' name='plugin_options[raised_string]' size='15' type='number' value='".$options['raised_string']."' />";
+	$options = get_option('thermometer_options');
+	echo "<input id='raised_string' name='thermometer_options[raised_string]' size='15' type='number' value='".$options['raised_string']."' />";
 	echo '  (also <code>[therm_r]</code> value)';
 
 }
@@ -223,7 +233,7 @@ function options_page_fn() {
 		<div class="icon32" id="icon-options-general"><br></div>
 		<h2>Donation Thermometer Settings</h2>
 		<form action="options.php" method="post">
-		<?php settings_fields('plugin_options'); ?>
+		<?php settings_fields('thermometer_options'); ?>
 		<?php do_settings_sections(__FILE__); ?>
 		<p>E.g. So far we have raised £<code>[therm_r]</code> towards our £<code>[therm_t]</code> target! Thank you for your support.</p>
 		<p class="submit">
@@ -236,19 +246,20 @@ function options_page_fn() {
 
 // Validate user data for some/all of your input fields
 function thermometer_options_validate($input) {
+
 	// Check for missed entries - input default
 	if ($input['colour_picker1'] ==  '' || strlen($input['colour_picker1']) !=  7){
-	   $input['colour_picker1'] = ('#FF0000');
+		$input['colour_picker1'] = ('#FF0000');
 	}
 	if ($input['colour_picker2'] ==  '' || strlen($input['colour_picker2']) !=  7){
 	    $input['colour_picker2'] = ('#000000');
 	}
 	if ($input['colour_picker3'] ==  '' || strlen($input['colour_picker3']) !=  7){
 	    if ($input['colour_picker4'] == ''){
-		$input['colour_picker3'] = ('#000000');
+			$input['colour_picker3'] = ('#000000');
 	    }
 	    else{
-		$input['colour_picker3'] = ($input['colour_picker4']); // if 4 not empty make the same
+			$input['colour_picker3'] = ($input['colour_picker4']); // if 4 not empty make the same
 	    }
 	}
 	if ($input['colour_picker4'] ==  '' || strlen($input['colour_picker4']) !=  7){
@@ -256,42 +267,47 @@ function thermometer_options_validate($input) {
 	}
 	if (!is_numeric($input['target_string'])){
 	    $input['target_string'] = '';
-	    }
+	}
 	if (!is_numeric($input['raised_string'])){
 	    $input['raised_string'] = '';
-	    }
+	}
+		
+	$input['chkbox1'] = (isset($input['chkbox1'])) ? 1 : 0;
+	$input['chkbox2'] = (isset($input['chkbox2'])) ? 1 : 0;
+	$input['chkbox3'] = (isset($input['chkbox3'])) ? 1 : 0;
+	$input['trailing'] = (isset($input['trailing'])) ? 1 : 0;
+
 	return $input; // return validated input
 }
 
 if( isset($_GET['settings-updated']) ) {
     $therms = glob(THERM_ABSPATH.'*.png');
     if (is_array($therms) && count($therms) > 0){
-	foreach($therms as $v){
-	    unlink($v);}
-    }
-    // createtherm(500,1000,'preview'); create preview
+		foreach($therms as $v){
+			unlink($v);
+		}
+	}
 }
-
 
 /////////////////////// Where the magic happens ;)...
 
 function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing){
-    $options = get_option('plugin_options');
+    $options = get_option('thermometer_options');
     $colour_input = $options['colour_picker1'];
     $text_input = $options['colour_picker2'];
     $text2_input = $options['colour_picker3'];
     if ($options['colour_picker4'] == ''){
-	$text3_input = $options['colour_picker3']; //if db empty after updating plugin
+		$text3_input = $options['colour_picker3']; //if db empty after updating plugin
     }
     else{
-	$text3_input = $options['colour_picker4'];
+		$text3_input = $options['colour_picker4'];
     }
     $raisedck = $options['chkbox3'];
     if($raisedck =='1'){
-	$raised_cnt = (((strlen($raised) + strlen(utf8_decode($currency)))*25)+205+28); //pixel width with raised string
+		$raised_cnt = (((strlen($raised) + strlen(utf8_decode($currency)))*25)+205+28); //pixel width with raised string
     }
     else{
-	$raised_cnt = 240;
+		$raised_cnt = 240;
     }
     
     $targetck = $options['chkbox2'];
@@ -300,11 +316,11 @@ function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing){
     $font = THERM_ABSPATH."fonts/Arial.ttf";
     
     // calculte percentage value
-    if ($target > 0){
+    if ($target > 0 && $raised > 0){
 	    $percent_raised  = ($raised/$target * 100); // avoid division by zero
 	}
 	else{
-	    $percent_raised == 0;
+	    $percent_raised = 0.01;
 	}
     
     $nodp = number_format($percent_raised, 0,'.',',');
@@ -326,7 +342,7 @@ function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing){
     imageline($image_2,63,734-$filled,175, 734-$filled,$border); //make a line where raised to
     imagefilltoborder($image_2, 110, 734, $border, $user_colour); //fill thermometer up to level
     if ($percent_raised <= 100){ // if less or equal to 100%
-	imagefilltoborder($image_2, 110, 74, $border, $background); //fill rest with white
+		imagefilltoborder($image_2, 110, 74, $border, $background); //fill rest with white
     }
     imagecopy($draft_img, $image_2, 0, 0, 0, 0, 460, $y ); // draw outline
     imagecopy($draft_img, $image_3, 38, 57, 0, 0, $x, $y); // draw markers
@@ -335,55 +351,55 @@ function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing){
     
     // percentage bottom
     if ($percentck =='1'){
-	if ($percent_raised > 999){ // variable percent size
-	    $fontsize = 24;}
-	elseif($percent_raised > 99){
-	    $fontsize = 33;
-	}
-	else{
-	    $fontsize = 40;
-	    }
-	$width_perc = 117;
-	$height_perc = 42;
-	$im = imagecreatetruecolor($width_perc, $height_perc);
-	$background = imagecolorallocate($im,$colour_fill['r'], $colour_fill['g'], $colour_fill['b']);
-	imagefilledrectangle($im, 0, 0, $width_perc, $height_perc, $background);
-	$colour_text = HextoRGB($text_input);		
-	$text_color = ImageColorAllocate($im, $colour_text['r'], $colour_text['g'], $colour_text['b']);
-	$box = imagettfbbox($fontsize,0,$font,$nodp.'%');
-	$perc_x = ceil(($width_perc - $box[2]) / 2); //centre of box
-	ImageTTFText($im, $fontsize, 0, $perc_x, 38, $text_color, $font, $nodp.'%');
-	imagecopy($draft_img, $im, 57, 790, 0,0, $width_perc,$height_perc);
-	imagedestroy($im);
+		if ($percent_raised > 999){ // variable percent size
+			$fontsize = 24;}
+		elseif($percent_raised > 99){
+			$fontsize = 33;
+		}
+		else{
+			$fontsize = 40;
+		}
+		$width_perc = 117;
+		$height_perc = 42;
+		$im = imagecreatetruecolor($width_perc, $height_perc);
+		$background = imagecolorallocate($im,$colour_fill['r'], $colour_fill['g'], $colour_fill['b']);
+		imagefilledrectangle($im, 0, 0, $width_perc, $height_perc, $background);
+		$colour_text = HextoRGB($text_input);		
+		$text_color = ImageColorAllocate($im, $colour_text['r'], $colour_text['g'], $colour_text['b']);
+		$box = imagettfbbox($fontsize,0,$font,$nodp.'%');
+		$perc_x = ceil(($width_perc - $box[2]) / 2); //centre of box
+		ImageTTFText($im, $fontsize, 0, $perc_x, 38, $text_color, $font, $nodp.'%');
+		imagecopy($draft_img, $im, 57, 790, 0,0, $width_perc,$height_perc);
+		imagedestroy($im);
     }
 	    
     // raised
     $colour_text3 = HextoRGB($text3_input); 
     $text_color3 = ImageColorAllocate($draft_img, $colour_text3['r'], $colour_text3['g'], $colour_text3['b']); 
     if ($raisedck =='1'){
-	if ($percent_raised <= 100){ // if less than 100%
-		$triangle_start = (722 - $filled);
-	}
-	else{
-		$triangle_start = (83);
-	}
-	$triangle = imagecreatetruecolor(24, 27); // draw triangle
-	imagealphablending($triangle,false);
-	$col2=imagecolorallocatealpha($triangle,255,255,255,127);
-	imagefilledrectangle($triangle,0,0,24,27,$col2);
-	$black = imagecolorallocate($triangle, 0, 0, 0);
-	$vertices = array(0,12,23.5,0,23.5,27); // triangle points
-	imagefilledpolygon($triangle,$vertices,3,$black);
-	imagealphablending($triangle,true);
-	imagecopy($draft_img, $triangle, 173, $triangle_start, 0, 0, 23, 26); // draw triangle
-	$raised_comma = number_format($raised,0,'.',$sep);
-	if ($trailing == 'false'){
-	    ImageTTFText($draft_img, 30, 0, 205, ($triangle_start + 26), $text_color3, $font, $currency.$raised_comma);
-	}
-	else{
-	    ImageTTFText($draft_img, 30, 0, 205, ($triangle_start + 26), $text_color3, $font, $raised_comma.' '.$currency);
-	}
-	imagedestroy($triangle);    
+		if ($percent_raised <= 100){ // if less than 100%
+			$triangle_start = (722 - $filled);
+		}
+		else{
+			$triangle_start = (83);
+		}
+		$triangle = imagecreatetruecolor(24, 27); // draw triangle
+		imagealphablending($triangle,false);
+		$col2=imagecolorallocatealpha($triangle,255,255,255,127);
+		imagefilledrectangle($triangle,0,0,24,27,$col2);
+		$black = imagecolorallocate($triangle, 0, 0, 0);
+		$vertices = array(0,12,23.5,0,23.5,27); // triangle points
+		imagefilledpolygon($triangle,$vertices,3,$black);
+		imagealphablending($triangle,true);
+		imagecopy($draft_img, $triangle, 173, $triangle_start, 0, 0, 23, 26); // draw triangle
+		$raised_comma = number_format($raised,0,'.',$sep);
+		if ($trailing == 'false'){
+			ImageTTFText($draft_img, 30, 0, 205, ($triangle_start + 26), $text_color3, $font, $currency.$raised_comma);
+		}
+		else{
+			ImageTTFText($draft_img, 30, 0, 205, ($triangle_start + 26), $text_color3, $font, $raised_comma.' '.$currency);
+		}
+		imagedestroy($triangle);    
     }
     
     // target
@@ -445,14 +461,14 @@ function HextoRGB($hex){
     $colour_rgb = array();
      
     if(strlen($hex) == 3) {
-	$colour_rgb['r'] = hexdec(substr($hex, 0, 1) . $r);
-	$colour_rgb['g'] = hexdec(substr($hex, 1, 1) . $g);
-	$colour_rgb['b'] = hexdec(substr($hex, 2, 1) . $b);
+		$colour_rgb['r'] = hexdec(substr($hex, 0, 1) . $r);
+		$colour_rgb['g'] = hexdec(substr($hex, 1, 1) . $g);
+		$colour_rgb['b'] = hexdec(substr($hex, 2, 1) . $b);
     }
     else if(strlen($hex) == 6) {
-	$colour_rgb['r'] = hexdec(substr($hex, 0, 2));
-	$colour_rgb['g'] = hexdec(substr($hex, 2, 2));
-	$colour_rgb['b'] = hexdec(substr($hex, 4, 2));
+		$colour_rgb['r'] = hexdec(substr($hex, 0, 2));
+		$colour_rgb['g'] = hexdec(substr($hex, 2, 2));
+		$colour_rgb['b'] = hexdec(substr($hex, 4, 2));
 	}
     return $colour_rgb;
 }
@@ -463,7 +479,6 @@ function HextoRGB($hex){
 add_shortcode( 'thermometer','thermometer_graphic');	
 		
 function thermometer_graphic($atts){
-	
 	$atts = (shortcode_atts(
 		array(
 			'width' => '',
@@ -474,25 +489,38 @@ function thermometer_graphic($atts){
 			'alt' =>'',
 			'currency' =>'',
 			'sep' =>'',
-			'trailing' =>'',
+			'trailing' =>''
 		), $atts));
-	$options = get_option('plugin_options');
+	$options = get_option('thermometer_options');
 	
 	//width
 	if ($atts['width'] != ''){
-	    $height='';
 	    $width=$atts['width'];
+		$height = '';
 	}
+	else{
+		$width = "200";
+		$height = '';
+	}
+	//height
 	if ($atts['height'] != ''){
 	    $height=$atts['height'];
-	    $width='';
+		$width = '';
+	}
+	elseif($atts['height'] == '' && $atts['width'] != ''){
+		$width=$atts['width'];
+		$height = '';
+	}
+	else{
+		$height = "533";
+		$width = '';
 	}
 	//currency value to use
 	if ($atts['currency'] == ''){
 	    $currency = $options['currency'];
-	    }
-	elseif($atts['currency'] == 'null' || $atts['currency'] == 'NULL'){ //get user to enter null for no value
-	    $currency ='';
+	}
+	elseif(strtolower($atts['currency']) == 'null'){ //get user to enter null for no value
+	    $currency = '';
 	}
 	else{
 	    $currency = $atts['currency']; //set currency to default or shortcode value
@@ -501,10 +529,11 @@ function thermometer_graphic($atts){
 	//target value
 	if ($atts['target'] == '' && $options['target_string'] == ''){
 	    echo '<p style="color:red;">Your target is missing. Set a value on the settings page or in the shortcode.</p>';
+		$target = 0;
 	}
 	elseif ($atts['target'] == '' && $options['target_string'] != ''){
 	    $target = $options['target_string'];
-	    }
+	}
 	else{
 	    $target = $atts['target'];
 	}
@@ -512,23 +541,27 @@ function thermometer_graphic($atts){
 	//raised value
 	if ($atts['raised'] == '' && $options['raised_string'] == ''){
 	    echo '<p style="color:red;">The amount raised is missing. Set a value on the settings page or in the shortcode.</p>';
+		$raised = 0;
 	}
 	elseif ($atts['raised'] == '' && $options['raised_string'] != ''){
 	    $raised = $options['raised_string'];
-	    }
+	}
 	else{
 	    $raised = $atts['raised'];
 	}
 	
 	//align position
-	if ($atts['align'] == 'center' || $atts['align'] == 'centre'){
+	if (strtolower($atts['align']) == 'center' || strtolower($atts['align']) == 'centre'){
 	    $align = 'display:block; margin-left:auto; margin-right:auto;';
 	}
-	elseif ($atts['align'] == 'left'){
+	elseif (strtolower($atts['align']) == 'left'){
 	    $align = 'display:block; float:left;';
 	}
 	elseif ($atts['align'] != ''){
-	    $align = 'display:block; float:'.$atts['align'].';';
+	    $align = 'display:block; float:'.strtolower($atts['align']).';';
+	}
+	else{
+		$align = 'display:block; float:left;';
 	}
 	
 	//width value
@@ -541,19 +574,33 @@ function thermometer_graphic($atts){
 	    $sep = $atts['sep'];
 	}
 	else{
-	    $sep = substr($options['thousands'],0,1);
+		if($options['thousands'] == ' (space)'){
+			$sep = ' ';
+		}
+		elseif($options['thousands'] == '(none)'){
+			$sep = '';
+		}
+		else{
+			$sep = substr($options['thousands'],0,1);
+		}
 	}
 	
 	// currency before or after number
-	if($atts['trailing'] == 'true' || $atts['trailing'] == 'True' || $options['trailing'] == 1){
-	    $trailing = 'true';
+	if(strtolower($atts['trailing']) == 'true'){
+		$trailing = 'true';
+	}
+	elseif(strtolower($atts['trailing']) == 'false'){
+		$trailing = 'false';
+	}
+	elseif(isset($options['trailing']) && $options['trailing'] == 1){
+		$trailing = 'true';
 	}
 	else{
-	    $trailing = 'false';
+		$trailing = 'false';
 	}
 	
 	//title text
-	if ($atts['alt'] == 'off' || $atts['alt'] == 'OFF' || $atts['alt'] == 'Off'){
+	if (strtolower($atts['alt']) == 'off'){
 	    $title = '';
 	}
 	elseif($atts['alt'] != ''){
@@ -561,12 +608,11 @@ function thermometer_graphic($atts){
 	    }
 	else{
 	    if ($trailing == 'false'){
-		$title = 'Raised '.$currency.number_format($raised,0,'.',$sep).' towards the '.$currency.number_format($target,0,'.',$sep).' target.';
+			$title = 'Raised '.$currency.number_format($raised,0,'.',$sep).' towards the '.$currency.number_format($target,0,'.',$sep).' target.';
 	    }
 	    else{
-		$title = 'Raised '.number_format($raised,0,'.',$sep).' '.$currency.' towards the '.number_format($target,0,'.',$sep).' '.$currency.' target.';
-	    }
-	    
+			$title = 'Raised '.number_format($raised,0,'.',$sep).' '.$currency.' towards the '.number_format($target,0,'.',$sep).' '.$currency.' target.';
+	    }  
 	}	
 	
 	global $post;
@@ -582,69 +628,48 @@ function thermometer_graphic($atts){
 	
     //clear cache if necessary first
     foreach(glob(THERM_ABSPATH.'*.png*') as $f){
-	if(time() - filemtime($f) >= $cache_life){
-	unlink($f);
-	}
+		if(time() - filemtime($f) >= $cache_life){
+			unlink($f);
+		}
     }
     
     // create a custom thermometer from shortcode parameters
-    
     if(file_exists(THERM_ABSPATH.$custom_thermname.'.png')){ // if thermometer exists
-	return thermhtml($width,$height,$raised,$target,$atts['align'],$align,$currency,$title,$urlpath,$custom_thermname);
+		return thermhtml($width,$height,$raised,$target,$align,$currency,$title,$urlpath,$custom_thermname);
 	}
     else{
-	createtherm($raised,$target,htmlspecialchars_decode($currency),$custom_thermname,$sep,$trailing); // use shortcode attributes to create thermometer
-	return thermhtml($width,$height,$raised,$target,$atts['align'],$align,$currency,$title,$urlpath,$custom_thermname);
+		createtherm($raised,$target,htmlspecialchars_decode($currency),$custom_thermname,$sep,$trailing); // use shortcode attributes to create thermometer
+		return thermhtml($width,$height,$raised,$target,$align,$currency,$title,$urlpath,$custom_thermname);
 	}
 }
 
-function thermhtml($code_w,$code_h,$code_r,$code_t,$code_a,$align,$currency,$title,$urlpath,$custom_thermname,$content = null){ //new function to get width/height ratio from created file
+function thermhtml($code_w,$code_h,$code_r,$code_t,$align,$currency,$title,$urlpath,$custom_thermname,$content = null){ //new function to get width/height ratio from created file
     list($width,$height) = getimagesize(THERM_ABSPATH.$custom_thermname.'.png');
     $ratio = $height/$width;
     
     // use default width of 300 pixels if no parameters given
-	if ($code_w == '' && $code_h == '' && $code_a == ''){
-		return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none; float: left; margin: 10px 20px; width: 200px; height: '.intval($ratio*200).'px;">';
+	if ($code_w == '' && $code_h == ''){
+		return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none; '.$align.' margin: 10px auto; width: 200px; height: '.intval($ratio*200).'px;">';
 	}
-	// if just align given
-	elseif($code_w == '' && $code_h == '' && $code_a != ''){
-		return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px 20px; width: 200px; height: '.intval($ratio*200).';">';
-	}
+
 	// if width/height and/or align given
 	else{
-	    if ($code_w != '' && $code_a != ''){
+	    if ($code_w != ''){
 		if (substr($code_w,-1) != '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px 20px; width: '.intval($code_w).'px; height: '.intval($code_w*$ratio).'px;">';
+		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px auto; width: '.intval($code_w).'px; height: '.intval($code_w*$ratio).'px;">';
 		}
 		elseif (substr($code_w,-1) == '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px 20px; width: '.$code_w.';">';
+		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px auto; width: '.$code_w.';">';
 		}
 	    }
 	    
-	    elseif ($code_h != '' && $code_a != ''){
-		if (substr($code_h,-1) != '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px 20px; width: '.intval($code_h/$ratio).'px; height: '.intval($code_h).'px;">';
-		}
-		elseif (substr($code_h,-1) == '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px 20px; height: '.$code_h.';">';
-		}
-	    }
-	    
-	    elseif ($code_h != '' && $code_a == ''){
-		if (substr($code_h,-1) != '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none; float: left; margin: 10px 20px; width: '.intval($code_h/$ratio).'px; height: '.intval($code_h).'px;">';
-		}
-		elseif (substr($code_h,-1) == '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none; float: left; margin: 10px 20px; height: '.$code_h.';">';
-		}
-	    }
-	    elseif($code_w != '' && $code_a == ''){
-		if (substr($code_w,-1) != '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none; float: left; margin: 10px 20px; width: '.intval($code_w).'px; height: '.intval($code_w*$ratio).'px;">';
-		}
-		elseif (substr($code_w,-1) == '%'){
-		    return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none; float: left; margin: 10px 20px; width: '.$code_w.';">';
-		}
+	    elseif ($code_h != ''){
+			if (substr($code_h,-1) != '%'){
+				return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px auto; width: '.intval($code_h/$ratio).'px; height: '.intval($code_h).'px;">';
+			}
+			elseif (substr($code_h,-1) == '%'){
+				return $therm_output = '<img src="'.$urlpath.'" title="'.$title.'" alt="'.$title.'" style="border: 0pt none;'.$align.' margin: 10px auto; height: '.$code_h.';">';
+			}
 	    }
 	}
 }
@@ -652,7 +677,7 @@ function thermhtml($code_w,$code_h,$code_r,$code_t,$code_a,$align,$currency,$tit
 add_shortcode( 'therm_r','therm_raised');
 
 function therm_raised(){
-    $options = get_option('plugin_options');
+    $options = get_option('thermometer_options');
     $raised = $options['raised_string'];
     $sep = substr($options['thousands'],0,1);
     if ($raised != ''){
@@ -666,7 +691,7 @@ function therm_raised(){
 add_shortcode( 'therm_t','therm_target');
 
 function therm_target(){
-    $options = get_option('plugin_options');
+    $options = get_option('thermometer_options');
     $target = $options['target_string'];
     $sep = substr($options['thousands'],0,1);
     if ($target != ''){
