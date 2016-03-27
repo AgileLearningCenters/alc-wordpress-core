@@ -127,7 +127,7 @@ class Theme_My_Login_Template extends Theme_My_Login_Abstract {
 		echo $this->get_option( 'after_widget' ) . "\n";
 		$output = ob_get_contents();
 		ob_end_clean();
-		return apply_filters_ref_array( 'tml_display', array( $output, $action, &$this ) );
+		return apply_filters_ref_array( 'tml_display', array( $output, $action, $this ) );
 	}
 
 	/**
@@ -245,9 +245,10 @@ class Theme_My_Login_Template extends Theme_My_Login_Abstract {
 	 * @access public
 	 *
 	 * @param string $action Action to retrieve
+	 * @param string $scheme Scheme to give the URL context
 	 * @return string The requested action URL
 	 */
-	public function get_action_url( $action = '' ) {
+	public function get_action_url( $action = '', $scheme = 'login' ) {
 
 		$instance = $this->get_option( 'instance' );
 
@@ -260,11 +261,9 @@ class Theme_My_Login_Template extends Theme_My_Login_Abstract {
 			$url = Theme_My_Login::get_page_link( $action );
 		}
 
-		// Respect FORCE_SSL_LOGIN
-		if ( 'login' == $action && force_ssl_login() )
-			$url = preg_replace( '|^http://|', 'https://', $url );
+		$url = set_url_scheme( $url, $scheme );
 
-		return apply_filters( 'tml_action_url', $url, $action, $instance );
+		return apply_filters( 'tml_action_url', $url, $action, $scheme, $instance );
 	}
 
 	/**
@@ -274,9 +273,10 @@ class Theme_My_Login_Template extends Theme_My_Login_Abstract {
 	 * @access public
 	 *
 	 * @param string $action Action to retrieve
+	 * @param string $scheme Scheme to give the URL context
 	 */
-	public function the_action_url( $action = 'login' ) {
-		echo esc_url( $this->get_action_url( $action ) );
+	public function the_action_url( $action = 'login', $scheme = 'login' ) {
+		echo esc_url( $this->get_action_url( $action, $scheme ) );
 	}
 
 	/**
@@ -449,14 +449,14 @@ class Theme_My_Login_Template extends Theme_My_Login_Abstract {
 		// Easy access to current user
 		$current_user = wp_get_current_user();
 
-		extract( apply_filters_ref_array( 'tml_template_args', array( $args, &$this ) ) );
+		extract( apply_filters_ref_array( 'tml_template_args', array( $args, $this ) ) );
 
 		$template_paths = apply_filters( 'tml_template_paths', array(
 			get_stylesheet_directory() . '/theme-my-login',
 			get_stylesheet_directory(),
 			get_template_directory() . '/theme-my-login',
 			get_template_directory(),
-			WP_PLUGIN_DIR . '/theme-my-login/templates'
+			THEME_MY_LOGIN_PATH . '/templates'
 		) );
 
 		foreach ( (array) $template_names as $template_name ) {
@@ -475,7 +475,7 @@ class Theme_My_Login_Template extends Theme_My_Login_Abstract {
 			}
 		}
 
-		$located = apply_filters_ref_array( 'tml_template', array( $located, $template_names, &$this ) );
+		$located = apply_filters_ref_array( 'tml_template', array( $located, $template_names, $this ) );
 
 		if ( $load && '' != $located )
 			include( $located );

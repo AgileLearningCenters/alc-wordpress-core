@@ -44,14 +44,12 @@ class Theme_My_Login_Custom_Email_Admin extends Theme_My_Login_Abstract {
 	 * @access protected
 	 */
 	protected function load() {
-		add_action( 'tml_uninstall_custom-email/custom-email.php', array( &$this, 'uninstall' ) );
+		add_action( 'tml_uninstall_custom-email/custom-email.php', array( $this, 'uninstall' ) );
 
-		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
-		add_action( 'admin_init', array( &$this, 'admin_init' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
-		add_action( 'load-tml_page_theme_my_login_email', array( &$this, 'load_settings_page' ) );
-
-		add_action( 'user_register', array( &$this, 'user_register' ) );
+		add_action( 'load-tml_page_theme_my_login_email', array( $this, 'load_settings_page' ) );
 	}
 
 	/**
@@ -93,20 +91,20 @@ class Theme_My_Login_Custom_Email_Admin extends Theme_My_Login_Abstract {
 			__( 'E-mail', 'theme-my-login' ),
 			'manage_options',
 			$this->options_key,
-			array( &$this, 'settings_page' )
+			array( $this, 'settings_page' )
 		);
 
-		add_meta_box( 'new_user',       __( 'New User',          'theme-my-login' ), array( &$this, 'new_user_meta_box' ),       'tml_page_' . $this->options_key, 'normal' );
-		add_meta_box( 'new_user_admin', __( 'New User Admin',    'theme-my-login' ), array( &$this, 'new_user_admin_meta_box' ), 'tml_page_' . $this->options_key, 'normal' );
-		add_meta_box( 'retrieve_pass',  __( 'Retrieve Password', 'theme-my-login' ), array( &$this, 'retrieve_pass_meta_box' ),  'tml_page_' . $this->options_key, 'normal' );
-		add_meta_box( 'reset_pass',     __( 'Reset Password',    'theme-my-login' ), array( &$this, 'reset_pass_meta_box' ),     'tml_page_' . $this->options_key, 'normal' );
+		add_meta_box( 'new_user',       __( 'New User',          'theme-my-login' ), array( $this, 'new_user_meta_box' ),       'tml_page_' . $this->options_key, 'normal' );
+		add_meta_box( 'new_user_admin', __( 'New User Admin',    'theme-my-login' ), array( $this, 'new_user_admin_meta_box' ), 'tml_page_' . $this->options_key, 'normal' );
+		add_meta_box( 'retrieve_pass',  __( 'Retrieve Password', 'theme-my-login' ), array( $this, 'retrieve_pass_meta_box' ),  'tml_page_' . $this->options_key, 'normal' );
+		add_meta_box( 'reset_pass',     __( 'Reset Password',    'theme-my-login' ), array( $this, 'reset_pass_meta_box' ),     'tml_page_' . $this->options_key, 'normal' );
 
 		// Check for User Moderation module
 		if ( class_exists( 'Theme_My_Login_User_Moderation' ) ) {
-			add_meta_box( 'user_activation',     __( 'User Activation',     'theme-my-login' ), array( &$this, 'user_activation_meta_box' ),     'tml_page_' . $this->options_key, 'normal' );
-			add_meta_box( 'user_approval',       __( 'User Approval',       'theme-my-login' ), array( &$this, 'user_approval_meta_box' ),       'tml_page_' . $this->options_key, 'normal' );
-			add_meta_box( 'user_approval_admin', __( 'User Approval Admin', 'theme-my-login'),  array( &$this, 'user_approval_admin_meta_box' ), 'tml_page_' . $this->options_key, 'normal' );
-			add_meta_box( 'user_denial',         __( 'User Denial',         'theme-my-login' ), array( &$this, 'user_denial_meta_box' ),         'tml_page_' . $this->options_key, 'normal' );
+			add_meta_box( 'user_activation',     __( 'User Activation',     'theme-my-login' ), array( $this, 'user_activation_meta_box' ),     'tml_page_' . $this->options_key, 'normal' );
+			add_meta_box( 'user_approval',       __( 'User Approval',       'theme-my-login' ), array( $this, 'user_approval_meta_box' ),       'tml_page_' . $this->options_key, 'normal' );
+			add_meta_box( 'user_approval_admin', __( 'User Approval Admin', 'theme-my-login'),  array( $this, 'user_approval_admin_meta_box' ), 'tml_page_' . $this->options_key, 'normal' );
+			add_meta_box( 'user_denial',         __( 'User Denial',         'theme-my-login' ), array( $this, 'user_denial_meta_box' ),         'tml_page_' . $this->options_key, 'normal' );
 		}
 	}
 
@@ -119,7 +117,7 @@ class Theme_My_Login_Custom_Email_Admin extends Theme_My_Login_Abstract {
 	 * @access public
 	 */
 	public function admin_init() {
-		register_setting( $this->options_key, $this->options_key, array( &$this, 'save_settings' ) );
+		register_setting( $this->options_key, $this->options_key, array( $this, 'save_settings' ) );
 	}
 
 	/**
@@ -131,7 +129,7 @@ class Theme_My_Login_Custom_Email_Admin extends Theme_My_Login_Abstract {
 	 * @access public
 	 */
 	public function load_settings_page() {
-		wp_enqueue_script( 'tml-custom-email-admin', plugins_url( 'theme-my-login/modules/custom-email/admin/js/custom-email-admin.js' ), array( 'postbox' ) );
+		wp_enqueue_script( 'tml-custom-email-admin', plugins_url( 'js/custom-email-admin.js', __FILE__ ), array( 'postbox' ) );
 	}
 
 	/**
@@ -146,8 +144,7 @@ class Theme_My_Login_Custom_Email_Admin extends Theme_My_Login_Abstract {
 		global $current_screen;
 		?>
 		<div class="wrap">
-			<?php screen_icon( 'options-general' ); ?>
-			<h2><?php echo esc_html_e( 'Theme My Login Custom E-mail Settings', 'theme-my-login' ); ?></h2>
+			<h2><?php esc_html_e( 'Theme My Login Custom E-mail Settings', 'theme-my-login' ); ?></h2>
 			<?php settings_errors(); ?>
 
 			<form method="post" action="options.php">
@@ -582,28 +579,6 @@ class Theme_My_Login_Custom_Email_Admin extends Theme_My_Login_Abstract {
 			</tr>
 		</table>
 		<?php
-	}
-
-	/**
-	 * Do 'tml_new_user_registered' action when a new user is created
-	 *
-	 * @since 6.3
-	 *
-	 * @param int $user_id User ID
-	 */
-	public function user_register( $user_id ) {
-		$screen = get_current_screen();
-
-		if ( 'user' == $screen->base && 'add' == $screen->action ) {
-			do_action( 'tml_new_user_registered', $user_id, null, 'both' );
-
-			if ( current_user_can( 'list_users' ) )
-				$redirect = 'users.php?update=add&id=' . $user_id;
-			else
-				$redirect = add_query_arg( 'update', 'add', 'user-new.php' );
-			wp_redirect( $redirect );
-			exit;
-		}
 	}
 
 	/**
