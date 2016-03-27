@@ -1,17 +1,17 @@
 <?php
 
-class MC4WP_Lite_Admin
-{
-
-	/**
-	 * @var bool True if the BWS Captcha plugin is activated.
-	 */
-	private $has_captcha_plugin = false;
+/**
+ * Class MC4WP_Admin
+ *
+ * @ignore
+ * @access private
+ */
+class MC4WP_Admin {
 
 	/**
 	 * @var string The relative path to the main plugin file from the plugins dir
 	 */
-	private $plugin_file;
+	protected $plugin_file;
 
 	/**
 	 * @var MC4WP_MailChimp
@@ -19,79 +19,153 @@ class MC4WP_Lite_Admin
 	protected $mailchimp;
 
 	/**
-	 * Constructor
+	 * @var MC4WP_Admin_Messages
 	 */
-	public function __construct() {
-
-		$this->plugin_file = plugin_basename( MC4WP_LITE_PLUGIN_FILE );
-		$this->mailchimp = new MC4WP_MailChimp();
-		$this->load_translations();
-		$this->setup_hooks();
-		$this->listen();
-	}
+	protected $messages;
 
 	/**
-	 * Upgrade routine
+	 * @var MC4WP_Admin_Ads
 	 */
-	private function load_upgrader() {
+	protected $ads;
 
-		// Only run if db option is at older version than code constant
-		$db_version = get_option( 'mc4wp_lite_version', 0 );
-		if( version_compare( MC4WP_LITE_VERSION, $db_version, '<=' ) ) {
-			return false;
-		}
-
-		$upgrader = new MC4WP_DB_Upgrader( MC4WP_LITE_VERSION, $db_version );
-		$upgrader->run();
+	/**
+	 * Constructor
+	 *
+	 * @param MC4WP_Admin_Messages $messages
+	 * @param MC4WP_MailChimp      $mailchimp
+	 */
+	public function __construct( MC4WP_Admin_Messages $messages, MC4WP_MailChimp $mailchimp ) {
+		$this->mailchimp = $mailchimp;
+		$this->messages = $messages;
+		$this->plugin_file = plugin_basename( MC4WP_PLUGIN_FILE );
+		$this->ads = new MC4WP_Admin_Ads();
+		$this->load_translations();
 	}
 
 	/**
 	 * Registers all hooks
 	 */
-	private function setup_hooks() {
-
-		global $pagenow;
-		$current_page = isset( $pagenow ) ? $pagenow : '';
+	public function add_hooks() {
 
 		// Actions used globally throughout WP Admin
-		add_action( 'admin_init', array( $this, 'initialize' ) );
 		add_action( 'admin_menu', array( $this, 'build_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_css_and_js' ) );
-		add_action( 'admin_footer_text', array( $this, 'footer_text' ) );
+		add_action( 'admin_init', array( $this, 'initialize' ) );
+		add_action( 'current_screen', array( $this, 'customize_admin_texts' ) );
+		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+		add_action( 'mc4wp_admin_empty_lists_cache', array( $this, 'renew_lists_cache' ) );
+		add_action( 'mc4wp_admin_empty_debug_log', array( $this, 'empty_debug_log' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
-		// Hooks for Plugins overview page
-		if( $current_page === 'plugins.php' ) {
-			$this->plugin_file = plugin_basename( MC4WP_LITE_PLUGIN_FILE );
-
-			add_filter( 'plugin_action_links_' . $this->plugin_file, array( $this, 'add_plugin_settings_link' ), 10, 2 );
-			add_filter( 'plugin_row_meta', array( $this, 'add_plugin_meta_links'), 10, 2 );
-		}
-
-		// Hooks for Form settings page
-		if( $this->get_current_page() === 'mailchimp-for-wp-form-settings' ) {
-			add_filter( 'quicktags_settings', array( $this, 'set_quicktags_buttons' ), 10, 2 );
-		}
-
-		// hide major plugin updates for everyone
-		add_filter( 'site_transient_update_plugins', array( $this, 'hide_major_plugin_updates' ) );
+		$this->ads->add_hooks();
+		$this->messages->add_hooks();
 	}
 
 	/**
-	 * Prevents v3.x updates from showing
+	 * Initializes various stuff used in WP Admin
+	 *
+	 * - Registers settings
 	 */
-	public function hide_major_plugin_updates( $data ) {
+	public function initialize() {
 
-		// do we have an update for this plugin?
-		if( isset( $data->response[ $this->plugin_file ]->new_version ) ) {
+		// register settings
+		register_setting( 'mc4wp_settings', 'mc4wp', array( $this, 'save_general_settings' ) );
 
-			// check if this is a major update and if so, remove it from the response object
-			if( version_compare( $data->response[ $this->plugin_file ]->new_version, '3.0.0', '>=' ) ) {
-				unset( $data->response[ $this->plugin_file ] );
-			}
+		// Load upgrader
+		$this->init_upgrade_routines();
+
+		// listen for custom actions
+		$this->listen_for_actions();
+	}
+
+
+	/**
+	 * Listen for `_mc4wp_action` requests
+	 */
+	public function listen_for_actions() {
+
+		// listen for any action (if user is authorised)
+		if( ! $this->is_user_authorized() || ! isset( $_REQUEST['_mc4wp_action'] ) ) {
+			return false;
 		}
 
-		// return modified updates data
-		return $data;
+		$action = (string) $_REQUEST['_mc4wp_action'];
+
+		/**
+		 * Allows you to hook into requests containing `_mc4wp_action` => action name.
+		 *
+		 * The dynamic portion of the hook name, `$action`, refers to the action name.
+		 *
+		 * By the time this hook is fired, the user is already authorized. After processing all the registered hooks,
+		 * the request is redirected back to the referring URL.
+		 *
+		 * @since 3.0
+		 */
+		do_action( 'mc4wp_admin_' . $action );
+
+		// redirect back to where we came from
+		$redirect_url = remove_query_arg( '_mc4wp_action' );
+		wp_redirect( $redirect_url );
+		exit;
+	}
+
+	/**
+	 * Register dashboard widgets
+	 */
+	public function register_dashboard_widgets() {
+
+		if( ! $this->is_user_authorized() ) {
+			return false;
+		}
+
+		/**
+		 * Setup dashboard widget, users are authorized by now.
+		 *
+		 * Use this hook to register your own dashboard widgets for users with the required capability.
+		 *
+		 * @since 3.0
+		 */
+		do_action( 'mc4wp_dashboard_setup' );
+
+		return true;
+	}
+
+	/**
+	 * Upgrade routine
+	 */
+	private function init_upgrade_routines() {
+
+		// upgrade routine for upgrade routine....
+		$previous_version = get_option( 'mc4wp_lite_version', 0 );
+		if( $previous_version ) {
+			delete_option( 'mc4wp_lite_version' );
+			update_option( 'mc4wp_version', $previous_version );
+		}
+
+		// Only run if db option is at older version than code constant
+		$previous_version = get_option( 'mc4wp_version', 0 );
+
+		// This ! check means we're not running when installing the plugin
+		if( ! $previous_version || version_compare( MC4WP_VERSION, $previous_version, '<=' ) ) {
+			return false;
+		}
+
+		define( 'MC4WP_DOING_UPGRADE', true );
+		$upgrade_routines = new MC4WP_Upgrade_Routines( $previous_version, MC4WP_VERSION, dirname( __FILE__ ) . '/migrations' );
+		$upgrade_routines->run();
+		update_option( 'mc4wp_version', MC4WP_VERSION );
+	}
+
+	/**
+	 * Renew MailChimp lists cache
+	 */
+	public function renew_lists_cache() {
+		$this->mailchimp->empty_cache();
+
+		// try getting new lists to fill cache again
+		$lists = $this->mailchimp->get_lists();
+		if( ! empty( $lists ) ) {
+			$this->messages->flash( __( 'Success! The cached configuration for your MailChimp lists has been renewed.', 'mailchimp-for-wp' ) );
+		}
 	}
 
 	/**
@@ -103,355 +177,279 @@ class MC4WP_Lite_Admin
 	}
 
 	/**
-	 * Initializes various stuff used in WP Admin
-	 *
-	 * - Registers settings
-	 * - Checks if the Captcha plugin is activated
-	 * - Loads the plugin text domain
+	 * Customize texts throughout WP Admin
 	 */
-	public function initialize() {
-
-		// register settings
-		register_setting( 'mc4wp_lite_settings', 'mc4wp_lite', array( $this, 'validate_settings' ) );
-		register_setting( 'mc4wp_lite_checkbox_settings', 'mc4wp_lite_checkbox', array( $this, 'validate_settings' ) );
-		register_setting( 'mc4wp_lite_form_settings', 'mc4wp_lite_form', array( $this, 'validate_settings' ) );
-
-		// store whether this plugin has the BWS captcha plugin running (https://wordpress.org/plugins/captcha/)
-		$this->has_captcha_plugin = function_exists( 'cptch_display_captcha_custom' );
-
-		$this->load_upgrader();
+	public function customize_admin_texts() {
+		$texts = new MC4WP_Admin_Texts( $this->plugin_file );
+		$texts->add_hooks();
 	}
 
-	/**
-	 * Listen to various mc4wp actions
-	 */
-	private function listen() {
-		// did the user click on upgrade to pro link?
-		if( $this->get_current_page() === 'mailchimp-for-wp-upgrade' && false === headers_sent() ) {
-			wp_redirect( 'https://mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=menu-upgrade-link' );
-			exit;
-		}
-	}
+
+
 
 	/**
-	 * Set which Quicktag buttons should appear in the form mark-up editor
-	 *
+	 * Validates the General settings
 	 * @param array $settings
-	 * @param string $editor_id
 	 * @return array
 	 */
-	public function set_quicktags_buttons( $settings, $editor_id = '' )
-	{
-		if( $editor_id !== 'mc4wpformmarkup' ) {
-			return $settings;
-		}
-
-		$settings['buttons'] = 'strong,em,link,img,ul,li,close';
-
-		return $settings;
-	}
-
-	/**
-	 * Add the settings link to the Plugins overview
-	 *
-	 * @param array $links
-	 * @param       $file
-	 *
-	 * @return array
-	 */
-	public function add_plugin_settings_link( $links, $file ) {
-		if( $file !== $this->plugin_file ) {
-			return $links;
-		}
-
-		 $settings_link = '<a href="' . admin_url( 'admin.php?page=mailchimp-for-wp' ) . '">'. __( 'Settings', 'mailchimp-for-wp' ) . '</a>';
-		 array_unshift( $links, $settings_link );
-		 return $links;
-	}
-
-	/**
-	 * Adds meta links to the plugin in the WP Admin > Plugins screen
-	 *
-	 * @param array $links
-	 * @param string $file
-	 *
-	 * @return array
-	 */
-	public function add_plugin_meta_links( $links, $file ) {
-		if( $file !== $this->plugin_file ) {
-			return $links;
-		}
-
-		$links[] = '<a href="https://wordpress.org/plugins/mailchimp-for-wp/faq/">FAQ</a>';
-		$links[] = '<a href="https://mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=plugins-upgrade-link">' . __( 'Upgrade to MailChimp for WordPress Pro', 'mailchimp-for-wp' ) . '</a>';
-		return $links;
-	}
-
-	/**
-	* Register the setting pages and their menu items
-		*/
-	public function build_menu() {
-
-		/**
-		 * @filter mc4wp_settings_cap
-		 * @expects     string      A valid WP capability like 'manage_options' (default)
-		 *
-		 * Use to customize the required user capability to access the MC4WP settings pages
-		 */
-		$required_cap = apply_filters( 'mc4wp_settings_cap', 'manage_options' );
-
-		$menu_items = array(
-			array(
-				'title' => __( 'MailChimp API Settings', 'mailchimp-for-wp' ),
-				'text' => __( 'MailChimp', 'mailchimp-for-wp' ),
-				'slug' => '',
-				'callback' => array( $this, 'show_api_settings' ),
-			),
-			array(
-				'title' => __( 'Checkbox Settings', 'mailchimp-for-wp' ),
-				'text' => __( 'Checkboxes', 'mailchimp-for-wp' ),
-				'slug' => 'checkbox-settings',
-				'callback' => array( $this, 'show_checkbox_settings' ),
-			),
-			array(
-				'title' => __( 'Form Settings', 'mailchimp-for-wp' ),
-				'text' => __( 'Forms', 'mailchimp-for-wp' ),
-				'slug' => 'form-settings',
-				'callback' => array( $this, 'show_form_settings' ) ),
-			array(
-				'title' => __( 'Upgrade to Pro', 'mailchimp-for-wp' ),
-				'text' => '<span style="line-height: 20px;"><span class="dashicons dashicons-external"></span> ' .__( 'Upgrade to Pro', 'mailchimp-for-wp' ),
-				'slug' => 'upgrade',
-
-				'callback' => array( $this, 'redirect_to_pro' ),
-			),
-		);
-
-		$menu_items = apply_filters( 'mc4wp_menu_items', $menu_items );
-
-		// add top menu item
-		add_menu_page( 'MailChimp for WP Lite', 'MailChimp for WP', $required_cap, 'mailchimp-for-wp', array( $this, 'show_api_settings' ), MC4WP_LITE_PLUGIN_URL . 'assets/img/icon.png', '99.68491' );
-
-		// add submenu pages
-		foreach( $menu_items as $item ) {
-			$slug = ( '' !== $item['slug'] ) ? "mailchimp-for-wp-{$item['slug']}" : 'mailchimp-for-wp';
-			add_submenu_page( 'mailchimp-for-wp', $item['title'] . ' - MailChimp for WordPress Lite', $item['text'], $required_cap, $slug, $item['callback'] );
-		}
-
-	}
-
-
-	/**
-	* Validates the General settings
-	*
-	* @param array $settings
-	* @return array
-	*/
-	public function validate_settings( array $settings ) {
+	public function save_general_settings( array $settings ) {
 
 		$current = mc4wp_get_options();
 
-		// sanitize simple text fields (no HTML, just chars & numbers)
-		$simple_text_fields = array( 'api_key', 'redirect', 'css' );
-		foreach( $simple_text_fields as $field ) {
-			if( isset( $settings[ $field ] ) ) {
-				$settings[ $field ] = sanitize_text_field( $settings[ $field ] );
-			}
+		// merge with current settings to allow passing partial arrays to this method
+		$settings = array_merge( $current, $settings );
+
+		// toggle usage tracking
+		if( $settings['allow_usage_tracking'] !== $current['allow_usage_tracking'] ) {
+			MC4WP_Usage_Tracking::instance()->toggle( $settings['allow_usage_tracking'] );
 		}
 
-		// if api key changed, empty cache
-		if( isset( $settings['api_key'] ) && $settings['api_key'] !== $current['general']['api_key'] ) {
+		// Make sure not to use obfuscated key
+		if( strpos( $settings['api_key'], '*' ) !== false ) {
+			$settings['api_key'] = $current['api_key'];
+		}
+
+		// Sanitize API key
+		$settings['api_key'] = sanitize_text_field( $settings['api_key'] );
+
+		// if API key changed, empty MailChimp cache
+		if ( $settings['api_key'] !== $current['api_key'] ) {
 			$this->mailchimp->empty_cache();
 		}
 
-		// validate woocommerce checkbox position
-		if( isset( $settings['woocommerce_position'] ) ) {
-			// make sure position is either 'order' or 'billing'
-			if( ! in_array( $settings['woocommerce_position'], array( 'order', 'billing' ) ) ) {
-				$settings['woocommerce_position'] = 'billing';
-			}
-		}
 
-		// dynamic sanitization
-		foreach( $settings as $setting => $value ) {
-			// strip special tags from text settings
-			if( substr( $setting, 0, 5 ) === 'text_' || $setting === 'label' ) {
-				$value = trim( $value );
-				$value = strip_tags( $value, '<a><b><strong><em><i><br><u><script><span><abbr><strike>' );
-				$settings[ $setting ] = $value;
-			}
-		}
-
-		// strip <form> from form mark-up
-		if( isset( $settings[ 'markup'] ) ) {
-			$settings[ 'markup' ] = preg_replace( '/<\/?form(.|\s)*?>/i', '', $settings[ 'markup'] );
-		}
+		/**
+		 * Runs right before general settings are saved.
+		 *
+		 * @param array $settings The updated settings array
+		 * @param array $current The old settings array
+		 */
+		do_action( 'mc4wp_save_settings', $settings, $current );
 
 		return $settings;
 	}
 
 	/**
 	 * Load scripts and stylesheet on MailChimp for WP Admin pages
+	 *
 	 * @return bool
 	*/
-	public function load_css_and_js() {
+	public function enqueue_assets() {
+
+		global $wp_scripts;
+
+		$prefix = 'mailchimp-for-wp';
+
 		// only load asset files on the MailChimp for WordPress settings pages
-		if( strpos( $this->get_current_page(), 'mailchimp-for-wp' ) !== 0 ) {
+		if( empty( $_GET['page'] ) || strpos( $_GET['page'], $prefix ) !== 0 ) {
 			return false;
 		}
 
+		$page = ltrim( substr( $_GET['page'], strlen( $prefix ) ), '-' );
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		// css
-		wp_enqueue_style( 'mc4wp-admin-css', MC4WP_LITE_PLUGIN_URL . 'assets/css/admin' . $suffix . '.css' );
+		wp_register_style( 'mc4wp-admin', MC4WP_PLUGIN_URL . 'assets/css/admin-styles' . $suffix . '.css', array(), MC4WP_VERSION );
+		wp_enqueue_style( 'mc4wp-admin' );
+
 
 		// js
-		wp_register_script( 'mc4wp-beautifyhtml', MC4WP_LITE_PLUGIN_URL . 'assets/js/third-party/beautify-html'. $suffix .'.js', array( 'jquery' ), MC4WP_LITE_VERSION, true );
-		wp_register_script( 'mc4wp-admin', MC4WP_LITE_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'quicktags' ), MC4WP_LITE_VERSION, true );
-		wp_enqueue_script( array( 'jquery', 'mc4wp-beautifyhtml', 'mc4wp-admin' ) );
-		wp_localize_script( 'mc4wp-admin', 'mc4wp',
+		wp_register_script( 'es5-shim', MC4WP_PLUGIN_URL . 'assets/js/third-party/es5-shim.min.js', array(), MC4WP_VERSION );
+		$wp_scripts->add_data( 'es5-shim', 'conditional', 'lt IE 9' );
+
+		// @todo: eventually get rid of jQuery here
+		wp_register_script( 'mc4wp-admin', MC4WP_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js', array( 'jquery', 'es5-shim' ), MC4WP_VERSION, true );
+
+		wp_enqueue_script( array( 'jquery', 'es5-shim', 'mc4wp-admin' ) );
+
+		wp_localize_script( 'mc4wp-admin', 'mc4wp_vars',
 			array(
-				'hasCaptchaPlugin' => $this->has_captcha_plugin,
-				'strings' => array(
-					'proOnlyNotice' => __( 'This option is only available in MailChimp for WordPress Pro.', 'mailchimp-for-wp' ),
-					'fieldWizard' => array(
-						'proOnly' => __( '(PRO ONLY)', 'mailchimp-for-wp' ),
-						'buttonText' => __( 'Button text', 'mailchimp-for-wp' ),
-						'initialValue' => __( 'Initial value', 'mailchimp-for-wp' ),
-						'optional' => __( '(optional)', 'mailchimp-for-wp' ),
-						'labelFor' => __( 'Label for', 'mailchimp-for-wp' ),
-						'orLeaveEmpty' => __( '(or leave empty)', 'mailchimp-for-wp' ),
-						'subscribe' => __( 'Subscribe', 'mailchimp-for-wp' ),
-						'unsubscribe' => __( 'Unsubscribe', 'mailchimp-for-wp' ),
-					)
+				'mailchimp' => array(
+					'lists' => $this->mailchimp->get_lists()
 				),
-				'mailchimpLists' => $this->mailchimp->get_lists()
+				'countries' => MC4WP_Tools::get_countries(),
+				'l10n' => array(
+					'pro_only' => __( 'This is a pro-only feature. Please upgrade to the premium version to be able to use it.', 'mailchimp-for-wp' )
+				)
 			)
 		);
+
+		/**
+		 * Hook to enqueue your own custom assets on the MailChimp for WordPress setting pages.
+		 *
+		 * @since 3.0
+		 *
+		 * @param string $suffix
+		 * @param string $page
+		 */
+		do_action( 'mc4wp_admin_enqueue_assets', $suffix, $page );
 
 		return true;
 	}
 
 	/**
-	 * Returns available checkbox integrations
+	 * Does the logged-in user have the required capability?
 	 *
-	 * @return array
+	 * @return bool
 	 */
-	public function get_checkbox_compatible_plugins()
-	{
-		static $checkbox_plugins;
+	public function is_user_authorized() {
+		return current_user_can( $this->get_required_capability() );
+	}
 
-		if( is_array( $checkbox_plugins ) ) {
-			return $checkbox_plugins;
-		}
+	/**
+	 * Get required capability to access settings page and view dashboard widgets.
+	 *
+	 * @return string
+	 */
+	public function get_required_capability() {
 
-		$checkbox_plugins = array(
-			'comment_form' => __( 'Comment form', 'mailchimp-for-wp' ),
-			'registration_form' => __( 'Registration form', 'mailchimp-for-wp' )
+		$capability = 'manage_options';
+
+		/**
+		 * Filters the required user capability to access the settings pages & dashboard widgets.
+		 *
+		 * @ignore
+		 * @deprecated 3.0
+		 */
+		$capability = apply_filters( 'mc4wp_settings_cap', $capability );
+
+		/**
+		 * Filters the required user capability to access the MailChimp for WordPress' settings pages, view the dashboard widgets.
+		 *
+		 * Defaults to `manage_options`
+		 *
+		 * @since 3.0
+		 * @param string $capability
+		 * @see https://codex.wordpress.org/Roles_and_Capabilities
+		 */
+		$capability = (string) apply_filters( 'mc4wp_admin_required_capability', $capability );
+
+		return $capability;
+	}
+
+	/**
+	 * Register the setting pages and their menu items
+	 */
+	public function build_menu() {
+		$required_cap = $this->get_required_capability();
+
+		$menu_items = array(
+			'general' => array(
+				'title' => __( 'MailChimp API Settings', 'mailchimp-for-wp' ),
+				'text' => __( 'MailChimp', 'mailchimp-for-wp' ),
+				'slug' => '',
+				'callback' => array( $this, 'show_generals_setting_page' ),
+				'position' => 0
+			),
+			'other' => array(
+				'title' => __( 'Other Settings', 'mailchimp-for-wp' ),
+				'text' => __( 'Other', 'mailchimp-for-wp' ),
+				'slug' => 'other',
+				'callback' => array( $this, 'show_other_setting_page' ),
+				'position' => 90
+			)
 		);
 
-		if( is_multisite() ) {
-			$checkbox_plugins['multisite_form'] = __( 'MultiSite forms', 'mailchimp-for-wp' );
-		}
+		/**
+		 * Filters the menu items to appear under the main menu item.
+		 *
+		 * To add your own item, add an associative array in the following format.
+		 *
+		 * $menu_items[] = array(
+		 *     'title' => 'Page title',
+		 *     'text'  => 'Menu text',
+		 *     'slug' => 'Page slug',
+		 *     'callback' => 'my_page_function',
+		 *     'position' => 50
+		 * );
+		 *
+		 * @param array $menu_items
+		 * @since 3.0
+		 */
+		$menu_items = (array) apply_filters( 'mc4wp_admin_menu_items', $menu_items );
 
-		if( class_exists( 'BuddyPress' ) ) {
-			$checkbox_plugins['buddypress_form'] = __( 'BuddyPress registration', 'mailchimp-for-wp' );
-		}
+		// add top menu item
+		add_menu_page( 'MailChimp for WP', 'MailChimp for WP', $required_cap, 'mailchimp-for-wp', array( $this, 'show_generals_setting_page' ), MC4WP_PLUGIN_URL . 'assets/img/icon.png', '99.68491' );
 
-		if( class_exists( 'bbPress' ) ) {
-			$checkbox_plugins['bbpress_forms'] = 'bbPress';
-		}
+		// sort submenu items by 'position'
+		uasort( $menu_items, array( $this, 'sort_menu_items_by_position' ) );
 
-		if ( class_exists( 'WooCommerce' ) ) {
-			$checkbox_plugins['woocommerce_checkout'] = sprintf( __( '%s checkout', 'mailchimp-for-wp' ), 'WooCommerce' );
-		}
-
-		if ( class_exists( 'Easy_Digital_Downloads' ) ) {
-			$checkbox_plugins['edd_checkout'] = sprintf( __( '%s checkout', 'mailchimp-for-wp' ), 'Easy Digital Downloads' );
-		}
-
-		return $checkbox_plugins;
+		// add sub-menu items
+		array_walk( $menu_items, array( $this, 'add_menu_item' ) );
 	}
 
 	/**
-	* Redirects to the premium version of MailChimp for WordPress (uses JS)
-	*/
-	public function redirect_to_pro()
-	{
-		?><script type="text/javascript">window.location.replace('https://mc4wp.com/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=menu-upgrade-link'); </script><?php
-	}
-
-	/**
-	* Show the API settings page
-	*/
-	public function show_api_settings()
-	{
-		$opts = mc4wp_get_options( 'general' );
-		$connected = ( mc4wp_get_api()->is_connected() );
-
-		// cache renewal triggered manually?
-		$force_cache_refresh = isset( $_POST['mc4wp-renew-cache'] ) && $_POST['mc4wp-renew-cache'] == 1;
-		$lists = $this->mailchimp->get_lists( $force_cache_refresh );
-
-		if ( $force_cache_refresh ) {
-
-			if( is_array( $lists ) ) {
-				if( count( $lists ) === 100 ) {
-					add_settings_error( 'mc4wp', 'mc4wp-lists-at-limit', __( 'The plugin can only fetch a maximum of 100 lists from MailChimp, only your first 100 lists are shown.', 'mailchimp-for-wp' ) );
-				} else {
-					add_settings_error( 'mc4wp', 'mc4wp-cache-success', __( 'Renewed MailChimp cache.', 'mailchimp-for-wp' ), 'updated' );
-				}
-			} else {
-				add_settings_error( 'mc4wp', 'mc4wp-cache-error', __( 'Failed to renew MailChimp cache - please try again later.', 'mailchimp-for-wp' ) );
-			}
-
-		}
-
-		require MC4WP_LITE_PLUGIN_DIR . 'includes/views/api-settings.php';
-	}
-
-	/**
-	* Show the Checkbox settings page
-	*/
-	public function show_checkbox_settings()
-	{
-		$opts = mc4wp_get_options( 'checkbox' );
-		$lists = $this->mailchimp->get_lists();
-		require MC4WP_LITE_PLUGIN_DIR . 'includes/views/checkbox-settings.php';
-	}
-
-	/**
-	* Show the forms settings page
-	*/
-	public function show_form_settings()
-	{
-		$opts = mc4wp_get_options( 'form' );
-		$lists = $this->mailchimp->get_lists();
-
-		require MC4WP_LITE_PLUGIN_DIR . 'includes/views/form-settings.php';
-	}
-
-	/**
-	 * @return string
+	 * @param array $item
 	 */
-	protected function get_current_page() {
-		return isset( $_GET['page'] ) ? $_GET['page'] : '';
+	public function add_menu_item( array $item ) {
+
+		// generate menu slug
+		$slug = 'mailchimp-for-wp';
+		if( ! empty( $item['slug'] ) ) {
+			$slug .= '-' . $item['slug'];
+		}
+
+		// provide some defaults
+		$parent_slug = ! empty( $item['parent_slug']) ? $item['parent_slug'] : 'mailchimp-for-wp';
+		$capability = ! empty( $item['capability'] ) ? $item['capability'] : $this->get_required_capability();
+
+		// register page
+		$hook = add_submenu_page( $parent_slug, $item['title'] . ' - MailChimp for WordPress', $item['text'], $capability, $slug, $item['callback'] );
+
+		// register callback for loading this page, if given
+		if( array_key_exists( 'load_callback', $item ) ) {
+			add_action( 'load-' . $hook, $item['load_callback'] );
+		}
 	}
 
 	/**
-	 * Ask for a plugin review in the WP Admin footer, if this is one of the plugin pages.
-	 *
-	 * @param $text
-	 *
-	 * @return string
+	 * Show the API Settings page
 	 */
-	public function footer_text( $text ) {
+	public function show_generals_setting_page() {
+		$opts = mc4wp_get_options();
+		$connected = ( mc4wp('api')->is_connected() );
+		$lists = $this->mailchimp->get_lists();
+		$obfuscated_api_key = mc4wp_obfuscate_string( $opts['api_key'] );
+		require MC4WP_PLUGIN_DIR . 'includes/views/general-settings.php';
+	}
 
-		if( isset( $_GET['page'] ) && strpos( $_GET['page'], 'mailchimp-for-wp' ) === 0 ) {
-			$text = sprintf( 'If you enjoy using <strong>MailChimp for WordPress</strong>, please <a href="%s" target="_blank">leave us a ★★★★★ rating</a>. A <strong style="text-decoration: underline;">huge</strong> thank you in advance!', 'https://wordpress.org/support/view/plugin-reviews/mailchimp-for-wp?rate=5#postform' );
-		}
+	/**
+	 * Show the Other Settings page
+	 */
+	public function show_other_setting_page() {
+		$opts = mc4wp_get_options();
+		$log = $this->get_log();
+		$log_reader = new MC4WP_Debug_Log_Reader( $log->file );
+		require MC4WP_PLUGIN_DIR . 'includes/views/other-settings.php';
+	}
 
-		return $text;
+	/**
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return int
+	 */
+	public function sort_menu_items_by_position( $a, $b ) {
+		$pos_a = isset( $a['position'] ) ? $a['position'] : 80;
+		$pos_b = isset( $b['position'] ) ? $b['position'] : 90;
+		return $pos_a < $pos_b ? -1 : 1;
+	}
+
+	/**
+	 * Empties the log file
+	 */
+	public function empty_debug_log() {
+		$log = $this->get_log();
+		file_put_contents( $log->file, '' );
+
+		$this->messages->flash( __( 'Log successfully emptied.', 'mailchimp-for-wp' ) );
+	}
+
+	/**
+	 * @return MC4WP_Debug_Log
+	 */
+	protected function get_log() {
+		return mc4wp('log');
 	}
 
 }
