@@ -1,6 +1,13 @@
 
 var __gf_timeout_handle;
 
+gform.addAction( 'gform_input_change', function( elem, formId, fieldId ) {
+	var dependentFieldIds = rgars( gf_form_conditional_logic, [ formId, 'fields', fieldId ].join( '/' ) );
+	if( dependentFieldIds ) {
+		gf_apply_rules( formId, dependentFieldIds );
+	}
+}, 10 );
+
 function gf_apply_rules(formId, fields, isInit){
 	var rule_applied = 0;
 	jQuery(document).trigger( 'gform_pre_conditional_logic', [ formId, fields, isInit ] );
@@ -129,8 +136,8 @@ function gf_is_match(formId, rule){
 				fieldValue = gformCleanNumber( fieldValue, '', '', decimalSeparator);
 
 				//now transform to number specified by locale
-				if(window['gf_number_format'] && window['gf_number_format'] == "decimal_comma")
-					fieldValue = gformFormatNumber(fieldValue, -1, ",", ".");
+				//if(window['gf_number_format'] && window['gf_number_format'] == "decimal_comma")
+				//	fieldValue = gformFormatNumber(fieldValue, -1, ",", ".");
 
 				if( ! fieldValue )
 					fieldValue = 0;
@@ -152,11 +159,16 @@ function gf_is_match(formId, rule){
 }
 
 function gf_try_convert_float(text){
-	var format = window["gf_number_format"] == "decimal_comma" ? "decimal_comma" : "decimal_dot";
 
-	if(gformIsNumeric(text, format)){
+	/*
+	 * The only format that should matter is the field format. Attempting to do this by WP locale creates a lot of issues with consistency.
+	 * var format = window["gf_number_format"] == "decimal_comma" ? "decimal_comma" : "decimal_dot";
+	 */
+
+    var format = 'decimal_dot';
+	if( gformIsNumeric( text, format ) ) {
 		var decimal_separator = format == "decimal_comma" ? "," : ".";
-		return gformCleanNumber(text, "", "", decimal_separator);
+		return gformCleanNumber( text, "", "", decimal_separator );
 	}
 
 	return text;
@@ -375,7 +387,7 @@ function gf_reset_to_default(targetId, defaultValue){
 			val = defaultValue[element.attr("name")];
             if( ! val ) {
                 // 'input_123_3_1' => '3.1'
-                var inputId = element.attr( 'id' ).split( '_' ).splice( -2 ).join( '.' );
+                var inputId = element.attr( 'id' ).split( '_' ).slice( 2 ).join( '.' );
                 val = defaultValue[ inputId ];
             }
 		}
