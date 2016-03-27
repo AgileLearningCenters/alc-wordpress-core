@@ -11,12 +11,12 @@
 /**
  * This class contains general stuff for usage at WordPress plugins
  */
-class Ure_Lib extends Garvs_WP_Lib {
+class Ure_Lib extends URE_Base_Lib {
 
 	public $roles = null;     
 	public $notification = '';   // notification message to show on page
 	public $apply_to_all = 0; 
-	public $user_to_check = array();  // cached list of user IDs, who has Administrator role     	 
+
    
 	protected $capabilities_to_save = null; 
 	protected $current_role = '';
@@ -27,14 +27,23 @@ class Ure_Lib extends Garvs_WP_Lib {
 	protected $caps_readable = false;
 	protected $hide_pro_banner = false;	
 	protected $full_capabilities = false;
-	protected $ure_object = 'role';  // what to process, 'role' or 'user'  
+	public $ure_object = 'role';  // what to process, 'role' or 'user'  
 	public    $role_default_html = '';
 	protected $role_to_copy_html = '';
 	protected $role_select_html = '';
 	protected $role_delete_html = '';
 	protected $capability_remove_html = '';
 	protected $advert = null;
+ protected $role_additional_options = null;
+ protected $bbpress = null; // reference to the URE_bbPress class instance
+ 
+ // when allow_edit_users_to_not_super_admin option is turned ON, we set this property to true 
+ // when we raise single site admin permissions up to the superadmin for the 'Add new user' new-user.php page
+ // User_Role_Editor::allow_add_user_as_superadmin()
+ public $raised_permissions = false; 
+ 
  public $debug = false;
+ 
   
   
     /** class constructor
@@ -46,11 +55,28 @@ class Ure_Lib extends Garvs_WP_Lib {
                                            
         parent::__construct($options_id); 
         $this->debug = defined('URE_DEBUG') && (URE_DEBUG==1 || URE_DEBUG==true);
+ 
+        $this->bbpress = URE_bbPress::get_instance($this);
         
         $this->upgrade();
     }
     // end of __construct()
 
+    
+    public static function get_instance($options_id = '') {
+        
+        if (self::$instance === null) {
+            if (empty($options_id)) {
+                throw new Exception('URE_Lib::get_inctance() - Error: plugin options ID string is required');
+            }
+            // new static() will work too
+            self::$instance = new URE_Lib($options_id);
+        }
+
+        return self::$instance;
+    }
+    // end of get_instance()
+    
     
     protected function upgrade() {
         
@@ -302,13 +328,17 @@ class Ure_Lib extends Garvs_WP_Lib {
   </div>
 </div>
 
-
+<?php
+if ($this->multisite && !is_network_admin()) {
+?>
 <div id="ure_default_role_dialog" class="ure-modal-dialog">
   <div style="padding:10px;">
     <?php echo $this->role_default_html; ?>
   </div>  
 </div>
-
+<?php
+}
+?>
 
 <div id="ure_delete_capability_dialog" class="ure-modal-dialog">
   <div style="padding:10px;">
@@ -325,19 +355,37 @@ class Ure_Lib extends Garvs_WP_Lib {
 </div>     
 
 <?php        
-    do_action('ure_dialogs_html');
+        
     }
     // end of output_role_edit_dialogs()
     
+    
+    protected function output_user_caps_edit_dialogs() {
+    
+
+    }
+    // end of output_user_caps_edit_dialogs()
+    
+    
+    protected function output_confirmation_dialog() {
+?>
+<div id="ure_confirmation_dialog" class="ure-modal-dialog">
+    <div id="ure_cd_html" style="padding:10px;"></div>
+</div>
+<?php
+    }
+    // end of output_confirmation_dialog()
+    
 
     protected function show_editor() {
+    $container_width = ($this->ure_object == 'user') ? 1400 : 1200;
     
     $this->show_message($this->notification);
 ?>
 <div class="wrap">
 		  <div id="ure-icon" class="icon32"><br/></div>
     <h2><?php _e('User Role Editor', 'user-role-editor'); ?></h2>
-    <div id="poststuff">
+    <div id="ure_container" style="min-width: <?php echo $container_width;?>px;">
         <div class="ure-sidebar" >
             <?php
             $this->advertisement();
@@ -361,11 +409,16 @@ class Ure_Lib extends Garvs_WP_Lib {
                 </div>      
             </form>		      
 <?php	
-	$this->advertise_pro_version();	
+    $this->advertise_pro_version();	
 	
-	if ($this->ure_object == 'role') {
+    if ($this->ure_object == 'role') {
         $this->output_role_edit_dialogs();
+    } else {
+        $this->output_user_caps_edit_dialogs();
     }
+    do_action('ure_dialogs_html');
+    
+    $this->output_confirmation_dialog();
 ?>
         </div>          
     </div>
@@ -563,7 +616,7 @@ class Ure_Lib extends Garvs_WP_Lib {
                     $this->notification = $this->init_current_role_name();                    
                 }
                 $this->prepare_capabilities_to_save();
-                $this->notification = $this->permissions_object_update($this->notification);
+                $this->notification = $this->permissions_object_update($this->notification);                                  
             } else {
                 do_action('ure_process_user_request');
             } // if ($action
@@ -620,16 +673,15 @@ class Ure_Lib extends Garvs_WP_Lib {
     }
     // end of editor_init0()
 
-
+    
     public function editor_init1() {
 
-        if (!isset($this->roles) || !$this->roles) {
-            // get roles data from database
-            $this->roles = $this->get_user_roles();
-        }
-
+        $this->roles = $this->get_user_roles();
         $this->init_full_capabilities();
-
+        if (empty($this->role_additional_options)) {
+            $this->role_additional_options = URE_Role_Additional_Options::get_instance($this);
+        }
+        
         if (!$this->is_pro()) {
             require_once(URE_PLUGIN_DIR . 'includes/class-advertisement.php');
         }
@@ -729,33 +781,13 @@ class Ure_Lib extends Garvs_WP_Lib {
     public function get_user_roles() {
 
         global $wp_roles;
-
+        
         if (!isset($wp_roles)) {
             $wp_roles = new WP_Roles();
         }                
 
-        if (function_exists('bbp_filter_blog_editable_roles')) {  // bbPress plugin is active
-            $this->roles = bbp_filter_blog_editable_roles($wp_roles->roles);  // exclude bbPress roles	
-            $bbp_full_caps = bbp_get_caps_for_role(bbp_get_keymaster_role());
-            // exclude capabilities automatically added by bbPress bbp_dynamic_role_caps() and not bbPress related: read, level_0, all s2Member levels, e.g. access_s2member_level_0, etc.
-            $built_in_wp_caps = $this->get_built_in_wp_caps();
-            $bbp_only_caps = array();
-            foreach ($bbp_full_caps as $bbp_cap => $val) {
-                if (isset($built_in_wp_caps[$bbp_cap]) || substr($bbp_cap, 0, 15) == 'access_s2member') {
-                    continue;
-                }
-                $bbp_only_caps[$bbp_cap] = $val;
-            }
-            // remove bbPress dynamically created capabilities from WordPress persistent roles in order to not save them to database with any role update
-            $cap_removed = false;
-            foreach ($bbp_only_caps as $bbp_cap => $val) {
-                foreach ($this->roles as &$role) {
-                    if (isset($role['capabilities'][$bbp_cap])) {
-                        unset($role['capabilities'][$bbp_cap]);
-                        $cap_removed = true;
-                    }
-                }
-            }            
+        if (!empty($this->bbpress)) {  // bbPress plugin is active
+            $this->roles = $this->bbpress->get_roles();
         } else {
             $this->roles = $wp_roles->roles;
         }        
@@ -928,6 +960,8 @@ class Ure_Lib extends Garvs_WP_Lib {
      * @return array 
      */
     public function get_built_in_wp_caps() {
+        $wp_version = get_bloginfo('version');
+        
         $caps = array();
         $caps['switch_themes'] = 1;
         $caps['edit_themes'] = 1;
@@ -984,7 +1018,11 @@ class Ure_Lib extends Garvs_WP_Lib {
         $caps['update_core'] = 1;
         $caps['list_users'] = 1;
         $caps['remove_users'] = 1;
-        $caps['add_users'] = 1;
+                
+        if (version_compare($wp_version, '4.4', '<')) {
+            $caps['add_users'] = 1;  // removed from WP v. 4.4.
+        }
+        
         $caps['promote_users'] = 1;
         $caps['edit_theme_options'] = 1;
         $caps['delete_themes'] = 1;
@@ -1164,7 +1202,7 @@ class Ure_Lib extends Garvs_WP_Lib {
         $onclick_for_admin = '';
         if (!( $this->multisite && is_super_admin() )) {  // do not limit SuperAdmin for multi-site
             if ($core && 'administrator' == $this->current_role) {
-                $onclick_for_admin = 'onclick="turn_it_back(this)"';
+                $onclick_for_admin = 'onclick="ure_turn_it_back(this)"';
             }
         }
 
@@ -1329,10 +1367,14 @@ class Ure_Lib extends Garvs_WP_Lib {
                    <button id="ure_delete_capability" class="ure_toolbar_button">Delete Capability</button>
 <?php
                 }
+                if ($this->multisite && !is_network_admin()) {  // Show for single site for WP multisite only
 ?>
                <hr />
                <button id="ure_default_role" class="ure_toolbar_button">Default Role</button>
                <hr />
+<?php
+                }
+?>
                <div id="ure_service_tools">
 <?php
                 do_action('ure_role_edit_toolbar_service');
@@ -1549,6 +1591,23 @@ class Ure_Lib extends Garvs_WP_Lib {
     
     
     /**
+     * Add bbPress plugin user capabilities (if available)
+     */
+    protected function add_bbpress_caps() {
+    
+        if (empty($this->bbpress)) {
+            return;
+        }
+        
+        $caps = $this->bbpress->get_caps();
+        foreach ($caps as $cap) {
+            $this->add_capability_to_full_caps_list($cap);
+        }
+    }
+    // end of add_bbpress_caps()
+        
+    
+    /**
      * Provide compatibility with plugins and themes which define their custom user capabilities using 
      * 'members_get_capabilities' filter from Members plugin 
      * 
@@ -1599,6 +1658,8 @@ class Ure_Lib extends Garvs_WP_Lib {
     
     protected function add_custom_post_type_caps() {
                
+        global $wp_roles;
+        
         $capabilities = array(
             'create_posts',
             'edit_posts',
@@ -1612,20 +1673,43 @@ class Ure_Lib extends Garvs_WP_Lib {
             'delete_published_posts',
             'delete_others_posts'
         );
-        $post_types = get_post_types(array('public'=>true, 'show_ui'=>true, '_builtin'=>false), 'objects');
-        foreach($post_types as $post_type) {
-            if ($post_type->capability_type=='post') {
-                continue;
-            }
+        
+        $post_types = get_post_types(array('_builtin'=>false), 'objects');
+        // do not forget attachment post type as it may use the own capabilities set
+        $attachment_post_type = get_post_type_object('attachment');
+        if ($attachment_post_type->cap->edit_posts!=='edit_posts') {
+            $post_types['attachment'] = $attachment_post_type;
+        }
+        
+        foreach($post_types as $post_type) {            
             if (!isset($post_type->cap)) {
                 continue;
             }
             foreach($capabilities as $capability) {
                 if (isset($post_type->cap->$capability)) {
-                    $this->add_capability_to_full_caps_list($post_type->cap->$capability);
+                    $cap_to_check = $post_type->cap->$capability;
+                    $this->add_capability_to_full_caps_list($cap_to_check);
+                    if (!$this->multisite &&
+                        isset($wp_roles->role_objects['administrator']) && 
+                        !isset($wp_roles->role_objects['administrator']->capabilities[$cap_to_check])) {
+                        // admin should be capable to edit any posts
+                        $wp_roles->role_objects['administrator']->add_cap($cap_to_check, true);
+                    }
                 }
             }                        
         }
+        
+        if (!$this->multisite && isset($wp_roles->role_objects['administrator'])) {
+            foreach(array('post', 'page') as $post_type_name) {
+                $post_type = get_post_type_object($post_type_name);
+                if ($post_type->cap->create_posts!=='edit_'. $post_type->name .'s') {   // 'create' capability is active
+                    if (!isset($wp_roles->role_objects['administrator']->capabilities[$post_type->cap->create_posts])) {
+                        // admin should be capable to create posts and pages
+                        $wp_roles->role_objects['administrator']->add_cap($post_type->cap->create_posts, true);
+                    }
+                }
+            }   // foreach()
+        }   // if ()
         
     }
     // end of add_custom_post_type_caps()
@@ -1647,11 +1731,12 @@ class Ure_Lib extends Garvs_WP_Lib {
     
     
     protected function init_full_capabilities() {
-        
+                
         $this->built_in_wp_caps = $this->get_built_in_wp_caps();
         $this->full_capabilities = array();
         $this->add_roles_caps();
         $this->add_gravity_forms_caps();
+        $this->add_bbpress_caps();
         $this->add_members_caps();
         $this->add_user_caps();
         $this->add_wordpress_caps();
@@ -1760,6 +1845,12 @@ class Ure_Lib extends Garvs_WP_Lib {
 
         update_option($option_name, $this->roles);
 
+        // save additional options for the current role
+        if (empty($this->role_additional_options)) {
+            $this->role_additional_options = URE_Role_Additional_Options::get_instance($this);
+        }
+        $this->role_additional_options->save($this->current_role);
+        
         return true;
     }
     // end of save_roles()
@@ -1771,7 +1862,7 @@ class Ure_Lib extends Garvs_WP_Lib {
      * @global wpdb $wpdb
      * @return boolean
      */
-    function direct_network_roles_update() {
+    public function direct_network_roles_update() {
         global $wpdb;
 
         if (!$this->last_check_before_update()) {
@@ -1798,6 +1889,8 @@ class Ure_Lib extends Garvs_WP_Lib {
                 $this->log_event($wpdb->last_error, true);
                 return false;
             }
+            // save role additional options
+            
         }
         
         return true;
@@ -1814,7 +1907,8 @@ class Ure_Lib extends Garvs_WP_Lib {
         $GLOBALS['_wp_switched_stack'] = array();
         $GLOBALS['switched'] = ! empty( $GLOBALS['_wp_switched_stack'] );
     }
-    // end of restore_after_blog_switching(
+    // end of restore_after_blog_switching()
+    
     
     protected function wp_api_network_roles_update() {
         global $wpdb;
@@ -1873,7 +1967,6 @@ class Ure_Lib extends Garvs_WP_Lib {
      * @return boolean
      */
     protected function update_roles() {
-        global $wpdb;
 
         if ($this->multisite && is_super_admin() && $this->apply_to_all) {  // update Role for the all blogs/sites in the network (permitted to superadmin only)
             if (!$this->multisite_update_roles()) {
@@ -1898,13 +1991,13 @@ class Ure_Lib extends Garvs_WP_Lib {
      * @param boolean $show_message
      */
     protected function log_event($message, $show_message = false) {
-        global $wp_version;
+        global $wp_version, $wpdb;
 
         $file_name = URE_PLUGIN_DIR . 'user-role-editor.log';
         $fh = fopen($file_name, 'a');
         $cr = "\n";
         $s = $cr . date("d-m-Y H:i:s") . $cr .
-                'WordPress version: ' . $wp_version . ', PHP version: ' . phpversion() . ', MySQL version: ' . mysql_get_server_info() . $cr;
+                'WordPress version: ' . $wp_version . ', PHP version: ' . phpversion() . ', MySQL version: ' . $wpdb->db_version() . $cr;
         fwrite($fh, $s);
         fwrite($fh, $message . $cr);
         fclose($fh);
@@ -2144,6 +2237,9 @@ class Ure_Lib extends Garvs_WP_Lib {
     protected function change_default_role() {
         global $wp_roles;
 
+        if (!$this->multisite || is_network_admin()) {
+            return 'Try to misuse the plugin functionality';
+        }
         $mess = '';
         if (!isset($wp_roles)) {
             $wp_roles = new WP_Roles();
@@ -2350,6 +2446,33 @@ class Ure_Lib extends Garvs_WP_Lib {
 
     
     /**
+     * Returns administrator role ID
+     * 
+     * @return string
+     */        
+    protected function get_admin_role() {
+        
+        if (isset($this->roles['administrator'])) {
+            $admin_role_id = 'administrator';
+        } else {        
+            // go through all roles and select one with max quant of capabilities included
+            $max_caps = -1;
+            $admin_role_id = '';
+            foreach(array_keys($this->roles) as $role_id) {
+                $caps = count($this->roles[$role_id]['capabilities']);
+                if ($caps>$max_caps) {
+                    $max_caps = $caps;
+                    $admin_role_id = $role_id;
+                }
+            }
+        }        
+        
+        return $admin_role_id;
+    }
+    // end get_admin_role()
+    
+    
+    /**
      * Add new capability
      * 
      * @global WP_Roles $wp_roles
@@ -2362,31 +2485,29 @@ class Ure_Lib extends Garvs_WP_Lib {
             return esc_html__('Insufficient permissions to work with User Role Editor','user-role-editor');
         }
         $mess = '';
-        if (isset($_POST['capability_id']) && $_POST['capability_id']) {
-            $user_capability = $_POST['capability_id'];
-            // sanitize user input for security
-            $valid_name = preg_match('/[A-Za-z0-9_\-]*/', $user_capability, $match);
-            if (!$valid_name || ($valid_name && ($match[0] != $user_capability))) { // some non-alphanumeric charactes found!    
-                return 'Error! ' . esc_html__('Error: Capability name must contain latin characters and digits only!', 'user-role-editor');
-                ;
-            }
-
-            if ($user_capability) {
-                $user_capability = strtolower($user_capability);
-                if (!isset($wp_roles)) {
-                    $wp_roles = new WP_Roles();
-                }
-                $wp_roles->use_db = true;
-                $administrator = $wp_roles->get_role('administrator');
-                if (!$administrator->has_cap($user_capability)) {
-                    $wp_roles->add_cap('administrator', $user_capability);
-                    $mess = sprintf(esc_html__('Capability %s is added successfully', 'user-role-editor'), $user_capability);
-                } else {
-                    $mess = sprintf('Error! ' . esc_html__('Capability %s exists already', 'user-role-editor'), $user_capability);
-                }
-            }
+        if (!isset($_POST['capability_id']) || empty($_POST['capability_id'])) {
+            return 'Wrong Request';
+        }
+        
+        $user_capability = $_POST['capability_id'];
+        // sanitize user input for security
+        $valid_name = preg_match('/[A-Za-z0-9_\-]*/', $user_capability, $match);
+        if (!$valid_name || ($valid_name && ($match[0] != $user_capability))) { // some non-alphanumeric charactes found!    
+            return esc_html__('Error: Capability name must contain latin characters and digits only!', 'user-role-editor');
         }
 
+        $user_capability = strtolower($user_capability);                
+        $this->get_user_roles();
+        $this->init_full_capabilities();
+        if (!isset($this->full_capabilities[$user_capability])) {
+            $admin_role = $this->get_admin_role();            
+            $wp_roles->use_db = true;
+            $wp_roles->add_cap($admin_role, $user_capability);
+            $mess = sprintf(esc_html__('Capability %s is added successfully', 'user-role-editor'), $user_capability);
+        } else {
+            $mess = sprintf(esc_html__('Capability %s exists already', 'user-role-editor'), $user_capability);
+        }
+        
         return $mess;
     }
     // end of add_new_capability()
@@ -2541,7 +2662,12 @@ class Ure_Lib extends Garvs_WP_Lib {
     // end of show_admin_role()
     
     
-    private function role_default_prepare_html($select_width=200) {
+    public function role_default_prepare_html($select_width=200) {
+                        
+        if (!isset($this->roles) || !$this->roles) {
+            // get roles data from database
+            $this->roles = $this->get_user_roles();
+        }
         
         $caps_access_restrict_for_simple_admin = $this->get_option('caps_access_restrict_for_simple_admin', 0);
         $show_admin_role = $this->show_admin_role_allowed();
@@ -2613,7 +2739,9 @@ class Ure_Lib extends Garvs_WP_Lib {
     public function role_edit_prepare_html($select_width=200) {
         
         $this->role_select_copy_prepare_html($select_width);
-        $this->role_default_prepare_html($select_width);
+        if ($this->multisite && !is_network_admin()) {
+            $this->role_default_prepare_html($select_width);
+        }        
         $this->role_delete_prepare_html();                
         $this->caps_to_remove_prepare_html();
     }
