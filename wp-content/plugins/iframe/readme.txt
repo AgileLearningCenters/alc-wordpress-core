@@ -3,8 +3,8 @@ Contributors: webvitaly
 Donate link: http://web-profile.com.ua/donate/
 Tags: iframe, embed, youtube, vimeo, google-map, google-maps
 Requires at least: 3.0
-Tested up to: 4.5
-Stable tag: 4.2
+Tested up to: 5.0
+Stable tag: 4.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -12,10 +12,11 @@ License URI: http://www.gnu.org/licenses/gpl.html
 
 == Description ==
 
-> **[Advanced iFrame Pro](http://codecanyon.net/item/advanced-iframe-pro/5344999?ref=webvitaly)** |
+> **[Speedup WordPress](http://codecanyon.net/item/silver-bullet-pro/15171769?ref=webvitalii "Speedup and protect WordPress in a smart way")** |
+> **[Advanced iFrame Pro](http://codecanyon.net/item/advanced-iframe-pro/5344999?ref=webvitalii "Advanced iFrame Pro")** |
 > **[iframe](http://web-profile.com.ua/wordpress/plugins/iframe/ "Plugin page")** |
-> **[All iframe params](http://wordpress.org/plugins/iframe/other_notes/)** |
-> **[Donate](http://web-profile.com.ua/donate/ "Support the development")**
+> **[Donate](http://web-profile.com.ua/donate/ "Support the development")** |
+> **[GitHub](https://github.com/webvitalii/iframe "Fork")**
 
 [iframe src="http://www.youtube.com/embed/4qsGTXLnmKs" width="100%" height="500"] shortcode
 should show something like this:
@@ -24,16 +25,16 @@ should show something like this:
 
 
 WordPress removes iframe html tags because of security reasons.
-Iframe shortcode is the replacement of the iframe html tag and accepts the same [params as iframe](http://wordpress.org/plugins/iframe/other_notes/) html tag does.
+Iframe shortcode is the replacement of the iframe html tag and accepts the same **[params as iframe html tag](http://wordpress.org/plugins/iframe/other_notes/)** does.
 You may use iframe shortcode to embed content from YouTube, Vimeo, Google Maps or from any external page.
 
 If you need to embed content from YouTube, Vimeo, SlideShare, SoundCloud, Twitter via direct link, you may use `[embed]http://www.youtube.com/watch?v=4qsGTXLnmKs[/embed]` shortcode.
 [embed] shortcode is a core WordPress feature and can [embed content from many resources via direct link](http://codex.wordpress.org/Embeds).
 
 = Useful: =
-* [Advanced iFrame Pro](http://codecanyon.net/item/advanced-iframe-pro/5344999?ref=webvitaly)
-* ["Anti-spam" - block spam in comments](http://wordpress.org/plugins/anti-spam/ "no spam, no captcha")
-* ["Page-list" - show list of pages with shortcodes](http://wordpress.org/plugins/page-list/ "list of pages with shortcodes")
+* **[Advanced iFrame Pro](http://codecanyon.net/item/advanced-iframe-pro/5344999?ref=webvitalii "Advanced iFrame Pro")**
+* **[Silver Bullet Pro - Speedup and protect WordPress in a smart way](http://codecanyon.net/item/silver-bullet-pro/15171769?ref=webvitalii "Speedup and protect WordPress in a smart way")**
+* **[Anti-spam Pro - Block spam in comments](http://codecanyon.net/item/antispam-pro/6491169?ref=webvitalii "Block spam in comments")**
 
 == Other Notes ==
 
@@ -58,6 +59,9 @@ If you need to embed content from YouTube, Vimeo, SlideShare, SoundCloud, Twitte
 1. [iframe] shortcode
 
 == Changelog ==
+
+= 4.3 - 2016-03-24 =
+* minor refactoring.
 
 = 4.2 - 2015-08-16 =
 * minor bugfixing.
