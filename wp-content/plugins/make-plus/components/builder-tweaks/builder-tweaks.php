@@ -35,7 +35,7 @@ class TTFMP_Builder_Tweaks {
 	var $file_path = '';
 
 	/**
-	 * The URI base for the plugin (e.g., http://domain.com/wp-content/plugins/make-plus/my-component).
+	 * The URI base for the plugin (e.g., http://example.com/wp-content/plugins/make-plus/my-component).
 	 *
 	 * @since 1.5.1.
 	 *
@@ -329,7 +329,7 @@ class TTFMP_Builder_Tweaks {
 	 */
 	private function sanitize_classes( $original_classes ) {
 		$classes = explode( ' ', $original_classes );
-		$clean_classes = array_map( 'sanitize_title_with_dashes', $classes );
+		$clean_classes = array_map( 'sanitize_key', $classes );
 		return implode( ' ', $clean_classes );
 	}
 
@@ -399,6 +399,10 @@ class TTFMP_Builder_Tweaks {
 	 * @return void
 	 */
 	public function render_remove_space() {
+		if ( ! ttfmake_is_builder_page() ) {
+			return;
+		}
+
 		// Get the available section types
 		global $post;
 		$sections = ttfmake_get_section_data( $post->ID );

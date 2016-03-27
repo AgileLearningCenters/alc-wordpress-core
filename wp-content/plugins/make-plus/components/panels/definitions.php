@@ -21,7 +21,7 @@ class TTFMP_Panels_Definitions {
 	var $component_root = '';
 
 	/**
-	 * The URI base for the plugin (e.g., http://domain.com/wp-content/plugins/make-plus/my-component).
+	 * The URI base for the plugin (e.g., http://example.com/wp-content/plugins/make-plus/my-component).
 	 *
 	 * @since 1.6.0.
 	 *
@@ -104,7 +104,7 @@ class TTFMP_Panels_Definitions {
 				100 => array(
 					'type'  => 'section_title',
 					'name'  => 'title',
-					'label' => __( 'Enter section title', 'make' ),
+					'label' => __( 'Enter section title', 'make-plus' ),
 					'class' => 'ttfmake-configuration-title ttfmake-section-header-title-input',
 					'default' => ttfmake_get_section_default( 'title', 'panels' ),
 				),
@@ -127,13 +127,13 @@ class TTFMP_Panels_Definitions {
 				400 => array(
 					'type'  => 'image',
 					'name'  => 'background-image',
-					'label' => __( 'Background image', 'make' ),
+					'label' => __( 'Background image', 'make-plus' ),
 					'class' => 'ttfmake-configuration-media',
 					'default' => ttfmake_get_section_default( 'background-image', 'panels' ),
 				),
 				500 => array(
 					'type'    => 'checkbox',
-					'label'   => __( 'Darken background to improve readability', 'make' ),
+					'label'   => __( 'Darken background to improve readability', 'make-plus' ),
 					'name'    => 'background-image-darken',
 					'default' => ttfmake_get_section_default( 'background-image-darken', 'panels' ),
 				),
@@ -147,7 +147,7 @@ class TTFMP_Panels_Definitions {
 				),
 				700 => array(
 					'type'    => 'color',
-					'label'   => __( 'Background color', 'make' ),
+					'label'   => __( 'Background color', 'make-plus' ),
 					'name'    => 'background-color',
 					'class'   => 'ttfmake-panels-background-color ttfmake-configuration-color-picker',
 					'default' => ttfmake_get_section_default( 'background-color', 'panels' ),

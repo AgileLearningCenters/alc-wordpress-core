@@ -91,7 +91,7 @@ class TTFMP_Typekit_Customizer {
 		// Define the section
 		$sections['font-typekit'] = array(
 			'panel' => $panel,
-			'title' => __( 'Typekit', 'make' ),
+			'title' => __( 'Typekit', 'make-plus' ),
 			'description' => __( 'Enter your Kit ID into the field below and click the "Load" button to retrieve the fonts from your kit.', 'make-plus' ),
 			'options' => array(
 				'typekit-id' => array(
@@ -107,7 +107,7 @@ class TTFMP_Typekit_Customizer {
 					'control' => array(
 						'control_type'		=> 'TTFMAKE_Customize_Misc_Control',
 						'type'				=> 'text',
-						'description'		=> '<a href="#">' . __( 'Reset', 'make-plus' ) . '</a><a href="#">' . __( 'Load Typekit Fonts', 'make-plus' ) . '</a>',
+						'description'		=> '<a href="#">' . esc_html__( 'Reset', 'make-plus' ) . '</a><a href="#">' . esc_html__( 'Load Typekit Fonts', 'make-plus' ) . '</a>',
 					),
 				),
 				'typekit-help-text' => array(
@@ -115,11 +115,12 @@ class TTFMP_Typekit_Customizer {
 						'control_type'		=> 'TTFMAKE_Customize_Misc_Control',
 						'type'				=> 'text',
 						'description'		=> sprintf(
-							__( 'For more information about Typekit integration, please see the %s.', 'make-plus' ),
+							// Translators: %s is a placeholder for a link to documentation
+							esc_html__( 'For more information about Typekit integration, please see the %s.', 'make-plus' ),
 							sprintf(
 								'<a href="%1$s">Make Plus %2$s</a>',
 								'https://thethemefoundry.com/docs/make-docs/customizer/typography/',
-								__( 'documentation', 'make-plus' )
+								esc_html__( 'documentation', 'make-plus' )
 							)
 						),
 					),
@@ -157,10 +158,49 @@ class TTFMP_Typekit_Customizer {
 	public function print_typekit() {
 		$id = $this->get_typekit_id();
 
-		if ( '' !== $id && true === $this->is_typekit_used() ) : ?>
-			<script type="text/javascript" src="//use.typekit.net/<?php echo $this->sanitize_typekit_id( $id ); ?>.js"></script>
-			<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+		if ( '' !== $id && true === $this->is_typekit_used() ) :
+			// Add frontend styles
+			add_action( 'make_css', array( $this, 'frontend_css' ), 2 );
+			?>
+			<script type="text/javascript">
+				(function(d) {
+					var config = {
+							kitId: '<?php echo $this->sanitize_typekit_id( $id ); ?>',
+							scriptTimeout: 3000,
+							async: true
+						},
+						h=d.documentElement,
+						t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),
+						tk=d.createElement("script"),
+						f=false,
+						s=d.getElementsByTagName("script")[0],
+						a;
+					h.className+=" wf-loading";
+					tk.src='//use.typekit.net/'+config.kitId+'.js';
+					tk.async=true;
+					tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};
+					s.parentNode.insertBefore(tk,s);
+				})(document);
+			</script>
 		<?php endif;
+	}
+
+	/**
+	 * Add frontend dynamic styles related to loading fonts.
+	 *
+	 * @since 1.6.3.
+	 *
+	 * @return void
+	 */
+	public function frontend_css() {
+		ttfmake_get_css()->add( array(
+			'selectors'    => array(
+				'.wf-loading body',
+			),
+			'declarations' => array(
+				'visibility' => 'hidden'
+			)
+		) );
 	}
 
 	/**
@@ -196,11 +236,19 @@ class TTFMP_Typekit_Customizer {
 	 * Get the list of Typekit fonts in the current Typekit Kit.
 	 *
 	 * @since  1.0.0.
+	 * @since  1.6.5. Introduced $allow_temp parameter.
 	 *
-	 * @return array    Array of Typekit fonts available to the kit.
+	 * @param  bool     $allow_temp    True to look for the temp mod first. False to ignore it.
+	 *
+	 * @return array                   Array of Typekit fonts available to the kit.
 	 */
-	public function get_typekit_choices() {
-		$choices = get_theme_mod( 'typekit-temp-choices', array() );
+	public function get_typekit_choices( $allow_temp = true ) {
+		$choices = array();
+
+		if ( $allow_temp ) {
+			$choices = get_theme_mod( 'typekit-temp-choices', array() );
+		}
+
 		if ( empty( $choices ) ) {
 			$choices = get_theme_mod( 'typekit-choices', array() );
 		}
@@ -212,8 +260,9 @@ class TTFMP_Typekit_Customizer {
 			foreach ( $choices as $data ) {
 				if ( isset( $data['label'] ) && isset( $data['stack'] ) ) {
 					$values[] = array(
-						'label' => wp_strip_all_tags( $data['label'] ),
-						'stack' => wp_strip_all_tags( $data['stack'] ),
+						'label'      => wp_strip_all_tags( $data['label'] ),
+						'stack'      => wp_strip_all_tags( $data['stack'] ),
+						'variations' => $data['variations'],
 					);
 				}
 			}
@@ -231,7 +280,7 @@ class TTFMP_Typekit_Customizer {
 	 * @return string    ID for the current Typekit Kit.
 	 */
 	public function get_typekit_id() {
-		return ( '' !== get_theme_mod( 'typekit-temp-id', '' ) ) ? get_theme_mod( 'typekit-temp-id' ) : get_theme_mod( 'typekit-id', '' );
+		return ( '' !== get_theme_mod( 'typekit-temp-id', '' ) ) ? get_theme_mod( 'typekit-temp-id' ) : get_theme_mod( 'typekit-id', ttfmake_get_default( 'typekit-id' ) );
 	}
 
 	/**
@@ -326,13 +375,13 @@ class TTFMP_Typekit_Customizer {
 	 * @return array                The updated font choices.
 	 */
 	public function all_fonts( $choices ) {
-		$typekit_fonts = $this->get_typekit_choices();
+		$typekit_fonts = $this->get_typekit_choices( false );
 
 		if ( ! empty( $typekit_fonts ) ) {
 			$choices = array_merge( $typekit_fonts, $choices );
 			$choices = array_merge( array(
 				0 => array(
-					'label' => sprintf( '--- %s ---', __( 'Typekit Fonts', 'make-plus' ) )
+					'label' => sprintf( '--- %s ---', esc_html__( 'Typekit Fonts', 'make-plus' ) )
 				)
 			), $choices );
 		}
@@ -363,14 +412,21 @@ class TTFMP_Typekit_Customizer {
 
 				// Package the new select options
 				foreach ( $response_body->kit->families as $family ) {
+					$key = sanitize_title_with_dashes( $family->slug );
+
 					// This format is needed to plug into the existing fonts
-					$php_options[ sanitize_title_with_dashes( $family->slug ) ] = array(
+					$php_options[ $key ] = array(
 						'label' => wp_strip_all_tags( $family->name ),
 						'stack' => ( isset( $family->css_stack ) ) ? wp_strip_all_tags( $family->css_stack ) : '',
 					);
 
+					// Save the variants
+					if ( isset( $family->variations ) ) {
+						$php_options[ $key ]['variations'] = $family->variations;
+					}
+
 					// Key/value pair for JS
-					$js_options[ sanitize_title_with_dashes( $family->slug ) ] = wp_strip_all_tags( $family->name );
+					$js_options[ $key ] = wp_strip_all_tags( $family->name );
 				}
 
 				// Save the current choices to a theme mod

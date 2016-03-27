@@ -108,7 +108,7 @@ class TTFMP_PerPage_Metabox {
 		foreach ( $post_types as $type ) {
 			add_meta_box(
 				ttfmp_get_perpage()->prefix . 'metabox',
-				__( 'Layout Settings', 'make-plus' ),
+				esc_html__( 'Layout Settings', 'make-plus' ),
 				array( $this, 'metabox_callback' ),
 				$type,
 				'side',
@@ -134,7 +134,7 @@ class TTFMP_PerPage_Metabox {
 		// Help blurb
 		echo '<p class="howto">';
 		printf(
-			__( 'Check the box next to a global setting to override it.', 'make-plus' )
+			esc_html__( 'Check the box next to a global setting to override it.', 'make-plus' )
 		);
 		echo '</p>';
 
@@ -203,6 +203,11 @@ class TTFMP_PerPage_Metabox {
 			$this->control_item( $post, 'select', 'layout-post-comment-count' );
 			$this->control_heading( __( 'Comment Count Location', 'make-plus' ), 'comment-count-dependent' );
 			$this->control_item( $post, 'select', 'layout-post-comment-count-location', '', 'comment-count-dependent' );
+
+			if ( function_exists( 'yoast_breadcrumb' ) && function_exists( 'ttfmake_yoast_seo_breadcrumb' ) ) :
+				$this->control_heading( __( 'Breadcrumbs', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'layout-post-yoast-breadcrumb', __( 'Show breadcrumbs', 'make-plus' ) );
+			endif;
 			?>
 		</ul>
 	<?php
@@ -261,6 +266,11 @@ class TTFMP_PerPage_Metabox {
 			$this->control_item( $post, 'select', 'layout-page-comment-count' );
 			$this->control_heading( __( 'Comment Count Location', 'make-plus' ), 'comment-count-dependent' );
 			$this->control_item( $post, 'select', 'layout-page-comment-count-location', '', 'comment-count-dependent' );
+
+			if ( function_exists( 'yoast_breadcrumb' ) && function_exists( 'ttfmake_yoast_seo_breadcrumb' ) ) :
+				$this->control_heading( __( 'Breadcrumbs', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'layout-page-yoast-breadcrumb', __( 'Show breadcrumbs', 'make-plus' ) );
+			endif;
 			?>
 		</ul>
 	<?php
@@ -295,6 +305,11 @@ class TTFMP_PerPage_Metabox {
 				$this->control_item( $post, 'checkbox', 'header-hide-padding-bottom', __( 'Remove padding beneath header', 'make-plus' ) );
 				$this->control_item( $post, 'checkbox', 'footer-hide-padding-top', __( 'Remove padding above footer', 'make-plus' ) );
 			endif;
+
+			if ( function_exists( 'yoast_breadcrumb' ) && function_exists( 'ttfmake_yoast_seo_breadcrumb' ) ) :
+				$this->control_heading( __( 'Breadcrumbs', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'layout-shop-yoast-breadcrumb', __( 'Show breadcrumbs', 'make-plus' ) );
+			endif;
 			?>
 		</ul>
 	<?php
@@ -328,6 +343,11 @@ class TTFMP_PerPage_Metabox {
 				$this->control_heading( __( 'Padding', 'make-plus' ) );
 				$this->control_item( $post, 'checkbox', 'header-hide-padding-bottom', __( 'Remove padding beneath header', 'make-plus' ) );
 				$this->control_item( $post, 'checkbox', 'footer-hide-padding-top', __( 'Remove padding above footer', 'make-plus' ) );
+			endif;
+
+			if ( function_exists( 'yoast_breadcrumb' ) && function_exists( 'ttfmake_yoast_seo_breadcrumb' ) ) :
+				$this->control_heading( __( 'Breadcrumbs', 'make-plus' ) );
+				$this->control_item( $post, 'checkbox', 'layout-product-yoast-breadcrumb', __( 'Show breadcrumbs', 'make-plus' ) );
 			endif;
 			?>
 		</ul>

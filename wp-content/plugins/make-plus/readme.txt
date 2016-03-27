@@ -3,8 +3,8 @@ Contributors: thethemefoundry, dstrojny, jupiterwise, scottrrollo, tollmanz
 Donate link: https://thethemefoundry.com
 Tags: woocommerce, sidebars, widgets, customizer, fonts, typekit, demo content, page builder
 Requires at least: 4.0
-Tested up to: 4.2.3
-Stable tag: 1.6.2
+Tested up to: 4.4.0
+Stable tag: 1.6.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,45 @@ For more information, please see the [Make Plus support page](https://thethemefo
 
 == Changelog ==
 
+= 1.6.6 =
+
+* New filter: `ttfmp_post_list_post_title_element` modifies the wrapper element for titles in Posts List items.
+* Bug fix: Not all necessary weights were included in the Google font URL in some situations.
+* Bug fix: "Ghost" widget areas were occasionally appearing on the Widgets screen after their associated Columns section had been deleted.
+* Bug fix: Choosing a Quick Start template on a blank page that was already published caused the page to be duplicated.
+* Bug fix: Incorrect button styles on individual columns that were converted to widget areas.
+* Updated: new Dutch translation.
+* Changed: Make Plus now only supports WordPress 4.2 and higher.
+
+= 1.6.5 =
+
+* New feature: Numeric font weight control for typography options in the Customizer.
+  * Replaces the standard normal/bold font weight options in Make.
+  * Available font weight options are determined by the chosen font family and font style options.
+  * Works with Google fonts and Typekit fonts.
+* Bug fix: Incorrect Typekit font family options were displayed if a kit ID was loaded but not saved.
+* Bug fix: The default kit ID value was sometimes being ignored if it was changed by a child theme.
+* Bug fix: Tab headers in the Panels section were styled with the wrong text color when in focus.
+* Changed: Added an admin notice that Make Plus will soon drop support for WP 4.0 and 4.1.
+
+= 1.6.4 =
+
+* New feature: Support for Yoast SEO's breadcrumb functionality.
+  * Enhances the breadcrumb functionality in the Make theme.
+  * Toggle breadcrumb visibility for individual posts and pages.
+  * Add breadcrumb options for WooCommerce and Easy Digital Downloads.
+
+= 1.6.3 =
+
+* Improved: Typekit font kits are now loaded asynchronously.
+* Improved: Better handling of localization:
+  * Improved translator notes for some strings.
+  * Ensure that all translated strings are escaped for security hardening.
+  * Added some missing text domains.
+* Changed: The 'From' dropdown for Posts Lists will now include empty taxonomy terms.
+* Bug fix: Posts Lists displaying posts from a certain taxonomy term would revert to showing all posts if that term became empty.
+* Bug fix: Custom section classes could not contain multiple consecutive dashes or underscores.
+
 = 1.6.2 =
 
 * Posts List section/widget improvements:
@@ -41,10 +80,10 @@ For more information, please see the [Make Plus support page](https://thethemefo
   * The 'From' control now displays different taxonomy options depending on the chosen post type.
   * If the chosen post type is hierarchical (e.g. Pages), the 'From' control includes options to show the children of a specific page/post.
   * Better labeling/organization of section and widget controls.
-* Improved: Allow Typkit ID setting default to be filtered like other theme setting defaults.
+* Improved: Allow Typekit ID setting default to be filtered like other theme setting defaults.
 * Improved: Layout for controls in Posts List, Products, and Downloads Builder sections.
-* Fixed: Accordion panels were expanding upward beyond the viewport, forcing users to scroll back up to begin reading them from the top.
-* Fixed: Layout settings for sidebar were incorrectly displaying in WooCommerce shop pages (e.g. Cart and Checkout).
+* Bug fix: Accordion panels were expanding upward beyond the viewport, forcing users to scroll back up to begin reading them from the top.
+* Bug fix: Layout settings for sidebar were incorrectly displaying in WooCommerce shop pages (e.g. Cart and Checkout).
 
 = 1.6.1.1 =
 
@@ -216,6 +255,6 @@ For more information, please see the [Make Plus support page](https://thethemefo
 
 == Upgrade Notice ==
 
-= 1.6.2 =
+= 1.6.6 =
 
-Major update of the Posts List section/widget.
+New `ttfmp_post_list_post_title_element` filter, new Dutch translation, several bug fixes.

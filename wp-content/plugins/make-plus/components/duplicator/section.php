@@ -94,7 +94,7 @@ class TTFMP_Section_Duplicator {
 			'ttfmpDuplicateSection',
 			array(
 				'nonce'        => wp_create_nonce( 'duplicate' ),
-				'defaultError' => __( 'An unexpected error occurred.', 'make-plus' ),
+				'defaultError' => esc_html__( 'An unexpected error occurred.', 'make-plus' ),
 			)
 		);
 
@@ -230,14 +230,14 @@ class TTFMP_Section_Duplicator {
 					if ( isset( $data[ $id ]['columns'] ) && is_array( $data[ $id ]['columns'] ) ) {
 						foreach ( $data[ $id ]['columns'] as $key => $column ) {
 							if ( isset( $column['widget-area'] ) && 1 === (int) $column['widget-area'] && isset( $column['sidebar-label'] ) ) {
-								$data[ $id ]['columns'][ $key ]['sidebar-label'] .= __( ' (Copy)', 'make-plus' );
+								$data[ $id ]['columns'][ $key ]['sidebar-label'] .= ' ' . __( '(Copy)', 'make-plus' );
 								$data[ $id ]['columns'][ $key ]['sidebar-label'] = trim( $data[ $id ]['columns'][ $key ]['sidebar-label'] );
 							}
 						}
 					}
 
 					// Append "(Copy)" to the section title
-					$data[ $id ]['label'] .= __( ' (Copy)', 'make-plus' );
+					$data[ $id ]['label'] .= ' ' . __( '(Copy)', 'make-plus' );
 
 					ob_start();
 					ttfmake_get_builder_base()->load_section( $section, $data[ $id ] );
@@ -251,14 +251,14 @@ class TTFMP_Section_Duplicator {
 			} else {
 				wp_send_json_error( array(
 					'result'  => 'error',
-					'message' => __( 'An unexpected error occurred.', 'make-plus' ),
+					'message' => esc_html__( 'An unexpected error occurred.', 'make-plus' ),
 				) );
 			}
 		}
 
 		wp_send_json_error( array(
 			'result'  => 'error',
-			'message' => __( 'An unexpected error occurred.', 'make-plus' ),
+			'message' => esc_html__( 'An unexpected error occurred.', 'make-plus' ),
 		) );
 	}
 }

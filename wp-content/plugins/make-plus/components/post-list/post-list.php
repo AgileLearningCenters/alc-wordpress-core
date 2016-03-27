@@ -41,7 +41,7 @@ class TTFMP_Post_List {
 	var $file_path = '';
 
 	/**
-	 * The URI base for the plugin (e.g., http://domain.com/wp-content/plugins/make-plus/my-component).
+	 * The URI base for the plugin (e.g., http://example.com/wp-content/plugins/make-plus/my-component).
 	 *
 	 * @since 1.2.0.
 	 *
@@ -475,7 +475,7 @@ class TTFMP_Post_List {
 	}
 
 	/**
-	 * Generate an excerpt of specified length for inclusion in a Posts List item.@deprecated
+	 * Generate an excerpt of specified length for inclusion in a Posts List item.
 	 *
 	 * @since 1.6.2.
 	 *

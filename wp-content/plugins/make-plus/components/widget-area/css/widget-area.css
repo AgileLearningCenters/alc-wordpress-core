@@ -133,6 +133,12 @@
 
 .ttfmp-widget-area-display .ttfmake-titlediv .ttfmake-title {
 	height: 40px;
+	padding-right: 54px;
+	/* width of 'Revert to column' button + 8px input padding */
+}
+
+.ttfmake-section-text .ttfmake-titlediv {
+	padding-right: 0;
 }
 
 

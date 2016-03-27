@@ -77,32 +77,32 @@ class TTFMP_Post_List_Section_Definitions {
 				100 => array(
 					'type'  => 'section_title',
 					'name'  => 'title',
-					'label' => __( 'Enter section title', 'make' ),
+					'label' => __( 'Enter section title', 'make-plus' ),
 					'class' => 'ttfmake-configuration-title ttfmake-section-header-title-input',
 				),
 				200 => array(
 					'type'  => 'image',
 					'name'  => 'background-image',
-					'label' => __( 'Background image', 'make' ),
+					'label' => __( 'Background image', 'make-plus' ),
 					'class' => 'ttfmake-configuration-media',
 					'default' => ttfmake_get_section_default( 'background-image', 'post-list' ),
 				),
 				300 => array(
 					'type'    => 'checkbox',
-					'label'   => __( 'Darken background to improve readability', 'make' ),
+					'label'   => __( 'Darken background to improve readability', 'make-plus' ),
 					'name'    => 'darken',
 					'default' => ttfmake_get_section_default( 'darken', 'post-list' ),
 				),
 				400 => array(
 					'type'    => 'select',
 					'name'    => 'background-style',
-					'label'   => __( 'Background style', 'make' ),
+					'label'   => __( 'Background style', 'make-plus' ),
 					'default' => ttfmake_get_section_default( 'background-style', 'post-list' ),
 					'options' => ttfmake_get_section_choices( 'background-style', 'post-list' ),
 				),
 				500 => array(
 					'type'    => 'color',
-					'label'   => __( 'Background color', 'make' ),
+					'label'   => __( 'Background color', 'make-plus' ),
 					'name'    => 'background-color',
 					'class'   => 'ttfmake-text-background-color ttfmake-configuration-color-picker',
 					'default' => ttfmake_get_section_default( 'background-color', 'post-list' ),
@@ -271,8 +271,8 @@ class TTFMP_Post_List_Section_Definitions {
 		switch ( $choice_id ) {
 			case 'post-list-background-style' :
 				$choices = array(
-					'tile'  => __( 'Tile', 'make' ),
-					'cover' => __( 'Cover', 'make' ),
+					'tile'  => __( 'Tile', 'make-plus' ),
+					'cover' => __( 'Cover', 'make-plus' ),
 				);
 				break;
 			case 'post-list-columns' :

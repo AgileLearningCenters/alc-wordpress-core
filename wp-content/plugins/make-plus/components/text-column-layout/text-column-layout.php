@@ -38,7 +38,7 @@ class TTFMP_Text_Column_Layout {
 	var $file_path = '';
 
 	/**
-	 * The URI base for the plugin (e.g., http://domain.com/wp-content/plugins/make-plus/my-component).
+	 * The URI base for the plugin (e.g., http://example.com/wp-content/plugins/make-plus/my-component).
 	 *
 	 * @since 1.3.0.
 	 *
@@ -163,7 +163,7 @@ class TTFMP_Text_Column_Layout {
 	 */
 	public function filter_column_layout_input( $wrap, $args ) {
 		if ( isset( $args['name'] ) && 'text-column-layout-blurb' === $args['name'] ) {
-			$blurb = __( 'Looking for the Column Layout option? Now you can simply click and drag between the columns to change their grid layout. (2- and 3-column sections only.)', 'make-plus' );
+			$blurb = esc_html__( 'Looking for the Column Layout option? Now you can simply click and drag between the columns to change their grid layout. (2- and 3-column sections only.)', 'make-plus' );
 			$wrap = str_replace( '%2$s', $blurb, $wrap );
 		}
 

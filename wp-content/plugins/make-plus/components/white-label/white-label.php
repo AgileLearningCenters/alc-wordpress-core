@@ -45,7 +45,7 @@ class TTFMP_Customizer_White_Label extends TTFMP_Customizer_Definitions {
 
 		$new_sections['white-label'] = array(
 			'panel' => $panel,
-			'title' => __( 'White Label', 'make' ),
+			'title' => __( 'White Label', 'make-plus' ),
 			'options' => array(
 				'footer-hide-credit' => array(
 					'setting' => array(

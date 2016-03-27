@@ -4,7 +4,7 @@
  * Plugin URI:  https://thethemefoundry.com/make/
  * Description: A powerful paid companion plugin for the Make WordPress theme.
  * Author:      The Theme Foundry
- * Version:     1.6.2
+ * Version:     1.6.6
  * Author URI:  https://thethemefoundry.com
  *
  * @package Make Plus
@@ -26,9 +26,12 @@ class TTFMP_App {
 	 *
 	 * @var   string    The semantically versioned plugin version number.
 	 */
-	var $version = '1.6.2';
+	var $version = '1.6.6';
 
-	const MIN_WP_VERSION = '4.0';
+	/**
+	 * The minimum version of WordPress required for Make Plus.
+	 */
+	const MIN_WP_VERSION = '4.2';
 
 	/**
 	 * Plugin mode.
@@ -103,7 +106,7 @@ class TTFMP_App {
 	var $shared_dir_name = 'shared';
 
 	/**
-	 * The URI base for the plugin (e.g., http://domain.com/wp-content/plugins/make-plus).
+	 * The URI base for the plugin (e.g., http://example.com/wp-content/plugins/make-plus).
 	 *
 	 * @since 1.0.0.
 	 *
@@ -161,7 +164,7 @@ class TTFMP_App {
 	 */
 	public function init() {
 		// Check to see if Make is the active theme
-		if ( 'make' === get_template() ) {
+		if ( 'make' === get_template() || function_exists( 'ttfmake_setup' ) ) {
 			$this->passive = false;
 		}
 
@@ -192,7 +195,7 @@ class TTFMP_App {
 	 */
 	public function load_shared_functions() {
 		// Admin notices
-		$file = $this->shared_base . '/admin-notice/admin-notice.php';
+		$file = $this->shared_base . '/admin-notice.php';
 		if ( is_admin() && file_exists( $file ) ) {
 			require_once $file;
 		}
@@ -248,6 +251,15 @@ class TTFMP_App {
 					false === $this->passive,
 					// Make version is at least 1.0.6
 					defined( 'TTFMAKE_VERSION' ) && true === version_compare( TTFMAKE_VERSION, '1.0.6', '>=' ),
+				)
+			),
+			'font-weight'  => array(
+				'slug'       => 'font-weight',
+				'conditions' => array(
+					// Make is active theme
+					false === $this->passive,
+					// Make version is at least 1.0.6
+					defined( 'TTFMAKE_VERSION' ) && true === version_compare( TTFMAKE_VERSION, '1.6.4', '>=' ),
 				)
 			),
 			'edd' => array(

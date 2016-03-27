@@ -18,9 +18,9 @@ class TTFMP_Post_List_Widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'ttfmp-widget-post-list',
-			'description' => sprintf( __( 'List posts or pages based on specific criteria. (%s)', 'make-plus' ), 'Make Plus' )
+			'description' => esc_html__( 'List posts or pages based on specific criteria. (Make Plus)', 'make-plus' )
 		);
-		parent::__construct( 'ttfmp-post-list', __( 'Posts List', 'make-plus' ), $widget_ops );
+		parent::__construct( 'ttfmp-post-list', esc_html__( 'Posts List', 'make-plus' ), $widget_ops );
 	}
 
 	/**
@@ -118,12 +118,12 @@ class TTFMP_Post_List_Widget extends WP_Widget {
 		$instance['taxonomy'] = ttfmp_get_post_list()->filter->upgrade_filter_choice( $instance['taxonomy'] );
 		?>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'make-plus' ); ?></label> <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'type' ); ?>"><?php _e( 'Type:', 'make-plus' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'type' ); ?>" id="<?php echo $this->get_field_id( 'type' ); ?>" class="widefat ttfmp-posts-list-select-type">
+			<label for="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>"><?php esc_html_e( 'Type:', 'make-plus' ); ?></label>
+			<select name="<?php echo esc_attr( $this->get_field_name( 'type' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>" class="widefat ttfmp-posts-list-select-type">
 				<?php foreach ( ttfmake_get_section_choices( 'type', 'post-list' ) as $value => $label ) : ?>
 					<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, $instance['type'] ); ?>>
 						<?php echo esc_html( $label ); ?>
@@ -133,19 +133,19 @@ class TTFMP_Post_List_Widget extends WP_Widget {
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'taxonomy' ); ?>"><?php _e( 'From:', 'make-plus' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'taxonomy' ); ?>" id="<?php echo $this->get_field_id( 'taxonomy' ); ?>" class="widefat ttfmp-posts-list-select-from">
+			<label for="<?php echo esc_attr( $this->get_field_id( 'taxonomy' ) ); ?>"><?php esc_html_e( 'From:', 'make-plus' ); ?></label>
+			<select name="<?php echo esc_attr( $this->get_field_name( 'taxonomy' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'taxonomy' ) ); ?>" class="widefat ttfmp-posts-list-select-from">
 				<?php echo ttfmp_get_post_list()->filter->render_choice_list( $instance['type'], $instance['taxonomy'] ); ?>
 			</select>
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'keyword' ); ?>"><?php _e( 'Keyword:' ); ?></label> <input class="widefat" id="<?php echo $this->get_field_id( 'keyword' ); ?>" name="<?php echo $this->get_field_name( 'keyword' ); ?>" type="text" value="<?php echo esc_attr( $instance['keyword'] ); ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'keyword' ) ); ?>"><?php esc_html_e( 'Keyword:', 'make-plus' ); ?></label> <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'keyword' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'keyword' ) ); ?>" type="text" value="<?php echo esc_attr( $instance['keyword'] ); ?>" />
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'sortby' ); ?>"><?php _e( 'Sort by:', 'make-plus' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'sortby' ); ?>" id="<?php echo $this->get_field_id( 'sortby' ); ?>" class="widefat">
+			<label for="<?php echo esc_attr( $this->get_field_id( 'sortby' ) ); ?>"><?php esc_html_e( 'Sort by:', 'make-plus' ); ?></label>
+			<select name="<?php echo esc_attr( $this->get_field_name( 'sortby' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'sortby' ) ); ?>" class="widefat">
 				<?php foreach ( ttfmake_get_section_choices( 'sortby', 'post-list' ) as $value => $label ) : ?>
 					<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, $instance['sortby'] ); ?>>
 						<?php echo esc_html( $label ); ?>
@@ -155,44 +155,44 @@ class TTFMP_Post_List_Widget extends WP_Widget {
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'count' ); ?>"><?php _e( 'Number of items to show:' ); ?></label> <input class="widefat" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>" type="number" value="<?php echo esc_attr( $instance['count'] ); ?>" />
-			<small style="display: block; padding-top: 5px;"><?php _e( 'To show all items, set to <code>-1</code>.', 'make-plus' ); ?></small>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>"><?php esc_html_e( 'Number of items to show:', 'make-plus' ); ?></label> <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'count' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'count' ) ); ?>" type="number" value="<?php echo esc_attr( $instance['count'] ); ?>" />
+			<small style="display: block; padding-top: 5px;"><?php echo wp_kses( __( 'To show all items, set to <code>-1</code>.', 'make-plus' ), wp_kses_allowed_html() ); ?></small>
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'offset' ); ?>"><?php _e( 'Item offset:' ); ?></label> <input class="widefat" id="<?php echo $this->get_field_id( 'offset' ); ?>" name="<?php echo $this->get_field_name( 'offset' ); ?>" type="number" value="<?php echo $instance['offset']; ?>" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'offset' ) ); ?>"><?php esc_html_e( 'Item offset:', 'make-plus' ); ?></label> <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'offset' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'offset' ) ); ?>" type="number" value="<?php echo esc_attr( $instance['offset'] ); ?>" />
 		</p>
 
-		<p style="margin-bottom: 0;"><label><?php _e( 'Post display', 'make-plus' ); ?></label></p>
+		<p style="margin-bottom: 0;"><label><?php esc_html_e( 'Post display', 'make-plus' ); ?></label></p>
 
 		<p style="margin-top: 1em;">
-			<input class="checkbox" type="checkbox" <?php checked( $instance['show-title'], true ) ?> id="<?php echo $this->get_field_id( 'show-title' ); ?>" name="<?php echo $this->get_field_name( 'show-title' ); ?>" value="1" />
-			<label for="<?php echo $this->get_field_id( 'show-title' ); ?>"><?php _e('Show item title'); ?></label>
+			<input class="checkbox" type="checkbox" <?php checked( $instance['show-title'], true ) ?> id="<?php echo esc_attr( $this->get_field_id( 'show-title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show-title' ) ); ?>" value="1" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show-title' ) ); ?>"><?php esc_html_e( 'Show item title', 'make-plus' ); ?></label>
 		</p>
 		<p>
-			<input class="checkbox" type="checkbox" <?php checked( $instance['show-date'], true ) ?> id="<?php echo $this->get_field_id( 'show-date' ); ?>" name="<?php echo $this->get_field_name( 'show-date' ); ?>" value="1" />
-			<label for="<?php echo $this->get_field_id( 'show-date' ); ?>"><?php _e('Show date'); ?></label>
+			<input class="checkbox" type="checkbox" <?php checked( $instance['show-date'], true ) ?> id="<?php echo esc_attr( $this->get_field_id( 'show-date' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show-date' ) ); ?>" value="1" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show-date' ) ); ?>"><?php esc_html_e( 'Show date', 'make-plus' ); ?></label>
 		</p>
 		<p>
-			<input class="checkbox" type="checkbox" <?php checked( $instance['show-author'], true ) ?> id="<?php echo $this->get_field_id( 'show-author' ); ?>" name="<?php echo $this->get_field_name( 'show-author' ); ?>" value="1" />
-			<label for="<?php echo $this->get_field_id( 'show-author' ); ?>"><?php _e('Show author'); ?></label>
+			<input class="checkbox" type="checkbox" <?php checked( $instance['show-author'], true ) ?> id="<?php echo esc_attr( $this->get_field_id( 'show-author' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show-author' ) ); ?>" value="1" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show-author' ) ); ?>"><?php esc_html_e( 'Show author', 'make-plus' ); ?></label>
 		</p>
 		<p>
-			<input class="checkbox" type="checkbox" <?php checked( $instance['show-comments'], true ) ?> id="<?php echo $this->get_field_id( 'show-comments' ); ?>" name="<?php echo $this->get_field_name( 'show-comments' ); ?>" value="1" />
-			<label for="<?php echo $this->get_field_id( 'show-comments' ); ?>"><?php _e('Show comment count'); ?></label>
+			<input class="checkbox" type="checkbox" <?php checked( $instance['show-comments'], true ) ?> id="<?php echo esc_attr( $this->get_field_id( 'show-comments' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show-comments' ) ); ?>" value="1" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show-comments' ) ); ?>"><?php esc_html_e( 'Show comment count', 'make-plus' ); ?></label>
 		</p>
 		<p>
-			<input class="checkbox" type="checkbox" <?php checked( $instance['show-excerpt'], true ) ?> id="<?php echo $this->get_field_id( 'show-excerpt' ); ?>" name="<?php echo $this->get_field_name( 'show-excerpt' ); ?>" value="1" />
-			<label for="<?php echo $this->get_field_id( 'show-excerpt' ); ?>"><?php _e('Show excerpt'); ?></label>
-		</p>
-
-		<p>
-			<label for="<?php echo $this->get_field_id( 'excerpt-length' ); ?>"><?php _e( 'Excerpt length (words):' ); ?></label> <input class="widefat" id="<?php echo $this->get_field_id( 'excerpt-length' ); ?>" name="<?php echo $this->get_field_name( 'excerpt-length' ); ?>" type="number" value="<?php echo $instance['excerpt-length']; ?>" />
+			<input class="checkbox" type="checkbox" <?php checked( $instance['show-excerpt'], true ) ?> id="<?php echo esc_attr( $this->get_field_id( 'show-excerpt' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show-excerpt' ) ); ?>" value="1" />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'show-excerpt' ) ); ?>"><?php esc_html_e( 'Show excerpt', 'make-plus' ); ?></label>
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'thumbnail' ); ?>"><?php _e( 'Show featured image:', 'make-plus' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'thumbnail' ); ?>" id="<?php echo $this->get_field_id( 'thumbnail' ); ?>" class="widefat">
+			<label for="<?php echo esc_attr( $this->get_field_id( 'excerpt-length' ) ); ?>"><?php esc_html_e( 'Excerpt length (words):', 'make-plus' ); ?></label> <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'excerpt-length' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'excerpt-length' ) ); ?>" type="number" value="<?php echo esc_attr( $instance['excerpt-length'] ); ?>" />
+		</p>
+
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'thumbnail' ) ); ?>"><?php esc_html_e( 'Show featured image:', 'make-plus' ); ?></label>
+			<select name="<?php echo esc_attr( $this->get_field_name( 'thumbnail' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'thumbnail' ) ); ?>" class="widefat">
 				<?php foreach ( ttfmake_get_section_choices( 'thumbnail', 'post-list' ) as $value => $label ) : ?>
 					<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, $instance['thumbnail'] ); ?>>
 						<?php echo esc_html( $label ); ?>
@@ -201,8 +201,8 @@ class TTFMP_Post_List_Widget extends WP_Widget {
 			</select>
 		</p>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'aspect' ); ?>"><?php _e( 'Image aspect ratio:', 'make-plus' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'aspect' ); ?>" id="<?php echo $this->get_field_id( 'aspect' ); ?>" class="widefat">
+			<label for="<?php echo esc_attr( $this->get_field_id( 'aspect' ) ); ?>"><?php esc_html_e( 'Image aspect ratio:', 'make-plus' ); ?></label>
+			<select name="<?php echo esc_attr( $this->get_field_name( 'aspect' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'aspect' ) ); ?>" class="widefat">
 				<?php foreach ( ttfmake_get_section_choices( 'aspect', 'post-list' ) as $value => $label ) : ?>
 					<option value="<?php echo esc_attr( $value ); ?>"<?php selected( $value, $instance['aspect'] ); ?>>
 						<?php echo esc_html( $label ); ?>

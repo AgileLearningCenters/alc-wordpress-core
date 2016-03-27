@@ -84,7 +84,9 @@ class TTFMP_Posts_List_Filter {
 					continue;
 				}
 
-				$terms = get_terms( $tax_name );
+				// Get all the terms for the taxonomy
+				$terms = get_terms( $tax_name, array( 'hide_empty' => false ) );
+
 				if ( ! empty( $terms ) ) {
 					$label = $taxonomy->labels->singular_name;
 					$choice_list[ 'ttfmp-disabled' . $i ] = '--- ' . $label . ' ---';

@@ -170,19 +170,19 @@ class TTFMP_Panels_Builder_Section_Item {
 		</div>
 
 		<div class="wrapper-panels-item-links">
-			<a href="#" class="configure-panels-item-link ttfmake-section-configure ttfmake-overlay-open" title="<?php esc_attr_e( 'Configure panel', 'make' ); ?>" data-overlay="#<?php echo $overlay_id; ?>">
+			<a href="#" class="configure-panels-item-link ttfmake-section-configure ttfmake-overlay-open" title="<?php esc_attr_e( 'Configure panel', 'make-plus' ); ?>" data-overlay="#<?php echo $overlay_id; ?>">
 				<span>
-					<?php _e( 'Configure panel', 'make' ); ?>
+					<?php esc_html_e( 'Configure panel', 'make-plus' ); ?>
 				</span>
 			</a>
-			<a href="#" class="edit-content-link edit-panels-item-link<?php if ( ! empty( $content ) ) : ?> item-has-content<?php endif; ?>" title="<?php esc_attr_e( 'Edit content', 'make' ); ?>" data-textarea="ttfmake-content-<?php echo $combined_id; ?>">
+			<a href="#" class="edit-content-link edit-panels-item-link<?php if ( ! empty( $content ) ) : ?> item-has-content<?php endif; ?>" title="<?php esc_attr_e( 'Edit content', 'make-plus' ); ?>" data-textarea="ttfmake-content-<?php echo $combined_id; ?>">
 				<span>
-					<?php _e( 'Edit content', 'make' ); ?>
+					<?php esc_html_e( 'Edit content', 'make-plus' ); ?>
 				</span>
 			</a>
-			<a href="#" class="remove-panels-item-link ttfmp-panels-item-remove" title="<?php esc_attr_e( 'Delete panel', 'make' ); ?>">
+			<a href="#" class="remove-panels-item-link ttfmp-panels-item-remove" title="<?php esc_attr_e( 'Delete panel', 'make-plus' ); ?>">
 				<span>
-					<?php _e( 'Delete panel', 'make' ); ?>
+					<?php esc_html_e( 'Delete panel', 'make-plus' ); ?>
 				</span>
 			</a>
 		</div>
@@ -216,7 +216,7 @@ class TTFMP_Panels_Builder_Section_Item {
 		global $ttfmake_overlay_class, $ttfmake_overlay_id, $ttfmake_overlay_title;
 		$ttfmake_overlay_class = 'ttfmake-configuration-overlay';
 		$ttfmake_overlay_id    = $overlay_id;
-		$ttfmake_overlay_title = __( 'Configure panel', 'make' );
+		$ttfmake_overlay_title = __( 'Configure panel', 'make-plus' );
 
 		get_template_part( '/inc/builder/core/templates/overlay', 'header' );
 
@@ -255,7 +255,7 @@ class TTFMP_Panels_Builder_Section_Item {
 			100 => array(
 				'type'  => 'section_title',
 				'name'  => 'item-title',
-				'label' => __( 'Enter panel title', 'make' ),
+				'label' => __( 'Enter panel title', 'make-plus' ),
 				'class' => 'ttfmake-configuration-title',
 				'default' => ttfmake_get_section_default( 'item-title', 'panels' ),
 			),

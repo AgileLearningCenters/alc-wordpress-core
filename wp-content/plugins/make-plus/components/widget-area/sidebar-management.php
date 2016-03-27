@@ -68,9 +68,10 @@ class TTFMP_Sidebar_Management {
 		if ( is_array( $sidebars ) ) {
 			foreach ( $sidebars as $id => $sidebar ) {
 				$pieces = $this->parse_sidebar_id( $sidebar['id'] );
+				$page = get_post( $pieces['page_id'] );
 
-				// Do not register the sidebar if the corresponding page is in the trash
-				if ( isset( $pieces['page_id'] ) && 'trash' !== get_post_status( $pieces['page_id'] ) ) {
+				// Do not register the sidebar if the corresponding page doesn't exist or is in the trash.
+				if ( $page instanceof WP_Post && 'trash' !== get_post_status( $page ) ) {
 					$id = 'ttfmp-' . $sidebar['id'];
 
 					register_sidebar( array(
@@ -103,7 +104,7 @@ class TTFMP_Sidebar_Management {
 			$label = esc_html( $sidebar['label'] );
 		} else {
 			$sidebar_information = $this->parse_sidebar_id( $id );
-			$label               = __( 'Sidebar', 'make-plus' ) . ' ' . $sidebar_information['page_id'] . '-' . $sidebar_information['section_id'] . '-' . $sidebar_information['column_id'];
+			$label               = esc_html__( 'Sidebar', 'make-plus' ) . ' ' . $sidebar_information['page_id'] . '-' . $sidebar_information['section_id'] . '-' . $sidebar_information['column_id'];
 		}
 
 		return $label;
@@ -128,12 +129,10 @@ class TTFMP_Sidebar_Management {
 			$label               = $sidebar_information['page_id'] . '-' . $sidebar_information['section_id'] . '-' . $sidebar_information['column_id'];
 		}
 
-		return __(
-			sprintf(
-				'Add widgets to the "%s" widget area.',
-				$label
-			),
-			'make-plus'
+		return sprintf(
+			// Translators: %s is a placeholder for the name of the sidebar.
+			esc_html__( 'Add widgets to the "%s" widget area.', 'make-plus' ),
+			$label
 		);
 	}
 
@@ -274,7 +273,11 @@ class TTFMP_Sidebar_Management {
 				'column_id'  => absint( $pieces[2] ),
 			);
 		} else {
-			return array();
+			return array_fill_keys( array(
+				'page_id',
+				'section_id',
+				'column_id',
+			), 0 );
 		}
 	}
 

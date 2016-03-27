@@ -47,7 +47,7 @@ class TTFMP_Widget_Area {
 	var $file_path = '';
 
 	/**
-	 * The URI base for the plugin (e.g., http://domain.com/wp-content/plugins/make-plus/my-component).
+	 * The URI base for the plugin (e.g., http://example.com/wp-content/plugins/make-plus/my-component).
 	 *
 	 * @since 1.0.0.
 	 *
@@ -204,9 +204,9 @@ class TTFMP_Widget_Area {
 		if ( true === $this->edit_widgets && defined( 'TTFMAKE_VERSION' ) && false === version_compare( TTFMAKE_VERSION, '1.3.99', '>=' ) ) : ?>
 		<a href="#" class="ttfmp-create-widget-area button button-small widefat">
 			<?php if ( 1 === (int) $widget_area ) : ?>
-				<?php _e( 'Revert to regular column', 'make-plus' ); ?>
+				<?php esc_html_e( 'Revert to regular column', 'make-plus' ); ?>
 			<?php else : ?>
-				<?php _e( 'Convert to widget area', 'make-plus' ); ?>
+				<?php esc_html_e( 'Convert to widget area', 'make-plus' ); ?>
 			<?php endif; ?>
 		</a>
 		<?php endif; ?>
@@ -227,10 +227,10 @@ class TTFMP_Widget_Area {
 	public function make_column_buttons( $column_buttons, $ttfmake_section_data ) {
 		if ( true === $this->edit_widgets ) {
 			$column_buttons[300] = array(
-				'label' => __( 'Convert text column to widget area', 'make' ),
+				'label' => __( 'Convert text column to widget area', 'make-plus' ),
 				'href'  => '#',
 				'class' => 'convert-widget-area-link ttfmp-create-widget-area',
-				'title' => __( 'Convert to widget area', 'make' ),
+				'title' => __( 'Convert to widget area', 'make-plus' ),
 			);
 		}
 
@@ -282,7 +282,7 @@ class TTFMP_Widget_Area {
 						<input placeholder="<?php esc_attr_e( 'Enter name here', 'make-plus' ); ?>" type="text" name="<?php echo $section_name; ?>[sidebar-label]" class="ttfmake-title" value="<?php echo sanitize_text_field( $sidebar_label ); ?>" autocomplete="off" />
 						<a href="#" class="ttfmp-revert-widget-area ttfmp-create-widget-area" title="<?php esc_attr_e( 'Revert to column', 'make-plus' ); ?>">
 							<span>
-								<?php _e( 'Revert to column', 'make-plus' ); ?>
+								<?php esc_html_e( 'Revert to column', 'make-plus' ); ?>
 							</span>
 						</a>
 						<?php else : ?>
@@ -294,12 +294,17 @@ class TTFMP_Widget_Area {
 						<?php if ( true === $ttfmake_is_js_template || ! isset( $widget_data ) || empty( $widget_data ) ) : ?>
 							<p>
 								<?php
-								_e( 'No widgets added yet.', 'make-plus' );
+								esc_html_e( 'No widgets added yet.', 'make-plus' );
 								if ( true === $this->edit_widgets ) :
 									echo ' ';
 									printf(
-										__( 'To add widgets, save this page, then go to the <a href="%s">Customizer</a>.', 'make-plus' ),
-										esc_url( $customize_url )
+										// Translators: %s is a placeholder for a link to the Customizer
+										esc_html__( 'To add widgets, save this page, then go to the %s.', 'make-plus' ),
+										sprintf(
+											'<a href="%1$s">%2$s</a>',
+											esc_url( $customize_url ),
+											esc_html__( 'Customizer', 'make-plus' )
+										)
 									);
 								endif;
 								?>
@@ -309,8 +314,13 @@ class TTFMP_Widget_Area {
 								<?php
 								if ( true === $this->edit_widgets ) :
 									printf(
-										__( 'To add new widgets, please go to the <a href="%s">Customizer</a>.', 'make-plus' ),
-										esc_url( $customize_url )
+										// Translators: %s is a placeholder for a link to the Customizer
+										esc_html__( 'To add new widgets, please go to the %s.', 'make-plus' ),
+										sprintf(
+											'<a href="%1$s">%2$s</a>',
+											esc_url( $customize_url ),
+											esc_html__( 'Customizer', 'make-plus' )
+										)
 									);
 								endif;
 								?>
@@ -319,21 +329,21 @@ class TTFMP_Widget_Area {
 							<?php foreach ( $widget_data as $widget ) : ?>
 								<li data-id="<?php echo esc_attr( $widget['id'] ); ?>">
 									<?php if ( true === $this->edit_widgets ) : ?>
-									<div title="<?php esc_attr_e( 'Drag-and-drop this widget into place', 'make' ); ?>" class="ttfmake-sortable-handle">
+									<div title="<?php esc_attr_e( 'Drag-and-drop this widget into place', 'make-plus' ); ?>" class="ttfmake-sortable-handle">
 										<div class="sortable-background"></div>
 									</div>
 									<?php endif; ?>
 									<div class="ttfmp-widget-list-container">
 										<span class="ttfmp-widget-list-type"><?php echo wp_strip_all_tags( $widget['type'] ); ?></span><?php if ( '' !== $widget['title'] ) : ?>: <span class="ttfmp-widget-list-title"><?php echo wp_strip_all_tags( $widget['title'] ); ?></span><?php endif; ?>
 										<?php if ( true === $this->edit_widgets ) : ?>
-										<a href="#" class="edit-widget-link ttfmake-overlay-open" data-overlay="#ttfmake-overlay-<?php echo esc_attr( $widget['id'] ); ?>" title="<?php esc_attr_e( 'Configure widget', 'make' ); ?>">
+										<a href="#" class="edit-widget-link ttfmake-overlay-open" data-overlay="#ttfmake-overlay-<?php echo esc_attr( $widget['id'] ); ?>" title="<?php esc_attr_e( 'Configure widget', 'make-plus' ); ?>">
 											<span>
-												<?php _e( 'Configure widget', 'make' ); ?>
+												<?php esc_html_e( 'Configure widget', 'make-plus' ); ?>
 											</span>
 										</a>
-										<a href="#" class="remove-widget-link ttfmake-widget-remove" title="<?php esc_attr_e( 'Delete widget', 'make' ); ?>">
+										<a href="#" class="remove-widget-link ttfmake-widget-remove" title="<?php esc_attr_e( 'Delete widget', 'make-plus' ); ?>">
 											<span>
-												<?php _e( 'Delete widget', 'make' ); ?>
+												<?php esc_html_e( 'Delete widget', 'make-plus' ); ?>
 											</span>
 										</a>
 										<?php endif; ?>
@@ -369,7 +379,7 @@ class TTFMP_Widget_Area {
 
 		global $ttfmake_overlay_class, $ttfmake_section_data, $ttfmake_overlay_title, $ttfmake_overlay_id;
 		$ttfmake_overlay_class = 'ttfmake-configuration-overlay ttfmake-widget-configuration-overlay';
-		$ttfmake_overlay_title = __( 'Configure ', 'make-plus' ) . $title;
+		$ttfmake_overlay_title = esc_html__( 'Configure ', 'make-plus' ) . $title;
 		$ttfmake_overlay_id    = 'ttfmake-overlay-' . $id;
 
 		// Include the header

@@ -10,7 +10,16 @@ $is_widget = ( isset( $ttfmp_data['is-widget'] ) && true === $ttfmp_data['is-wid
 
 // Thumbnail
 $thumbnail = trim( $ttfmp_data['thumbnail'] );
+/**
+ * Filter: Modify the image size used for featured images in a Posts List instance.
+ *
+ * @since 1.3.0.
+ *
+ * @param string    $thumbnail_size    The image size to use. E.g. thumbnail, medium, large, full.
+ * @param array     $ttfmp_data        The array of data specific to the Posts List instance.
+ */
 $thumbnail_size = apply_filters( 'ttfmp_posts_list_thumbnail_size', 'large', $ttfmp_data );
+
 $aspect = trim( $ttfmp_data['aspect'] );
 $featured_image = wp_get_attachment_image_src( get_post_thumbnail_id(), $thumbnail_size );
 $image_style = ( isset( $featured_image[0] ) ) ? ' style="background-image: url(' . addcslashes( esc_url_raw( $featured_image[0] ), '"' ) . ');"' : '';
@@ -35,6 +44,15 @@ $t_wrap = 'h3';
 if ( $is_widget || in_array( $thumbnail, array( 'left', 'right' ) ) ) {
 	$t_wrap = 'strong';
 }
+/**
+ * Filter: Modify the element used to wrap post titles in a Posts List instance.
+ *
+ * @since 1.6.6.
+ *
+ * @param string    $t_wrap        The element name. E.g. h3, strong, div
+ * @param array     $ttfmp_data    The array of data specific to the Posts List instance.
+ */
+$t_wrap = apply_filters( 'ttfmp_post_list_post_title_element', $t_wrap, $ttfmp_data );
 ?>
 
 <?php if ( 'none' !== $thumbnail || $d['show-title'] || $d['show-date'] || $d['show-author'] ) : ?>
@@ -55,11 +73,11 @@ if ( $is_widget || in_array( $thumbnail, array( 'left', 'right' ) ) ) {
 	</figure>
 	<?php endif; ?>
 	<?php if ( $d['show-title'] ) : ?>
-	<<?php echo $t_wrap; ?> class="ttfmp-post-list-item-title">
+	<<?php echo sanitize_key( $t_wrap ); ?> class="ttfmp-post-list-item-title">
 		<a href="<?php the_permalink(); ?>">
 			<?php the_title(); ?>
 		</a>
-	</<?php echo $t_wrap; ?>>
+	</<?php echo sanitize_key( $t_wrap ); ?>>
 	<?php endif; ?>
 	<?php if ( $d['show-date'] ) : ?>
 	<span class="ttfmp-post-list-item-date">
@@ -95,11 +113,13 @@ if ( $is_widget || in_array( $thumbnail, array( 'left', 'right' ) ) ) {
 
 		// Categories
 		if ( $d['show-categories'] && $category_list ) :
+			// Translators: this HTML markup will display an icon representing blog categories.
 			$taxonomy_output .= __( '<i class="fa fa-file"></i> ', 'make-plus' ) . '%1$s';
 		endif;
 
 		// Tags
 		if ( $d['show-tags'] && $tag_list ) :
+			// Translators: this HTML markup will display an icon representing blog tags.
 			$taxonomy_output .= __( '<i class="fa fa-tag"></i> ', 'make-plus' ) . '%2$s';
 		endif;
 
@@ -115,7 +135,7 @@ if ( $is_widget || in_array( $thumbnail, array( 'left', 'right' ) ) ) {
 	<a class="ttfmp-post-list-item-comment-link" href="<?php the_permalink(); ?>">
 		<?php
 		printf(
-			_n( '%d comment', '%d comments', get_comments_number(), 'make-plus' ),
+			esc_html( _n( '%d comment', '%d comments', get_comments_number(), 'make-plus' ) ),
 			number_format_i18n( get_comments_number() )
 		);
 		?>

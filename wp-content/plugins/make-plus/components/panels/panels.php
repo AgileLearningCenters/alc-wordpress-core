@@ -44,7 +44,7 @@ class TTFMP_Panels {
 	var $file_path = '';
 
 	/**
-	 * The URI base for the plugin (e.g., http://domain.com/wp-content/plugins/make-plus/my-component).
+	 * The URI base for the plugin (e.g., http://example.com/wp-content/plugins/make-plus/my-component).
 	 *
 	 * @since 1.6.0.
 	 *
@@ -259,6 +259,7 @@ class TTFMP_Panels {
 					'ttfmpPanels',
 					array(
 						'tabsPlaceholder' => sprintf(
+							// Translators: %s is a placeholder for a link to a bug report
 							__( 'Panels sections in Tabs mode won\'t work correctly in the Customizer because of a bug in WordPress (%s). However, they\'ll still work on the front end.', 'make-plus' ),
 							sprintf(
 								'<a href="%1$s" target="_blank">%1$s</a>',
@@ -400,8 +401,10 @@ class TTFMP_Panels {
 		if ( $color_primary_link && $color_primary_link !== ttfmake_get_default( 'color-primary-link' ) ) {
 			ttfmake_get_css()->add( array(
 				'selectors'    => array(
-					'.builder-section-panels .ui-widget-content a:hover',
-					'.builder-section-panels .ui-widget-content a:focus',
+					'.builder-section-panels .ui-accordion-content a:hover',
+					'.builder-section-panels .ui-accordion-content a:focus',
+					'.builder-section-panels .ui-tabs-panel a:hover',
+					'.builder-section-panels .ui-tabs-panel a:focus',
 				),
 				'declarations' => array(
 					'color' => $color_primary_link
