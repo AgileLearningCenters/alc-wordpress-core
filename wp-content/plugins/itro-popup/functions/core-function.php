@@ -51,34 +51,6 @@ function itro_init()
 		
 		itro_update_option('sample_popup','done');
 	}
-	
-	/* ---------------create preview page */
-	switch(WPLANG)
-	{
-		case 'en_US':
-			$preview_text = 'ITRO - Preview page. This page is used to rightly display preview of your popup with site theme.';
-			break;
-		case 'it_IT':
-			$preview_text = 'ITRO - Pagina di anteprima. Questa pagina &egrave; utilizzata per visualizzare correttamente il popup, integrato con lo stile del tema.';
-			break;
-		default:
-			$preview_text = 'ITRO - Preview page. This page is used to rightly display preview of your popup with site theme.';
-	}
-	if ( itro_get_option('preview_id') == NULL )
-	{
-		/* Create post object */
-		$preview_post = array(
-		  'post_title'    => 'ITRO - Preview',
-		  'post_name'    => 'itro-preview',
-		  'post_content'  => $preview_text,
-		  'post_status'   => 'private',
-		  'post_author'   => 1,
-		  'post_type'   => 'page',
-		);
-		/* Insert the post into the database */
-		@$preview_id = wp_insert_post( $preview_post );
-		itro_update_option('preview_id',$preview_id);
-	}	
 }
 
 /* --------------------------CHECK THE PLUGIN VERSION */
@@ -100,6 +72,13 @@ function itro_check_ver()
 /* --------------------------DISPLAY THE POPUP */
 function itro_display_popup()
 {
+	/* check if it is the preview visualization */
+	if(!empty($_GET['itro_preview']) && $_GET['itro_preview']=='yes' && is_user_logged_in() ){
+		$is_preview = true;
+	}else {
+		$is_preview = false;
+	}
+	
 	/* woocommerce shop page identification */
 	if( function_exists('is_shop') && function_exists('woocommerce_get_page_id') ) /* if this functions exist, woocommerce is installed! */
 	{
@@ -118,10 +97,12 @@ function itro_display_popup()
 	/* this condition, control if the popup must or not by displayed in a specified page */
 	$selected_page_id = json_decode(itro_get_option('selected_page_id'));
 	$id_match = NULL;
+	
 	/* get the page id */
 	global $wp_query;
     $current_page_id = $wp_query->get_queried_object_id();
-	
+    
+    
 	switch (itro_get_option('page_selection'))
 	{
 		case 'some':
@@ -139,7 +120,7 @@ function itro_display_popup()
 			{
 				$id_match++;
 			}
-			if( $id_match != NULL || itro_get_option('preview_id') == $current_page_id )
+			if( $id_match != NULL || $is_preview )
 			{
 				itro_style();
 				itro_popup_template();
@@ -152,7 +133,7 @@ function itro_display_popup()
 			itro_popup_js();
 		break;
 		case 'none':
-			if( itro_get_option('preview_id') == $current_page_id )
+			if( $is_preview )
 			{
 				itro_style();
 				itro_popup_template();
@@ -177,6 +158,7 @@ function itro_check_selected_id($id_to_check)
 		}
 	}
 }
+
 
 function itro_list_pages()
 {?>				

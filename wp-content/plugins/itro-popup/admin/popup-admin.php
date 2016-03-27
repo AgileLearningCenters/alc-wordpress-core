@@ -1,6 +1,6 @@
 <?php
 /*
-Copyright 2013  I.T.RO.® (email : support.itro@live.com)
+Copyright 2012-2016  I.T.RO.® (email : support@itroteam.com)
 This file is part of ITRO Popup Plugin.
 */
 global $ITRO_VER;
@@ -431,7 +431,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 		<hr>
 		<p class="submit">
 			<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="button" target="_blank" class="button" onClick="window.open('<?php echo get_site_url() . '/?page_id=' . itro_get_option('preview_id'); ?>')" value="<?php echo _e('Preview page','itro-plugin' )?>">
+			<input type="button" target="_blank" class="button" onClick="window.open('<?php echo get_site_url() . '/?itro_preview=yes'?>')" value="<?php echo _e('Preview page','itro-plugin' )?>">
 		</p>
 	</div>
 
@@ -439,7 +439,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 		<!-- A simple not annoying banner, please do not remove, we use it to quickly comunicate with you about premium and free! !-->
 		<p class="wpstyle" onClick="jQuery('#premium_ads').toggle('blind');"><?php _e('ITRO Popup messages', 'itro-plugin'); ?> </p>
 		<div id="premium_ads" style="text-align: center;">
-			<a target="_blank" href="http://www.itro.eu"><img title="TRY IT FOR FREE!!!" src="http://www.itroteam.com/plugins/premium_banner.png"></a>
+			<a target="_blank" href="http://www.wordpress-popup-plugin.com"><img title="TRY IT FOR FREE!!!" src="http://www.itroteam.com/plugins/premium_banner.png"></a>
 		</div>
 		
 		<input type="hidden" name="<?php echo $submitted_form; ?>" value="Y">
@@ -453,7 +453,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 			<hr>
 			<p class="submit">
 				<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />&nbsp;&nbsp;&nbsp;&nbsp;
-				<input type="button" target="_blank" class="button" onClick="window.open('<?php echo get_site_url() . '/?page_id=' . itro_get_option('preview_id'); ?>')" value="<?php echo _e('Preview page','itro-plugin' )?>">
+				<input type="button" target="_blank" class="button" onClick="window.open('<?php echo get_site_url() . '/?itro_preview=yes'?>')" value="<?php echo _e('Preview page','itro-plugin' )?>">
 			</p>
 		</div>
 	</div>

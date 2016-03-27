@@ -1,16 +1,16 @@
 ﻿=== ITRO Popup Plugin ===
 Contributors: ITRO
-Donate link: http://www.itro.eu/
-Tags: popup, popup message, popup box, popup ads, popup advertising, jquery popup, popup jquery, automatic popup, age restriction, popup block, popup violence, age validation popup, adult, adult content, content warning, content warning popup, fancy box, fancy popup, custom popup, advertising popup, pop-up, lightbox, lightbox popup
+Donate link: http://www.wordpress-popup-plugin.com/donate/
+Tags: multilingual popup, popup, popup message, opt-in popu-up, popup box, popup ads, popup advertising, jquery popup, popup jquery, automatic popup, age restriction, popup block, popup violence, age validation popup, adult, adult content, content warning, content warning popup, fancy box, fancy popup, custom popup, advertising popup, pop-up, lightbox, lightbox popup
 Requires at least: 3.0.1
-Tested up to: 4.3.1
-Stable tag: 4.7.2
+Tested up to: 4.4.2
+Stable tag: 4.7.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 ITRO Popup display a popup to your WP site:
-★ Age validation for adult-content site
-★ Fully customizable with WP Post Editor
+★ Age restriction for adult-content site
+★ Multilanguage popup with qTransalte-X
 ★ Very easy to use
 
 == Description ==
@@ -20,7 +20,7 @@ ITRO Popup Plugin - The BEST WP Popup Plugin
 	★ Pretty fade-in and fade-out animation.
 	★ Need to remove plugin and save data? It is possible!
 	★ Selcted pages where you want to display the popup, by a scrollable list. NO SHORTCODES NEEDED!
-	★ Fully translated in Italian. Ready for multilingual translation.
+	★ Multilanguage popup with qTransalte-X.
 	★ Close popup with ESC button (not with "age restricted option" checked).
 	★ Automatic popup centering in browser page.
 	★ Fully and easy customizable aspect (background, border, color, etc...).
@@ -31,11 +31,13 @@ ITRO Popup Plugin - The BEST WP Popup Plugin
 	★ All great explaned by tips in admin pannel.
 	★ Great and fast support for all your problem with our popup plugin.
 	★ All in a very easy way to use!
-	
-WANT MORE FEATURES? Try ITRO Wordpress Marketing for free!
-[TRY IT FOR FREE!](http://www.itro.eu/)
 
-ITRO Popup is a very lightweight Plugin for Wordpress which allow users to add a fully-customizable  and perfectly centered popup. 
+Thanks to [Viterbo Marketing](https://www.viterbomarketing.com) for website and marketing consulting.	
+
+WANT MORE FEATURES? Try ITRO Wordpress Marketing for free!
+[TRY IT FOR FREE!](http://www.wordpress-popup-plugin.com/download-free-trial-of-itro-wordpress-marketing/)
+
+ITRO Popup is a very lightweight Plugin for Wordpress which allow users to add a fully-customizable, multilanguage pop-up thanks to qTranslate-X. 
 It has a very user-friendly interface, which allow Wordpress users to easily modify all settings needed for a popup, without coding. 
 With "Age restricted site"  option, the popup block the navigation (for age validation) until the user declare that is above the local country legal age. 
 It is useful for adult content Wordpress site (tobacco & alcohol selling, violence, bad language, etc...). The leave and the enter button 
@@ -51,10 +53,10 @@ TRANSLATED IN FOLLOWING LANGUAGES:
 - Serbo-Croatian (thanks to Andrijana Nikolic www.webhostinggeeks.com)
 - Nederlands (thanks to Descamps Gino)
 
-FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.itro.eu/?page_id=390)
-DONATE NOW! [DONATE NOW](http://www.itro.eu/?page_id=396)
+FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.wordpress-popup-plugin.com/itro-wordpress-popup-plugin-guide/)
+DONATE NOW! [DONATE NOW](http://www.wordpress-popup-plugin.com/donate/)
 
-For any problem, please contact us at our site: [CONTACT US](http://www.itro.eu/?page_id=247)
+For any problem, please contact us at our site: [CONTACT US](http://www.wordpress-popup-plugin.com/contact-us/)
 
 Want a more powerful marketing tools?
 Try ITRO Wordpress Marketing PRO with a 14 days free trial.
@@ -63,22 +65,22 @@ Try ITRO Wordpress Marketing PRO with a 14 days free trial.
     ★ ON-CLICK POPUP
 	★ RESPONSIVE POPUP
     ★ SHORTCODES (on click popup, automatic popup, contact forms...)
-    ★ MAILCHIMP INTEGRATION with autoresponder different for each contact form
+    ★ MAILCHIMP INTEGRATION with autoresponder and auto-sync
     ★ LINK CLICKS COUNTER (or DOWNLOAD COUNTER)
-    ★ CONTACT POPUPS
+    ★ CONTACT POPUPS with visual contact form builder
     ★ SUPPORT REQUEST MANAGEMENT SYSTEM
     ★ SMTP AUTH AUTORESPONDER
     ★ POPUP ANIMATIONS
     ★ SOCIAL POPUPS
     ★ VIDEO EMBEDDING (Youtube and Vimeo)
 
-[TRY IT FOR FREE!](http://www.itro.eu/)
+[TRY IT FOR FREE!](http://www.wordpress-popup-plugin.com/download-free-trial-of-itro-wordpress-marketing/)
 
 == Installation ==
 
-FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.itro.eu/?page_id=390)
+FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.wordpress-popup-plugin.com/itro-wordpress-popup-plugin-guide/)
 
-DONATE NOW! - HELP US TO DEVELOP FOR YOU! [DONATE NOW](http://www.itro.eu/?page_id=396)
+DONATE NOW! - HELP US TO DEVELOP FOR YOU! [DONATE NOW](http://www.wordpress-popup-plugin.com/donate/)
 
 1. Unzip `itro-plugin.zip` to the `/wp-content/plugins/` directory or select it by "Add new" in the 'Plugins' menu in WordPress
 2. Activate the plugin through the 'Plugins' menu in WordPress
@@ -87,15 +89,18 @@ DONATE NOW! - HELP US TO DEVELOP FOR YOU! [DONATE NOW](http://www.itro.eu/?page_
 
 == Frequently Asked Questions ==
 
-FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.itro.eu/?page_id=390)
+FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.wordpress-popup-plugin.com/itro-wordpress-popup-plugin-guide/)
 
-DONATE NOW! - HELP US TO DEVELOP FOR YOU! [DONATE NOW](http://www.itro.eu/?page_id=396)
+DONATE NOW! - HELP US TO KEEP IT FREE! [DONATE NOW](http://www.wordpress-popup-plugin.com/donate/)
 
 == Screenshots ==
 
-VIEW NOW DEMOS ON OUR OFFICIAL SITE - [CLICK HERE!](http://www.itro.eu/index.php/itro-wordpress-plugins-demos/)
+VIEW LIVE DEMOS ON OUR OFFICIAL SITE - [CLICK HERE!](http://www.wordpress-popup-plugin.com/wordpress-popup-samples-and-demos/)
 
 == Changelog ==
+= 4.7.3 =
+IMPROVED: Useless preview page deleted. Preview via GET request.
+
 = 4.7.2 =
 FIXED: Popup closing by clicking outside with age restriction.
 
@@ -299,6 +304,9 @@ bug fixed: color table now works in admin pannel.
 First released version.
 
 == Upgrade Notice ==
+= 4.7.3 =
+IMPROVED: Useless preview page deleted. Preview via GET request.
+
 = 4.7.2 =
 FIXED: Popup closing by clicking outside with age restriction.
 
@@ -310,9 +318,9 @@ ADDED: Multilingual compatibility with qtranslate X.
 ADDED: Url for the enter button of age validation.
 
 == Notes ==
-FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.itro.eu/?page_id=390)
+FOR TUTORIAL AND FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](http://www.wordpress-popup-plugin.com/itro-wordpress-popup-plugin-guide/)
 
-DONATE NOW! - HELP US TO DEVELOP FOR YOU! [DONATE NOW](http://www.itro.eu/?page_id=396)
+DONATE NOW! - HELP US TO KEEP IT FREE! [DONATE NOW](http://www.wordpress-popup-plugin.com/donate/)
 
 We accept all kind of suggestion.
 Thanks to Jan Odvarko for jscolor: http://jscolor.com/

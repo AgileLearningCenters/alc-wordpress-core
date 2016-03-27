@@ -1,20 +1,17 @@
 <?php
 /*
-Copyright 2015  I.T.RO.® (email : support@itroteam.com)
-This file is part of ITRO Popup Plugin.
-
 Plugin Name: ITRO Popup Plugin
-Plugin URI: http://www.itro.eu/
+Plugin URI: http://www.wordpress-popup-plugin.com
 Description: EN - Show a perfecly centered customizable popup and a popup-system for age-restricted site and allow to insert own HTML code. IT - Visualizza un popup perfettamente centrato e personalizzabile con possibile blocco per i siti con restrizioni di eta' e permette di inserire il proprio codice HTML.
 Author: ITRO Team
 E-mail: support@itroteam.com
 Text Domain: itro-popup
-Version: 4.7.2
-Author URI: http://www.itro.eu/
+Version: 4.7.3
+Author URI: http://www.itroteam.com
 */
 
 global $ITRO_VER;
-$ITRO_VER = 4.72;
+$ITRO_VER = 4.73;
 
 define('itroPath', plugins_url() . '/itro-popup/');
 define('itroImages', plugins_url() . '/itro-popup/images/');

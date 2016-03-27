@@ -51,6 +51,14 @@ function itro_update_db()
 		$wpdb->query("RENAME TABLE wp_itro_plugin_option TO ". $wpdb->prefix ."itro_plugin_option");
 		$wpdb->query("RENAME TABLE wp_itro_plugin_field TO ". $wpdb->prefix ."itro_plugin_field");
 	}
+	
+	if( get_option('itro_prev_ver') <= 4.6 && $wpdb->prefix != 'wp_' )
+	{
+		/* delete the obsolete and useless preview post */
+		if(itro_get_option('preview_id') != NULL){
+			wp_delete_post(itro_get_option('preview_id'), true);
+		}
+	}
 }
 
 /* ------------------ PLUGIN OPTION DB MANAGEMENT --------------  */
