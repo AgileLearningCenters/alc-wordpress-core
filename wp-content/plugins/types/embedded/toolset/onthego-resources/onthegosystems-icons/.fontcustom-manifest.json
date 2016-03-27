@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "65c5f624e7b3a7731aeb86b34dab9f6546b6019d0e948635813de379e3a3ee8f",
-    "current": "65c5f624e7b3a7731aeb86b34dab9f6546b6019d0e948635813de379e3a3ee8f"
+    "previous": "397ea366af9eb4eb01e6afbdaaf9b5c733766f918f10f0becec71e77ca55ff1e",
+    "current": "397ea366af9eb4eb01e6afbdaaf9b5c733766f918f10f0becec71e77ca55ff1e"
   },
   "fonts": [
-    "fonts/onthegosystems-icons_65c5f624e7b3a7731aeb86b34dab9f65.ttf",
-    "fonts/onthegosystems-icons_65c5f624e7b3a7731aeb86b34dab9f65.svg",
-    "fonts/onthegosystems-icons_65c5f624e7b3a7731aeb86b34dab9f65.woff",
-    "fonts/onthegosystems-icons_65c5f624e7b3a7731aeb86b34dab9f65.eot"
+    "fonts/onthegosystems-icons_397ea366af9eb4eb01e6afbdaaf9b5c7.ttf",
+    "fonts/onthegosystems-icons_397ea366af9eb4eb01e6afbdaaf9b5c7.svg",
+    "fonts/onthegosystems-icons_397ea366af9eb4eb01e6afbdaaf9b5c7.woff",
+    "fonts/onthegosystems-icons_397ea366af9eb4eb01e6afbdaaf9b5c7.eot"
   ],
   "glyphs": {
     "access": {
@@ -46,6 +46,14 @@
       "codepoint": 61718,
       "source": "vectors/layouts.svg"
     },
+    "layouts-genesis": {
+      "codepoint": 61737,
+      "source": "vectors/layouts-genesis.svg"
+    },
+    "layouts-genesis-logo": {
+      "codepoint": 61735,
+      "source": "vectors/layouts-genesis-logo.svg"
+    },
     "layouts-logo": {
       "codepoint": 61719,
       "source": "vectors/layouts-logo.svg"
@@ -66,9 +74,21 @@
       "codepoint": 61729,
       "source": "vectors/packager-logo.svg"
     },
+    "toolset-genesis-logo": {
+      "codepoint": 61736,
+      "source": "vectors/toolset-genesis-logo.svg"
+    },
     "toolset-logo": {
       "codepoint": 61722,
       "source": "vectors/toolset-logo.svg"
+    },
+    "toolset-map": {
+      "codepoint": 61733,
+      "source": "vectors/toolset-map.svg"
+    },
+    "toolset-map-logo": {
+      "codepoint": 61732,
+      "source": "vectors/toolset-map-logo.svg"
     },
     "types": {
       "codepoint": 61723,

@@ -30,6 +30,15 @@ function my_toolset_valid_image_extentions($valid_extensions)
 
 = Changelog =
 
+2015-11-16
+
+- Fixed Cosmetic Issue on Radios field validation message
+
+2015-10-08
+
+- Fixed a problem with backslashes in WYSIWYG field title
+  https://onthegosystems.myjetbrains.com/youtrack/issue/tssupp-682
+
 2015-06-29
 
 - Added ability to have default value for custom fields

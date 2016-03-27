@@ -62,7 +62,7 @@ class WPToolset_Field_Colorpicker extends FieldFactory
             'args' => array(
                 'hexadecimal'
             ),
-            'message' => __( 'You can add valid hexadecimal.', 'wpv-views' ),
+            'message' => __('Please use a valid hexadecimal value.', 'wpv-views' ),
         );
         return $validation;
     }
@@ -83,15 +83,16 @@ class WPToolset_Field_Colorpicker extends FieldFactory
 
         $form = array();
         $form['name'] = array(
-            '#type' => 'textfield',
-            '#title' => $this->getTitle(),
-            '#description' => $this->getDescription(),
-            '#value' => $this->getValue(),
-            '#name' => $this->getName(),
-            '#attributes' => $attributes,
-            '#validate' => $validation,
-            '#after' => '',
-            '#repetitive' => $this->isRepetitive(),
+            '#type'			=> 'textfield',
+            '#title'		=> $this->getTitle(),
+            '#description'	=> $this->getDescription(),
+            '#value'		=> $this->getValue(),
+            '#name'			=> $this->getName(),
+            '#attributes'	=> $attributes,
+            '#validate'		=> $validation,
+            '#after'		=> '',
+            '#repetitive'	=> $this->isRepetitive(),
+			'wpml_action'	=> $this->getWPMLAction(),
         );
         return $form;
     }

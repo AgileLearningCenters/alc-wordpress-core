@@ -84,8 +84,13 @@ abstract class FieldFactory extends FieldAbstract
         /**
          * default value
          */
-        if ( empty( $value ) && array_key_exists('user_default_value', $this->_data)) {
-            $value = stripcslashes($this->_data['user_default_value']);
+        if ( 
+			empty( $value ) 
+			&& ! is_numeric( $value )
+			&& array_key_exists('user_default_value', $this->_data)
+			&& ! empty( $this->_data['user_default_value'] )
+		) {
+            $value = stripcslashes( $this->_data['user_default_value'] );
         }
         $value = apply_filters( 'wpcf_fields_value_get', $value, $post );
         if ( array_key_exists('slug', $this->_data ) ) {
@@ -105,7 +110,7 @@ abstract class FieldFactory extends FieldAbstract
 
     public function getDescription()
     {
-        return wpautop( $this->_data['description'] );
+        return wpautop( wp_filter_post_kses( $this->_data['description'] ) );
     }
 
     public function getName()
@@ -140,9 +145,19 @@ abstract class FieldFactory extends FieldAbstract
 
     public function getAttr() {
         if ( array_key_exists( 'attribute', $this->_data ) ) {
-            return $this->_data['attribute'];
+            /**
+             * Change field attributes
+             *
+             * This filter allow to change field attributes.
+             *
+             * @since x.x.x
+             *
+             * @param array $attributes array with field attributes
+             * @param object $field current field
+             */
+            return apply_filters( 'toolset_field_factory_get_attributes', $this->_data['attribute'], $this);
         }
-        return array();
+        return apply_filters( 'toolset_field_factory_get_attributes', array(), $this);
     }
 
     public function getWPMLAction()

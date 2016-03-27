@@ -148,15 +148,28 @@ function wpcf_wpml_init() {
 /**
  * WPML translate call.
  *
- * @param type $name
- * @param type $string
- * @return type
+ * @param string $name name of translated string
+ * @param mixed $string value to translate, but process only strings
+ * @param string $context context of translation
+ * @return string translated string
  */
-function wpcf_translate( $name, $string, $context = 'plugin Types' ) {
-    if ( !function_exists( 'icl_t' ) || !is_string($string) || empty($string) ) {
+function wpcf_translate( $name, $string, $context = 'plugin Types' )
+{
+    /**
+     * do not translate if $string is not a string or is empty
+     */
+    if ( empty($string) || !is_string($string) ) {
         return $string;
     }
-    return icl_t( $context, $name, stripslashes( $string ) );
+    /**
+     * translate
+     */
+    return apply_filters(
+        'wpml_translate_single_string',
+        stripslashes( $string ),
+        $context,
+        $name
+    );
 }
 
 /**
@@ -286,12 +299,15 @@ function wpcf_admin_bulk_string_translation() {
 
     // Register groups
     $groups = wpcf_admin_fields_get_groups();
-    foreach ( $groups as $group_id => $group ) {
+    foreach ( $groups as $group_key => $group ) {
+        //Get correct group ID
+        $group_id = isset( $group['id'] ) ? $group['id'] : $group_key;
+
         wpcf_translate_register_string( 'plugin Types',
-                'group ' . $group_id . ' name', $group['name'] );
+            'group ' . $group_id . ' name', $group['name'] );
         if ( isset( $group['description'] ) ) {
             wpcf_translate_register_string( 'plugin Types',
-                    'group ' . $group_id . ' description', $group['description'] );
+                'group ' . $group_id . ' description', $group['description'] );
         }
     }
 
@@ -795,12 +811,11 @@ function wpcf_wpml_group_form_filter_terms_filter( $terms ) {
  * @param type $group
  * @return type
  */
-function wpcf_wpml_post_group_filter_taxonomies( $group, $post, $context,
-        $post_terms ) {
-
+function wpcf_wpml_post_group_filter_taxonomies( $group, $post, $context, $post_terms )
+{
     global $sitepress, $wpdb;
 
-    if ( empty( $post->ID ) ) {
+    if (empty( $post->ID )) {
         return $group;
     }
 
@@ -1015,7 +1030,7 @@ function wpcf_wpml_is_translated_profile_page( $field ) {
  */
 function wpcf_wpml_field_is_copy( $field ) {
     if ( !defined( 'WPML_TM_VERSION' ) ) return false;
-    return isset( $field['wpml_action'] ) && $field['wpml_action'] === 1;
+    return isset( $field['wpml_action'] ) && intval( $field['wpml_action'] ) === 1;
 }
 
 /**
@@ -1026,7 +1041,7 @@ function wpcf_wpml_field_is_copy( $field ) {
  */
 function wpcf_wpml_field_is_translated( $field ) {
     if ( !defined( 'WPML_TM_VERSION' ) ) return false;
-    return isset( $field['wpml_action'] ) && $field['wpml_action'] === 2;
+    return isset( $field['wpml_action'] ) && intval( $field['wpml_action'] ) === 2;
 }
 
 /**
@@ -1217,6 +1232,10 @@ function wpcf_wpml_warnings_init()
     }
 }
 
+
+/**
+ * Display all relevant WPML admin notices of the "wp-types" group.
+ */
 function wpcf_wpml_warning()
 {
 	if(!defined('WPML_ST_PATH') || !class_exists( 'ICL_AdminNotifier' )) return;

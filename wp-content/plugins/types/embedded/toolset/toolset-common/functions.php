@@ -446,13 +446,12 @@ function wpv_evaluate_expression( $expression ){
  */
 class WPV_wpcf_switch_post_from_attr_id
 {
-
     function __construct( $atts ){
         $this->found = false;
+	    $this->reassign_original_post = false;
 
         if ( isset( $atts['id'] ) ) {
-
-            global $post, $authordata, $id, $WPV_wpcf_post_relationship;
+	        global $post, $authordata, $id, $WPV_wpcf_post_relationship;
 
             $post_id = 0;
 
@@ -488,6 +487,28 @@ class WPV_wpcf_switch_post_from_attr_id
 
             if ( $post_id > 0 ) {
 
+	            // if post does not exists
+	            if( get_post_status( $post_id ) === false ) {
+
+		            // set to true to reapply backup post in __destruct()
+		            $this->reassign_original_post = true;
+
+		            // save original post
+		            $this->post = ( isset( $post ) && ( $post instanceof WP_Post ) ) ? clone $post : null;
+
+		            $msg_post_does_not_exists = __(
+			            sprintf(
+				            'A post with the ID %s does not exist.',
+				            '<b>'.$atts['id'].'</b>'
+			            )
+			            , 'wpv-views'
+		            );
+
+		            $post->post_title = $post->post_content = $post->post_excerpt = $msg_post_does_not_exists;
+
+		            return;
+	            }
+
                 $this->found = true;
 
                 // save original post 
@@ -502,10 +523,11 @@ class WPV_wpcf_switch_post_from_attr_id
                 // set the global post values
                 $id = $post_id;
                 $post = get_post( $id );
-                $authordata = new WP_User( $post->post_author );
+
+	            $authordata = new WP_User( $post->post_author );
+
             }
         }
-
     }
 
     function __destruct(){
@@ -522,24 +544,42 @@ class WPV_wpcf_switch_post_from_attr_id
             $id = $this->id;
         }
 
+	    if( isset( $this->reassign_original_post ) && $this->reassign_original_post ) {
+			global $post;
+
+		    $post = ( isset( $this->post ) && ( $this->post instanceof WP_Post ) ) ? clone $this->post : null;
+	    }
+
     }
 
 }
 
-// Add a filter on the content so that we can record any related posts.
-// These can then be used ine id of Types and Views shortcodes
-// eg. for a stay we can have
-// [types field='my-field' id="$room"] displays my-field from the related room
-// [wpv-post-title id="$room"] display the title of the related room
+/**
+* Add a filter on the content so that we can record any related posts.
+*
+* These can then be used in id attributes of Types and Views shortcodes:
+* [types field='my-field' id="$room"] displays my-field from the related room.
+* [wpv-post-title id="$room"] display the title of the related room.
+*
+* Then, clear the recorded relationships and take care of nested structures by restoring states.
+*
+* Note that this is also done for the Views wpv_filter_wpv_the_content_suppressed filter
+* used on [wpv-post-body view_template="..." suppress_filters="true"]
+* so that we also have parent data stored and restored when nesting Content Templates without all the filters.
+*/
+
+$WPV_wpcf_post_relationship = array();
+$WPV_wpcf_post_relationship_depth = 0;
+$WPV_wpcf_post_relationship_track = array();
 
 add_filter( 'the_content', 'WPV_wpcf_record_post_relationship_belongs', 0, 1 );
-
-$WPV_wpcf_post_relationship = Array();
+add_filter( 'wpv_filter_wpv_the_content_suppressed', 'WPV_wpcf_record_post_relationship_belongs', 0, 1 );
 
 function WPV_wpcf_record_post_relationship_belongs( $content ) {
 
-    global $post, $WPV_wpcf_post_relationship;
+    global $post, $WPV_wpcf_post_relationship, $WPV_wpcf_post_relationship_depth, $WPV_wpcf_post_relationship_track;
     static $related = array();
+	$WPV_wpcf_post_relationship_depth++;
 
     if ( !empty( $post->ID ) && function_exists( 'wpcf_pr_get_belongs' ) ) {
 
@@ -557,9 +597,27 @@ function WPV_wpcf_record_post_relationship_belongs( $content ) {
             }
         }
     }
-
+	
+	$WPV_wpcf_post_relationship_track[ $WPV_wpcf_post_relationship_depth ] = $WPV_wpcf_post_relationship;
 
     return $content;
+}
+
+add_filter( 'the_content', 'WPV_wpcf_restore_post_relationship_belongs', PHP_INT_MAX, 1 );
+add_filter( 'wpv_filter_wpv_the_content_suppressed', 'WPV_wpcf_restore_post_relationship_belongs', PHP_INT_MAX, 1 );
+
+function WPV_wpcf_restore_post_relationship_belongs( $content ) {
+	global $WPV_wpcf_post_relationship, $WPV_wpcf_post_relationship_depth, $WPV_wpcf_post_relationship_track;
+	$WPV_wpcf_post_relationship_depth--;
+	if ( 
+		$WPV_wpcf_post_relationship_depth > 0 
+		&& isset( $WPV_wpcf_post_relationship_track[ $WPV_wpcf_post_relationship_depth ] )
+	) {
+		$WPV_wpcf_post_relationship = $WPV_wpcf_post_relationship_track[ $WPV_wpcf_post_relationship_depth ];
+	} else {
+		$WPV_wpcf_post_relationship = array();
+	}
+	return $content;
 }
 
 /**
@@ -620,3 +678,76 @@ function wpv_dismiss_message_ajax() {
     die( 'ajax' );
 }
 
+
+// These functions are defined as pluggable in Views 1.12 for compatibility reason, hence they must be pluggable here as well.
+
+if( !function_exists( 'toolset_getarr_safe' ) ) {
+    /**
+     * Safely retrieve a key from given array (meant for $_POST, $_GET, etc).
+     *
+     * Checks if the key is set in the source array. If not, default value is returned. Optionally validates against array
+     * of allowed values and returns default value if the validation fails.
+     *
+     * @param array $source The source array.
+     * @param string $key The key to be retrieved from the source array.
+     * @param mixed $default Default value to be returned if key is not set or the value is invalid. Optional.
+     *     Default is empty string.
+     * @param null|array $valid If an array is provided, the value will be validated against it's elements.
+     *
+     * @return mixed The value of the given key or $default.
+     *
+     * @since 1.7
+     */
+    function toolset_getarr_safe( &$source, $key, $default = '', $valid = null ) {
+        if( isset( $source[ $key ] ) ) {
+            $val = $source[ $key ];
+            if( is_array( $valid ) && !in_array( $val, $valid ) ) {
+                return $default;
+            }
+
+            return $val;
+        } else {
+            return $default;
+        }
+    }
+}
+
+/* IF PHP < 5.3 */
+if ( !function_exists( 'array_replace_recursive' ) ) {
+    function wpcf_recurse( $array, $array1 ) {
+        foreach ($array1 as $key => $value)
+        {
+            // create new key in $array, if it is empty or not an array
+            if (!isset($array[$key]) || (isset($array[$key]) && !is_array($array[$key])))
+            {
+                $array[$key] = array();
+            }
+
+            // overwrite the value in the base array
+            if (is_array($value))
+            {
+                $value = array_replace_recursive($array[$key], $value);
+            }
+            $array[$key] = $value;
+        }
+        return $array;
+    }
+
+    function array_replace_recursive( $array, $array1 ) {
+        // handle the arguments, merge one by one
+        $args = func_get_args();
+        $array = $args[0];
+        if (!is_array($array))
+        {
+            return $array;
+        }
+        for ($i = 1; $i < count($args); $i++)
+        {
+            if (is_array($args[$i]))
+            {
+                $array = wpcf_recurse($array, $args[$i]);
+            }
+        }
+        return $array;
+    }
+}
