@@ -3,7 +3,7 @@ Contributors: freediver
 Donate link: https://www.networkforgood.org/donation/MakeDonation.aspx?ORGID2=920155875
 Tags: theme, themes, admin, test
 Requires at least: 2.3
-Tested up to: 4.2
+Tested up to: 4.3.1
 Stable tag: trunk
 
 Safely test drive any theme as an administrator, while visitors use the default one. 
@@ -21,6 +21,9 @@ You can also preview any theme by adding "?theme=xxx" to your blog URL. For exam
 Plugin by Vladimir Prelovac. Managing more than one WordPress sites? Check out <a href="https://managewp.com">ManageWP</a>.
 
 == Changelog ==
+
+= 2.9.1 =
+* Fixed security issue
 
 = 2.9 =
 * WordPress 4.1 refresh and compatibility

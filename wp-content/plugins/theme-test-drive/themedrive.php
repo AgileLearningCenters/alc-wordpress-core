@@ -4,7 +4,7 @@
    Plugin URI: http://www.prelovac.com/vladimir/wordpress-plugins/theme-test-drive
    Description: Safely test drive any theme while visitors are using the default one. Includes instant theme preview via thumbnail.
    Author: Vladimir Prelovac
-   Version: 2.9
+   Version: 2.9.1
    Author URI: http://www.prelovac.com/vladimir/
    
    To-Do:
@@ -15,7 +15,7 @@
   
   // // //  PLUGIN CODE // // //
   
-  $themedrive_localversion = "2.9";
+  $themedrive_localversion = "2.9.1";
   
   $wp_themedrive_plugin_url = trailingslashit(plugins_url(null, __FILE__)); 
   
@@ -328,6 +328,10 @@
       global $themedrive_localversion;
       global $wp_themedrive_plugin_url;
 
+      if ($_SERVER['REQUEST_METHOD'] === 'POST' && !wp_verify_nonce(@$_POST['_wpnonce'], 'theme-drive')) {
+          wp_die('Nonce invalid. Please re-submit the form.');
+          exit;
+      }
     
       
       if ( isset( $_POST['button'] ) && 'Enable Theme Drive' == $_POST['button']) {
@@ -338,9 +342,9 @@
           $access_level = (int)$_POST['access_level'];
           update_option('td_level', $access_level);
           $msg_status = "Theme Test Drive Enabled for administrator with " . $themedrive . ' theme.';
-          
-          
-          
+
+
+
           // Show message
           echo '<div id="message" class="updated fade"><p>' . $msg_status . '</p></div>';
       } elseif ( isset( $_POST['button'] ) && 'Disable Theme Drive' == $_POST['button'] ) {
@@ -441,7 +445,7 @@ Alternatively, disabling this plug-in should also do the trick.
       <br>
       <input class="button" type="submit" name="theme_install" value="Install theme &raquo;" class="button-primary" />
   <br /><br />
-  
+
   
 </form>
 
