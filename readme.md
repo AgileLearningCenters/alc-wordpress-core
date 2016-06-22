@@ -56,9 +56,17 @@ A database is already set up in the VM called `alc_wordpress` where we will uplo
 
 `vagrant ssh`
 
+Pop over to the synced folder and WP web root:
+
+`cd /var/www/alc-dev/`
+
+If you got a tar.gz, first untar it:
+
+`tar -xvf name-of-db-dump.sql.tar.gz`
+
 Then run:
 
-`mysql -uroot -proot alc_wordpress < /var/www/alc-dev/name-of-db-dump.sql`
+`mysql -uroot -proot alc_wordpress < name-of-db-dump.sql`
 
 *Replace name-of-db-dump.sql with the actual name of the file*
 
