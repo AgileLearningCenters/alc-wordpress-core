@@ -35,13 +35,17 @@ DocumentRoot /var/www/alc-dev
   Options -Indexes +FollowSymLinks
   DirectoryIndex index.php
   AllowOverride All
+  Order allow,deny
+  Allow from all
+
   Require all granted
+  Satisfy Any
 </Directory>
 </VirtualHost>
 apache
 
 # add site and restart apache
-sudo a2ensite alc
+sudo a2ensite alc.conf
 sudo service apache2 restart
 
 # set up MySQL database
