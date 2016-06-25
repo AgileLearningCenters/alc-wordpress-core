@@ -68,6 +68,27 @@ Then run:
 
 `mysql -uroot -proot alc_wordpress < name-of-db-dump.sql`
 
+Has this database been prepared? If not, you'll need to run some extra commands:
+
+```
+# grab this lovely utility for find/replacing across a wordpress database:
+git clone https://github.com/interconnectit/Search-Replace-DB.git
+
+# use it to remap the domain names from their production norms to our dev rig:
+pushd Search-Replace-DB
+php srdb.cli.php -h localhost -n alc_wordpress -u root -p root -s "agilelearningcenters.org" -r "alc.dev"
+popd
+
+# TODO: scrub away sensitive data
+
+# replace all passwords with 'password'
+mysql -uroot -proot -h localhost -e "UPDATE \`wp_users\` SET \`user_pass\`= MD5('password');" alc_wordpress
+
+
+# Delete this wretched implement:
+rm -rf Search-Replace-DB
+```
+
 *Replace name-of-db-dump.sql with the actual name of the file*
 
 ## Create and configure the wp-config.php file
