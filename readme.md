@@ -11,6 +11,10 @@ We use vagrant to create virtual servers to run this code locally. If you use va
 
 Check out [Vagrant's install page](https://docs.vagrantup.com/v2/installation/index.html) to get it on your system.
 
+### Vagrant NSF
+
+On the line `config.vm.synced_folder ".", "/var/www/alc-dev", nfs: true` this `nfs: true` bit makes the VM much faster. Be aware that it might not work on your system
+
 ## Clone the git repository
 
 Open up a terminal shell and go to the directory where you'd like the ALC code to live, then clone it from git.
@@ -56,9 +60,38 @@ A database is already set up in the VM called `alc_wordpress` where we will uplo
 
 `vagrant ssh`
 
+Pop over to the synced folder and WP web root:
+
+`cd /var/www/alc-dev/`
+
+If you got a tar.gz, first untar it:
+
+`tar -xvf name-of-db-dump.sql.tar.gz`
+
 Then run:
 
-`mysql -uroot -proot alc_wordpress < /var/www/alc-dev/name-of-db-dump.sql`
+`mysql -uroot -proot alc_wordpress < name-of-db-dump.sql`
+
+Has this database been prepared? If not, you'll need to run some extra commands:
+
+```
+# grab this lovely utility for find/replacing across a wordpress database:
+git clone https://github.com/interconnectit/Search-Replace-DB.git
+
+# use it to remap the domain names from their production norms to our dev rig:
+pushd Search-Replace-DB
+php srdb.cli.php -h localhost -n alc_wordpress -u root -p root -s "agilelearningcenters.org" -r "alc.dev"
+popd
+
+# TODO: scrub away sensitive data
+
+# replace all passwords with 'password'
+mysql -uroot -proot -h localhost -e "UPDATE \`wp_users\` SET \`user_pass\`= MD5('password');" alc_wordpress
+
+
+# Delete this wretched implement:
+rm -rf Search-Replace-DB
+```
 
 *Replace name-of-db-dump.sql with the actual name of the file*
 

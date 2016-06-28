@@ -8,11 +8,12 @@ wp-config.php
 php_errorlog
 .ftpquota
 cgi-bin/
+alc-database-dump.sql
 
 # vagrant files
 .vagrant
 
-# We ignore this useful (and dangerous) script for 
+# We ignore this useful (and dangerous) script for
 # setting up local environment
 # you can get it from: https://github.com/interconnectit/Search-Replace-DB.git
 search-replace-db/

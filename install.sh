@@ -6,7 +6,7 @@ sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password passwor
 sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
 
 sudo apt-get install -y vim curl python-software-properties
-sudo add-apt-repository -y ppa:ondrej/php5
+sudo add-apt-repository -y ppa:ondrej/php5-oldstable
 sudo apt-get update
 
 sudo apt-get install -y php5 apache2 libapache2-mod-php5 php5-curl php5-gd php5-mcrypt php5-readline mysql-server-5.5 php5-mysql git-core php5-xdebug
@@ -35,13 +35,17 @@ DocumentRoot /var/www/alc-dev
   Options -Indexes +FollowSymLinks
   DirectoryIndex index.php
   AllowOverride All
+  Order allow,deny
+  Allow from all
+
   Require all granted
+  Satisfy Any
 </Directory>
 </VirtualHost>
 apache
 
 # add site and restart apache
-sudo a2ensite alc
+sudo a2ensite alc.conf
 sudo service apache2 restart
 
 # set up MySQL database
