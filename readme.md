@@ -11,6 +11,10 @@ We use vagrant to create virtual servers to run this code locally. If you use va
 
 Check out [Vagrant's install page](https://docs.vagrantup.com/v2/installation/index.html) to get it on your system.
 
+### Vagrant NSF
+
+On the line `config.vm.synced_folder ".", "/var/www/alc-dev", nfs: true` this `nfs: true` bit makes the VM much faster. Be aware that it might not work on your system
+
 ## Clone the git repository
 
 Open up a terminal shell and go to the directory where you'd like the ALC code to live, then clone it from git.
