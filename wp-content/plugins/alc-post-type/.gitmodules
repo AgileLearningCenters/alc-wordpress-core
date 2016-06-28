@@ -1,0 +1,3 @@
+[submodule "scripts/geocomplete"]
+	path = scripts/geocomplete
+	url = git@github.com:ubilabs/geocomplete.git
