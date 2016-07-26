@@ -1,7 +1,7 @@
 <?php
 
-/*
- * a class for the Polylang settings pages
+/**
+ * A class for the Polylang settings pages
  * accessible in $polylang global object
  *
  * properties:
@@ -19,8 +19,8 @@
 class PLL_Settings extends PLL_Admin_Base {
 	protected $active_tab, $modules;
 
-	/*
-	 * constructor
+	/**
+	 * Constructor
 	 *
 	 * @since 1.2
 	 *
@@ -43,12 +43,19 @@ class PLL_Settings extends PLL_Admin_Base {
 		add_filter( 'set-screen-option', array( &$this, 'set_screen_option' ), 10, 3 );
 	}
 
-	/*
-	 * initializes the modules
+	/**
+	 * Initializes the modules
 	 *
 	 * @since 1.8
 	 */
 	public function register_settings_modules() {
+		/**
+		 * Filter the list of setting modules
+		 *
+		 * @since 1.8
+		 *
+		 * @param array $modules the list of module classes
+		 */
 		$modules = apply_filters( 'pll_settings_modules', array(
 			'PLL_Settings_Url',
 			'PLL_Settings_Browser',
@@ -56,7 +63,10 @@ class PLL_Settings extends PLL_Admin_Base {
 			'PLL_Settings_CPT',
 			'PLL_Settings_Sync',
 			'PLL_Settings_WPML',
+			'PLL_Settings_Share_Slug',
+			'PLL_Settings_Translate_Slugs',
 			'PLL_Settings_Tools',
+			'PLL_Settings_Licenses',
 		) );
 
 		foreach ( $modules as $key => $class ) {
@@ -65,8 +75,8 @@ class PLL_Settings extends PLL_Admin_Base {
 		}
 	}
 
-	/*
-	 * adds the link to the languages panel in the WordPress admin menu
+	/**
+	 * Adds the link to the languages panel in the WordPress admin menu
 	 *
 	 * @since 0.1
 	 */
@@ -74,7 +84,7 @@ class PLL_Settings extends PLL_Admin_Base {
 		add_submenu_page( 'options-general.php', $title = __( 'Languages', 'polylang' ), $title, 'manage_options', 'mlang', array( $this, 'languages_page' ) );
 	}
 
-	/*
+	/**
 	 * Loads the about metabox
 	 *
 	 * @since 0.8
@@ -83,8 +93,8 @@ class PLL_Settings extends PLL_Admin_Base {
 		include( PLL_SETTINGS_INC.'/view-about.php' );
 	}
 
-	/*
-	 * adds screen options and the about box in the languages admin panel
+	/**
+	 * Adds screen options and the about box in the languages admin panel
 	 *
 	 * @since 0.9.5
 	 */
@@ -121,14 +131,14 @@ class PLL_Settings extends PLL_Admin_Base {
 		}
 	}
 
-	/*
+	/**
 	 * Save the "Views/Uploads per page" option set by this user
 	 *
 	 * @since 0.9.5
 	 *
-	 * @param	mixed $status false or value returned by previous filter
+	 * @param	mixed  $status false or value returned by previous filter
 	 * @param	string $option Name of the option being changed
-	 * @param	string $value Value of the option
+	 * @param	string $value  Value of the option
 	 *
 	 * @return string New value if this is our option, otherwise nothing
 	 */
@@ -136,92 +146,19 @@ class PLL_Settings extends PLL_Admin_Base {
 		return 'pll_strings_per_page' === $option ? $value : $status;
 	}
 
-	/*
-	 * diplays the 3 tabs pages: languages, strings translations, settings
-	 * also manages user input for these pages
+	/**
+	 * Manages the user input for the languages pages
 	 *
-	 * @since 0.1
+	 * @since 1.9
+	 *
+	 * @param string $action
 	 */
-	public function languages_page() {
-		// prepare the list of tabs
-		$tabs = array( 'lang' => __( 'Languages','polylang' ) );
-
-		// only if at least one language has been created
-		if ( $listlanguages = $this->model->get_languages_list() ) {
-			$tabs['strings'] = __( 'Strings translations', 'polylang' );
-			$tabs['settings'] = __( 'Settings', 'polylang' );
-		}
-
-		// allows plugins to add tabs
-		$tabs = apply_filters( 'pll_settings_tabs', $tabs );
-
-		switch ( $this->active_tab ) {
-			case 'lang':
-				// prepare the list table of languages
-				$list_table = new PLL_Table_Languages();
-				$list_table->prepare_items( $listlanguages );
-			break;
-
-			case 'strings':
-				// get the strings to translate
-				$data = PLL_Admin_Strings::get_strings();
-
-				// get the groups
-				foreach ( $data as $key => $row ) {
-					$groups[] = $row['context'];
-				}
-
-				$groups = array_unique( $groups );
-				$selected = empty( $_GET['group'] ) || ! in_array( $_GET['group'], $groups ) ? -1 : $_GET['group'];
-				$s = empty( $_GET['s'] ) ? '' : wp_unslash( $_GET['s'] );
-
-				// filter for search string
-				foreach ( $data as $key => $row ) {
-					if ( ( -1 != $selected && $row['context'] != $selected ) || ( ! empty( $s ) && stripos( $row['name'], $s ) === false && stripos( $row['string'], $s ) === false ) ) {
-						unset( $data[ $key ] );
-					}
-				}
-
-				// load translations
-				foreach ( $listlanguages as $language ) {
-					// filters by language if requested
-					if ( ( $lg = get_user_meta( get_current_user_id(), 'pll_filter_content', true ) ) && $language->slug != $lg ) {
-						continue;
-					}
-
-					$mo = new PLL_MO();
-					$mo->import_from_db( $language );
-					foreach ( $data as $key => $row ) {
-						$data[ $key ]['translations'][ $language->slug ] = $mo->translate( $row['string'] );
-						$data[ $key ]['row'] = $key; // store the row number for convenience
-					}
-				}
-
-				// get an array with language slugs as keys, names as values
-				$languages = array_combine( wp_list_pluck( $listlanguages, 'slug' ), wp_list_pluck( $listlanguages, 'name' ) );
-
-				$string_table = new PLL_Table_String( compact( 'languages', 'groups', 'selected' ) );
-				$string_table->prepare_items( $data );
-			break;
-
-			case 'settings':
-				$post_types = get_post_types( array( 'public' => true, '_builtin' => false ) );
-				$post_types = array_diff( $post_types, get_post_types( array( '_pll' => true ) ) );
-				$post_types = array_unique( apply_filters( 'pll_get_post_types', $post_types, true ) );
-
-				$taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ) );
-				$taxonomies = array_diff( $taxonomies, get_taxonomies( array( '_pll' => true ) ) );
-				$taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', $taxonomies , true ) );
-			break;
-		}
-
-		$action = isset( $_REQUEST['pll_action'] ) ? $_REQUEST['pll_action'] : '';
-
+	public function handle_actions( $action ) {
 		switch ( $action ) {
 			case 'add':
 				check_admin_referer( 'add-lang', '_wpnonce_add-lang' );
 
-				if ( $this->model->add_language( $_POST ) && 'en_US' != $_POST['locale'] ) {
+				if ( $this->model->add_language( $_POST ) && 'en_US' !== $_POST['locale'] ) {
 					// attempts to install the language pack
 					require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
 					if ( ! wp_download_language_pack( $_POST['locale'] ) ) {
@@ -243,12 +180,6 @@ class PLL_Settings extends PLL_Admin_Base {
 				}
 
 				self::redirect(); // to refresh the page ( possible thanks to the $_GET['noheader']=true )
-			break;
-
-			case 'edit':
-				if ( ! empty( $_GET['lang'] ) ) {
-					$edit_lang = $this->model->get_language( (int) $_GET['lang'] );
-				}
 			break;
 
 			case 'update':
@@ -282,58 +213,6 @@ class PLL_Settings extends PLL_Admin_Base {
 				self::redirect(); // to refresh the page ( possible thanks to the $_GET['noheader']=true )
 			break;
 
-			case 'string-translation':
-				if ( ! empty( $_POST['submit'] ) ) {
-					check_admin_referer( 'string-translation', '_wpnonce_string-translation' );
-					$strings = PLL_Admin_Strings::get_strings();
-
-					foreach ( $this->model->get_languages_list() as $language ) {
-						if ( empty( $_POST['translation'][ $language->slug ] ) ) { // in case the language filter is active ( thanks to John P. Bloch )
-							continue;
-						}
-
-						$mo = new PLL_MO();
-						$mo->import_from_db( $language );
-
-						foreach ( $_POST['translation'][ $language->slug ] as $key => $translation ) {
-							$translation = apply_filters( 'pll_sanitize_string_translation', $translation, $strings[ $key ]['name'], $strings[ $key ]['context'] );
-							$mo->add_entry( $mo->make_entry( $strings[ $key ]['string'], $translation ) );
-						}
-
-						// clean database ( removes all strings which were registered some day but are no more )
-						if ( ! empty( $_POST['clean'] ) ) {
-							$new_mo = new PLL_MO();
-
-							foreach ( $strings as $string ) {
-								$new_mo->add_entry( $mo->make_entry( $string['string'], $mo->translate( $string['string'] ) ) );
-							}
-						}
-
-						isset( $new_mo ) ? $new_mo->export_to_db( $language ) : $mo->export_to_db( $language );
-					}
-
-					add_settings_error( 'general', 'pll_strings_translations_updated', __( 'Translations updated.', 'polylang' ), 'updated' );
-					do_action( 'pll_save_strings_translations' );
-				}
-
-				// unregisters strings registered through WPML API
-				if ( $string_table->current_action() == 'delete' && ! empty( $_POST['strings'] ) && function_exists( 'icl_unregister_string' ) ) {
-					check_admin_referer( 'string-translation', '_wpnonce_string-translation' );
-					$strings = PLL_Admin_Strings::get_strings();
-
-					foreach ( $_POST['strings'] as $key ) {
-						icl_unregister_string( $strings[ $key ]['context'], $strings[ $key ]['name'] );
-					}
-				}
-
-				// to refresh the page ( possible thanks to the $_GET['noheader']=true )
-				$args = array_intersect_key( $_REQUEST, array_flip( array( 's', 'paged', 'group' ) ) );
-				if ( ! empty( $args['s'] ) ) {
-					$args['s'] = urlencode( $args['s'] ); // searched string needs to be encoded as it comes from $_POST
-				}
-				self::redirect( $args );
-			break;
-
 			case 'activate':
 				check_admin_referer( 'pll_activate' );
 				$this->modules[ $_GET['module'] ]->activate();
@@ -347,16 +226,68 @@ class PLL_Settings extends PLL_Admin_Base {
 			break;
 
 			default:
+				/**
+				 * Fires when a non default action has been sent to Polylang settings
+				 *
+				 * @since 1.8
+				 */
 				do_action( "mlang_action_$action" );
 			break;
+		}
+	}
+
+	/**
+	 * Displays the 3 tabs pages: languages, strings translations, settings
+	 * also manages user input for these pages
+	 *
+	 * @since 0.1
+	 */
+	public function languages_page() {
+		// prepare the list of tabs
+		$tabs = array( 'lang' => __( 'Languages','polylang' ) );
+
+		// only if at least one language has been created
+		if ( $listlanguages = $this->model->get_languages_list() ) {
+			$tabs['strings'] = __( 'Strings translations', 'polylang' );
+			$tabs['settings'] = __( 'Settings', 'polylang' );
+		}
+
+		/**
+		 * Filter the list of tabs in Polylang settings
+		 *
+		 * @since 1.5.1
+		 *
+		 * @param array $tabs list of tab names
+		 */
+		$tabs = apply_filters( 'pll_settings_tabs', $tabs );
+
+		switch ( $this->active_tab ) {
+			case 'lang':
+				// prepare the list table of languages
+				$list_table = new PLL_Table_Languages();
+				$list_table->prepare_items( $listlanguages );
+			break;
+
+			case 'strings':
+				$string_table = new PLL_Table_String( $listlanguages );
+				$string_table->prepare_items();
+			break;
+		}
+
+		// handle user input
+		$action = isset( $_REQUEST['pll_action'] ) ? $_REQUEST['pll_action'] : '';
+		if ( 'edit' === $action && ! empty( $_GET['lang'] ) ) {
+			$edit_lang = $this->model->get_language( (int) $_GET['lang'] );
+		} else {
+			$this->handle_actions( $action );
 		}
 
 		// displays the page
 		include( PLL_SETTINGS_INC.'/view-languages.php' );
 	}
 
-	/*
-	 * enqueues scripts and styles
+	/**
+	 * Enqueues scripts and styles
 	 */
 	public function admin_enqueue_scripts() {
 		parent::admin_enqueue_scripts();
@@ -369,8 +300,8 @@ class PLL_Settings extends PLL_Admin_Base {
 		wp_enqueue_style( 'pll_selectmenu', POLYLANG_URL .'/css/selectmenu'.$suffix.'.css', array(), POLYLANG_VERSION );
 	}
 
-	/*
-	 * displays a notice when there are objects with no language assigned
+	/**
+	 * Displays a notice when there are objects with no language assigned
 	 *
 	 * @since 1.8
 	 */
@@ -385,8 +316,8 @@ class PLL_Settings extends PLL_Admin_Base {
 		}
 	}
 
-	/*
-	 * redirects to language page ( current active tab )
+	/**
+	 * Redirects to language page ( current active tab )
 	 * saves error messages in a transient for reuse in redirected page
 	 *
 	 * @since 1.5

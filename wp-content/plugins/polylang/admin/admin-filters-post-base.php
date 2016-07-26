@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * some common code for PLL_Admin_Filters_Post and PLL_Admin_Filters_Media
  *
  * @since 1.5
@@ -8,7 +8,7 @@
 abstract class PLL_Admin_Filters_Post_Base {
 	public $links, $model, $pref_lang;
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.2
@@ -21,7 +21,7 @@ abstract class PLL_Admin_Filters_Post_Base {
 		$this->pref_lang = &$polylang->pref_lang;
 	}
 
-	/*
+	/**
 	 * allows to set a language by default for posts if it has no language yet
 	 *
 	 * @since 1.5
@@ -44,7 +44,7 @@ abstract class PLL_Admin_Filters_Post_Base {
 		}
 	}
 
-	/*
+	/**
 	 * save translations from language metabox
 	 *
 	 * @since 1.5

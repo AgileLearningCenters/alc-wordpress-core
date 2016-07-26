@@ -4,7 +4,7 @@ if ( ! class_exists( 'WP_Widget_Calendar' ) ) {
 	require_once( ABSPATH . '/wp-includes/default-widgets.php' );
 }
 
-/*
+/**
  * obliged to rewrite the whole functionnality as there is no filter on sql queries and only a filter on final output
  * code base last checked with WP 4.4.2
  * a request for making a filter on sql queries exists: http://core.trac.wordpress.org/ticket/15202
@@ -15,7 +15,7 @@ if ( ! class_exists( 'WP_Widget_Calendar' ) ) {
  */
 class PLL_Widget_Calendar extends WP_Widget_Calendar {
 
-	/*
+	/**
 	 * displays the widget
 	 * modified version of the parent function to call our own get_calendar function
 	 *
@@ -25,6 +25,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 	 * @param array $instance The settings for the particular instance of the widget
 	 */
 	function widget( $args, $instance ) {
+		/** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '&nbsp;' : $instance['title'], $instance, $this->id_base );
 		echo $args['before_widget'];
 		if ( $title ) {
@@ -36,7 +37,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 		echo $args['after_widget'];
 	}
 
-	/*
+	/**
 	 * modified version of WP get_calendar function to filter the query
 	 *
 	 * @since 0.5

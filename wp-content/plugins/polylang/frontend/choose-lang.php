@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * base class to choose the language
  *
  * @since 1.2
@@ -9,7 +9,7 @@ abstract class PLL_Choose_Lang {
 	public $links_model, $model, $options;
 	public $curlang;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.2
@@ -24,7 +24,7 @@ abstract class PLL_Choose_Lang {
 		$this->curlang = &$polylang->curlang;
 	}
 
-	/*
+	/**
 	 * sets the language for ajax requests
 	 * and setup actions
 	 * any child class must call this method if it overrides it
@@ -40,7 +40,7 @@ abstract class PLL_Choose_Lang {
 		add_action( 'parse_query', array( &$this, 'parse_main_query' ), 2 ); // sets the language in special cases
 	}
 
-	/*
+	/**
 	 * writes language cookie
 	 * loads user defined translations
 	 * fires the action 'pll_language_defined'
@@ -62,10 +62,19 @@ abstract class PLL_Choose_Lang {
 		$this->maybe_setcookie();
 
 		$GLOBALS['text_direction'] = $this->curlang->is_rtl ? 'rtl' : 'ltr';
+
+		/**
+		 * Fires when the current language is defined
+		 *
+		 * @since 0.9.5
+		 *
+		 * @param string $slug    current language code
+		 * @param object $curlang current language object
+		 */
 		do_action( 'pll_language_defined', $this->curlang->slug, $this->curlang );
 	}
 
-	/*
+	/**
 	 * set a cookie to remember the language.
 	 * possibility to set PLL_COOKIE to false will disable cookie although it will break some functionalities
 	 *
@@ -75,17 +84,27 @@ abstract class PLL_Choose_Lang {
 		// check headers have not been sent to avoid ugly error
 		// cookie domain must be set to false for localhost ( default value for COOKIE_DOMAIN ) thanks to Stephen Harris.
 		if ( ! headers_sent() && PLL_COOKIE !== false && ( ! isset( $_COOKIE[ PLL_COOKIE ] ) || $_COOKIE[ PLL_COOKIE ] != $this->curlang->slug ) ) {
+
+			/**
+			 * Filter the Polylang cookie duration
+			 *
+			 * @since 1.8
+			 *
+			 * @param int $duration cookie duration in seconds
+			 */
+			$expiration = apply_filters( 'pll_cookie_expiration', YEAR_IN_SECONDS );
+
 			setcookie(
 				PLL_COOKIE,
 				$this->curlang->slug,
-				time() + apply_filters( 'pll_cookie_expiration', YEAR_IN_SECONDS ),
+				time() + $expiration,
 				COOKIEPATH,
 				2 == $this->options['force_lang'] ? parse_url( $this->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN
 			);
 		}
 	}
 
-	/*
+	/**
 	 * get the preferred language according to the browser preferences
 	 * code adapted from http://www.thefutureoftheweb.com/blog/use-accept-language-header
 	 *
@@ -132,19 +151,28 @@ abstract class PLL_Choose_Lang {
 			}
 		}
 
-		// looks through sorted list and use first one that matches our language list
-		$listlanguages = $this->model->get_languages_list( array( 'hide_empty' => true ) ); // hides languages with no post
+		$languages = $this->model->get_languages_list( array( 'hide_empty' => true ) ); // hides languages with no post
 
+		/**
+		 * Filter the list of languages to use to match the browser preferences
+		 *
+		 * @since 1.9.3
+		 *
+		 * @param array $languages array of PLL_Language objects
+		 */
+		$languages = apply_filters( 'pll_languages_for_browser_preferences', $languages );
+
+		// looks through sorted list and use first one that matches our language list
 		foreach ( array_keys( $accept_langs ) as $accept_lang ) {
 			// first loop to match the exact locale
-			foreach ( $listlanguages as $language ) {
+			foreach ( $languages as $language ) {
 				if ( 0 === strcasecmp( $accept_lang, $language->get_locale( 'display' ) ) ) {
 					return $language->slug;
 				}
 			}
 
 			// second loop to match the language set
-			foreach ( $listlanguages as $language ) {
+			foreach ( $languages as $language ) {
 				if ( 0 === stripos( $accept_lang, $language->slug ) || 0 === stripos( $language->get_locale( 'display' ), $accept_lang ) ) {
 					return $language->slug;
 				}
@@ -153,7 +181,7 @@ abstract class PLL_Choose_Lang {
 		return false;
 	}
 
-	/*
+	/**
 	 * returns the language according to browser preference or the default language
 	 *
 	 * @since 0.1
@@ -166,15 +194,23 @@ abstract class PLL_Choose_Lang {
 			return $this->model->get_language( $_COOKIE[ PLL_COOKIE ] );
 		}
 
-		// sets the browsing language according to the browser preferences
-		// allow plugin to modify the preferred language ( useful for example to have a different fallback than the default language )
+		/**
+		 * Filter the visitor's preferred language (normally set first by cookie
+		 * if this is not the first visit, then by the browser preferences).
+		 * If no preferred language has been found or set by this filter,
+		 * Polylang fallbacks to the default language
+		 *
+		 * @since 1.0
+		 *
+		 * @param string $language preferred language code
+		 */
 		$slug = apply_filters( 'pll_preferred_language', $this->options['browser'] ? $this->get_preferred_browser_language() : false );
 
 		// return default if there is no preferences in the browser or preferences does not match our languages or it is requested not to use the browser preference
 		return ( $lang = $this->model->get_language( $slug ) ) ? $lang : $this->model->get_language( $this->options['default_lang'] );
 	}
 
-	/*
+	/**
 	 * sets the language when home page is resquested
 	 *
 	 * @since 1.2
@@ -188,7 +224,7 @@ abstract class PLL_Choose_Lang {
 		$this->set_language( $language );
 	}
 
-	/*
+	/**
 	 * to call when the home page has been requested
 	 * make sure to call this after 'setup_theme' has been fired as we need $wp_query
 	 * performs a redirection to the home page in the current language if needed
@@ -199,6 +235,12 @@ abstract class PLL_Choose_Lang {
 		// we are already on the right page
 		if ( $this->options['default_lang'] == $this->curlang->slug && $this->options['hide_default'] ) {
 			$this->set_lang_query_var( $GLOBALS['wp_query'], $this->curlang );
+
+			/**
+			 * Fires when the site root page is requested
+			 *
+			 * @since 1.8
+			 */
 			do_action( 'pll_home_requested' );
 		}
 		// redirect to the home page in the right language
@@ -208,6 +250,15 @@ abstract class PLL_Choose_Lang {
 		// don't forget the query string which may be added by plugins
 		elseif ( is_string( $redirect = $this->curlang->home_url ) && empty( $_POST ) ) {
 			$redirect = empty( $_SERVER['QUERY_STRING'] ) ? $redirect : $redirect . ( $this->links_model->using_permalinks ? '?' : '&' ) . $_SERVER['QUERY_STRING'];
+
+			/**
+			 * When a visitor reaches the site home, Polylang redirects to the home page in the correct language.
+			 * This filter allows plugins to modify the redirected url or prevent this redirection
+			 *
+			 * @since 1.1.1
+			 *
+			 * @param string $redirect the url the visitor will be redirected to
+			 */
 			if ( $redirect = apply_filters( 'pll_redirect_home', $redirect ) ) {
 				wp_redirect( $redirect );
 				exit;
@@ -215,7 +266,7 @@ abstract class PLL_Choose_Lang {
 		}
 	}
 
-	/*
+	/**
 	 * set the language when posting a comment
 	 *
 	 * @since 0.8.4
@@ -226,7 +277,7 @@ abstract class PLL_Choose_Lang {
 		$this->set_language( $this->model->post->get_language( $post_id ) );
 	}
 
-	/*
+	/**
 	 * modifies some main query vars for home page and page for posts
 	 * to enable one home page ( and one page for posts ) per language
 	 *
@@ -239,6 +290,14 @@ abstract class PLL_Choose_Lang {
 			return;
 		}
 
+		/**
+		 * This filter allows to set the language based on information contained in the main query
+		 *
+		 * @since 1.8
+		 *
+		 * @param bool|object $lang  false or language object
+		 * @param object      $query WP_Query object
+		 */
 		if ( $lang = apply_filters( 'pll_set_language_from_query', false, $query ) ) {
 			$this->set_language( $lang );
 			$this->set_lang_query_var( $query, $this->curlang );
@@ -247,14 +306,15 @@ abstract class PLL_Choose_Lang {
 		// sets is_home on translated home page when it displays posts
 		// is_home must be true on page 2, 3... too
 		// as well as when searching an empty string: http://wordpress.org/support/topic/plugin-polylang-polylang-breaks-search-in-spun-theme
-		if ( 'posts' == get_option( 'show_on_front' ) && ( count( $query->query ) == 1 || ( is_paged() && count( $query->query ) == 2 ) || ( isset( $query->query['s'] ) && ! $query->query['s'] ) ) && is_tax( 'language' ) ) {
-			$this->set_language( $this->model->get_language( get_query_var( 'lang' ) ) ); // sets the language now otherwise it will be too late to filter sticky posts !
+		if ( 'posts' == get_option( 'show_on_front' ) && ( count( $query->query ) == 1 || ( is_paged() && count( $query->query ) == 2 ) || ( isset( $query->query['s'] ) && ! $query->query['s'] ) ) && $lang = get_query_var( 'lang' ) ) {
+			$lang = $this->model->get_language( $lang );
+			$this->set_language( $lang ); // sets the language now otherwise it will be too late to filter sticky posts !
 			$query->is_home = true;
 			$query->is_archive = $query->is_tax = false;
 		}
 	}
 
-	/*
+	/**
 	 * sets the language in query
 	 * optimized for ( needs ) WP 3.5+
 	 *

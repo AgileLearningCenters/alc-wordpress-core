@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * base class for both admin and frontend
  *
  * @since 1.2
@@ -8,7 +8,7 @@
 abstract class PLL_Base {
 	public $links_model, $model, $options;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.2
@@ -29,7 +29,7 @@ abstract class PLL_Base {
 		add_action( 'switch_blog', array( &$this, 'switch_blog' ), 10, 2 );
 	}
 
-	/*
+	/**
 	 * registers our widgets
 	 *
 	 * @since 0.1
@@ -59,7 +59,7 @@ abstract class PLL_Base {
 		}
 	}
 
-	/*
+	/**
 	 * loads user defined strings translations
 	 *
 	 * @since 1.2
@@ -70,7 +70,7 @@ abstract class PLL_Base {
 		$GLOBALS['l10n']['pll_string'] = &$mo;
 	}
 
-	/*
+	/**
 	 * resets some variables when switching blog
 	 * applies only if Polylang is active on the new blog
 	 *
@@ -92,7 +92,7 @@ abstract class PLL_Base {
 		return false;
 	}
 
-	/*
+	/**
 	 * some backward compatibility with Polylang < 1.2
 	 * allows for example to call $polylang->get_languages_list() instead of $polylang->model->get_languages_list()
 	 * this works but should be slower than the direct call, thus an error is triggered in debug mode

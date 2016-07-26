@@ -1,9 +1,9 @@
 <?php
 
-/*
- * template tag: displays the language switcher
+/**
+ * Template tag: displays the language switcher
  *
- * list of parameters accepted in $args:
+ * List of parameters accepted in $args:
  *
  * dropdown               => displays a dropdown if set to 1, defaults to 0
  * echo                   => echoes the the switcher if set to 1 ( default )
@@ -31,20 +31,21 @@ function pll_the_languages( $args = '' ) {
 	return $switcher->the_languages( PLL()->links, $args );
 }
 
-/*
- * returns the current language
+/**
+ * Returns the current language on frontend
+ * Returns the language set in admin language filter on backend ( false if set to all languages )
  *
  * @since 0.8.1
  *
  * @param string $field optional the language field to return 'name', 'locale', defaults to 'slug'
- * @return string the requested field for the current language
+ * @return string|bool the requested field for the current language
  */
 function pll_current_language( $field = 'slug' ) {
 	return isset( PLL()->curlang->$field ) ? PLL()->curlang->$field : false;
 }
 
-/*
- * returns the default language
+/**
+ * Returns the default language
  *
  * @since 1.0
  *
@@ -55,34 +56,34 @@ function pll_default_language( $field = 'slug' ) {
 	return isset( PLL()->options['default_lang'] ) && ( $lang = PLL()->model->get_language( PLL()->options['default_lang'] ) ) && isset( $lang->$field ) ? $lang->$field : false;
 }
 
-/*
- * among the post and its translations, returns the id of the post which is in the language represented by $slug
+/**
+ * Among the post and its translations, returns the id of the post which is in the language represented by $slug
  *
  * @since 0.5
  *
- * @param int $post_id post id
- * @param string $slug optional language code, defaults to current language
- * @return int post id of the translation if exists
+ * @param int    $post_id post id
+ * @param string $slug    optional language code, defaults to current language
+ * @return int|null post id of the translation if exists, null otherwise
  */
 function pll_get_post( $post_id, $slug = '' ) {
 	return ( $slug = $slug ? $slug : pll_current_language() ) ? PLL()->model->post->get( $post_id, $slug ) : null;
 }
 
-/*
- * among the term and its translations, returns the id of the term which is in the language represented by $slug
+/**
+ * Among the term and its translations, returns the id of the term which is in the language represented by $slug
  *
  * @since 0.5
  *
- * @param int $term_id term id
- * @param string $slug optional language code, defaults to current language
- * @return int term id of the translation if exists
+ * @param int    $term_id term id
+ * @param string $slug    optional language code, defaults to current language
+ * @return int|null term id of the translation if exists, null otherwise
  */
 function pll_get_term( $term_id, $slug = '' ) {
 	return ( $slug = $slug ? $slug : pll_current_language() ) ? PLL()->model->term->get( $term_id, $slug ) : null;
 }
 
-/*
- * returns the home url in the current language
+/**
+ * Returns the home url in the current language
  *
  * @since 0.8
  *
@@ -97,15 +98,15 @@ function pll_home_url( $lang = '' ) {
 	return empty( $lang ) ? home_url( '/' ) : PLL()->links->get_home_url( $lang );
 }
 
-/*
- * registers a string for translation in the "strings translation" panel
+/**
+ * Registers a string for translation in the "strings translation" panel
  *
  * @since 0.6
  *
- * @param string $name a unique name for the string
- * @param string $string the string to register
- * @param string $context optional the group in which the string is registered, defaults to 'polylang'
- * @param bool $multiline optional wether the string table should display a multiline textarea or a single line input, defaults to single line
+ * @param string $name      a unique name for the string
+ * @param string $string    the string to register
+ * @param string $context   optional the group in which the string is registered, defaults to 'polylang'
+ * @param bool   $multiline optional wether the string table should display a multiline textarea or a single line input, defaults to single line
  */
 function pll_register_string( $name, $string, $context = 'polylang', $multiline = false ) {
 	if ( PLL_ADMIN ) {
@@ -113,8 +114,8 @@ function pll_register_string( $name, $string, $context = 'polylang', $multiline 
 	}
 }
 
-/*
- * translates a string ( previously registered with pll_register_string )
+/**
+ * Translates a string ( previously registered with pll_register_string )
  *
  * @since 0.6
  *
@@ -122,9 +123,9 @@ function pll_register_string( $name, $string, $context = 'polylang', $multiline 
  * @return string the string translation in the current language
  */
 function pll__( $string ) {
-	static $cache; // cache object to avoid translating the same string several times
+	static $cache; // Cache object to avoid translating the same string several times
 
-	if ( ! did_action( 'pll_language_defined' ) ) { // no need for translation
+	if ( ! did_action( 'pll_language_defined' ) ) { // No need for translation
 		return $string;
 	}
 
@@ -140,8 +141,8 @@ function pll__( $string ) {
 	return $str;
 }
 
-/*
- * echoes a translated string ( previously registered with pll_register_string )
+/**
+ * Echoes a translated string ( previously registered with pll_register_string )
  *
  * @since 0.6
  *
@@ -151,13 +152,13 @@ function pll_e( $string ) {
 	echo pll__( $string );
 }
 
-/*
- * translates a string ( previously registered with pll_register_string )
+/**
+ * Translates a string ( previously registered with pll_register_string )
  *
  * @since 1.5.4
  *
  * @param string $string the string to translate
- * @param string $lang language code
+ * @param string $lang   language code
  * @return string the string translation in the requested language
  */
 function pll_translate_string( $string, $lang ) {
@@ -165,7 +166,7 @@ function pll_translate_string( $string, $lang ) {
 		return pll__( $string );
 	}
 
-	static $cache; // cache object to avoid loading the same translations object several times
+	static $cache; // Cache object to avoid loading the same translations object several times
 
 	if ( empty( $cache ) ) {
 		$cache = new PLL_Cache();
@@ -180,8 +181,8 @@ function pll_translate_string( $string, $lang ) {
 	return $mo->translate( $string );
 }
 
-/*
- * returns true if Polylang manages languages and translations for this post type
+/**
+ * Returns true if Polylang manages languages and translations for this post type
  *
  * @since 1.0.1
  *
@@ -192,8 +193,8 @@ function pll_is_translated_post_type( $post_type ) {
 	return PLL()->model->is_translated_post_type( $post_type );
 }
 
-/*
- * returns true if Polylang manages languages and translations for this taxonomy
+/**
+ * Returns true if Polylang manages languages and translations for this taxonomy
  *
  * @since 1.0.1
  *
@@ -204,10 +205,10 @@ function pll_is_translated_taxonomy( $tax ) {
 	return PLL()->model->is_translated_taxonomy( $tax );
 }
 
-/*
- * returns the list of available languages
+/**
+ * Returns the list of available languages
  *
- * list of parameters accepted in $args:
+ * List of parameters accepted in $args:
  *
  * hide_empty => hides languages with no posts if set to true ( defaults to false )
  * fields     => return only that field if set ( see PLL_Language for a list of fields )
@@ -222,32 +223,32 @@ function pll_languages_list( $args = array() ) {
 	return PLL()->model->get_languages_list( $args );
 }
 
-/*
- * set the post language
+/**
+ * Set the post language
  *
  * @since 1.5
  *
- * @param int $post_id post id
+ * @param int    $id   post id
  * @param string $lang language code
  */
 function pll_set_post_language( $id, $lang ) {
 	PLL()->model->post->set_language( $id, $lang );
 }
 
-/*
- * set the term language
+/**
+ * Set the term language
  *
  * @since 1.5
  *
- * @param int $id term id
+ * @param int    $id   term id
  * @param string $lang language code
  */
 function pll_set_term_language( $id, $lang ) {
 	PLL()->model->term->set_language( $id, $lang );
 }
 
-/*
- * save posts translations
+/**
+ * Save posts translations
  *
  * @since 1.5
  *
@@ -257,8 +258,8 @@ function pll_save_post_translations( $arr ) {
 	PLL()->model->post->save_translations( reset( $arr ), $arr );
 }
 
-/*
- * save terms translations
+/**
+ * Save terms translations
  *
  * @since 1.5
  *
@@ -268,34 +269,34 @@ function pll_save_term_translations( $arr ) {
 	PLL()->model->term->save_translations( reset( $arr ), $arr );
 }
 
-/*
- * returns the post language
+/**
+ * Returns the post language
  *
  * @since 1.5.4
  *
- * @param int $post_id
- * @param string $field optional the language field to return 'name', 'locale', defaults to 'slug'
+ * @param int    $post_id
+ * @param string $field   optional the language field to return 'name', 'locale', defaults to 'slug'
  * @return bool|string the requested field for the post language, false if no language is associated to that post
  */
 function pll_get_post_language( $post_id, $field = 'slug' ) {
 	return ( $lang = PLL()->model->post->get_language( $post_id ) ) ? $lang->$field : false;
 }
 
-/*
- * returns the term language
+/**
+ * Returns the term language
  *
  * @since 1.5.4
  *
- * @param int $term_id
- * @param string $field optional the language field to return 'name', 'locale', defaults to 'slug'
+ * @param int    $term_id
+ * @param string $field   optional the language field to return 'name', 'locale', defaults to 'slug'
  * @return bool|string the requested field for the term language, false if no language is associated to that term
  */
 function pll_get_term_language( $term_id, $field = 'slug' ) {
 	return ( $lang = PLL()->model->term->get_language( $term_id ) ) ? $lang->$field : false;
 }
 
-/*
- * returns an array of translations of a post
+/**
+ * Returns an array of translations of a post
  *
  * @since 1.8
  *
@@ -306,8 +307,8 @@ function pll_get_post_translations( $post_id ) {
 	return PLL()->model->post->get_translations( $post_id );
 }
 
-/*
- * returns an array of translations of a term
+/**
+ * Returns an array of translations of a term
  *
  * @since 1.8
  *
@@ -318,23 +319,23 @@ function pll_get_term_translations( $term_id ) {
 	return PLL()->model->term->get_translations( $term_id );
 }
 
-/*
- * count posts in a language
+/**
+ * Count posts in a language
  *
  * @since 1.5
  *
  * @param string $lang language code
- * @param array $args ( accepted keys: post_type, m, year, monthnum, day, author, author_name, post_format )
+ * @param array  $args ( accepted keys: post_type, m, year, monthnum, day, author, author_name, post_format )
  * @return int posts count
  */
 function pll_count_posts( $lang, $args = array() ) {
 	return PLL()->model->count_posts( PLL()->model->get_language( $lang ), $args );
 }
 
-/*
- * allows to access the Polylang instance
- * it is always preferable to use API functions
- * internal methods may be changed without prior notice
+/**
+ * Allows to access the Polylang instance
+ * It is always preferable to use API functions
+ * Internal methods may be changed without prior notice
  *
  * @since 1.8
  */

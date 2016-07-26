@@ -92,7 +92,7 @@
 	margin-bottom: 0.5em;
 }
 
-.pll-configure .submit {
+.pll-configure p.submit {
 	margin-top: 20px;
 }
 
@@ -126,6 +126,20 @@
 	display: inline-block;
 	width: 49%;
 	vertical-align: top;
+}
+
+/* settings Activation keys */
+#pll-licenses-table td {
+	vertical-align: top;
+}
+
+#pll-licenses-table label {
+	font-size: 1em;
+	font-weight: 600;
+}
+
+.pll-configure .pll-deactivate-license {
+	margin: 0 0 0 20px;
 }
 
 /* language columns in edit.php and edit-tags.php */
@@ -278,6 +292,15 @@ td[class*='column-language_'] {
 	.pll-settings-url-col {
 		display: block;
 		width: 100%;
+	}
+
+	/* settings licenses */
+	#wpbody-content .pll-settings #pll-licenses-table td {
+		display: block;
+	}
+
+	.pll-configure .pll-deactivate-license {
+		margin: 10px 0 5px;
 	}
 
 	/* strings translations table */

@@ -4,14 +4,14 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' ); // since WP 3.1
 }
 
-/*
+/**
  * a class to create a table to list all settings modules
  *
  * @since 1.8
  */
 class PLL_Table_Settings extends WP_List_Table {
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.8
@@ -23,7 +23,7 @@ class PLL_Table_Settings extends WP_List_Table {
 		) );
 	}
 
-	/*
+	/**
 	 * get the table classes for styling
 	 *
 	 * @øince 1.8
@@ -32,7 +32,7 @@ class PLL_Table_Settings extends WP_List_Table {
 		return array( 'wp-list-table', 'widefat', 'plugins', 'pll-settings' ); // get the style of the plugins list table + one specific class
 	}
 
-	/*
+	/**
 	 * displays a single row
 	 *
 	 * @øince 1.8
@@ -42,11 +42,26 @@ class PLL_Table_Settings extends WP_List_Table {
 	public function single_row( $item ) {
 		// classes to reuse css from the plugins list table
 		$classes = $item->is_active() ? 'active' : 'inactive';
+		if ( $message = $item->get_upgrade_message() ) {
+			$classes .= ' update';
+		}
 
 		// display the columns
 		printf( '<tr id="pll-module-%s" class="%s">', esc_attr( $item->module ), esc_attr( $classes ) );
 		$this->single_row_columns( $item );
 		echo '</tr>';
+
+		// display an upgrade message if there is any
+		if ( $message = $item->get_upgrade_message() ) {
+			printf( '
+				<tr class="plugin-update-tr">
+					<td colspan="3" class="plugin-update colspanchange">
+						<div class="update-message">%s</div>
+					</td>
+				</tr>',
+				$message
+			);
+		}
 
 		// the settings if there are
 		// "inactive" class to reuse css from the plugins list table
@@ -57,12 +72,11 @@ class PLL_Table_Settings extends WP_List_Table {
 						<legend>%s</legend>
 						%s
 						<p class="submit inline-edit-save">
-							<button type="button" class="button button-secondary cancel">%s</button>
-							<button type="button" class="button button-primary save">%s</button>
+							%s
 						</p>
 					</td>
 				</tr>',
-				esc_attr( $item->module ), esc_html( $item->title ), $form, __( 'Cancel' ), __( 'Save Changes' )
+				esc_attr( $item->module ), esc_html( $item->title ), $form, implode( $item->get_buttons() )
 			);
 		}
 	}
@@ -109,7 +123,7 @@ class PLL_Table_Settings extends WP_List_Table {
 	 */
 	protected function column_cb( $item ) {}
 
-	/*
+	/**
 	 * displays the item information in a column ( default case )
 	 *
 	 * @since 1.8
@@ -125,7 +139,7 @@ class PLL_Table_Settings extends WP_List_Table {
 		return $item->$column_name;
 	}
 
-	/*
+	/**
 	 * gets the list of columns
 	 *
 	 * @since 1.8
@@ -151,7 +165,7 @@ class PLL_Table_Settings extends WP_List_Table {
 		return 'plugin-title';
 	}
 
-	/*
+	/**
 	 * prepares the list of items for displaying
 	 *
 	 * @since 1.8

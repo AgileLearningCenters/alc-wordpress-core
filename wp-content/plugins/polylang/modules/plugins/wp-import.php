@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * a class to import languages and translations information form a WXR file
  *
  * @since 1.2
@@ -8,7 +8,7 @@
 class PLL_WP_Import extends WP_Import {
 	public $post_translations = array();
 
-	/*
+	/**
 	 * overrides WP_Import::process_terms to remap terms translations
 	 *
 	 * @since 1.2
@@ -44,7 +44,7 @@ class PLL_WP_Import extends WP_Import {
 		$this->remap_translations( $term_translations, $this->processed_terms );
 	}
 
-	/*
+	/**
 	 * overrides WP_Import::process_post to remap posts translations
 	 * also merges strings translations from the WXR file to the existing ones
 	 *
@@ -103,7 +103,7 @@ class PLL_WP_Import extends WP_Import {
 		}
 	}
 
-	/*
+	/**
 	 * remaps terms languages
 	 *
 	 * @since 1.2
@@ -149,7 +149,7 @@ class PLL_WP_Import extends WP_Import {
 		}
 	}
 
-	/*
+	/**
 	 * remaps translations for both posts and terms
 	 *
 	 * @since 1.2

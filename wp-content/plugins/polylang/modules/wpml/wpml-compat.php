@@ -1,14 +1,14 @@
 <?php
 
-/*
- * compatibility with WPML API. See http://wpml.org/documentation/support/wpml-coding-api/
+/**
+ * Compatibility with WPML API. See http://wpml.org/documentation/support/wpml-coding-api/
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // don't access directly
 };
 
-/*
+/**
  * defines two WPML constants once the language has been defined
  * the compatibility with WPML is not perfect on admin side as the constants are defined
  * in 'setup_theme' by Polylang ( based on user info ) and 'plugins_loaded' by WPML ( based on cookie )
@@ -39,7 +39,7 @@ function pll_define_wpml_constants() {
 
 add_action( 'pll_language_defined', 'pll_define_wpml_constants' );
 
-/*
+/**
  * link to the home page in the active language
  *
  * @since 0.9.4
@@ -52,7 +52,7 @@ if ( ! function_exists( 'icl_get_home_url' ) ) {
 	}
 }
 
-/*
+/**
  * used for building custom language selectors
  * available only on frontend
  *
@@ -115,15 +115,15 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 	}
 }
 
-/*
+/**
  * used for creating language dependent links in themes
  *
  * @since 1.0
  *
- * @param int $id object id
- * @param string $type optional, post type or taxonomy name of the object, defaults to 'post'
- * @param string $text optional the link text. If not specified will produce the name of the element in the current language
- * @param array $args optional an array of arguments to add to the link, defaults to empty
+ * @param int    $id     object id
+ * @param string $type   optional, post type or taxonomy name of the object, defaults to 'post'
+ * @param string $text   optional the link text. If not specified will produce the name of the element in the current language
+ * @param array  $args   optional an array of arguments to add to the link, defaults to empty
  * @param string $anchor optional the anchor to add to teh link, defaults to empty
  * @return string a language dependent link
  */
@@ -167,14 +167,14 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 	}
 }
 
-/*
+/**
  * used for calculating the IDs of objects ( usually categories ) in the current language
  *
  * @since 0.9.5
  *
  * @param int $id object id
  * @param string $type, post type or taxonomy name of the object, defaults to 'post'
- * @param bool $return_original_if_missing optional, true if Polylang should return the original id if the translation is missing, defaults to false
+ * @param bool   $return_original_if_missing optional, true if Polylang should return the original id if the translation is missing, defaults to false
  * @param string $lang optional language code, defaults to current language
  * @return int|null the object id of the translation, null if the translation is missing and $return_original_if_missing set to false
  */
@@ -186,7 +186,7 @@ if ( ! function_exists( 'icl_object_id' ) ) {
 	}
 }
 
-/*
+/**
  * undocumented function used by the theme Maya
  * returns the post language
  * @see original WPML code at https://wpml.org/forums/topic/canonical-urls-for-wpml-duplicated-posts/#post-52198
@@ -213,14 +213,14 @@ if ( ! function_exists( 'wpml_get_language_information' ) ) {
 	}
 }
 
-/*
+/**
  * registers a string for translation in the "strings translation" panel
  *
  * @since 0.9.3
  *
  * @param string $context the group in which the string is registered, defaults to 'polylang'
- * @param string $name a unique name for the string
- * @param string $string the string to register
+ * @param string $name    a unique name for the string
+ * @param string $string  the string to register
  */
 if ( ! function_exists( 'icl_register_string' ) ) {
 	function icl_register_string( $context, $name, $string ) {
@@ -228,13 +228,13 @@ if ( ! function_exists( 'icl_register_string' ) ) {
 	}
 }
 
-/*
+/**
  * removes a string from the "strings translation" panel
  *
  * @since 1.0.2
  *
  * @param string $context the group in which the string is registered, defaults to 'polylang'
- * @param string $name a unique name for the string
+ * @param string $name    a unique name for the string
  */
 if ( ! function_exists( 'icl_unregister_string' ) ) {
 	function icl_unregister_string( $context, $name ) {
@@ -242,23 +242,26 @@ if ( ! function_exists( 'icl_unregister_string' ) ) {
 	}
 }
 
-/*
+/**
  * gets the translated value of a string ( previously registered with icl_register_string or pll_register_string )
  *
  * @since 0.9.3
  *
- * @param string $context not used by Polylang
- * @param string $name not used by Polylang
- * @param string $string the string to translated
+ * @param string $context the group in which the string is registered
+ * @param string $name    a unique name for the string
+ * @param string $string  the string to translate, optional for strings registered with icl_register_string
  * @return string the translated string in the current language
  */
 if ( ! function_exists( 'icl_t' ) ) {
-	function icl_t( $context, $name, $string ) {
+	function icl_t( $context, $name, $string = false ) {
+		if ( empty( $string ) ) {
+			$string = PLL_WPML_Compat::instance()->get_string_by_context_and_name( $context, $name );
+		}
 		return pll__( $string );
 	}
 }
 
-/*
+/**
  * undocumented function used by NextGen Gallery
  * seems to be used to both register and translate a string
  * used in PLL_Plugins_Compat for Jetpack with only 3 arguments
@@ -266,9 +269,9 @@ if ( ! function_exists( 'icl_t' ) ) {
  * @since 1.0.2
  *
  * @param string $context the group in which the string is registered, defaults to 'polylang'
- * @param string $name a unique name for the string
- * @param string $string the string to register
- * @param bool $bool optional, not used by Polylang
+ * @param string $name    a unique name for the string
+ * @param string $string  the string to register
+ * @param bool   $bool    optional, not used by Polylang
  * @return string the translated string in the current language
  */
 if ( ! function_exists( 'icl_translate' ) ) {
@@ -278,11 +281,11 @@ if ( ! function_exists( 'icl_translate' ) ) {
 	}
 }
 
-/*
+/**
  * undocumented function used by Types
  * FIXME: tested only with Types
  * probably incomplete as Types locks the custom fields for a new post, but not when edited
- * this is probably linked to the fact that WPML has always an original post in the default language and not Polylang : )
+ * this is probably linked to the fact that WPML has always an original post in the default language and not Polylang :)
  *
  * @since 1.1.2
  *
@@ -302,13 +305,14 @@ if ( ! function_exists( 'wpml_get_copied_fields_for_post_edit' ) ) {
 		}
 
 		// apply our filter and fill the expected output ( see /types/embedded/includes/fields-post.php )
+		/** This filter is documented in modules/sync/admin-sync.php */
 		$arr['fields'] = array_unique( apply_filters( 'pll_copy_post_metas', empty( $keys ) ? array() : $keys, false ) );
 		$arr['original_post_id'] = (int) $_GET['from_post'];
 		return $arr;
 	}
 }
 
-/*
+/**
  * undocumented function used by Warp 6 by Yootheme
  *
  * @since 1.0.5
@@ -321,7 +325,7 @@ if ( ! function_exists( 'icl_get_default_language' ) ) {
 	}
 }
 
-/*
+/**
  * undocumented function reported to be used by Table Rate Shipping for WooCommerce
  * @see https://wordpress.org/support/topic/add-wpml-compatibility-function
  *
@@ -335,7 +339,7 @@ if ( ! function_exists( 'wpml_get_default_language' ) ) {
 	}
 }
 
-/*
+/**
  * registers strings in a persistent way as done by WPML
  *
  * @since 1.0.2
@@ -344,7 +348,7 @@ class PLL_WPML_Compat {
 	static protected $instance; // for singleton
 	static protected $strings; // used for cache
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.0.2
@@ -355,7 +359,7 @@ class PLL_WPML_Compat {
 		add_action( 'pll_get_strings', array( &$this, 'get_strings' ) );
 	}
 
-	/*
+	/**
 	 * access to the single instance of the class
 	 *
 	 * @since 1.7
@@ -369,7 +373,7 @@ class PLL_WPML_Compat {
 		return self::$instance;
 	}
 
-	/*
+	/**
 	 * unlike pll_register_string, icl_register_string stores the string in database
 	 * so we need to do the same as some plugins or themes may expect this
 	 * we use a serialized option to do this
@@ -377,9 +381,9 @@ class PLL_WPML_Compat {
 	 * @since 1.0.2
 	 *
 	 * @param string $context the group in which the string is registered, defaults to 'polylang'
-	 * @param string $name a unique name for the string
-	 * @param string $string the string to register
- 	 */
+	 * @param string $name    a unique name for the string
+	 * @param string $string  the string to register
+	 */
 	public function register_string( $context, $name, $string ) {
 		// registers the string if it does not exist yet
 		$to_register = array( 'context' => $context, 'name' => $name, 'string' => $string, 'multiline' => false, 'icl' => true );
@@ -389,13 +393,13 @@ class PLL_WPML_Compat {
 		}
 	}
 
-	/*
+	/**
 	 * removes a string from the registered strings list
 	 *
 	 * @since 1.0.2
 	 *
 	 * @param string $context the group in which the string is registered, defaults to 'polylang'
-	 * @param string $name a unique name for the string
+	 * @param string $name    a unique name for the string
 	 */
 	public function unregister_string( $context, $name ) {
 		foreach ( self::$strings as $key => $string ) {
@@ -406,7 +410,7 @@ class PLL_WPML_Compat {
 		}
 	}
 
-	/*
+	/**
 	 * adds strings registered by icl_register_string to those registered by pll_register_string
 	 *
 	 * @since 1.0.2
@@ -416,5 +420,23 @@ class PLL_WPML_Compat {
 	 */
 	public function get_strings( $strings ) {
 		return empty( self::$strings ) ? $strings : array_merge( $strings, self::$strings );
+	}
+
+	/**
+	 * Get a registered string by its context and name
+	 *
+	 * @since 1.9.2
+	 *
+	 * @param string $context the group in which the string is registered
+	 * @param string $name    a unique name for the string
+	 * @return bool|string the registered string, false if none was found
+	 */
+	public function get_string_by_context_and_name( $context, $name ) {
+		foreach ( self::$strings as $string ) {
+			if ( $string['context'] == $context && $string['name'] == $name ) {
+				return $string['string'];
+			}
+		}
+		return false;
 	}
 }

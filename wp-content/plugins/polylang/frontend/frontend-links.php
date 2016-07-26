@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * manages links filters and url of translations on frontend
  *
  * @since 1.2
@@ -9,7 +9,7 @@ class PLL_Frontend_Links extends PLL_Links {
 	public $curlang;
 	public $cache; // our internal non persistent cache object
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.2
@@ -24,7 +24,7 @@ class PLL_Frontend_Links extends PLL_Links {
 
 	}
 
-	/*
+	/**
 	 * returns the url of the translation ( if exists ) of the current page
 	 *
 	 * @since 0.1
@@ -43,7 +43,16 @@ class PLL_Frontend_Links extends PLL_Links {
 		// see https://wordpress.org/support/topic/patch-for-fixing-a-notice
 		$queried_object_id = $wp_query->get_queried_object_id();
 
-		// the filter will handle the static front page and posts page
+		/**
+		 * Filter the translation url before Polylang attempts to find one
+		 * Internally used by Polylang for the static front page and posts page
+		 *
+		 * @since 1.8
+		 *
+		 * @param string $url               empty or the url of the translation of teh current page
+		 * @param object $language          language of the translation
+		 * @param int    $queried_object_id queried object id
+		 */
 		if ( ! $url = apply_filters( 'pll_pre_translation_url', '', $language, $queried_object_id ) ) {
 			$qv = $wp_query->query_vars;
 			$hide = $this->options['default_lang'] == $language->slug && $this->options['hide_default'];
@@ -122,12 +131,20 @@ class PLL_Frontend_Links extends PLL_Links {
 			}
 		}
 
+		/**
+		 * Filter the translation url of the current page before Polylang caches it
+		 *
+		 * @since 1.1.2
+		 *
+		 * @param null|string $url      the translation url, null if none was found
+		 * @param string      $language the language code of the translation
+		 */
 		$translation_url = apply_filters( 'pll_translation_url', ( isset( $url ) && ! is_wp_error( $url ) ? $url : null ), $language->slug );
 		$this->cache->set( 'translation_url:' . $language->slug, $translation_url );
 		return $translation_url;
 	}
 
-	/*
+	/**
 	 * get the translation of the current archive url
 	 * used also for search
 	 *
@@ -140,10 +157,19 @@ class PLL_Frontend_Links extends PLL_Links {
 		$url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		$url = $this->links_model->switch_language_in_link( $url, $language );
 		$url = $this->links_model->remove_paged_from_link( $url );
+
+		/**
+		 * Filter the archive url
+		 *
+		 * @since 1.6
+		 *
+		 * @param string $url      url of the archive
+		 * @param object $language language of the archive
+		 */
 		return apply_filters( 'pll_get_archive_url', $url, $language );
 	}
 
-	/*
+	/**
 	 * returns the home url in the right language
 	 *
 	 * @since 0.1

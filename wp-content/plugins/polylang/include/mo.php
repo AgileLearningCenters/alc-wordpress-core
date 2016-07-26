@@ -1,13 +1,13 @@
 <?php
 
-/*
+/**
  * manages strings translations storage
  *
  * @since 1.2
  */
 class PLL_MO extends MO {
 
-	/*
+	/**
 	 * registers the polylang_mo custom post type, only at first object creation
 	 *
 	 * @since 1.2
@@ -19,7 +19,7 @@ class PLL_MO extends MO {
 		}
 	}
 
-	/*
+	/**
 	 * writes a PLL_MO object into a custom post
 	 *
 	 * @since 1.2
@@ -48,7 +48,7 @@ class PLL_MO extends MO {
 		wp_insert_post( $post );
 	}
 
-	/*
+	/**
 	 * reads a PLL_MO object from a custom post
 	 *
 	 * @since 1.2
@@ -67,7 +67,7 @@ class PLL_MO extends MO {
 		}
 	}
 
-	/*
+	/**
 	 * returns the post id of the post storing the strings translations
 	 *
 	 * @since 1.4

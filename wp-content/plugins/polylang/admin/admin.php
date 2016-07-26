@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * admin side controller
  * accessible in $polylang global object
  *
@@ -25,7 +25,7 @@
 class PLL_Admin extends PLL_Admin_Base {
 	public $filters, $filters_columns, $filters_post, $filters_term, $nav_menu, $sync, $filters_media;
 
-	/*
+	/**
 	 * loads the polylang text domain
 	 * setups filters and action needed on all admin pages and on plugins page
 	 *
@@ -41,7 +41,7 @@ class PLL_Admin extends PLL_Admin_Base {
 		add_action( 'in_plugin_update_message-' . POLYLANG_BASENAME, array( &$this, 'plugin_update_message' ), 10, 2 );
 	}
 
-	/*
+	/**
 	 * setups filters and action needed on all admin pages and on plugins page
 	 * loads the settings pages or the filters base on the request
 	 *
@@ -59,7 +59,7 @@ class PLL_Admin extends PLL_Admin_Base {
 		}
 	}
 
-	/*
+	/**
 	 * adds a 'settings' link in the plugins table
 	 *
 	 * @since 0.1
@@ -72,7 +72,7 @@ class PLL_Admin extends PLL_Admin_Base {
 		return $links;
 	}
 
-	/*
+	/**
 	 * adds the upgrade notice in plugins table
 	 *
 	 * @since 1.1.6
@@ -86,7 +86,7 @@ class PLL_Admin extends PLL_Admin_Base {
 		}
 	}
 
-	/*
+	/**
 	 * setup filters for admin pages
 	 *
 	 * @since 1.2
@@ -102,6 +102,14 @@ class PLL_Admin extends PLL_Admin_Base {
 
 		foreach ( $classes as $class ) {
 			$obj = strtolower( $class );
+
+			/**
+			 * Filter the class to instantiate when loding admin filters
+			 *
+			 * @since 1.5
+			 *
+			 * @param string $class class name
+			 */
 			$class = apply_filters( 'pll_' . $obj, 'PLL_Admin_' . $class );
 			$this->$obj = new $class( $this );
 		}

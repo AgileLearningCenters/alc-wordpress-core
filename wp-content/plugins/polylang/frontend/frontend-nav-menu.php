@@ -1,15 +1,15 @@
 <?php
 
-/*
- * manages custom menus translations as well as the language switcher menu item on frontend
+/**
+ * Manages custom menus translations as well as the language switcher menu item on frontend
  *
  * @since 1.2
  */
 class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	public $curlang;
 
-	/*
-	 * constructor
+	/**
+	 * Constructor
 	 *
 	 * @since 1.2
 	 */
@@ -18,23 +18,23 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 
 		$this->curlang = &$polylang->curlang;
 
-		// split the language switcher menu item in several language menu items
+		// Split the language switcher menu item in several language menu items
 		add_filter( 'wp_get_nav_menu_items', array( &$this, 'wp_get_nav_menu_items' ), 20 ); // after the customizer menus
 		add_filter( 'wp_nav_menu_objects', array( &$this, 'wp_nav_menu_objects' ) );
 		add_filter( 'nav_menu_link_attributes', array( &$this, 'nav_menu_link_attributes' ), 10, 3 );
 
-		// filters menus by language
+		// Filters menus by language
 		add_filter( 'theme_mod_nav_menu_locations', array( $this, 'nav_menu_locations' ), 20 );
 		add_filter( 'wp_nav_menu_args', array( &$this, 'wp_nav_menu_args' ) );
 
-		// the customizer
+		// The customizer
 		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
 			add_filter( 'wp_nav_menu_args', array( &$this, 'filter_args_before_customizer' ) );
 			add_filter( 'wp_nav_menu_args', array( &$this, 'filter_args_after_customizer' ), 2000 );
 		}
 	}
 
-	/*
+	/**
 	 * Sort menu items by menu order
 	 *
 	 * @since 1.7.9
@@ -47,8 +47,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return ( $a->menu_order < $b->menu_order ) ? -1 : 1;
 	}
 
-	/*
-	 * splits the one item of backend in several items on frontend
+	/**
+	 * Splits the one item of backend in several items on frontend
 	 * take care to menu_order as it is used later in wp_nav_menu
 	 *
 	 * @since 1.1.1
@@ -61,7 +61,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 			return $items;
 		}
 
-		// the customizer menus does not sort the items and we need them to be sorted before splitting the language switcher
+		// The customizer menus does not sort the items and we need them to be sorted before splitting the language switcher
 		usort( $items, array( $this, 'usort_menu_items' ) );
 
 		$new_items = array();
@@ -77,17 +77,16 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 
 				foreach ( $the_languages as $lang ) {
 					$lang_item = clone $item;
-					$lang_item->ID = $lang_item->ID . '-' . $lang['slug']; // a unique ID
-					$lang_item->title = $options['show_flags'] && $options['show_names'] ? $lang['flag'].'&nbsp;'.esc_html( $lang['name'] ) : ( $options['show_flags'] ? $lang['flag'] : esc_html( $lang['name'] ) );
+					$lang_item->ID = $lang_item->ID . '-' . $lang['slug']; // A unique ID
+					$lang_item->title = $options['show_flags'] && $options['show_names'] ? $lang['flag'] . '<span style="margin-left:0.3em;">' . esc_html( $lang['name'] ) . '</span>' : ( $options['show_flags'] ? $lang['flag'] : esc_html( $lang['name'] ) );
 					$lang_item->url = $lang['url'];
-					$lang_item->lang = $lang['locale']; // save this for use in nav_menu_link_attributes
+					$lang_item->lang = $lang['locale']; // Save this for use in nav_menu_link_attributes
 					$lang_item->classes = $lang['classes'];
 					$lang_item->menu_order += $offset + $i++;
 					$new_items[] = $lang_item;
 				}
 				$offset += $i - 1;
-			}
-			else {
+			} else {
 				$item->menu_order += $offset;
 				$new_items[] = $item;
 			}
@@ -96,8 +95,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return $new_items;
 	}
 
-	/*
-	 * returns the ancestors of a menu item
+	/**
+	 * Returns the ancestors of a menu item
 	 *
 	 * @since 1.1.1
 	 *
@@ -113,8 +112,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return $ids;
 	}
 
-	/*
-	 * removes current-menu and current-menu-ancestor classes to lang switcher when not on the home page
+	/**
+	 * Removes current-menu and current-menu-ancestor classes to lang switcher when not on the home page
 	 *
 	 * @since 1.1.1
 	 *
@@ -128,10 +127,9 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 			if ( ! empty( $item->classes ) && is_array( $item->classes ) ) {
 				if ( in_array( 'current-lang', $item->classes ) ) {
 					$item->classes = array_diff( $item->classes, array( 'current-menu-item' ) );
-					$r_ids = array_merge( $r_ids, $this->get_ancestors( $item ) ); // remove the classes for these ancestors
-				}
-				elseif ( in_array( 'current-menu-item', $item->classes ) ) {
-					$k_ids = array_merge( $k_ids, $this->get_ancestors( $item ) ); // keep the classes for these ancestors
+					$r_ids = array_merge( $r_ids, $this->get_ancestors( $item ) ); // Remove the classes for these ancestors
+				} elseif ( in_array( 'current-menu-item', $item->classes ) ) {
+					$k_ids = array_merge( $k_ids, $this->get_ancestors( $item ) ); // Keep the classes for these ancestors
 				}
 			}
 		}
@@ -147,8 +145,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return $items;
 	}
 
-	/*
-	 * adds hreflang attribute for the language switcher menu items
+	/**
+	 * Adds hreflang attribute for the language switcher menu items
 	 * available since WP3.6
 	 *
 	 * @since 1.1
@@ -163,9 +161,9 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return $atts;
 	}
 
-	/*
-	 * fills the theme nav menus locations with the right menu in the right language
-	 * needs to wait for the language to be defined
+	/**
+	 * Fills the theme nav menus locations with the right menu in the right language
+	 * Needs to wait for the language to be defined
 	 *
 	 * @since 1.2
 	 *
@@ -174,15 +172,15 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	 */
 	public function nav_menu_locations( $menus ) {
 		if ( is_array( $menus ) && ! empty( $this->curlang ) ) {
-			// first get multilingual menu locations from DB
+			// First get multilingual menu locations from DB
 			$theme = get_option( 'stylesheet' );
 
 			foreach ( $menus as $loc => $menu ) {
 				$menus[ $loc ] = empty( $this->options['nav_menus'][ $theme ][ $loc ][ $this->curlang->slug ] ) ? 0 : $this->options['nav_menus'][ $theme ][ $loc ][ $this->curlang->slug ];
 			}
 
-			// support for theme customizer
-			// let's look for multilingual menu locations directly in $_POST as there are not in customizer object
+			// Support for theme customizer
+			// Let's look for multilingual menu locations directly in $_POST as there are not in customizer object
 			if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
 				$customized = json_decode( wp_unslash( $_POST['customized'] ) );
 
@@ -193,8 +191,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 							$infos = $this->explode_location( $loc );
 							if ( $infos['lang'] == $this->curlang->slug ) {
 								$menus[ $infos['location'] ] = $c;
-							}
-							elseif ( $this->curlang->slug == $this->options['default_lang'] ) {
+							} elseif ( $this->curlang->slug == $this->options['default_lang'] ) {
 								$menus[ $loc ] = $c;
 							}
 						}
@@ -205,8 +202,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return $menus;
 	}
 
-	/*
-	 * attempt to translate the nav menu when it is hardcoded or when no location is defined in wp_nav_menu
+	/**
+	 * Attempt to translate the nav menu when it is hardcoded or when no location is defined in wp_nav_menu
 	 *
 	 * @since 1.7.10
 	 *
@@ -223,8 +220,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		// Get the nav menu based on the requested menu
 		$menu = wp_get_nav_menu_object( $args['menu'] );
 
-		// attempt to find a translation of this menu
-		// this obviously does not work if the nav menu has no associated theme location
+		// Attempt to find a translation of this menu
+		// This obviously does not work if the nav menu has no associated theme location
 		if ( $menu ) {
 			foreach ( $this->options['nav_menus'][ $theme ] as $menus ) {
 				if ( in_array( $menu->term_id, $menus ) && ! empty( $menus[ $this->curlang->slug ] ) ) {
@@ -234,7 +231,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 			}
 		}
 
-		// get the first menu that has items and and is in the current language if we still can't find a menu
+		// Get the first menu that has items and and is in the current language if we still can't find a menu
 		if ( ! $menu && ! $args['theme_location'] ) {
 			$menus = wp_get_nav_menus();
 			foreach ( $menus as $menu_maybe ) {
@@ -252,8 +249,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return $args;
 	}
 
-	/*
-	 * filters the nav menu location before the customizer so that it matches the temporary location in the customizer
+	/**
+	 * Filters the nav menu location before the customizer so that it matches the temporary location in the customizer
 	 *
 	 * @since 1.8
 	 *
@@ -267,8 +264,8 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		return $args;
 	}
 
-	/*
-	 * filters the nav menu location after the customizer to get back the true nav menu location for the theme
+	/**
+	 * Filters the nav menu location after the customizer to get back the true nav menu location for the theme
 	 *
 	 * @since 1.8
 	 *

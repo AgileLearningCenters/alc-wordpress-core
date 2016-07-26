@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * base class for both admin
  *
  * @since 1.8
@@ -8,7 +8,7 @@
 class PLL_Admin_Base extends PLL_Base {
 	public $curlang, $pref_lang;
 
-	/*
+	/**
 	 * loads the polylang text domain
 	 * setups actions needed on all admin pages
 	 *
@@ -35,7 +35,7 @@ class PLL_Admin_Base extends PLL_Base {
 		}
 	}
 
-	/*
+	/**
 	 * setups filters and action needed on all admin pages and on plugins page
 	 * loads the settings pages or the filters base on the request
 	 *
@@ -61,7 +61,7 @@ class PLL_Admin_Base extends PLL_Base {
 		add_action( 'admin_bar_menu', array( &$this, 'admin_bar_menu' ), 100 ); // 100 determines the position
 	}
 
-	/*
+	/**
 	 * adds the link to the languages panel in the WordPress admin menu
 	 *
 	 * @since 0.1
@@ -70,7 +70,7 @@ class PLL_Admin_Base extends PLL_Base {
 		add_submenu_page( 'options-general.php', $title = __( 'Languages', 'polylang' ), $title, 'manage_options', 'mlang', '__return_null' );
 	}
 
-	/*
+	/**
 	 * setup js scripts & css styles ( only on the relevant pages )
 	 *
 	 * @since 0.6
@@ -105,7 +105,7 @@ class PLL_Admin_Base extends PLL_Base {
 		wp_enqueue_style( 'polylang_admin', POLYLANG_URL .'/css/admin'.$suffix.'.css', array(), POLYLANG_VERSION );
 	}
 
-	/*
+	/**
 	 * sets pll_ajax_backend on all backend ajax request
 	 * the final goal is to detect if an ajax request is made on admin or frontend
 	 *
@@ -169,7 +169,7 @@ class PLL_Admin_Base extends PLL_Base {
 
 	}
 
-	/*
+	/**
 	 * defines the backend language and the admin language filter based on user preferences
 	 *
 	 * @since 1.2.3
@@ -188,20 +188,31 @@ class PLL_Admin_Base extends PLL_Base {
 
 		// set preferred language for use when saving posts and terms: must not be empty
 		$this->pref_lang = empty( $this->curlang ) ? $this->model->get_language( $this->options['default_lang'] ) : $this->curlang;
+
+		/**
+		 * Filter the preferred language on amin side
+		 * The preferred language is used for example to determine the language of a new post
+		 *
+		 * @since 1.2.3
+		 *
+		 * @param object $pref_lang preferred language
+		 */
 		$this->pref_lang = apply_filters( 'pll_admin_preferred_language', $this->pref_lang );
 
 		// inform that the admin language has been set
 		// only if the admin language is one of the Polylang defined language
 		if ( $curlang = $this->model->get_language( get_locale() ) ) {
 			$GLOBALS['text_direction'] = $curlang->is_rtl ? 'rtl' : 'ltr'; // force text direction according to language setting
+			/** This action is documented in frontend/choose-lang.php */
 			do_action( 'pll_language_defined', $curlang->slug, $curlang );
 		}
 		else {
+			/** This action is documented in include/class-polylang.php */
 			do_action( 'pll_no_language_defined' ); // to load overriden textdomains
 		}
 	}
 
-	/*
+	/**
 	 * avoids parsing a tax query when all languages are requested
 	 * fixes https://wordpress.org/support/topic/notice-undefined-offset-0-in-wp-includesqueryphp-on-line-3877 introduced in WP 4.1
 	 * @see the suggestion of @boonebgorges, https://core.trac.wordpress.org/ticket/31246
@@ -219,7 +230,7 @@ class PLL_Admin_Base extends PLL_Base {
 		return $qvars;
 	}
 
-	/*
+	/**
 	 * get the locale based on user preference
 	 *
 	 * @since 0.4
@@ -231,7 +242,7 @@ class PLL_Admin_Base extends PLL_Base {
 		return ( $loc = get_user_meta( get_current_user_id(), 'user_lang', 'true' ) ) ? $loc : $locale;
 	}
 
-	/*
+	/**
 	 * adds the languages list in admin bar for the admin languages filter
 	 *
 	 * @since 0.9

@@ -1,7 +1,7 @@
 <?php
 
-/*
- * links model for use when using one domain per language
+/**
+ * Links model for use when using one domain per language
  * for example mysite.com/sth and mysite.fr/qqch
  * implements the "links_model interface"
  *
@@ -9,8 +9,8 @@
  */
 class PLL_Links_Domain extends PLL_Links_Permalinks {
 
-	/*
-	 * constructor
+	/**
+	 * Constructor
 	 *
 	 * @since 1.8
 	 *
@@ -23,13 +23,13 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 	}
 
 
-	/*
-	 * adds the language code in url
+	/**
+	 * Adds the language code in url
 	 * links_model interface
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $url url to modify
+	 * @param string $url  url to modify
 	 * @param object $lang language
 	 * @return string modified url
 	 */
@@ -40,8 +40,8 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 		return $url;
 	}
 
-	/*
-	 * returns the url without language code
+	/**
+	 * Returns the url without language code
 	 * links_model interface
 	 *
 	 * @since 1.2
@@ -56,8 +56,8 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 		return $url;
 	}
 
-	/*
-	 * returns the language based on language code in url
+	/**
+	 * Returns the language based on language code in url
 	 * links_model interface
 	 *
 	 * @since 1.2
@@ -68,8 +68,8 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 		return ( $lang = array_search( ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . parse_url( $this->home, PHP_URL_PATH ), $this->options['domains'] ) ) ? $lang : '';
 	}
 
-	/*
-	 * returns the home url
+	/**
+	 * Returns the home url
 	 * links_model interface
 	 *
 	 * @since 1.3.1
@@ -81,8 +81,8 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 		return trailingslashit( empty( $this->options['domains'][ $lang->slug ] ) ? $this->home : $this->options['domains'][ $lang->slug ] );
 	}
 
-	/*
-	 * get hosts managed on the website
+	/**
+	 * Get hosts managed on the website
 	 *
 	 * @since 1.5
 	 *
@@ -96,8 +96,8 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 		return $hosts;
 	}
 
-	/*
-	 * returns the correct site url ( mainly to get the correct login form )
+	/**
+	 * Returns the correct site url ( mainly to get the correct login form )
 	 *
 	 * @since 1.8
 	 *

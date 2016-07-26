@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Choose the language when it is set from content
  * The language is set either in parse_query with priority 2 or in wp with priority 5
  *
@@ -8,7 +8,7 @@
  */
 class PLL_Choose_Lang_Content extends PLL_Choose_lang {
 
-	/*
+	/**
 	 * defers the language choice to the 'wp' action (when the content is known)
 	 *
 	 * @since 1.8
@@ -25,7 +25,7 @@ class PLL_Choose_Lang_Content extends PLL_Choose_lang {
 		}
 	}
 
-	/*
+	/**
 	 * overwrites parent::set_language to remove the 'wp' action if the language is set before
 	 *
 	 * @since 1.2
@@ -37,7 +37,7 @@ class PLL_Choose_Lang_Content extends PLL_Choose_lang {
 		remove_action( 'wp', array( &$this, 'wp' ), 5 ); // won't attempt to set the language a 2nd time
 	}
 
-	/*
+	/**
 	 * returns the language based on the queried content
 	 *
 	 * @since 1.2
@@ -67,11 +67,17 @@ class PLL_Choose_Lang_Content extends PLL_Choose_lang {
 			}
 		}
 
-		// allows plugins to set the language
+		/**
+		 * Filter the language before it is set from the content
+		 *
+		 * @since 0.9
+		 *
+		 * @param bool|object $lang language object or false if none was found
+		 */
 		return apply_filters( 'pll_get_current_language', isset( $lang ) ? $lang : false );
 	}
 
-	/*
+	/**
 	 * sets the language for home page
 	 * add the lang query var when querying archives with no language code
 	 *
@@ -109,7 +115,7 @@ class PLL_Choose_Lang_Content extends PLL_Choose_lang {
 		}
 	}
 
-	/*
+	/**
 	 * sets the language from content
 	 *
 	 * @since 1.2
@@ -121,7 +127,7 @@ class PLL_Choose_Lang_Content extends PLL_Choose_lang {
 		}
 	}
 
-	/*
+	/**
 	 * if no language found by get_language_from_content, return the preferred one
 	 *
 	 * @since 0.9

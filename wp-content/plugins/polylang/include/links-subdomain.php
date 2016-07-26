@@ -1,7 +1,7 @@
 <?php
 
-/*
- * links model for use when the language code is added in url as a subdomain
+/**
+ * Links model for use when the language code is added in url as a subdomain
  * for example en.mysite.com/something
  * implements the "links_model interface"
  *
@@ -10,18 +10,25 @@
 class PLL_Links_Subdomain extends PLL_Links_Permalinks {
 	protected $www;
 
+	/**
+	 * Constructor
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param object $model PLL_Model instance
+	 */
 	public function __construct( &$model ) {
 		parent::__construct( $model );
 		$this->www = false === strpos( $this->home, '://www.' ) ? '://' : '://www.';
 	}
 
-	/*
-	 * adds the language code in url
+	/**
+	 * Adds the language code in url
 	 * links_model interface
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $url url to modify
+	 * @param string $url  url to modify
 	 * @param object $lang language
 	 * @return string modified url
 	 */
@@ -32,8 +39,8 @@ class PLL_Links_Subdomain extends PLL_Links_Permalinks {
 		return $url;
 	}
 
-	/*
-	 * returns the url without language code
+	/**
+	 * Returns the url without language code
 	 * links_model interface
 	 *
 	 * @since 1.2
@@ -55,8 +62,8 @@ class PLL_Links_Subdomain extends PLL_Links_Permalinks {
 		return $url;
 	}
 
-	/*
-	 * returns the language based on language code in url
+	/**
+	 * Returns the language based on language code in url
 	 * links_model interface
 	 *
 	 * @since 1.2
@@ -68,8 +75,8 @@ class PLL_Links_Subdomain extends PLL_Links_Permalinks {
 		return preg_match( $pattern, trailingslashit( $_SERVER['HTTP_HOST'] ), $matches ) ? $matches[1] : ''; // $matches[1] is the slug of the requested language
 	}
 
-	/*
-	 * get hosts managed on the website
+	/**
+	 * Get hosts managed on the website
 	 *
 	 * @since 1.5
 	 *

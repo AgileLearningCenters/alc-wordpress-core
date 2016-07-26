@@ -1,7 +1,7 @@
 <?php
 
-/*
- * links model abstract class
+/**
+ * Links model abstract class
  *
  * @since 1.5
  */
@@ -10,8 +10,8 @@ abstract class PLL_Links_Model {
 	public $home; // used to store the home url before it is filtered
 	public $using_permalinks;
 
-	/*
-	 * constructor
+	/**
+	 * Constructor
 	 *
 	 * @since 1.5
 	 *
@@ -30,12 +30,12 @@ abstract class PLL_Links_Model {
 		add_filter( 'allowed_redirect_hosts', array( &$this, 'allowed_redirect_hosts' ) );
 	}
 
-	/*
-	 * changes the language code in url
+	/**
+	 * Changes the language code in url
 	 *
 	 * @since 1.5
 	 *
-	 * @param string $url url to modify
+	 * @param string $url  url to modify
 	 * @param object $lang language
 	 * @return string modified url
 	 */
@@ -44,8 +44,8 @@ abstract class PLL_Links_Model {
 		return $this->add_language_to_link( $url, $lang );
 	}
 
-	/*
-	 * get hosts managed on the website
+	/**
+	 * Get hosts managed on the website
 	 *
 	 * @since 1.5
 	 *
@@ -55,8 +55,8 @@ abstract class PLL_Links_Model {
 		return array( parse_url( $this->home, PHP_URL_HOST ) );
 	}
 
-	/*
-	 * returns the home url
+	/**
+	 * Returns the home url
 	 *
 	 * @since 1.3.1
 	 *
@@ -68,8 +68,8 @@ abstract class PLL_Links_Model {
 		return $this->options['hide_default'] && $lang->slug == $this->options['default_lang'] ? $url: $this->add_language_to_link( $url, $lang );
 	}
 
-	/*
-	 * sets the home urls
+	/**
+	 * Sets the home urls
 	 *
 	 * @since 1.8
 	 *
@@ -81,8 +81,8 @@ abstract class PLL_Links_Model {
 		$language->set_home_url( $search_url, $home_url );
 	}
 
-	/*
-	 * sets the home urls before it is persistently cached
+	/**
+	 * Sets the home urls before it is persistently cached
 	 *
 	 * @since 1.8
 	 *
@@ -96,9 +96,9 @@ abstract class PLL_Links_Model {
 		return $languages;
 	}
 
-	/*
-	 * sets the home urls when not cached
-	 * sets the home urls scheme
+	/**
+	 * Sets the home urls when not cached
+	 * Sets the home urls scheme
 	 *
 	 * @since 1.8
 	 *
@@ -107,19 +107,19 @@ abstract class PLL_Links_Model {
 	 */
 	public function pll_after_languages_cache( $languages ) {
 		foreach ( $languages as $language ) {
-			// get the home urls when not cached
+			// Get the home urls when not cached
 			if ( ( defined( 'PLL_CACHE_LANGUAGES' ) && ! PLL_CACHE_LANGUAGES ) || ( defined( 'PLL_CACHE_HOME_URL' ) && ! PLL_CACHE_HOME_URL ) ) {
 				$this->set_home_url( $language );
 			}
 
-			// ensures that the ( possibly cached ) home url uses the right scheme http or https
+			// Ensures that the ( possibly cached ) home url uses the right scheme http or https
 			$language->set_home_url_scheme();
 		}
 		return $languages;
 	}
 
-		/*
-	 * adds our domains or subdomains to allowed hosts for safe redirection
+	/**
+	 * Adds our domains or subdomains to allowed hosts for safe redirection
 	 *
 	 * @since 1.4.3
 	 *

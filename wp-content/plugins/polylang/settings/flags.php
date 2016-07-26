@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // don't access directly
 };
 
-/*
+/**
  * The list of flags
  *
  * for each flag:
@@ -262,4 +262,11 @@ $flags = array(
 	'zw' => __( 'Zimbabwe', 'polylang' ),
 );
 
+/*
+ * Filter the list of predefined flags
+ *
+ * @since 1.8
+ *
+ * @param array $flags
+ */
 $flags = apply_filters( 'pll_predefined_flags', $flags );

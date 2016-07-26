@@ -1,12 +1,19 @@
 <?php
 
-/*
- * setups the taxonomies languages and translations model
+/**
+ * Setups the taxonomies languages and translations model
  *
  * @since 1.8
  */
 class PLL_Translated_Term extends PLL_Translated_Object {
 
+	/**
+	 * Constructor
+	 *
+	 * @since 1.8
+	 *
+	 * @param object $model
+	 */
 	public function __construct( &$model ) {
 		$this->object_type = 'term';
 		$this->tax_language = 'term_language';
@@ -20,13 +27,13 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		add_filter( 'wp_get_object_terms', array( &$this, 'wp_get_object_terms' ), 10, 3 );
 	}
 
-	/*
-	 * stores the term language in the database
+	/**
+	 * Stores the term language in the database
 	 *
 	 * @since 0.6
 	 *
-	 * @param int $term_id term id
-	 * @param int|string|object language ( term_id or slug or object )
+	 * @param int               $term_id term id
+	 * @param int|string|object $lang    language ( term_id or slug or object )
 	 */
 	public function set_language( $term_id, $lang ) {
 		$term_id = (int) $term_id;
@@ -41,8 +48,8 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		$this->save_translations( $term_id, $translations );
 	}
 
-	/*
-	 * removes the term language in database
+	/**
+	 * Removes the term language in database
 	 *
 	 * @since 0.5
 	 *
@@ -52,13 +59,13 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		wp_delete_object_term_relationships( $term_id, 'term_language' );
 	}
 
-	/*
-	 * returns the language of a term
+	/**
+	 * Returns the language of a term
 	 *
 	 * @since 0.1
 	 *
-	 * @param int|string $value term id or term slug
-	 * @param string $taxonomy optional taxonomy needed when the term slug is passed as first parameter
+	 * @param int|string $value    term id or term slug
+	 * @param string     $taxonomy optional taxonomy needed when the term slug is passed as first parameter
 	 * @return bool|object PLL_Language object, false if no language is associated to that term
 	 */
 	public function get_language( $value, $taxonomy = '' ) {
@@ -75,8 +82,8 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		return isset( $term_id ) && ( $lang = $this->get_object_term( $term_id, 'term_language' ) ) ? $this->model->get_language( $lang->term_id ) : false;
 	}
 
-	/*
-	 * tells the parent class to always store a translation term
+	/**
+	 * Tells the parent class to always store a translation term
 	 *
 	 * @since 1.8
 	 *
@@ -86,8 +93,8 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		return true;
 	}
 
-	/*
-	 * deletes a translation
+	/**
+	 * Deletes a translation
 	 *
 	 * @since 0.5
 	 *
@@ -107,8 +114,8 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		}
 	}
 
-	/*
-	 * a join clause to add to sql queries when filtering by language is needed directly in query
+	/**
+	 * A join clause to add to sql queries when filtering by language is needed directly in query
 	 *
 	 * @since 1.2
 	 *
@@ -119,12 +126,12 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		return " INNER JOIN $wpdb->term_relationships AS pll_tr ON pll_tr.object_id = t.term_id";
 	}
 
-	/*
-	 * cache language and translations when terms are queried by get_terms
+	/**
+	 * Cache language and translations when terms are queried by get_terms
 	 *
 	 * @since 1.2
 	 *
-	 * @param array $terms queried terms
+	 * @param array $terms      queried terms
 	 * @param array $taxonomies queried taxonomies
 	 * @return array unmodified $terms
 	 */
@@ -141,12 +148,12 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		return $terms;
 	}
 
-	/*
-	 * when terms are found for posts, add their language and translations to cache
+	/**
+	 * When terms are found for posts, add their language and translations to cache
 	 *
 	 * @since 1.2
 	 *
-	 * @param array $terms terms found
+	 * @param array $terms      terms found
 	 * @param array $object_ids not used
 	 * @param array $taxonomies terms taxonomies
 	 * @return array unmodified $terms

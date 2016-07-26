@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * displays the translations fields for terms
  */
 
@@ -9,12 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 };
 
 if ( isset( $term_id ) ) {
-	// edit term form?>
+	// edit term form ?>
 	<th scope="row"><?php _e( 'Translations', 'polylang' ); ?></th>
 	<td><?php
 }
 else {
-	// add term form?>
+	// add term form ?>
 	<p><?php _e( 'Translations', 'polylang' ); ?></p><?php
 }?>
 <table class="widefat term-translations"  id="<?php echo isset( $term_id ) ? 'edit' : 'add'; ?>-term-translations"><?php

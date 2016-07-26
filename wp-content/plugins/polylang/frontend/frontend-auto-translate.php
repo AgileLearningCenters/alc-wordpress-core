@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * auto translates the posts and terms ids
  * useful for example for themes querying a specific cat
  *
@@ -8,7 +9,7 @@
 class PLL_Frontend_Auto_Translate {
 	public $model, $curlang;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.1
@@ -23,7 +24,7 @@ class PLL_Frontend_Auto_Translate {
 		add_filter( 'get_terms_args', array( &$this, 'get_terms_args' ), 10, 2 );
 	}
 
-	/*
+	/**
 	 * helper function to get the translated post in the current language
 	 *
 	 * since 1.8
@@ -35,7 +36,7 @@ class PLL_Frontend_Auto_Translate {
 		return $this->model->post->get( $post_id, $this->curlang );
 	}
 
-	/*
+	/**
 	 * helper function to get the translated term in the current language
 	 *
 	 * since 1.8
@@ -47,7 +48,7 @@ class PLL_Frontend_Auto_Translate {
 		return $this->model->term->get( $term_id, $this->curlang );
 	}
 
-	/*
+	/**
 	 * filters posts query to automatically translate included ids
 	 *
 	 * @since 1.1
@@ -183,7 +184,7 @@ class PLL_Frontend_Auto_Translate {
 		}
 	}
 
-	/*
+	/**
 	 * filters terms query to automatically translate included ids
 	 *
 	 * @since 1.1.1
@@ -203,7 +204,7 @@ class PLL_Frontend_Auto_Translate {
 		return $args;
 	}
 
-	/*
+	/**
 	 * translates tax queries
 	 * compatible with nested tax queries introduced in WP 4.1
 	 *

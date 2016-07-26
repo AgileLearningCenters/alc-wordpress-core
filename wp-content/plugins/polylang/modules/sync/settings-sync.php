@@ -1,12 +1,13 @@
 <?php
 
-/*
+/**
  * Settings class for synchronization settings management
  *
  * @since 1.8
  */
 class PLL_Settings_Sync extends PLL_Settings_Module {
-	/*
+
+	/**
 	 * constructor
 	 *
 	 * @since 1.8
@@ -21,7 +22,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 		) );
 	}
 
-	/*
+	/**
 	 * deactivates the module
 	 *
 	 * @since 1.8
@@ -31,7 +32,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 		update_option( 'polylang', $this->options );
 	}
 
-	/*
+	/**
 	 * displays the settings form
 	 *
 	 * @since 1.8
@@ -49,7 +50,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 		</ul><?php
 	}
 
-	/*
+	/**
 	 * sanitizes the settings before saving
 	 *
 	 * @since 1.8
@@ -61,7 +62,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 		return $newoptions; // take care to return only validated options
 	}
 
-	/*
+	/**
 	 * get the row actions
 	 *
 	 * @since 1.8
@@ -72,7 +73,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 		return empty( $this->options['sync'] ) ? array( 'configure' ) : array( 'configure', 'deactivate' );
 	}
 
-	/*
+	/**
 	 * list the post metas to synchronize
 	 *
 	 * @since 1.0

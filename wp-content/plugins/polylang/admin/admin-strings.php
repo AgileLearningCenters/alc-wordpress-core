@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * a fully static class to manage strings translations on admin side
  *
  * @since 1.6
@@ -9,7 +9,7 @@ class PLL_Admin_Strings {
 	static protected $strings = array(); // strings to translate
 	static protected $default_strings; // default strings to register
 
-	/*
+	/**
 	 * init: add filters
 	 *
 	 * @since 1.6
@@ -19,13 +19,13 @@ class PLL_Admin_Strings {
 		add_filter( 'pll_sanitize_string_translation', array( __CLASS__, 'sanitize_string_translation' ), 10, 2 );
 	}
 
-	/*
+	/**
 	 * register strings for translation making sure it is not duplicate or empty
 	 *
 	 * @since 0.6
 	 *
-	 * @param string $name a unique name for the string
-	 * @param string $string the string to register
+	 * @param string $name    a unique name for the string
+	 * @param string $string  the string to register
 	 * @param string $context optional the group in which the string is registered, defaults to 'polylang'
 	 * @param bool $multiline optional wether the string table should display a multiline textarea or a single line input, defaults to single line
 	 */
@@ -42,7 +42,7 @@ class PLL_Admin_Strings {
 		}
 	}
 
-	/*
+	/**
 	 * get registered strings
 	 *
 	 * @since 0.6.1
@@ -97,18 +97,25 @@ class PLL_Admin_Strings {
 			}
 		}
 
-		// allow plugins to modify our list of strings, mainly for use by our PLL_WPML_Compat class
+		/**
+		 * Filter the list of strings registered for translation
+		 * Mainly for use by our PLL_WPML_Compat class
+		 *
+		 * @since 1.0.2
+		 *
+		 * @param array $strings list of strings
+		 */
 		self::$strings = apply_filters( 'pll_get_strings', self::$strings );
 		return self::$strings;
 	}
 
-	/*
+	/**
 	 * performs the sanitization ( before saving in DB ) of default strings translations
 	 *
 	 * @since 1.6
 	 *
-	 * @param string $translation, translation to sanitize
-	 * @param string $name unique name for the string
+	 * @param string $translation translation to sanitize
+	 * @param string $name        unique name for the string
 	 * @return string
 	 */
 	static public function sanitize_string_translation( $translation, $name ) {

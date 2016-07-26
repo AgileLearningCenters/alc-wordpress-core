@@ -1,13 +1,13 @@
 <?php
 
-/*
+/**
  * A class to manage URL modifications settings
  *
  * @since 1.8
  */
 class PLL_Settings_Url extends PLL_Settings_Module {
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.8
@@ -26,7 +26,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		$this->page_on_front = &$polylang->static_pages->page_on_front;
 	}
 
-	/*
+	/**
 	 * displays the fieldset to choose how the language is set
 	 *
 	 * @since 1.8
@@ -93,7 +93,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		</label><?php
 	}
 
-	/*
+	/**
 	 * displays the fieldset to choose to hide /language/ in url
 	 *
 	 * @since 1.8
@@ -119,7 +119,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		<p class="description"><?php echo __( 'Example:', 'polylang' ) . ' <code>' . esc_html( home_url( 'language/en/' ) ) . '</code>';?></p><?php
 	}
 
-	/*
+	/**
 	 * displays the fieldset to choose to redirect the home page to language page
 	 *
 	 * @since 1.8
@@ -145,7 +145,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		</p><?php
 	}
 
-	/*
+	/**
 	 * displays the settings
 	 *
 	 * @since 1.8
@@ -176,7 +176,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		</div><?php
 	}
 
-	/*
+	/**
 	 * sanitizes the settings before saving
 	 *
 	 * @since 1.8
@@ -219,7 +219,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		return $newoptions; // take care to return only validated options
 	}
 
-	/*
+	/**
 	 * check if subdomains or domains are accessible
 	 *
 	 * @since 1.8

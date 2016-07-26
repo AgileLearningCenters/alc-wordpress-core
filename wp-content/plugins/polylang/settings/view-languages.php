@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * displays the Languages admin panel
  */
 
@@ -29,6 +30,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		break;
 
 		default:
+			/**
+			 * Fires when loading the active Polylang settings tab
+			 * Allows plugins to add their own tab
+			 *
+			 * @since 1.5.1
+			 */
 			do_action( 'pll_settings_active_tab_' . $this->active_tab );
 		break;
 	}?>

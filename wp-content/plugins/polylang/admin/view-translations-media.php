@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * displays the translations fields for media
  * needs WP 3.5+
  */

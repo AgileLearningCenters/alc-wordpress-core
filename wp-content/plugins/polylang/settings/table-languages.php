@@ -4,7 +4,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' ); // since WP 3.1
 }
 
-/*
+/**
  * a class to create the languages table in Polylang settings
  * Thanks to Matt Van Andel ( http://www.mattvanandel.com ) for its plugin "Custom List Table Example" !
  *
@@ -12,7 +12,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  */
 class PLL_Table_Languages extends WP_List_Table {
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 0.1
@@ -24,7 +24,7 @@ class PLL_Table_Languages extends WP_List_Table {
 		) );
 	}
 
-	/*
+	/**
 	 * Generates content for a single row of the table
 	 *
 	 * @since 1.8
@@ -32,13 +32,21 @@ class PLL_Table_Languages extends WP_List_Table {
 	 * @param object $item The current item
 	 */
 	public function single_row( $item ) {
+		/*
+		 * Filter the list of classes assigned a row in the languages list table
+		 *
+		 * @since 1.8
+		 *
+		 * @param array  $classes list of class names
+		 * @param object $item    the current item
+		 */
 		$classes = apply_filters( 'pll_languages_row_classes', array(), $item );
 		echo '<tr' . ( empty( $classes ) ? '>' : ' class="' . esc_attr( implode( ' ', $classes ) ) . '">' );
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
 
-	/*
+	/**
 	 * displays the item information in a column ( default case )
 	 *
 	 * @since 0.1
@@ -62,7 +70,7 @@ class PLL_Table_Languages extends WP_List_Table {
 		}
 	}
 
-	/*
+	/**
 	 * displays the item information in the column 'name'
 	 * displays the edit and delete action links
 	 *
@@ -80,7 +88,7 @@ class PLL_Table_Languages extends WP_List_Table {
 		);
 	}
 
-	/*
+	/**
 	 * displays the item information in the default language
 	 * displays the 'make default' action link
 	 *
@@ -102,7 +110,16 @@ class PLL_Table_Languages extends WP_List_Table {
 				/* translators: %s is a native language name */
 				esc_html( sprintf( __( 'Choose %s as default language', 'polylang' ), $item->name ) )
 			);
-			$s = apply_filters( 'pll_default_lang_row_action', $s, $item ); // allow plugins to modify this action
+
+			/*
+			 * Filter the default language row action in the languages list table
+			 *
+			 * @since 1.8
+			 *
+			 * @param string $s    html markup of the action
+			 * @param object $item
+			 */
+			$s = apply_filters( 'pll_default_lang_row_action', $s, $item );
 		} else {
 			$s = sprintf(
 				'<span class="icon-default-lang"><span class="screen-reader-text">%1$s</span></span>',
@@ -114,7 +131,7 @@ class PLL_Table_Languages extends WP_List_Table {
 		return $s;
 	}
 
-	/*
+	/**
 	 * gets the list of columns
 	 *
 	 * @since 0.1
@@ -133,7 +150,7 @@ class PLL_Table_Languages extends WP_List_Table {
 		);
 	}
 
-	/*
+	/**
 	 * gets the list of sortable columns
 	 *
 	 * @since 0.1
@@ -155,9 +172,9 @@ class PLL_Table_Languages extends WP_List_Table {
 	 *
 	 * @since 1.8
 	 *
-	 * @param object $item The item being acted upon.
+	 * @param object $item        The item being acted upon.
 	 * @param string $column_name Current column name.
-	 * @param string $primary Primary column name.
+	 * @param string $primary     Primary column name.
 	 * @return string The row actions output.
 	 */
 	protected function handle_row_actions( $item, $column_name, $primary ) {
@@ -181,12 +198,20 @@ class PLL_Table_Languages extends WP_List_Table {
 			),
 		);
 
-		$actions = apply_filters( 'pll_languages_row_actions', $actions, $item ); // allow plugins to modify the list of actions
+		/*
+		 * Filter the list of row actions in the languages list table
+		 *
+		 * @since 1.8
+		 *
+		 * @param array  $actions list of html markup actions
+		 * @param object $item
+		 */
+		$actions = apply_filters( 'pll_languages_row_actions', $actions, $item );
 
 		return $this->row_actions( $actions );
 	}
 
-	/*
+	/**
 	 * Sort items
 	 *
 	 * @since 0.1
@@ -207,7 +232,7 @@ class PLL_Table_Languages extends WP_List_Table {
 		return ( empty( $_GET['order'] ) || 'asc' == $_GET['order'] ) ? $result : -$result;
 	}
 
-	/*
+	/**
 	 * prepares the list of items for displaying
 	 *
 	 * @since 0.1

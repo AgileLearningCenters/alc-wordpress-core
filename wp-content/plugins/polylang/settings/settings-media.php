@@ -1,12 +1,13 @@
 <?php
 
-/*
+/**
  * Settings class for media language and translation management
  *
  * @since 1.8
  */
 class PLL_Settings_Media extends PLL_Settings_Module {
-	/*
+
+	/**
 	 * constructor
 	 *
 	 * @since 1.8

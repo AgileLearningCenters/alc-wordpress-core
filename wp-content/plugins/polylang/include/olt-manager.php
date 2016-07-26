@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * it is best practice that plugins do nothing before plugins_loaded is fired
  * so it is what Polylang intends to do
  * but some plugins load their text domain as soon as loaded, thus before plugins_loaded is fired
@@ -15,7 +15,7 @@ class PLL_OLT_Manager {
 	protected $list_textdomains = array(); // all text domains
 	public $labels = array(); // post types and taxonomies labels to translate
 
-	/*
+	/**
 	 * constructor: setups relevant filters
 	 *
 	 * @since 1.2
@@ -38,7 +38,7 @@ class PLL_OLT_Manager {
 		add_filter( 'pre_update_option_active_sitewide_plugins', array( &$this, 'make_polylang_first' ) );
 	}
 
-	/*
+	/**
 	 * access to the single instance of the class
 	 *
 	 * @since 1.7
@@ -53,7 +53,7 @@ class PLL_OLT_Manager {
 		return self::$instance;
 	}
 
-	/*
+	/**
 	 * loads text domains
 	 *
 	 * @since 0.1
@@ -105,19 +105,26 @@ class PLL_OLT_Manager {
 			$GLOBALS['wp_locale'] = new WP_Locale();
 		}
 
-		// allow plugins to translate text the same way we do for post types and taxonomies labels
+		/**
+		 * Fires after the post types and taxonomies labels have been translated
+		 * This allows plugins to translate text the same way we do for post types and taxonomies labels
+		 *
+		 * @since 1.2
+		 *
+		 * @param array $labels list of strings to trnaslate
+		 */
 		do_action_ref_array( 'pll_translate_labels', array( &$this->labels ) );
 
 		// free memory
 		unset( $this->default_locale, $this->list_textdomains, $this->labels );
 	}
 
-	/*
+	/**
 	 * saves all text domains in a table for later usage
 	 *
 	 * @since 0.1
 	 *
-	 * @param bool $bool not used
+	 * @param bool   $bool   not used
 	 * @param string $domain text domain name
 	 * @param string $mofile translation file name
 	 * @return bool always true
@@ -127,14 +134,14 @@ class PLL_OLT_Manager {
 		return true; // prevents WP loading text domains as we will load them all later
 	}
 
-	/*
+	/**
 	 * saves post types and taxonomies labels for a later usage
 	 *
 	 * @since 0.9
 	 *
 	 * @param string $translation not used
-	 * @param string $text string to translate
-	 * @param string $domain text domain
+	 * @param string $text        string to translate
+	 * @param string $domain      text domain
 	 * @return string unmodified $translation
 	 */
 	public function gettext( $translation, $text, $domain ) {
@@ -144,15 +151,15 @@ class PLL_OLT_Manager {
 		return $translation;
 	}
 
-	/*
+	/**
 	 * saves post types and taxonomies labels for a later usage
 	 *
 	 * @since 0.9
 	 *
 	 * @param string $translation not used
-	 * @param string $text string to translate
-	 * @param string $context some comment to describe the context of string to translate
-	 * @param string $domain text domain
+	 * @param string $text        string to translate
+	 * @param string $context     some comment to describe the context of string to translate
+	 * @param string $domain      text domain
 	 * @return string unmodified $translation
 	 */
 	public function gettext_with_context( $translation, $text, $context, $domain ) {
@@ -160,7 +167,7 @@ class PLL_OLT_Manager {
 		return $translation;
 	}
 
-	/*
+	/**
 	 * translates post types and taxonomies labels once the language is known
 	 *
 	 * @since 0.9
@@ -185,7 +192,7 @@ class PLL_OLT_Manager {
 		}
 	}
 
-	/*
+	/**
 	 * allows Polylang to be the first plugin loaded ;- )
 	 *
 	 * @since 1.2

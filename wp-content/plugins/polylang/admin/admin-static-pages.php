@@ -1,13 +1,13 @@
 <?php
 
-/*
+/**
  * manages the static front page and the page for posts on admin side
  *
  * @since 1.8
  */
 class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.8
@@ -25,9 +25,12 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 
 		// checks if chosen page on front is translated
 		add_filter( 'pre_update_option_page_on_front', array( &$this, 'update_page_on_front' ), 10, 2 );
+
+		// Prevents WP resetting the option
+		add_filter( 'pre_update_option_show_on_front', array( $this, 'update_show_on_front' ), 10, 2 );
 	}
 
-		/*
+	/**
 	 * add post state for translations of the front page and posts page
 	 *
 	 * @since 1.8
@@ -48,7 +51,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 		return $post_states;
 	}
 
-	/*
+	/**
 	 * refresh language cache when a static front page has been translated
 	 *
 	 * @since 1.8
@@ -63,7 +66,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 		}
 	}
 
-	/*
+	/**
 	 * prevents choosing an untranslated static front page
 	 * displays an error message
 	 *
@@ -85,5 +88,21 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 		}
 
 		return $page_id;
+	}
+
+	/**
+	 * Prevents WP resetting the option if the admin language filter is active for a language with no pages
+	 *
+	 * @since 1.9.3
+	 *
+	 * @param string $value
+	 * @param string $old_value
+	 * @return string
+	 */
+	public function update_show_on_front( $value, $old_value ) {
+		if ( ! empty( $GLOBALS['pagenow'] ) && 'options-reading.php' === $GLOBALS['pagenow'] && 'posts' === $value && ! get_pages() && get_pages( array( 'lang' => '' ) ) ) {
+			$value = $old_value;
+		}
+		return $value;
 	}
 }

@@ -5,7 +5,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit();
 }
 
-/*
+/**
  * manages Polylang uninstallation
  * the goal is to remove ALL Polylang related data in db
  *
@@ -13,7 +13,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 class PLL_Uninstall {
 
-	/*
+	/**
 	 * constructor: manages uninstall for multisite
 	 *
 	 * @since 0.5
@@ -34,7 +34,7 @@ class PLL_Uninstall {
 		}
 	}
 
-	/*
+	/**
 	 * removes ALL plugin data
 	 * only when the relevant option is active
 	 *
@@ -129,10 +129,12 @@ class PLL_Uninstall {
 		delete_option( 'polylang' );
 		delete_option( 'widget_polylang' ); // automatically created by WP
 		delete_option( 'polylang_wpml_strings' ); // strings registered with icl_register_string
+		delete_option( 'polylang_licenses' );
 
 		//delete transients
 		delete_transient( 'pll_languages_list' );
 		delete_transient( 'pll_upgrade_1_4' );
+		delete_transient( 'pll_translated_slugs' );
 	}
 }
 

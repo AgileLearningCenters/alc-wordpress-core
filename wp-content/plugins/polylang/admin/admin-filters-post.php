@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * manages filters and actions related to posts on admin side
  *
  * @since 1.2
@@ -8,7 +8,7 @@
 class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	public $options, $curlang;
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.2
@@ -44,7 +44,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		add_filter( 'page_attributes_dropdown_pages_args', array( &$this, 'page_attributes_dropdown_pages_args' ), 10, 2 );
 	}
 
-	/*
+	/**
 	 * outputs a javascript list of terms ordered by language and hierarchical taxonomies
 	 * to filter the category checklist per post language in quick edit
 	 * outputs a javascript list of pages ordered by language
@@ -97,7 +97,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 	}
 
-	/*
+	/**
 	 * filters posts, pages and media by language
 	 *
 	 * @since 0.1
@@ -127,7 +127,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 	}
 
-	/*
+	/**
 	 * adds the Language box in the 'Edit Post' and 'Edit Page' panels ( as well as in custom post types panels )
 	 *
 	 * @since 0.1
@@ -140,7 +140,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 	}
 
-	/*
+	/**
 	 * displays the Languages metabox in the 'Edit Post' and 'Edit Page' panels
 	 *
 	 * @since 0.1
@@ -162,8 +162,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		printf( '
 			<p><strong>%1$s</strong></p>
 			<label class="screen-reader-text" for="%2$s">%1$s</label>
-			<div id="select-%3$s-language">%4$s</div>
-			<div id="post-translations" class="translations">',
+			<div id="select-%3$s-language">%4$s</div>',
 			__( 'Language', 'polylang' ),
 			$id = ( 'attachment' === $post_type ) ? sprintf( 'attachments[%d][language]', $post_ID ) : 'post_lang_choice',
 			'attachment' === $post_type ? 'media' : 'post',
@@ -171,17 +170,25 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 				'name'     => $id,
 				'class'    => 'post_lang_choice tags-input',
 				'selected' => $lang ? $lang->slug : '',
-				'flag'     => true
+				'flag'     => true,
 			) )
 		);
 
+		/**
+		 * Fires before displaying the list of translations in the Languages metabox for posts
+		 *
+		 * @since 1.8
+		 */
+		do_action( 'pll_before_post_translations', $post_type );
+
+		echo '<div id="post-translations" class="translations">';
 		if ( $lang ) {
 			include( PLL_ADMIN_INC . '/view-translations-' . ( 'attachment' == $post_type ? 'media' : 'post' ) . '.php' );
 		}
 		echo '</div>' . "\n";
 	}
 
-	/*
+	/**
 	 * ajax response for changing the language in the post metabox
 	 *
 	 * @since 0.2
@@ -253,6 +260,8 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 				'sort_column'      => 'menu_order, post_title',
 				'echo'             => 0,
 			);
+
+			/** This filter is documented in wp-admin/includes/meta-boxes.php */
 			$dropdown_args = apply_filters( 'page_attributes_dropdown_pages_args', $dropdown_args, $post ); // since WP 3.3
 
 			$x->Add( array( 'what' => 'pages', 'data' => wp_dropdown_pages( $dropdown_args ) ) );
@@ -264,7 +273,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		$x->send();
 	}
 
-	/*
+	/**
 	 * ajax response for input in translation autocomplete input box
 	 *
 	 * @since 1.5
@@ -291,10 +300,19 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 				'taxonomy' => 'language',
 				'field'    => 'term_taxonomy_id', // WP 3.5+
 				'terms'    => $translation_language->term_taxonomy_id,
-			) )
+			) ),
 		);
 
-		// allow plugins to change args help fixing edge cases: see same topic as above
+		/**
+		 * Filter the query args when auto suggesting untranslated posts in the Languages metabox
+		 * This should help plugins to fix some edge cases
+		 *
+		 * @see https://wordpress.org/support/topic/find-translated-post-when-10-is-not-enough
+		 *
+		 * @since 1.7
+		 *
+		 * @param array $args WP_Query arguments
+		 */
 		$args = apply_filters( 'pll_ajax_posts_not_translated_args', $args );
 		$posts = get_posts( $args );
 
@@ -323,7 +341,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		wp_die( json_encode( $return ) );
 	}
 
-	/*
+	/**
 	 * saves language
 	 * checks the terms saved are in the right language
 	 *
@@ -416,7 +434,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 	}
 
-	/*
+	/**
 	 * called when a post ( or page ) is saved, published or updated
 	 * saves languages and translations
 	 *
@@ -442,10 +460,20 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		if ( ( $update && current_user_can( $post_type_object->cap->edit_post, $post_id ) ) || ( ! $update && current_user_can( $post_type_object->cap->create_posts ) ) ) {
 			$this->save_language( $post_id, $post );
 
-			if ( isset( $_POST['post_tr_lang'] ) ) {
+			// Make sure we are saving translations only for the main post currently being edited and not for other possible post types
+			if ( ! empty( $GLOBALS['post_type'] ) && $post->post_type === $GLOBALS['post_type'] && isset( $_POST['post_tr_lang'] ) ) {
 				$translations = $this->save_translations( $post_id, $_POST['post_tr_lang'] );
 			}
 
+			/**
+			 * Fires after the post language and translations are saved
+			 *
+			 * @since 1.2
+			 *
+			 * @param int    $post_id      post id
+			 * @param object $post         post object
+			 * @param array  $translations the list of translations post ids
+			 */
 			do_action( 'pll_save_post', $post_id, $post, empty( $translations ) ? $this->model->post->get_translations( $post_id ) : $translations );
 		}
 
@@ -455,7 +483,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 	}
 
-	/*
+	/**
 	 * make sure that the post parent is in the correct language when using bulk edit
 	 *
 	 * @since 1.8
@@ -477,7 +505,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		return $post_parent;
 	}
 
-	/*
+	/**
 	 * called when a post, page or media is deleted
 	 * don't delete translations if this is a post revision thanks to AndyDeGroo who catched this bug
 	 * http://wordpress.org/support/topic/plugin-polylang-quick-edit-still-breaks-translation-linking-of-pages-in-072
@@ -492,7 +520,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 	}
 
-	/*
+	/**
 	 * filters the pages by language in the parent dropdown list in the page attributes metabox
 	 *
 	 * @since 0.6

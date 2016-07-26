@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * base class for all settings
  *
  * @since 1.8
@@ -9,9 +9,9 @@ class PLL_Settings_Module {
 	public $active_option, $configure;
 	public $module, $title, $description;
 	public $options;
-	protected $action_links;
+	protected $action_links, $buttons;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.8
@@ -62,11 +62,16 @@ class PLL_Settings_Module {
 			'deactivated' => __( 'Deactivated', 'polylang' ),
 		);
 
+		$this->buttons = array(
+			'cancel' => sprintf( '<button type="button" class="button button-secondary cancel">%s</button>', __( 'Cancel' ) ),
+			'save'   => sprintf( '<button type="button" class="button button-primary save">%s</button>', __( 'Save Changes' ) ),
+		);
+
 		// ajax action to save options
 		add_action( 'wp_ajax_pll_save_options', array( &$this, 'save_options' ) );
 	}
 
-	/*
+	/**
 	 * tells if the module is active
 	 *
 	 * @since 1.8
@@ -77,7 +82,7 @@ class PLL_Settings_Module {
 		return empty( $this->active_option ) || ! empty( $this->options[ $this->active_option ] );
 	}
 
-	/*
+	/**
 	 * activates the module
 	 *
 	 * @since 1.8
@@ -89,7 +94,7 @@ class PLL_Settings_Module {
 		}
 	}
 
-	/*
+	/**
 	 * deactivates the module
 	 *
 	 * @since 1.8
@@ -101,7 +106,7 @@ class PLL_Settings_Module {
 		}
 	}
 
-	/*
+	/**
 	 * protected method to display a configuration form
 	 *
 	 * @since 1.8
@@ -111,7 +116,7 @@ class PLL_Settings_Module {
 		// child classes can provide a form
 	}
 
-	/*
+	/**
 	 * public method returning the form if any
 	 *
 	 * @since 1.8
@@ -131,7 +136,7 @@ class PLL_Settings_Module {
 		return $form;
 	}
 
-	/*
+	/**
 	 * allows child classes to validate their options before saving
 	 *
 	 * @since 1.8
@@ -143,7 +148,7 @@ class PLL_Settings_Module {
 		return array(); // it's responsibility of the child class to decide what is saved
 	}
 
-	/*
+	/**
 	 * ajax method to save the options
 	 *
 	 * @since 1.8
@@ -155,10 +160,9 @@ class PLL_Settings_Module {
 		}
 
 		if ( $this->module == $_POST['module'] ) {
-			unset( $_POST['action'], $_POST['module'], $_POST['pll_ajax_backend'], $_POST['_pll_nonce'] );
-
 			// it's up to the child class to decide which options are saved, whether there are errors or not
-			$options = $this->update( $_POST );
+			$post = array_diff_key( $_POST, array_flip( array( 'action', 'module', 'pll_ajax_backend', '_pll_nonce' ) ) );
+			$options = $this->update( $post );
 			$this->options = array_merge( $this->options, $options );
 			update_option( 'polylang', $this->options );
 
@@ -175,18 +179,18 @@ class PLL_Settings_Module {
 				// send update message
 				add_settings_error( 'general', 'settings_updated', __( 'Settings saved.' ), 'updated' );
 				settings_errors();
-				wp_send_json_success( ob_get_clean() );
-			}
-
-			else {
+				$x = new WP_Ajax_Response( array( 'what' => 'success', 'data' => ob_get_clean() ) );
+				$x->send();
+			} else {
 				// send error messages
 				settings_errors();
-				wp_send_json_error( ob_get_clean() );
+				$x = new WP_Ajax_Response( array( 'what' => 'error', 'data' => ob_get_clean() ) );
+				$x->send();
 			}
 		}
 	}
 
-	/*
+	/**
 	 * get the row actions
 	 *
 	 * @since 1.8
@@ -209,7 +213,7 @@ class PLL_Settings_Module {
 		return $actions;
 	}
 
-	/*
+	/**
 	 * get the actions links
 	 *
 	 * @since 1.8
@@ -218,5 +222,43 @@ class PLL_Settings_Module {
 	 */
 	public function get_action_links() {
 		return array_intersect_key( $this->action_links, array_flip( $this->get_actions() ) );
+	}
+
+	/**
+	 * default upgrade message ( to pro version )
+	 *
+	 * @since 1.9
+	 *
+	 * @return string
+	 */
+	protected function default_upgrade_message() {
+		return sprintf(
+			'%s <a href="%s">%s</a>',
+			__( 'You need Polylang Pro to enable this feature.', 'polylang' ),
+			'https://polylang.pro',
+			__( 'Upgrade now.', 'polylang' )
+		);
+	}
+
+	/**
+	 * allows child classes to display an upgrade message
+	 *
+	 * @since 1.9
+	 *
+	 * @return string
+	 */
+	public function get_upgrade_message() {
+		return '';
+	}
+
+	/**
+	 * get the buttons
+	 *
+	 * @since 1.9
+	 *
+	 * @return array
+	 */
+	public function get_buttons() {
+		return $this->buttons;
 	}
 }

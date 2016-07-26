@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * base class to manage the static front page and the page for posts
  *
  * @since 1.8
@@ -9,7 +9,7 @@ abstract class PLL_Static_Pages {
 	public $model, $options;
 	public $page_on_front, $page_for_posts;
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.8
@@ -30,7 +30,7 @@ abstract class PLL_Static_Pages {
 		add_action( 'update_option_page_on_front', 'flush_rewrite_rules' );
 	}
 
-	/*
+	/**
 	 * stores the page on front and page for posts ids
 	 *
 	 * @since 1.8
@@ -47,7 +47,7 @@ abstract class PLL_Static_Pages {
 		}
 	}
 
-	/*
+	/**
 	 * adds page_on_front and page_for_posts properties to the language objects
 	 *
 	 * @since 1.8

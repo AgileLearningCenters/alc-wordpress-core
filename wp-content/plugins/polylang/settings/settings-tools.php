@@ -1,11 +1,13 @@
 <?php
-/*
+
+/**
  * Settings class for tools
  *
  * @since 1.8
  */
 class PLL_Settings_Tools extends PLL_Settings_Module {
-	/*
+
+	/**
 	 * constructor
 	 *
 	 * @since 1.8
@@ -20,7 +22,7 @@ class PLL_Settings_Tools extends PLL_Settings_Module {
 		) );
 	}
 
-	/*
+	/**
 	 * displays the settings form
 	 *
 	 * @since 1.8
@@ -33,7 +35,7 @@ class PLL_Settings_Tools extends PLL_Settings_Module {
 		);
 	}
 
-	/*
+	/**
 	 * sanitizes the settings before saving
 	 *
 	 * @since 1.8

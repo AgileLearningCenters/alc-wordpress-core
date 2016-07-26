@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * manages links filters on frontend
  *
  * @since 1.8
@@ -9,7 +9,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	public $curlang;
 	public $cache; // our internal non persistent cache object
 
-	/*
+	/**
 	 * constructor
 	 * adds filters once the language is defined
 	 * low priority on links filters to come after any other modification
@@ -53,7 +53,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		add_action( 'template_redirect', array( &$this, 'check_canonical_url' ), 4 );
 	}
 
-	/*
+	/**
 	 * modifies the author and date links to add the language parameter ( as well as feed link )
 	 *
 	 * @since 0.4
@@ -65,7 +65,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return $this->links_model->add_language_to_link( $link, $this->curlang );
 	}
 
-	/*
+	/**
 	 * modifies the post type archive links to add the language parameter
 	 * only if the post type is translated
 	 *
@@ -79,7 +79,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return $this->model->is_translated_post_type( $post_type ) ? $this->links_model->add_language_to_link( $link, $this->curlang ) : $link;
 	}
 
-	/*
+	/**
 	 * modifies post & page links
 	 * caches the result
 	 *
@@ -98,14 +98,14 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return $_link;
 	}
 
-	/*
+	/**
 	 * modifies page links
 	 * caches the result
 	 *
 	 * @since 1.7
 	 *
-	 * @param string $link post link
-	 * @param int $post_id post ID
+	 * @param string $link    post link
+	 * @param int    $post_id post ID
 	 * @return string modified post link
 	 */
 	public function _get_page_link( $link, $post_id ) {
@@ -117,14 +117,14 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return $_link;
 	}
 
-	/*
+	/**
 	 * modifies attachment links
 	 * caches the result
 	 *
 	 * @since 1.6.2
 	 *
-	 * @param string $link attachment link
-	 * @param int $post_id attachment link
+	 * @param string $link    attachment link
+	 * @param int    $post_id attachment link
 	 * @return string modified attachment link
 	 */
 	public function attachment_link( $link, $post_id ) {
@@ -136,7 +136,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return $_link;
 	}
 
-	/*
+	/**
 	 * modifies custom posts links
 	 * caches the result
 	 *
@@ -155,7 +155,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return $_link;
 	}
 
-	/*
+	/**
 	 * modifies filtered taxonomies ( post format like ) and translated taxonomies links
 	 * caches the result
 	 *
@@ -163,7 +163,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	 *
 	 * @param string $link
 	 * @param object $term term object
-	 * @param string $tax taxonomy name
+	 * @param string $tax  taxonomy name
 	 * @return string modified link
 	 */
 	public function term_link( $link, $term, $tax ) {
@@ -171,6 +171,8 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		if ( false === $_link = $this->cache->get( $cache_key ) ) {
 			if ( in_array( $tax, $this->model->get_filtered_taxonomies() ) ) {
 				$_link = $this->links_model->add_language_to_link( $link, $this->curlang );
+
+				/** This filter is documented in include/filters-links.php */
 				$_link = apply_filters( 'pll_term_link', $_link, $this->curlang, $term );
 			}
 
@@ -182,7 +184,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return $_link;
 	}
 
-	/*
+	/**
 	 * outputs references to translated pages ( if exists ) in the html head section
 	 *
 	 * @since 0.1
@@ -198,7 +200,16 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		// ouptputs the section only if there are translations ( $urls always contains self link )
 		// don't output anything on paged archives: see https://wordpress.org/support/topic/hreflang-on-page2
 		if ( ! empty( $urls ) && count( $urls ) > 1 && ! is_paged() ) {
-			foreach ( $urls as $lang => $url ) {
+			// prepare the list of languages to remove the country code
+			foreach ( array_keys( $urls ) as $locale ) {
+				$split = explode( '-', $locale );
+				$languages[ $locale ] = reset( $split );
+			}
+
+			$count = array_count_values( $languages );
+
+			foreach ( $urls as $locale => $url ) {
+				$lang = $count[ $languages[ $locale ] ] > 1 ? $locale : $languages[ $locale ]; // output the country code only when necessary
 				printf( '<link rel="alternate" href="%s" hreflang="%s" />'."\n", esc_url( $url ), esc_attr( $lang ) );
 			}
 
@@ -210,7 +221,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		}
 	}
 
-	/*
+	/**
 	 * filters the home url to get the right language
 	 *
 	 * @since 0.4
@@ -233,6 +244,16 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			$theme_root = get_theme_root();
 			$theme_root = ( false === strpos( $theme_root, '\\' ) ) ? $theme_root : str_replace( '/', '\\', $theme_root );
 
+			/**
+			 * Filter the white list of the Polylang 'home_url' filter
+			 * The $args contains an array of arrays each of them having
+			 * a 'file' key and/or a 'function' key to decide which functions in
+			 * which files using home_url() calls must be filtered
+			 *
+			 * @since 1.1.2
+			 *
+			 * @param array $args
+			 */
 			$white_list = apply_filters( 'pll_home_url_white_list',  array(
 				array( 'file' => $theme_root ),
 				array( 'function' => 'wp_nav_menu' ),
@@ -242,6 +263,17 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 		// we don't want to filter the home url in these cases
 		if ( empty( $black_list ) ) {
+
+			/**
+			 * Filter the black list of the Polylang 'home_url' filter
+			 * The $args contains an array of arrays each of them having
+			 * a 'file' key and/or a 'function' key to decide which functions in
+			 * which files using home_url() calls must be filtered
+			 *
+			 * @since 1.1.2
+			 *
+			 * @param array $args
+			 */
 			$black_list = apply_filters( 'pll_home_url_black_list',  array(
 				array( 'file' => 'searchform.php' ), // since WP 3.6 searchform.php is passed through get_search_form
 				array( 'function' => 'get_search_form' ),
@@ -270,12 +302,12 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return empty( $ok ) ? $url : ( empty( $path ) ? rtrim( $this->links->get_home_url( $this->curlang ), '/' ) : $this->links->get_home_url( $this->curlang ) );
 	}
 
-	/*
+	/**
 	 * rewrites ajax url when using domains or subdomains
 	 *
 	 * @since 1.5
 	 *
-	 * @param string $url admin url with path evaluated by WordPress
+	 * @param string $url  admin url with path evaluated by WordPress
 	 * @param string $path admin path
 	 * @return string
 	 */
@@ -283,14 +315,14 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		return 'admin-ajax.php' === $path ? $this->links_model->switch_language_in_link( $url, $this->curlang ) : $url;
 	}
 
-	/*
+	/**
 	 * if the language code is not in agreement with the language of the content
 	 * redirects incoming links to the proper URL to avoid duplicate content
 	 *
 	 * @since 0.9.6
 	 *
 	 * @param string $requested_url optional
-	 * @param bool $do_redirect optional, whether to perform the redirection or not
+	 * @param bool   $do_redirect   optional, whether to perform the redirection or not
 	 * @return string if redirect is not performed
 	 */
 	public function check_canonical_url( $requested_url = '', $do_redirect = true ) {
@@ -334,11 +366,16 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			$language = $this->model->post->get_language( (int) $obj->ID );
 		}
 
+		elseif ( is_404() && $id = get_query_var('p') ) {
+			// special case for page shortlinks when using subdomains or multiple domains
+			// needed because redirect_canonical doesn't accept to change the domain name
+			$language = $this->model->post->get_language( (int) $id );
+		}
+
 		if ( empty( $language ) ) {
 			$language = $this->curlang;
 			$redirect_url = $requested_url;
-		}
-		else {
+		} else {
 			// first get the canonical url evaluated by WP
 			$redirect_url = ( ! $redirect_url = redirect_canonical( $requested_url, false ) ) ? $requested_url : $redirect_url;
 
@@ -348,7 +385,14 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 				$this->links_model->remove_language_from_link( $redirect_url ); // works only for default permalinks
 		}
 
-		// allow plugins to change the redirection or even cancel it by setting $redirect_url to false
+		/**
+		 * Filters the canonical url detected by Polylang
+		 *
+		 * @since 1.6
+		 *
+		 * @param bool|string $redirect_url false or the url to redirect to
+		 * @param object      $language the language detected
+		 */
 		$redirect_url = apply_filters( 'pll_check_canonical_url', $redirect_url, $language );
 
 		// the language is not correctly set so let's redirect to the correct url for this object

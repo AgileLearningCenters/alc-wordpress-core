@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * filters search forms when using permalinks
  *
  * @since 1.2
@@ -8,7 +8,7 @@
 class PLL_Frontend_Filters_Search {
 	public $links_model, $curlang;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.2
@@ -33,7 +33,7 @@ class PLL_Frontend_Filters_Search {
 		}
 	}
 
-	/*
+	/**
 	 * adds the language information in the search form
 	 * does not work if searchform.php ( prior to WP 3.6 ) is used or if the search form is hardcoded in another template file
 	 *
@@ -59,7 +59,7 @@ class PLL_Frontend_Filters_Search {
 		return $form;
 	}
 
-	/*
+	/**
 	 * adds the language information in admin bar search form
 	 *
 	 * @since 1.2
@@ -69,7 +69,7 @@ class PLL_Frontend_Filters_Search {
 		add_action( 'admin_bar_menu', array( &$this, 'admin_bar_search_menu' ), 4 );
 	}
 
-	/*
+	/**
 	 * rewrites the admin bar search form to pass our get_search form filter. See #21342
 	 * code base is WP 4.3.1
 	 *
@@ -92,7 +92,7 @@ class PLL_Frontend_Filters_Search {
 		) );
 	}
 
-	/*
+	/**
 	 * allows modifying the search form if it does not pass get_search_form
 	 *
 	 * @since 0.1

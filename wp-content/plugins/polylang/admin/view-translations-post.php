@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * displays the translations fields for posts
  */
 
@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 };
 ?>
 <p><strong><?php _e( 'Translations', 'polylang' ); ?></strong></p>
-<?php do_action( 'pll_before_post_translations' ) ?>
 <table><?php
 	foreach ( $this->model->get_languages_list() as $language ) {
 		if ( $language->term_id == $lang->term_id ) {

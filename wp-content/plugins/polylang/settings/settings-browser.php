@@ -1,12 +1,13 @@
 <?php
 
-/*
+/**
  * Settings class for browser language preference detection
  *
  * @since 1.8
  */
 class PLL_Settings_Browser extends PLL_Settings_Module {
-	/*
+
+	/**
 	 * constructor
 	 *
 	 * @since 1.8
@@ -24,7 +25,7 @@ class PLL_Settings_Browser extends PLL_Settings_Module {
 		add_action( 'admin_print_footer_scripts', array( &$this, 'print_js' ) );
 	}
 
-	/*
+	/**
 	 * tells if the module is active
 	 *
 	 * @since 1.8
@@ -35,7 +36,7 @@ class PLL_Settings_Browser extends PLL_Settings_Module {
 		return 3 > $this->options['force_lang'] ? parent::is_active() : false;
 	}
 
-	/*
+	/**
 	 * displays the javascript to handle dynamically the change in url modifications
 	 * as the preferred browser language is not used when the language is set from different domains
 	 *

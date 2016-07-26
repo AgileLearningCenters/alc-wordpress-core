@@ -14,14 +14,14 @@ if ( file_exists( PLL_LOCAL_DIR . '/pll-config.php' ) ) {
 	include_once( PLL_LOCAL_DIR . '/pll-config.php' );
 }
 
-/*
+/**
  * controls the plugin, as well as activation, and deactivation
  *
  * @since 0.1
  */
 class Polylang {
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 0.1
@@ -54,7 +54,7 @@ class Polylang {
 		}
 	}
 
-	/*
+	/**
 	 * autoload classes
 	 *
 	 * @since 1.2
@@ -90,7 +90,7 @@ class Polylang {
 		}
 	}
 
-	/*
+	/**
 	 * defines constants
 	 * may be overriden by a plugin if set before plugins_loaded, 1
 	 *
@@ -127,11 +127,11 @@ class Polylang {
 
 		// settings page whatever the tab
 		if ( ! defined( 'PLL_SETTINGS' ) ) {
-			define( 'PLL_SETTINGS', is_admin() && ( ( isset( $_GET['page'] ) && 'mlang' == $_GET['page'] ) || ( isset( $_POST['action'] ) && 'pll_save_options' == $_POST['action'] ) ) );
+			define( 'PLL_SETTINGS', is_admin() && ( ( isset( $_GET['page'] ) && 'mlang' == $_GET['page'] ) || ! empty( $_REQUEST['pll_ajax_settings'] ) ) );
 		}
 	}
 
-	/*
+	/**
 	 * Polylang initialization
 	 * setups models and separate admin and frontend
 	 *
@@ -151,7 +151,14 @@ class Polylang {
 			}
 		}
 
-		// /!\ this filter is fired *before* the $polylang object is available
+		/**
+		 * Filter the model class to use
+		 * /!\ this filter is fired *before* the $polylang object is available
+		 *
+		 * @since 1.5
+		 *
+		 * @param string $class either PLL_Model or PLL_Admin_Model
+		 */
 		$class = apply_filters( 'pll_model', PLL_SETTINGS ? 'PLL_Admin_Model' : 'PLL_Model' );
 		$model = new $class( $options );
 		$links_model = $model->get_links_model();
@@ -170,7 +177,13 @@ class Polylang {
 		}
 
 		if ( ! $model->get_languages_list() ) {
-			do_action( 'pll_no_language_defined' ); // to load overriden textdomains
+			/**
+			 * Fires when no language has been defined yet
+			 * Used to load overriden textdomains
+			 *
+			 * @since 1.2
+			 */
+			do_action( 'pll_no_language_defined' );
 		}
 
 		if ( ! empty( $polylang ) ) {
@@ -182,7 +195,15 @@ class Polylang {
 			}
 
 			$polylang->init();
-			do_action( 'pll_init', $polylang );
+
+			/**
+			 * Fires after the $polylang object and the API is loaded
+			 *
+			 * @since 1.7
+			 *
+			 * @param object $polylang
+			 */
+			do_action_ref_array( 'pll_init', array( &$polylang ) );
 		}
 	}
 }

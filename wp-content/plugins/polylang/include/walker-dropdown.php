@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * displays languages in a dropdown list
  *
  * @since 1.2
@@ -8,7 +8,7 @@
 class PLL_Walker_Dropdown extends Walker {
 	var $db_fields = array( 'parent' => 'parent', 'id' => 'id' );
 
-	/*
+	/**
 	 * outputs one element
 	 *
 	 * @since 1.2
@@ -25,7 +25,7 @@ class PLL_Walker_Dropdown extends Walker {
 		);
 	}
 
-	/*
+	/**
 	 * overrides Walker::display_element as expects an object with a parent property
 	 *
 	 * @since 1.2
@@ -38,7 +38,7 @@ class PLL_Walker_Dropdown extends Walker {
 		parent::display_element( $element, $children_elements, $max_depth, $depth, $args, $output );
 	}
 
-	/*
+	/**
 	 * starts the output of the dropdown list
 	 *
 	 * @since 1.2

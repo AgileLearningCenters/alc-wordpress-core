@@ -1,13 +1,13 @@
 <?php
 
-/*
+/**
  * manages the static front page and the page for posts on frontend
  *
  * @since 1.8
  */
 class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.8
@@ -37,7 +37,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		add_filter( 'pll_set_language_from_query', array( &$this, 'page_for_posts_query' ), 10, 2 );
 	}
 
-	/*
+	/**
 	 * init the filters
 	 *
 	 * @since 1.8
@@ -57,7 +57,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		}
 	}
 
-	/*
+	/**
 	 * translates the page_id query var when the site root page is requested
 	 *
 	 * @since 1.8
@@ -66,7 +66,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		set_query_var( 'page_id', $this->curlang->page_on_front );
 	}
 
-	/*
+	/**
 	 * translates page on front
 	 *
 	 * @since 1.8
@@ -79,7 +79,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return isset( $this->curlang->page_on_front ) ? $this->curlang->page_on_front : $v;
 	}
 
-	/*
+	/**
 	 * translates page for posts
 	 *
 	 * @since 1.8
@@ -92,7 +92,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return isset( $this->curlang->page_for_posts ) ? $this->curlang->page_for_posts : $v;
 	}
 
-	/*
+	/**
 	 * modifies the page link in case the front page is not in the default language
 	 *
 	 * @since 0.7.2
@@ -108,7 +108,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return $link;
 	}
 
-	/*
+	/**
 	 * manages canonical redirection of the homepage when using page on front
 	 *
 	 * @since 0.1
@@ -136,7 +136,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return $redirect_url;
 	}
 
-	/*
+	/**
 	 * translates the url of the page on front and page for posts
 	 *
 	 * @since 1.8
@@ -162,7 +162,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return $url;
 	}
 
-	/*
+	/**
 	 * prevents canonical redirection if we are on a static front page
 	 *
 	 * @since 1.8
@@ -174,7 +174,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return $this->options['redirect_lang'] && isset( $this->curlang->page_on_front ) && is_page( $this->curlang->page_on_front ) ? false : $redirect_url;
 	}
 
-	/*
+	/**
 	 * setups query vars when requesting a static front page
 	 *
 	 * @since 1.8
@@ -222,7 +222,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return $lang;
 	}
 
-	/*
+	/**
 	 * setups query vars when requesting a posts page
 	 *
 	 * @since 1.8
@@ -248,7 +248,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		return $lang;
 	}
 
-	/*
+	/**
 	 * get queried page_id ( if exists )
 	 * If permalinks are used, WordPress does set and use $query->queried_object_id and sets $query->query_vars['page_id'] to 0
 	 * and does set and use $query->query_vars['page_id'] if permalinks are not used :(

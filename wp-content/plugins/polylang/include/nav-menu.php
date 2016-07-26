@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * manages custom menus translations
  * common to admin and frontend for the customizer
  *
@@ -9,7 +9,7 @@
 class PLL_Nav_Menu {
 	public $model, $options;
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.7.7
@@ -24,7 +24,7 @@ class PLL_Nav_Menu {
 		add_action( 'customize_register', array( &$this, 'create_nav_menu_locations' ), 5 );
 	}
 
-	/*
+	/**
 	 * create temporary nav menu locations ( one per location and per language ) for all non-default language
 	 * to do only one time
 	 *
@@ -46,7 +46,7 @@ class PLL_Nav_Menu {
 		}
 	}
 
-	/*
+	/**
 	 * creates a temporary nav menu location from a location and a language
 	 *
 	 * @since 1.8
@@ -56,10 +56,10 @@ class PLL_Nav_Menu {
 	 * @return string
 	 */
 	public function combine_location( $loc, $lang ) {
-		return $loc . ( strpos( $loc, '___') || $this->options['default_lang'] == $lang->slug ? '' : '___' . $lang->slug );
+		return $loc . ( strpos( $loc, '___' ) || $this->options['default_lang'] === $lang->slug ? '' : '___' . $lang->slug );
 	}
 
-	/*
+	/**
 	 * get nav menu locations and language from a temporary locaction
 	 *
 	 * @since 1.8

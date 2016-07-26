@@ -1,13 +1,13 @@
 <?php
 
-/*
+/**
  * manages custom menus translations as well as the language switcher menu item on admin side
  *
  * @since 1.2
  */
 class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.2
@@ -33,7 +33,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		}
 	}
 
-	/*
+	/**
 	 * setups filters and terms
 	 * adds the language switcher metabox and create new nav menu locations
 	 *
@@ -58,7 +58,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		$this->create_nav_menu_locations();
 	}
 
-	/*
+	/**
 	 * language switcher metabox
 	 * The checkbox and all hidden fields are important
 	 * thanks to John Morris for his very interesting post http://www.johnmorrisonline.com/how-to-add-a-fully-functional-custom-meta-box-to-wordpress-navigation-menus/
@@ -91,7 +91,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
    	</div><?php
 	}
 
-	/*
+	/**
 	 * prepares javascript to modify the language switcher menu item
 	 *
 	 * @since 1.1
@@ -131,7 +131,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		wp_localize_script( 'pll_nav_menu', 'pll_data', $data );
 	}
 
-	/*
+	/**
 	 * save our menu item options
 	 *
 	 * @since 1.1
@@ -165,7 +165,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		}
 	}
 
-	/*
+	/**
 	 * translates the language switcher menu items title in case the user switches the admin language
 	 *
 	 * @since 1.1.1
@@ -182,7 +182,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		return $items;
 	}
 
-	/*
+	/**
 	 * assign menu languages and translations based on ( temporary ) locations
 	 *
 	 * @since 1.8
@@ -206,7 +206,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		return $locations;
 	}
 
-	/*
+	/**
 	 * assign menu languages and translations based on ( temporary ) locations
 	 *
 	 * @since 1.1
@@ -246,7 +246,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		return $mods;
 	}
 
-	/*
+	/**
 	 * fills temporary menu locations based on menus translations
 	 *
 	 * @since 1.2
@@ -268,7 +268,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		return $menus;
 	}
 
-	/*
+	/**
 	 * removes the nav menu term_id from the locations stored in Polylang options when a nav menu is deleted
 	 *
 	 * @since 1.7.3
@@ -291,7 +291,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		}
 	}
 
-	/*
+	/**
 	 * filters the option nav_menu_options for auto added pages to menu
 	 *
 	 *	@since 0.9.4
@@ -304,7 +304,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		return $options;
 	}
 
-	/*
+	/**
 	 * filters _wp_auto_add_pages_to_menu by language
 	 *
 	 * @since 0.9.4
@@ -333,7 +333,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		}
 	}
 
-	/*
+	/**
 	 * prevents sharing a menu term with a language term by renaming the nav menu before its creation
 	 * to avoid http://core.trac.wordpress.org/ticket/24802
 	 * and http://wordpress.org/support/topic/all-connection-between-elements-lost

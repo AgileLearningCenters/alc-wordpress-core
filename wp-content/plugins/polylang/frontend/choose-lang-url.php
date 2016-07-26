@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Choose the language when the language code is added to all urls
  * The language is set in plugins_loaded with priority 1 as done by WPML
  * Some actions have to be delayed to wait for $wp_rewrite availibility
@@ -10,7 +10,7 @@
 class PLL_Choose_Lang_Url extends PLL_Choose_lang {
 	protected $index = 'index.php'; // need this before $wp_rewrite is created, also harcoded in wp-includes/rewrite.php
 
-	/*
+	/**
 	 * sets the language
 	 *
 	 * @since 1.8
@@ -25,7 +25,7 @@ class PLL_Choose_Lang_Url extends PLL_Choose_lang {
 		add_action( 'request', array( &$this, 'request' ) );
 	}
 
-	/*
+	/**
 	 * finds the language according to information found in the url
 	 *
 	 * @since 1.2
@@ -67,7 +67,7 @@ class PLL_Choose_Lang_Url extends PLL_Choose_lang {
 	}
 
 
-	/*
+	/**
 	 * adds the current language in query vars
 	 * useful for subdomains and multiple domains
 	 *

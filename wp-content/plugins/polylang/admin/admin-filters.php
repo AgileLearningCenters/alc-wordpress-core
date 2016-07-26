@@ -1,13 +1,13 @@
 <?php
 
-/*
+/**
  * setup miscellaneous admin filters as well as filters common to admin and frontend
  *
  * @since 1.2
  */
 class PLL_Admin_Filters extends PLL_Filters {
 
-	/*
+	/**
 	 * constructor: setups filters and actions
 	 *
 	 * @since 1.2
@@ -35,7 +35,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 		add_filter( 'plugins_update_check_locales', array( &$this, 'update_check_locales' ) );
 	}
 
-	/*
+	/**
 	 * modifies the widgets forms to add our language dropdwown list
 	 *
 	 * @since 0.3
@@ -61,15 +61,15 @@ class PLL_Admin_Filters extends PLL_Filters {
 		);
 	}
 
-	/*
+	/**
 	 * called when widget options are saved
 	 * saves the language associated to the widget
 	 *
 	 * @since 0.3
 	 *
-	 * @param array $instance widget options
-	 * @param array $new_instance not used
-	 * @param array $old_instance not used
+	 * @param array  $instance widget options
+	 * @param array  $new_instance not used
+	 * @param array  $old_instance not used
 	 * @param object $widget WP_Widget object
 	 * @return array widget options
 	 */
@@ -84,7 +84,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 		return $instance;
 	}
 
-	/*
+	/**
 	 * updates language user preference set in user profile
 	 *
 	 * @since 0.4
@@ -100,12 +100,14 @@ class PLL_Admin_Filters extends PLL_Filters {
 		foreach ( $this->model->get_languages_list() as $lang ) {
 			$meta = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
 			$description = empty( $_POST[ 'description_' . $lang->slug ] ) ? '' : trim( $_POST[ 'description_' . $lang->slug ] );
+
+			/** This filter is documented in wp-includes/user.php */
 			$description = apply_filters( 'pre_user_description', $description ); // applies WP default filter wp_filter_kses
 			update_user_meta( $user_id, $meta, $description );
 		}
 	}
 
-	/*
+	/**
 	 * form for language user preference in user profile
 	 *
 	 * @since 0.4
@@ -136,6 +138,8 @@ class PLL_Admin_Filters extends PLL_Filters {
 		// hidden informations to modify the biography form with js
 		foreach ( $this->model->get_languages_list() as $lang ) {
 			$meta = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
+
+			/** This filter is documented in wp-includes/user.php */
 			$description = apply_filters( 'user_description', get_user_meta( $profileuser->ID, $meta, true ) ); // applies WP default filter wp_kses_data
 
 			printf( '<input type="hidden" class="biography" name="%s___%s" value="%s" />',
@@ -146,7 +150,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 		}
 	}
 
-	/*
+	/**
 	 * ugprades languages files after a core upgrade
 	 * only for backward compatibility WP < 4.0 *AND* Polylang < 1.6
 	 *
@@ -157,12 +161,14 @@ class PLL_Admin_Filters extends PLL_Filters {
 	public function upgrade_languages( $version ) {
 		// $GLOBALS['wp_version'] is the old WP version
 		if ( version_compare( $version, '4.0', '>=' ) && version_compare( $GLOBALS['wp_version'], '4.0', '<' ) ) {
+
+			/** This filter is documented in wp-admin/includes/update-core.php */
 			apply_filters( 'update_feedback', __( 'Upgrading language files&#8230;', 'polylang' ) );
 			PLL_Upgrade::download_language_packs();
 		}
 	}
 
-	/*
+	/**
 	 * allows to update translations files for plugins and themes
 	 *
 	 * @since 1.6

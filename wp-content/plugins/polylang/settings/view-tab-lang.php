@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * displays the languages tab in Polylang settings
  */
 
@@ -125,8 +126,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div><?php
 
 				if ( ! empty( $edit_lang ) ) {
+					/**
+					 * Fires after the Edit Language form fields are displayed.
+					 *
+					 * @since 1.7.10
+					 *
+					 * @param object $lang language being edited.
+					 */
 					do_action( 'pll_language_edit_form_fields', $edit_lang );
 				} else {
+					/**
+					 * Fires after the Add Language form fields are displayed.
+					 *
+					 * @since 1.7.10
+					 */
 					do_action( 'pll_language_add_form_fields' );
 				}
 

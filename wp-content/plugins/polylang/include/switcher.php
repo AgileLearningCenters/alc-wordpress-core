@@ -1,20 +1,20 @@
 <?php
 
-/*
+/**
  * a class to display a language switcher on frontend
  *
  * @since 1.2
  */
 class PLL_Switcher {
 
-	/*
+	/**
 	 * returns options available for the language switcher - menu or widget
 	 * either strings to display the options or default values
 	 *
 	 * @since 0.7
 	 *
 	 * @param string $type optional either 'menu' or 'widget', defaults to 'widget'
-	 * @param string $key optional either 'string' or 'default', defaults to 'string'
+	 * @param string $key  optional either 'string' or 'default', defaults to 'string'
 	 * @return array list of switcher options srings or default values
 	 */
 	static public function get_switcher_options( $type = 'widget', $key = 'string' ) {
@@ -33,7 +33,7 @@ class PLL_Switcher {
 		return wp_list_pluck( $options, $key );
 	}
 
-	/*
+	/**
 	 * get the language elements for use in a walker
 	 *
 	 * list of parameters accepted in $args:
@@ -42,7 +42,7 @@ class PLL_Switcher {
 	 * @since 1.2
 	 *
 	 * @param object $links instance of PLL_Frontend_Links
-	 * @param array $args
+	 * @param array  $args
 	 * @return array
 	 */
 	protected function get_elements( $links, $args ) {
@@ -72,6 +72,15 @@ class PLL_Switcher {
 				$classes[] = 'no-translation';
 			}
 
+			/*
+			 * Filter the link in the language switcher
+			 *
+			 * @since 0.7
+			 *
+			 * @param string $url    the link
+			 * @param string $slug   language code
+			 * @param string $locale language locale
+			 */
 			$url = apply_filters( 'pll_the_language_link', $url, $slug, $language->locale );
 
 			// hide if no translation exists
@@ -90,7 +99,7 @@ class PLL_Switcher {
 		return empty( $out ) ? array() : $out;
 	}
 
-	/*
+	/**
 	 * displays a language switcher
 	 * or returns the raw elements to build a custom language switcher
 	 *
@@ -111,7 +120,7 @@ class PLL_Switcher {
 	 * @since 0.1
 	 *
 	 * @param object $links instance of PLL_Frontend_Links
-	 * @param array $args
+	 * @param array  $args
 	 * @return string|array either the html markup of the switcher or the raw elements to build a custom language switcher
 	 */
 	public function the_languages( $links, $args = '' ) {
@@ -130,6 +139,14 @@ class PLL_Switcher {
 			'raw'                    => 0, // set this to true to build your own custom language switcher
 		);
 		$args = wp_parse_args( $args, $defaults );
+
+		/*
+		 * Filter the arguments of the 'pll_the_languages' template tag
+		 *
+		 * @since 1.5
+		 *
+		 * @param array $args
+		 */
 		$args = apply_filters( 'pll_the_languages_args', $args );
 
 		// prevents showing empty options in dropdown
@@ -152,6 +169,14 @@ class PLL_Switcher {
 			$walker = new PLL_Walker_List();
 		}
 
+		/*
+		 * Filter the whole html markup returned by the 'pll_the_languages' template tag
+		 *
+		 * @since 0.8
+		 *
+		 * @param string $html html returned/outputed by the template tag
+		 * @param array  $args arguments passed to the template tag
+		 */
 		$out = apply_filters( 'pll_the_languages', $walker->walk( $elements, $args ), $args );
 
 		// javascript to switch the language when using a dropdown list

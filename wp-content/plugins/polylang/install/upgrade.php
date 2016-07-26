@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * manages Polylang upgrades
  *
  * @since 1.2
@@ -8,7 +8,7 @@
 class PLL_Upgrade {
 	public $options;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.2
@@ -17,7 +17,7 @@ class PLL_Upgrade {
 		$this->options = &$options;
 	}
 
-	/*
+	/**
 	 * check if upgrade is possible otherwise die to avoid activation
 	 *
 	 * @since 1.2
@@ -30,7 +30,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * upgrades if possible otherwise returns false to stop Polylang loading
 	 *
 	 * @since 1.2
@@ -48,7 +48,7 @@ class PLL_Upgrade {
 	}
 
 
-	/*
+	/**
 	 * check if we the previous version is not too old
 	 * upgrades if OK
 	 * /!\ never start any upgrade before admin_init as it is likely to conflict with some other plugins
@@ -62,7 +62,7 @@ class PLL_Upgrade {
 		return version_compare( $this->options['version'], '0.8', '>=' );
 	}
 
-	/*
+	/**
 	 * displays a notice when ugrading from a too old version
 	 *
 	 * @since 1.0
@@ -81,7 +81,7 @@ class PLL_Upgrade {
 		);
 	}
 
-	/*
+	/**
 	 * upgrades the plugin depending on the previous version
 	 *
 	 * @since 1.2
@@ -103,7 +103,7 @@ class PLL_Upgrade {
 		update_option( 'polylang', $this->options );
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 0.9
 	 *
 	 * @since 1.2
@@ -112,7 +112,7 @@ class PLL_Upgrade {
 		$this->options['sync'] = defined( 'PLL_SYNC' ) && ! PLL_SYNC ? 0 : 1; // the option replaces PLL_SYNC in 0.9
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.0
 	 *
 	 * @since 1.2
@@ -132,7 +132,7 @@ class PLL_Upgrade {
 		flush_rewrite_rules(); // rewrite rules have been modified in 1.0
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.1
 	 *
 	 * @since 1.2
@@ -154,7 +154,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.2
 	 *
 	 * @since 1.2
@@ -270,7 +270,7 @@ class PLL_Upgrade {
 		// upgrade of nav menus is now in upgrade_1_2_3
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.2.1
 	 *
 	 * @since 1.2.1
@@ -288,7 +288,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.2.3
 	 * uprades multilingual menus depending on the old version due to multiple changes in menus management
 	 *
@@ -365,7 +365,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.3
 	 * moves the user biographies in default language to the 'description' user meta
 	 *
@@ -384,7 +384,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.4
 	 * sets a transient to delete old model data
 	 * deletes language cache (due to bug correction in home urls in 1.3.1 and added mo_id in 1.4)
@@ -396,7 +396,7 @@ class PLL_Upgrade {
 		delete_transient( 'pll_languages_list' );
 	}
 
-	/*
+	/**
 	 * old data were not deleted in 1.2, just in case...
 	 * delete them at first upgrade at least 60 days after upgrade to 1.4
 	 *
@@ -424,7 +424,7 @@ class PLL_Upgrade {
 		delete_transient( 'pll_upgrade_1_4' );
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.4.1
 	 * disables the browser detection when using multiple domains
 	 *
@@ -436,7 +436,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.4.4
 	 * uprades widgets options for language filter
 	 *
@@ -456,7 +456,7 @@ class PLL_Upgrade {
 		unset( $this->options['widgets'] );
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.5
 	 * deletes language cache (due to host property added and bug on search url)
 	 *
@@ -466,7 +466,7 @@ class PLL_Upgrade {
 		delete_transient( 'pll_languages_list' );
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.6
 	 * upgrades core language files to get the .po file (only for WP 4.0+)
 	 *
@@ -478,7 +478,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * downloads language packs
 	 * intended to be used only one time (at upgrade to Polylang 1.6 or first upgrade of WP 4.0 or later)
 	 * adapted from wp_download_language_pack
@@ -520,7 +520,7 @@ class PLL_Upgrade {
 		}
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.7.4
 	 *
 	 * @since 1.7.4
@@ -530,7 +530,7 @@ class PLL_Upgrade {
 		flush_rewrite_rules(); // flush rewrite rules due to custom taxonomy rewrite rule bug fix
 	}
 
-	/*
+	/**
 	 * upgrades if the previous version is < 1.8
 	 *
 	 * @since 1.8

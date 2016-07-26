@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * an extremely simple non persistent cache system
  * not as fast as using directly an array but more readable
  *
@@ -9,7 +9,7 @@
 class PLL_Cache {
 	protected $blog_id, $cache;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.7
@@ -19,7 +19,7 @@ class PLL_Cache {
 		add_action( 'switch_blog', array( &$this, 'switch_blog' ) );
 	}
 
-	/*
+	/**
 	 * called when switching blog
 	 *
 	 * @since 1.7
@@ -30,7 +30,7 @@ class PLL_Cache {
 		$this->blog_id = $new_blog;
 	}
 
-	/*
+	/**
 	 * add a value in cache
 	 *
 	 * @since 1.7
@@ -42,7 +42,7 @@ class PLL_Cache {
 		$this->cache[ $this->blog_id ][ $key ] = $data;
 	}
 
-	/*
+	/**
 	 * get value from cache
 	 *
 	 * @since 1.7
@@ -54,7 +54,7 @@ class PLL_Cache {
 		return isset( $this->cache[ $this->blog_id ][ $key ] ) ? $this->cache[ $this->blog_id ][ $key ] : false;
 	}
 
-	/*
+	/**
 	 * clean the cache (for this blog only)
 	 *
 	 * @since 1.7

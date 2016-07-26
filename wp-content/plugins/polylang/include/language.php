@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * a language object is made of two terms in 'language' and 'term_language' taxonomies
  * manipulating only one object per language instead of two terms should make things easier
  *
@@ -42,7 +42,7 @@ class PLL_Language {
 	public $host, $mo_id;
 	public $page_on_front, $page_for_posts;
 
-	/*
+	/**
 	 * constructor: builds a language object given its two corresponding terms in language and term_language taxonomies
 	 *
 	 * @since 1.2
@@ -84,7 +84,7 @@ class PLL_Language {
 		}
 	}
 
-	/*
+	/**
 	 * sets flag_url and flag properties
 	 *
 	 * @since 1.2
@@ -110,14 +110,34 @@ class PLL_Language {
 			$flags['custom_flag']['src'] = esc_url( PLL_LOCAL_URL . $file );
 		}
 
+		/**
+		 * Filter the flag title attribute
+		 * Defaults to the language name
+		 *
+		 * @since 0.7
+		 *
+		 * @param string $title  the flag title attribute
+		 * @param string $slug   the language code
+		 * @param string $locale the language locale
+		 */
+		$title = apply_filters( 'pll_flag_title', $this->name, $this->slug, $this->locale );
+
 		foreach ( $flags as $key => $flag ) {
 			$this->{$key . '_url'} = empty( $flag['url'] ) ? '' : $flag['url'];
 
+			/**
+			 * Filter the html markup of a flag
+			 *
+			 * @since 1.0.2
+			 *
+			 * @param string $flag html markup of the flag or empty string
+			 * @param string $slug language code
+			 */
 			$this->{$key} = apply_filters( 'pll_get_flag', empty( $flag['src'] ) ? '' :
 				sprintf(
 					'<img src="%s" title="%s" alt="%s" />',
 					$flag['src'],
-					esc_attr( apply_filters( 'pll_flag_title', $this->name, $this->slug, $this->locale ) ),
+					esc_attr( $title ),
 					esc_attr( $this->name )
 				),
 				$this->slug
@@ -125,7 +145,7 @@ class PLL_Language {
 		}
 	}
 
-	/*
+	/**
 	 * replace flag by custom flag
 	 * takes care of url scheme
 	 *
@@ -149,7 +169,7 @@ class PLL_Language {
 		}
 	}
 
-	/*
+	/**
 	 * updates post and term count
 	 *
 	 * @since 1.2
@@ -159,7 +179,7 @@ class PLL_Language {
 		wp_update_term_count( $this->tl_term_taxonomy_id, 'term_language' ); // terms count
 	}
 
-	/*
+	/**
 	 * set home_url and search_url properties
 	 *
 	 * @since 1.3
@@ -172,7 +192,7 @@ class PLL_Language {
 		$this->home_url = $home_url;
 	}
 
-	/*
+	/**
 	 * set home_url scheme
 	 * this can't be cached accross pages
 	 *
@@ -190,7 +210,7 @@ class PLL_Language {
 		}
 	}
 
-	/*
+	/**
 	 * returns the language locale
 	 * converts WP locales to W3C valid locales for display
 	 * @see #33511
@@ -203,17 +223,19 @@ class PLL_Language {
 	public function get_locale( $filter = 'raw' ) {
 		if ( 'display' == $filter ) {
 			static $valid_locales = array(
-				'bel'          => 'be',
-				'bre'          => 'br',
-				'de_DE_formal' => 'de_DE',
-				'dzo'          => 'dz',
-				'ido'          => 'io',
-				'kin'          => 'rw',
-				'oci'          => 'oc',
-				'mri'          => 'mi',
-				'roh'          => 'rm',
-				'srd'          => 'sc',
-				'tuk'          => 'tk',
+				'bel'            => 'be',
+				'bre'            => 'br',
+				'de_CH_informal' => 'de_CH',
+				'de_DE_formal'   => 'de_DE',
+				'dzo'            => 'dz',
+				'ido'            => 'io',
+				'kin'            => 'rw',
+				'oci'            => 'oc',
+				'mri'            => 'mi',
+				'nl_NL_formal'   => 'nl_NL',
+				'roh'            => 'rm',
+				'srd'            => 'sc',
+				'tuk'            => 'tk',
 			 );
 			$locale = isset( $valid_locales[ $this->locale ] ) ? $valid_locales[ $this->locale ] : $this->locale;
 			return str_replace( '_', '-', $locale );

@@ -1,35 +1,43 @@
 <?php
 
-/*
- * the language switcher widget
+/**
+ * The language switcher widget
  *
  * @since 0.1
  */
 class PLL_Widget_Languages extends WP_Widget {
 
-	/*
-	 * constructor
+	/**
+	 * Constructor
 	 *
 	 * @since 0.1
 	 */
 	function __construct() {
-		parent::__construct( 'polylang', __( 'Language Switcher', 'polylang' ), array( 'description' => __( 'Displays a language switcher', 'polylang' ) ) );
+		parent::__construct(
+			'polylang',
+			__( 'Language Switcher', 'polylang' ),
+			array(
+				'description' => __( 'Displays a language switcher', 'polylang' ),
+				'customize_selective_refresh' => true,
+			)
+		);
 	}
 
-	/*
-	 * displays the widget
+	/**
+	 * Displays the widget
 	 *
 	 * @since 0.1
 	 *
-	 * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
+	 * @param array $args     Display arguments including before_title, after_title, before_widget, and after_widget.
 	 * @param array $instance The settings for the particular instance of the widget
 	 */
 	function widget( $args, $instance ) {
-		// sets a unique id for dropdown
+		// Sets a unique id for dropdown
 		$instance['dropdown'] = empty( $instance['dropdown'] ) ? 0 : $args['widget_id'];
 
 		if ( $list = pll_the_languages( array_merge( $instance, array( 'echo' => 0 ) ) ) ) {
 			$title = empty( $instance['title'] ) ? '' : $instance['title'];
+			/** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
 			$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 			echo $args['before_widget'];
@@ -41,8 +49,8 @@ class PLL_Widget_Languages extends WP_Widget {
 		}
 	}
 
-	/*
-	 * updates the widget options
+	/**
+	 * Updates the widget options
 	 *
 	 * @since 0.4
 	 *
@@ -59,19 +67,19 @@ class PLL_Widget_Languages extends WP_Widget {
 		return $instance;
 	}
 
-	/*
-	 * displays the widget form
+	/**
+	 * Displays the widget form
 	 *
 	 * @since 0.4
 	 *
 	 * @param array $instance Current settings
 	 */
 	function form( $instance ) {
-		// default values
+		// Default values
 		$instance = wp_parse_args( (array) $instance, array_merge( array( 'title' => '' ), PLL_Switcher::get_switcher_options( 'widget', 'default' ) ) );
 
-		// title
-		$title = sprintf(
+		// Title
+		printf(
 			'<p><label for="%1$s">%2$s</label><input class="widefat" id="%1$s" name="%3$s" type="text" value="%4$s" /></p>',
 			$this->get_field_id( 'title' ),
 			__( 'Title:', 'polylang' ),
@@ -82,17 +90,18 @@ class PLL_Widget_Languages extends WP_Widget {
 		$fields = '';
 		foreach ( PLL_Switcher::get_switcher_options( 'widget' ) as $key => $str ) {
 			$fields .= sprintf(
-				'<div class = "%5$s" %6$s><input type="checkbox" class="checkbox" id="%1$s" name="%2$s" %3$s/> <label for="%1$s">%4$s</label></div>',
+				'<div%5$s%6$s><input type="checkbox" class="checkbox %7$s" id="%1$s" name="%2$s"%3$s /><label for="%1$s">%4$s</label></div>',
 				$this->get_field_id( $key ),
 				$this->get_field_name( $key ),
-				$instance[ $key ] ? 'checked="checked"' : '',
+				$instance[ $key ] ? ' checked="checked"' : '',
 				esc_html( $str ),
-				in_array( $key, array( 'show_names', 'show_flags', 'hide_current' ) ) ? 'no-dropdown-' . $this->id : '',
-				! empty( $instance['dropdown'] ) && in_array( $key, array( 'show_names', 'show_flags', 'hide_current' ) ) ? 'style="display:none;"' : ''
+				in_array( $key, array( 'show_names', 'show_flags', 'hide_current' ) ) ? ' class="no-dropdown-' . $this->id . '"' : '',
+				! empty( $instance['dropdown'] ) && in_array( $key, array( 'show_names', 'show_flags', 'hide_current' ) ) ? ' style="display:none;"' : '',
+				'pll-' . $key
 			);
 		}
 
-		echo $title.'<p>'.$fields.'</p>';
+		echo $fields;
 
 		// FIXME echoing script in form is not very clean
 		// but it does not work if enqueued properly :
@@ -100,49 +109,44 @@ class PLL_Widget_Languages extends WP_Widget {
 		$this->admin_print_script();
 	}
 
-	/*
-	 * add javascript to control the language switcher options
+	/**
+	 * Add javascript to control the language switcher options
 	 *
 	 * @since 1.3
 	 */
 	public function admin_print_script() {
-		static $js = '';
+		static $done = false;
 
-		if ( $js ) {
+		if ( $done ) {
 			return;
 		}
 
-		$js = "
-			<script type='text/javascript'>
-				//<![CDATA[
-				jQuery( document ).ready( function( $ ) {
-					function pll_toggle( a, test ) {
-						test ? a.show() : a.hide();
-					}
+		$done = true; ?>
+		<script type='text/javascript'>
+			//<![CDATA[
+			jQuery( document ).ready( function( $ ) {
+				function pll_toggle( a, test ) {
+					test ? a.show() : a.hide();
+				}
 
-					var widgets = new Array();
-					$( '.widget-id' ).each( function(){
-						var this_id = $( this ).attr( 'value' );
+				// Remove all options if dropdown is checked
+				$( '.widgets-sortables,.control-section-sidebar' ).on( 'change', '.pll-dropdown', function() {
+					var this_id = $( this ).parent().parent().parent().children( '.widget-id' ).attr( 'value' );
+					pll_toggle( $( '.no-dropdown-' + this_id ), 'checked' != $( this ).attr( 'checked' ) );
+				} );
 
-						// remove all options if dropdown is checked
-						$( '#widget-'+this_id+'-dropdown' ).change( function() {
-							pll_toggle( $( '.no-dropdown-'+this_id ), 'checked' != $( this ).attr( 'checked' ) );
-						} );
-
-						// disallow unchecking both show names and show flags
-						var options = ['-show_flags', '-show_names'];
-						$.each( options, function( i, v ) {
-							$( '#widget-'+this_id+v ).change( function() {
-								if ( 'checked' != $( this ).attr( 'checked' ) )
-									$( '#widget-'+this_id+options[1-i] ).prop( 'checked', true );
-							} );
-						} );
-
+				// Disallow unchecking both show names and show flags
+				var options = ['-show_flags', '-show_names'];
+				$.each( options, function( i, v ) {
+					$( '.widgets-sortables,.control-section-sidebar' ).on( 'change', '.pll' + v, function() {
+						var this_id = $( this ).parent().parent().parent().children( '.widget-id' ).attr( 'value' );
+						if ( 'checked' != $( this ).attr( 'checked' ) ) {
+							$( '#widget-' + this_id + options[ 1-i ] ).prop( 'checked', true );
+						}
 					} );
 				} );
-				//]]>
-			</script>";
-
-		echo $js;
+			} );
+			//]]>
+		</script><?php
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * a class to manage WP pointers
  * offers the possibility to have customized buttons
  *
@@ -9,7 +9,7 @@
 class PLL_Pointer {
 	protected $args;
 
-	/*
+	/**
 	 * constructor
 	 * enqueues the pointer script
 	 *
@@ -36,7 +36,7 @@ class PLL_Pointer {
 		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
 	}
 
-	/*
+	/**
 	 * enqueue javascripts and styles if the pointer has not been dismissed
 	 *
 	 * @since 1.7.7
@@ -54,7 +54,7 @@ class PLL_Pointer {
 		wp_enqueue_script( 'wp-pointer' );
 	}
 
-	/*
+	/**
 	 * adds the javascript of our pointer to the page
 	 *
 	 * @since 1.7.7

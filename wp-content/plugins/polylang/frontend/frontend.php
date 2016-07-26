@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * frontend controller
  * accessible as $polylang global object
  *
@@ -24,7 +24,7 @@ class PLL_Frontend extends PLL_Base {
 	public $curlang;
 	public $links, $choose_lang, $filters, $filters_search, $nav_menu, $auto_translate;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.2
@@ -48,7 +48,7 @@ class PLL_Frontend extends PLL_Base {
 		}
 	}
 
-	/*
+	/**
 	 * setups the language chooser based on options
 	 *
 	 * @since 1.2
@@ -67,7 +67,7 @@ class PLL_Frontend extends PLL_Base {
 		$this->nav_menu = new PLL_Frontend_Nav_Menu( $this );
 	}
 
-	/*
+	/**
 	 * setups filters and nav menus once the language has been defined
 	 *
 	 * @since 1.2
@@ -80,7 +80,7 @@ class PLL_Frontend extends PLL_Base {
 	}
 
 
-	/*
+	/**
 	 * when querying multiple taxonomies, makes sure that the language is not the queried object
 	 *
 	 * @since 1.8
@@ -95,7 +95,7 @@ class PLL_Frontend extends PLL_Base {
 		}
 	}
 
-	/*
+	/**
 	 * modifies some query vars to "hide" that the language is a taxonomy and avoid conflicts
 	 *
 	 * @since 1.2
@@ -153,7 +153,7 @@ class PLL_Frontend extends PLL_Base {
 		}
 	}
 
-	/*
+	/**
 	 * auto translate posts and terms ids
 	 *
 	 * @since 1.2
@@ -162,7 +162,7 @@ class PLL_Frontend extends PLL_Base {
 		$this->auto_translate = new PLL_Frontend_Auto_Translate( $this );
 	}
 
-	/*
+	/**
 	 * resets some variables when switching blog
 	 * overrides parent method
 	 *
@@ -183,7 +183,7 @@ class PLL_Frontend extends PLL_Base {
 		}
 	}
 
-	/*
+	/**
 	 * check if translated taxonomy is queried
 	 * compatible with nested queries introduced in WP 4.1
 	 * @see https://wordpress.org/support/topic/tax_query-bug
@@ -208,7 +208,7 @@ class PLL_Frontend extends PLL_Base {
 		return false;
 	}
 
-	/*
+	/**
 	 * get queried taxonomies
 	 *
 	 * @since 1.8

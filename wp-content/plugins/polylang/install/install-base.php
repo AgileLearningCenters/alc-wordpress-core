@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * a generic activation / de-activation class compatble with multisite
  *
  * @since 1.7
@@ -8,7 +8,7 @@
 class PLL_Install_Base {
 	protected $plugin_basename;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.7
@@ -24,7 +24,7 @@ class PLL_Install_Base {
 		add_action( 'wpmu_new_blog', array( &$this, 'wpmu_new_blog' ), 5 ); // before WP attempts to send mails which can break on some PHP versions
 	}
 
-	/*
+	/**
 	 * allows to detect plugin deactivation
 	 *
 	 * @since 1.7
@@ -35,7 +35,7 @@ class PLL_Install_Base {
 		return isset( $_GET['action'], $_GET['plugin'] ) && 'deactivate' == $_GET['action'] && $this->plugin_basename == $_GET['plugin'];
 	}
 
-	/*
+	/**
 	 * activation or deactivation for all blogs
 	 *
 	 * @since 1.2
@@ -60,7 +60,7 @@ class PLL_Install_Base {
 		}
 	}
 
-	/*
+	/**
 	 * plugin activation for multisite
 	 *
 	 * @since 1.7
@@ -69,7 +69,7 @@ class PLL_Install_Base {
 		$this->do_for_all_blogs( 'activate', $networkwide );
 	}
 
-	/*
+	/**
 	 * plugin activation
 	 *
 	 * @since 0.5
@@ -78,7 +78,7 @@ class PLL_Install_Base {
 		// can be overriden in child class
 	}
 
-	/*
+	/**
 	 * plugin deactivation for multisite
 	 *
 	 * @since 0.1
@@ -87,7 +87,7 @@ class PLL_Install_Base {
 		$this->do_for_all_blogs( 'deactivate', $networkwide );
 	}
 
-	/*
+	/**
 	 * plugin deactivation
 	 *
 	 * @since 0.5
@@ -96,7 +96,7 @@ class PLL_Install_Base {
 		// can be overriden in child class
 	}
 
-	/*
+	/**
 	 * blog creation on multisite ( to set default options )
 	 *
 	 * @since 0.9.4

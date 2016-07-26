@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * displays the settings tab in Polylang settings
  */
 

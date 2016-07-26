@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * reads and interprets the file wpml-config.xml
  * see http://wpml.org/documentation/support/language-configuration-files/
  * the language switcher configuration is not interpreted
@@ -14,7 +14,7 @@ class PLL_WPML_Config {
 	protected $values, $index, $strings;
 	public $tags;
 
-	/*
+	/**
 	 * constructor
 	 *
 	 * @since 1.0
@@ -23,7 +23,7 @@ class PLL_WPML_Config {
 		$this->init();
 	}
 
-	/*
+	/**
 	 * access to the single instance of the class
 	 *
 	 * @since 1.7
@@ -37,7 +37,7 @@ class PLL_WPML_Config {
 		return self::$instance;
 	}
 
-	/*
+	/**
 	 * parses the wpml-config.xml file
 	 *
 	 * @since 1.0
@@ -76,7 +76,7 @@ class PLL_WPML_Config {
 		}
 	}
 
-	/*
+	/**
 	 * recursively parses the wpml-config.xml file
 	 *
 	 * @since 1.0
@@ -137,7 +137,7 @@ class PLL_WPML_Config {
 		return $found;
 	}
 
-	/*
+	/**
 	 * finds the wpml-config.xml files to parse and setup filters
 	 *
 	 * @since 1.0
@@ -212,7 +212,7 @@ class PLL_WPML_Config {
 		}
 	}
 
-	/*
+	/**
 	 * arranges strings in a cleaner way
 	 *
 	 * @since 1.0
@@ -233,7 +233,7 @@ class PLL_WPML_Config {
 		return $strings;
 	}
 
-	/*
+	/**
 	 * recursively registers strings for a serialized option
 	 *
 	 * @since 1.0
@@ -257,7 +257,7 @@ class PLL_WPML_Config {
 		}
 	}
 
-	/*
+	/**
 	 * adds custom fields to the list of metas to copy when creating a new translation
 	 *
 	 * @since 1.0
@@ -284,7 +284,7 @@ class PLL_WPML_Config {
 		return $metas;
 	}
 
-	/*
+	/**
 	 * language and translation management for custom post types
 	 *
 	 * @since 1.0
@@ -307,7 +307,7 @@ class PLL_WPML_Config {
 		return $types;
 	}
 
-	/*
+	/**
 	 * language and translation management for custom taxonomies
 	 *
 	 * @since 1.0
@@ -331,7 +331,7 @@ class PLL_WPML_Config {
 		return $taxonomies;
 	}
 
-	/*
+	/**
 	 * translates the strings for an option
 	 *
 	 * @since 1.0
@@ -351,7 +351,7 @@ class PLL_WPML_Config {
 		return pll__( $value );
 	}
 
-	/*
+	/**
 	 * recursively translates strings for a serialized option
 	 *
 	 * @since 1.0
