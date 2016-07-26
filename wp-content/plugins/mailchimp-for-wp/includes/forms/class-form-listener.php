@@ -67,6 +67,7 @@ class MC4WP_Form_Listener {
 	public function process_subscribe_form( MC4WP_Form $form ) {
 		$api = $this->get_api();
 		$result = false;
+		$email = $form->data['EMAIL'];
 		$email_type = $form->get_email_type();
 		$merge_vars = $form->data;
 
@@ -84,16 +85,19 @@ class MC4WP_Form_Listener {
 		// loop through lists
 		foreach( $map->list_fields as $list_id => $merge_vars ) {
 			// send a subscribe request to MailChimp for each list
-			$result = $api->subscribe( $list_id, $form->data['EMAIL'], $merge_vars, $email_type, $form->settings['double_optin'], $form->settings['update_existing'], $form->settings['replace_interests'], $form->settings['send_welcome'] );
+			$result = $api->subscribe( $list_id, $email, $merge_vars, $email_type, $form->settings['double_optin'], $form->settings['update_existing'], $form->settings['replace_interests'], $form->settings['send_welcome'] );
 		}
 
 		// do stuff on failure
 		if( ! $result ) {
 
-			if( $api->get_error_code() == 214 ) {
+			if( $api->get_error_code() == 212 ) {
+				$form->errors[] = 'previously_unsubscribed';
+				$this->get_log()->warning( sprintf( 'Form %d > %s has unsubscribed before and cannot be resubscribed by the plugin.', $form->ID, $form->data['EMAIL'] ) );
+			} elseif( $api->get_error_code() == 214 ) {
 				// handle "already_subscribed" as a soft-error
 				$form->errors[] = 'already_subscribed';
-				$this->get_log()->warning( sprintf( "Form %d > %s is already subscribed to the selected list(s)", $form->ID, $form->data['EMAIL'] ) );
+				$this->get_log()->warning( sprintf( "Form %d > %s is already subscribed to the selected list(s)", $form->ID, mc4wp_obfuscate_string( $form->data['EMAIL'] ) ) );
 			} else {
 				// log error
 				$this->get_log()->error( sprintf( 'Form %d > MailChimp API error: %s', $form->ID, $api->get_error_message() ) );
@@ -114,8 +118,11 @@ class MC4WP_Form_Listener {
 		 * @since 3.0
 		 *
 		 * @param MC4WP_Form $form Instance of the submitted form
+		 * @param string $email
+		 * @param array $merge_vars
+		 * @param array $pretty_data
 		 */
-		do_action( 'mc4wp_form_subscribed', $form, $map->formatted_data, $map->pretty_data );
+		do_action( 'mc4wp_form_subscribed', $form, $email, $merge_vars, $map->pretty_data );
 	}
 
 	/**

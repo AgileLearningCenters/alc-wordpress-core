@@ -63,31 +63,34 @@ class MC4WP_Forms_Admin {
 			'city'          => __( 'City', 'mailchimp-for-wp' ),
 			'checkboxes'    => __( 'Checkboxes', 'mailchimp-for-wp' ),
 			'choices'       => __( 'Choices', 'mailchimp-for-wp' ),
-			'choiceType'    => __( "Choice Type", 'mailchimp-for-wp' ),
+			'choiceType'    => __( "Choice type", 'mailchimp-for-wp' ),
 			'chooseField'   => __( "Choose a MailChimp field to add to the form", 'mailchimp-for-wp' ),
 			'close'         => __( 'Close', 'mailchimp-for-wp' ),
 			'country'       => __( 'Country', 'mailchimp-for-wp' ),
 			'dropdown'      => __( 'Dropdown', 'mailchimp-for-wp' ),
-			'fieldLabel'    => __( "Field Label", 'mailchimp-for-wp' ),
-			'formAction'    => __( 'Form Action', 'mailchimp-for-wp' ),
+			'fieldLabel'    => __( "Field label", 'mailchimp-for-wp' ),
+			'formAction'    => __( 'Form action', 'mailchimp-for-wp' ),
 			'formActionDescription' => __( 'This field will allow your visitors to choose whether they would like to subscribe or unsubscribe', 'mailchimp-for-wp' ),
 			'forceRequired' => __( 'This field is marked as required in MailChimp.', 'mailchimp-for-wp' ),
 			'isFieldRequired' => __( "Is this field required?", 'mailchimp-for-wp' ),
-			'listChoice'    => __( 'List Choice', 'mailchimp-for-wp' ),
+			'listChoice'    => __( 'List choice', 'mailchimp-for-wp' ),
 			'listChoiceDescription' => __( 'This field will allow your visitors to choose a list to subscribe to.', 'mailchimp-for-wp' ),
 			'min'           => __( 'Min', 'mailchimp-for-wp' ),
 			'max'           => __( 'Max', 'mailchimp-for-wp' ),
 			'noAvailableFields' => __( 'No available fields. Did you select a MailChimp list in the form settings?', 'mailchimp-for-wp' ),
+			'optional' 		=> __( 'Optional', 'mailchimp-for-wp' ),
 			'placeholder'   => __( 'Placeholder', 'mailchimp-for-wp' ),
 			'placeholderHelp' => __( "Text to show when field has no value.", 'mailchimp-for-wp' ),
-			'radioButtons'  => __( 'Radio Buttons', 'mailchimp-for-wp' ),
+			'preselect' 	=> __( 'Preselect', 'mailchimp-for-wp' ),
+			'remove' 		=> __( 'Remove', 'mailchimp-for-wp' ),
+			'radioButtons'  => __( 'Radio buttons', 'mailchimp-for-wp' ),
 			'streetAddress' => __( 'Street Address', 'mailchimp-for-wp' ),
 			'state'         => __( 'State', 'mailchimp-for-wp' ),
 			'subscribe'     => __( 'Subscribe', 'mailchimp-for-wp' ),
-			'submitButton'  => __( 'Submit Button', 'mailchimp-for-wp' ),
+			'submitButton'  => __( 'Submit button', 'mailchimp-for-wp' ),
 			'wrapInParagraphTags' => __( "Wrap in paragraph tags?", 'mailchimp-for-wp' ),
-			'value'  => __( "Initial Value", 'mailchimp-for-wp' ),
-			'valueHelp' => __( "Text to prefill this field with.", 'mailchimp-for-wp' ),
+			'value'  		=> __( "Initial value", 'mailchimp-for-wp' ),
+			'valueHelp' 	=> __( "Text to prefill this field with.", 'mailchimp-for-wp' ),
 			'zip'           => __( 'ZIP', 'mailchimp-for-wp' ),
 		));
 	}
@@ -167,20 +170,16 @@ class MC4WP_Forms_Admin {
 
 		// if an `ID` is given, make sure post is of type `mc4wp-form`
 		if( ! empty( $data['ID'] ) ) {
-			$post_data['ID'] = $data['ID'];
-
 			$post = get_post( $data['ID'] );
 
-			// check if attempted post is of post_type `mc4wp-form`
-			if( ! is_object( $post ) || $post->post_type !== 'mc4wp-form' ) {
-				wp_nonce_ays( '' );
-				return 0;
-			}
+			if( $post instanceof WP_Post && $post->post_type === 'mc4wp-form' ) {
+				$post_data['ID'] = $data['ID'];
 
-			// merge new settings  with current settings to allow passing partial data
-			$current_settings = get_post_meta( $post->ID, '_mc4wp_settings', true );
-			if( is_array( $current_settings ) ) {
-				$data['settings'] = array_merge( $current_settings, $data['settings'] );
+				// merge new settings  with current settings to allow passing partial data
+				$current_settings = get_post_meta( $post->ID, '_mc4wp_settings', true );
+				if( is_array( $current_settings ) ) {
+					$data['settings'] = array_merge( $current_settings, $data['settings'] );
+				}
 			}
 		}
 
@@ -296,18 +295,20 @@ class MC4WP_Forms_Admin {
 	 */
 	public function prepare_form_preview() {
 		$form_id = (int) $_POST['mc4wp_form_id'];
-		$previewer = new MC4WP_Form_Previewer( $form_id, true );
+		$preview_id = (int) get_option( 'mc4wp_form_preview_id', 0 );
 
 		// get data
 		$form_data = stripslashes_deep( $_POST['mc4wp_form'] );
-		$form_data['ID'] =  $previewer->get_preview_id();
-		$form_data['status'] = 'draft';
+		$form_data['ID'] =  $preview_id;
+		$form_data['status'] = 'preview';
+		$real_preview_id = $this->save_form( $form_data );
 
-		// save as new post & update preview id
-		$preview_id = $this->save_form( $form_data );
-		$previewer->set_preview_id( $preview_id );
+		if( $real_preview_id != $preview_id ) {
+			update_option( 'mc4wp_form_preview_id', $real_preview_id, false );
+		}
 
 		// redirect to preview
+		$previewer = new MC4WP_Form_Previewer( $form_id, $real_preview_id );
 		wp_redirect( $previewer->get_preview_url() );
 		exit;
 	}
