@@ -30,6 +30,10 @@ if (!class_exists('GFCPTAddonBase')) {
             //set the post type when saving a post
             add_filter("gform_post_data", array(&$this, 'set_post_values'), 10, 2);
 
+            if( class_exists( 'gform_update_post' ) ) {
+                remove_filter( 'gform_after_submission', array( 'gform_update_post', 'delete_custom_taxonomy_save' ), 1, 2 );
+            }
+
             //intercept the form save and save any taxonomy links if needed
             add_action( 'gform_after_create_post', array( $this, 'save_taxonomies'), 10, 3 );
 
@@ -327,7 +331,7 @@ if (!class_exists('GFCPTAddonBase')) {
          */
         function setup_taxonomy_field( &$field, $taxonomy ) {
 
-            $first_choice = rgars( $field, 'choices/0/text/' );
+            $first_choice = rgars( $field, 'choices/0/text' );
             $field['choices'] = $this->load_taxonomy_choices( $taxonomy, $field['type'], $first_choice, $field );
 
             //now check if we are dealing with a checkbox list and do some extra magic
@@ -427,6 +431,8 @@ if (!class_exists('GFCPTAddonBase')) {
             // Check if the submission contains a WordPress post
             if ( isset ( $entry['post_id'] ) ) {
 
+                $this->delete_custom_taxonomies( $entry, $form );
+
                 foreach( $form['fields'] as &$field ) {
 
                     $taxonomy = $this->get_field_taxonomy( $field );
@@ -434,6 +440,30 @@ if (!class_exists('GFCPTAddonBase')) {
                     if ( !$taxonomy ) continue;
 
                     $this->save_taxonomy_field( $field, $entry, $taxonomy );
+                }
+            }
+        }
+
+        /**
+         * Remove Custom Taxonomies
+         *
+         * @author  ekaj
+         * @return	void
+         */
+        public function delete_custom_taxonomies( $entry, $form ) {
+            // Check if the submission contains a WordPress post
+            if (! empty($entry['post_id']) )
+            {
+                foreach( $form['fields'] as &$field )
+                {
+                    $taxonomy = false;
+                    if ( array_key_exists('populateTaxonomy', $field) ) {
+                        $taxonomy = $field['populateTaxonomy'];
+                    }
+
+                    if ( $taxonomy ) {
+                        wp_set_object_terms( $entry['post_id'], NULL, $taxonomy );
+                    }
                 }
             }
         }
