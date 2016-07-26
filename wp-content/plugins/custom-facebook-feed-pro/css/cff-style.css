@@ -43,6 +43,11 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+#cff.cff-masonry .cff-item.cff-box,
+#cff.cff-masonry .cff-item.cff-box:first-child{
+  margin-left: 1.5%;
+  margin-right: 1.5%;
+}
 /* Feed Header */
 .cff-header{
   width: 100%;
@@ -217,7 +222,9 @@
   position: relative;
   margin: 0;
 }
-#cff .cff-photo:after {
+#cff .cff-photo:after,
+#cff .cff-event-thumb:after,
+#cff .cff-html5-video:after {
   border: 1px solid rgba(0, 0, 0, .1);
   bottom: 0;
   content: '';
@@ -258,7 +265,7 @@
   -webkit-box-shadow: 0 0 1px 0 rgba(255,255,255,0.8);
 }
 
-/*** ALBUMS ONLY ***/
+/*** GRID LAYOUT ***/
 /*Album*/
 #cff .cff-album-item{
   float: left;
@@ -306,7 +313,8 @@
   margin-right: 0;
 }
 /*Album image container*/
-#cff .cff-album-item .cff-album-cover{
+#cff .cff-album-item .cff-album-cover,
+#cff .cff-photo.cff-crop{
   width: 100%;
   height: 200px;
   display: block;
@@ -404,6 +412,10 @@
   width: 100%;
   margin: 0;
   padding: 0;
+}
+/* Fixes issue with HTML5 video controls now displaying when playing videos in feed (lightbox disabled) */
+#cff video{
+  z-index: 1;
 }
 #cff .cff-vidLink{
   float: left;
@@ -579,7 +591,7 @@
   margin: 0;
 }
 #cff .cff-text-link.cff-no-image{
-  width: 100%;
+  width: 100% !important;
 }
 #cff .cff-shared-link .cff-post-desc{
   margin-bottom: 0;
@@ -609,6 +621,10 @@
   margin-left: 3%;
   padding: 0 0 10px 0;
 }
+#cff .cff-timeline-event .cff-details{
+  width: 100%;
+  margin: 0;
+}
 /* Event date. Uses bold tags so can target in JS */
 #cff .cff-timeline-event b,
 #cff .cff-event b{
@@ -624,20 +640,30 @@
 }
 #cff .cff-event-thumb{
   position: relative;
-  width: 20%;
-  /*max-width: 80px;*/
+  width: 100%;
   float: left;
-  clear: both;
-  margin: 5px 0 0 0;
+  clear: none;
+  margin: 0;
 }
 #cff .cff-event-thumb img{
   float: left;
+  overflow: hidden;
   width: 100%;
   height: auto;
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
 }
+/* Timeline event which has cover photo */
+#cff .cff-event-thumb.cff-has-cover{
+  width: 100%;
+  padding: 0;
+}
+#cff .cff-details.cff-has-cover{
+  width: 100%;
+  margin: 5px 0 0 0;
+}
+
 #cff .cff-details h5{
   margin: 0 0 5px 0;
   padding: 0;
@@ -797,11 +823,9 @@
   width: 16px;
   height: 16px;
   margin: -2px 0 -3px 0;
-  /*background: url('../img/loader-light.gif') no-repeat;*/
   background: url('../img/loader.png') no-repeat;
 }
 .cff-dark .cff-loader{
-  /*background: url('../img/loader-dark.gif') no-repeat;*/
   background: url('../img/loader-dark.png') no-repeat;
 }
 /* Display comments */
@@ -939,6 +963,7 @@
 #cff .cff-comment .cff-comment-text img,
 #cff img.emoji{
   float: none;
+  max-width: 100%;
 }
 #cff .cff-comment-attachment{
   float: left;
@@ -1024,7 +1049,7 @@
   z-index: 1000;
   bottom: 22px;
   right: 0;
-  width: 135px;
+  width: 140px;
   padding: 5px 5px 4px 5px;
   margin: 0;
   background: #333;
@@ -1090,6 +1115,7 @@
   width: 100%;
   position: relative;
   margin: 20px 0 0 0;
+  padding: 0;
 }
 .cff-likebox .fb_iframe_widget{
   width: 100%;
@@ -1100,7 +1126,7 @@
 .cff-likebox iframe{
   margin: 0;
 
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100% !important;
@@ -1204,6 +1230,14 @@
 #cff.cff-thumb-layout .cff-full-size .cff-text-link{
   width: 72%;
 }
+/* Timeline event */
+#cff.cff-thumb-layout .cff-event-thumb{
+  width: 20%;
+}
+#cff.cff-thumb-layout .cff-details.cff-has-cover{
+  width: 100%;
+  margin: 0;
+}
 
 
 /*Half image size */
@@ -1260,7 +1294,14 @@
 #cff.cff-half-layout .cff-full-size .cff-text-link{
   width: 47%;
 }
-
+/* Timeline event */
+#cff.cff-half-layout .cff-event-thumb{
+  width: 50%;
+}
+#cff.cff-half-layout .cff-details.cff-has-cover{
+  width: 100%;
+  margin: 0;
+}
 
 /* Narrow width */
 #cff.narrow.cff-half-layout .cff-photo,
@@ -1296,10 +1337,36 @@
 #cff.narrow .cff-event .cff-details {
   width: 100%;
 }
+/* Timeline event which has cover photo */
+#cff.narrow .cff-event-thumb{
+  width: 100%;
+}
+#cff.narrow .cff-details.cff-has-cover{
+  width: 100%;
+  margin: 5px 0 0 0;
+}
 
 #cff .cff-error-msg{
+  position: relative;
   font-size: 12px;
   font-family: sans-serif;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+}
+#cff .cff-error-msg p{
+  float: none;
+}
+#cff .cff-error-msg .cff_notice_dismiss{
+  position: absolute;
+  top: 4px;
+  right: 8px;
 }
 #cff #cff-error-reason{
   display: none;
@@ -1403,6 +1470,25 @@
   width: 64px;
   height: 64px;
   margin: 3px;
+}
+.cff-lightbox-thumbs .cff-selected,
+.cff-lightbox-thumbs .cff-selected:hover,
+.cff-lightbox-thumbs .cff-selected:focus{
+  box-shadow: inset 0 0 2px 2px rgba(255,255,255,0.8);
+  border: 2px solid #333;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 3px;
+}
+.cff-lightbox-thumbs .cff-selected:after{
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(255,255,255,0.6);
 }
 .cff-lightbox-thumbs img{
   width: 60px;
@@ -1718,6 +1804,9 @@ body:after {
   .cff-has-video .cff-lightbox-dataContainer{
     min-width: 100%;
   }
+  #cff.cff-width-resp{
+    width: 100% !important;
+  }
 }
 
 /* Iframe */
@@ -1751,4 +1840,44 @@ body:after {
   bottom: 0;
   width: 100%;
   height: 100;
+}
+
+
+/*REVIEWS*/
+#cff .cff-review .cff-reviewer-name{
+  padding-right: 8px;
+  margin-left: 0 !important;
+}
+#cff .cff-review .cff-author .cff-author-text .cff-rating{
+  float: none;
+  display: inline-block;
+  margin: 0 0 5px 0 !important;
+  padding: 3px 6px;
+  height: auto;
+
+  background: #5890FF;
+  color: #fff;
+  line-height: 0.9;
+  white-space: nowrap;
+
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+}
+#cff .cff-review .cff-rating span.cff-rating-num,
+#cff .cff-review .cff-rating span.cff-star{
+  margin: 0 2px 0 4px !important;
+  padding: 0;
+  height: auto;
+  display: inline-block;
+  vertical-align: top;
+  line-height: 1;
+  color: #fff;
+  font-weight: normal;
+}
+#cff .cff-review .cff-rating span.cff-star{
+  margin: 0 2px 0 0 !important;
+}
+#cff .cff-review .cff-post-links{
+  float: left;
 }

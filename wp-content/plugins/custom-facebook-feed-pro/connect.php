@@ -1,16 +1,51 @@
 <?php
 
+//If displaying albums from a group then get the User Access Token from the DB
+$users_token = false;
+if( isset($cffgroupalbums) && $cffgroupalbums != false ){
+
+    function cff_get_wp_config_path(){
+        $base = dirname(__FILE__);
+        $path = false;
+        if (@file_exists(dirname(dirname($base))."/wp-config.php")){
+            $path = dirname(dirname($base))."/wp-config.php";
+        } else if (@file_exists(dirname(dirname(dirname($base)))."/wp-config.php")){
+            $path = dirname(dirname(dirname($base)))."/wp-config.php";
+        } else {
+            $path = false;
+        }
+        if ($path != false){
+            $path = str_replace("\\", "/", $path);
+        }
+        return $path;
+    }
+
+    $config_path = cff_get_wp_config_path();
+    $check_path = realpath($config_path);
+    if($check_path){
+        define( 'SHORTINIT', true );
+        require_once( $config_path );
+
+        $table_name = $wpdb->prefix . "options";
+        $sql_query = "SELECT * FROM " . $table_name . " WHERE option_name = 'cff_access_token'";
+        $results = $wpdb->get_results( $sql_query, ARRAY_A );
+        $users_token = $results[0]['option_value'];
+    }
+
+}
+
+
 //If there's no Access Token then use the defaults (regular tokens)
 $access_token_array = array(
-    '416662301842014|Iy7oi0_vW3k6zQBj4x7jKfaBw8w',
-    '351136301748729|qMn9Wtl3Kq5Fphtcxv3F_XiTF2U',
-    '896835057039463|T79vzdXFpPLHYAayPhMU-1_i1JI',
-    '388805814640108|gcuuC0CxitPh8n-jdSZzMUjDEDA',
-    '840211402734532|cg7gK3DbncTd4asqkWRZlWpME8g'
+    '209586139394490|QXhQP8gkkjaUkteRHEZ69cIQ_E0',
+    '860568860732369|3Zwc0BIFAPJpwnMA8jJFIHGkHXs',
+    '468006550060345|tucGvxtTrVlXfVsanjd6CdcTrgE',
+    '222681624750027|HHlgjdHHogQnUkcRG7rg1nLovaE',
+    '1719355091673842|5mZlDFAp48-vtThXE-QsWtNxXD8'
 );
-$access_token = $access_token_array[rand(0, 4)];
 
-//Include this function as it isn't automatically included if the wp-config.php file can't be found
+($users_token) ? $access_token = $users_token : $access_token = $access_token_array[rand(0, 4)];
+
 function cff_fetchUrl($url){
     //Can we use cURL?
     if(is_callable('curl_init')){

@@ -356,3 +356,69 @@
 	border: 1px solid #905207;
 	color: #905207;
 }
+#cff-admin .cff-short select,
+#cff-admin .cff-short input {
+	width: 50px;
+}
+#cff-admin .cff-medium select {
+	width: 250px;
+}
+#cff-admin .cff-wide select{
+	width: 400px;
+}
+
+#cff-admin #cff_width_options{
+	margin-top: 10px;
+	display: none;
+}
+#cff-admin #cff_width_options label{
+	font-size: 13px;
+	position: relative;
+	top: -2px;
+}
+
+/* Quick links */
+#cff-admin .cff_contents_links{
+	float: left;
+	clear: both;
+	width: 100%;
+	padding-bottom: 12px;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 15px;
+}
+#cff-admin .cff_contents_links a,
+#cff-admin .cff_contents_links span{
+	display: block;
+	float: left;
+	padding: 2px 5px;
+}
+#cff-admin .cff_contents_links span{
+	padding-left: 0;
+}
+
+/* Shortcode tooltips */
+#cff-admin label{
+	position: relative;
+}
+#cff-admin th{
+	position: relative;
+}
+#cff-admin .cff_shortcode{
+	display: none;
+	position: absolute;
+	z-index: 10;
+	font-size: 11px;
+	float: left;
+	width: auto;
+	white-space: pre-line;
+	line-height: 1.4;
+}
+#cff-admin .cff_shortcode_symbol{
+	position: absolute;
+	right: -24px;
+	bottom: 0px;
+  padding: 2px 4px 3px 3px;
+	width: auto;
+	font-size: 11px;
+	margin-left: 5px;
+}

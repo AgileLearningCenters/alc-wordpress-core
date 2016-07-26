@@ -3,12 +3,12 @@
 Plugin Name: Custom Facebook Feed Pro Personal
 Plugin URI: http://smashballoon.com/custom-facebook-feed
 Description: Add a completely customizable Facebook feed to your WordPress site
-Version: 2.5.10
+Version: 2.6.8.1
 Author: Smash Balloon
 Author URI: http://smashballoon.com/
 */
 /*
-Copyright 2014  Smash Balloon  (email: hey@smashballoon.com)
+Copyright 2016  Smash Balloon  (email: hey@smashballoon.com)
 This program is paid software; you may not redistribute it under any
 circumstances without the expressed written consent of the plugin author.
 This program is distributed in the hope that it will be useful,
@@ -23,11 +23,11 @@ if ( function_exists('display_cff') ){
 } else {
     include dirname( __FILE__ ) .'/cff-init.php';
 }
-define( 'CFFVER', '2.5.10' );
+define( 'CFFVER', '2.6.8.1' );
 define( 'WPW_SL_STORE_URL', 'http://smashballoon.com/' );
 define( 'WPW_SL_ITEM_NAME', 'Custom Facebook Feed WordPress Plugin Personal' ); //*!*Update Plugin Name at top of file*!*
 // The ID of the product. Used for renewals
-$cff_download_id = 210;
+$cff_download_id = 210; //210, 299, 300, 13384
 
 if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
     // load our custom updater if it doesn't already exist
@@ -72,8 +72,18 @@ function cff_pro_activate() {
     $options[ 'cff_show_facebook_share' ] = true;
     $options[ 'cff_event_title_link' ] = true;
     update_option( 'cff_style_settings', $options );
+
+    //Run cron twice daily when plugin is first activated for new users
+    wp_schedule_event(time(), 'twicedaily', 'cff_cron_job');
 }
 register_activation_hook( __FILE__, 'cff_pro_activate' );
+
+function cff_pro_deactivate() {
+    wp_clear_scheduled_hook('cff_cron_job');
+}
+register_deactivation_hook(__FILE__, 'cff_pro_deactivate');
+
+
 //Uninstall
 function cff_pro_uninstall()
 {

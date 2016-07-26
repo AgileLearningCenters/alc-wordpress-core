@@ -2,8 +2,8 @@
 Author: Smash Balloon
 Support Website: http://smashballoon/custom-facebook-feed/
 Requires at least: 3.0
-Tested up to: 4.2.2
-Version: 2.5.10
+Tested up to: 4.5.3
+Version: 2.6.8.1
 License: Non-distributable, Not for resale
 
 The Custom Facebook Feed allows you to display a completely customizable Facebook feed of any public Facebook page or group on your website.
@@ -34,9 +34,139 @@ Display a **completely customizable**, **responsive** and **search engine crawla
 5. You can display multiple feeds of different Facebook pages by specifying a Page ID directly in the shortcode: [custom-facebook-feed id=smashballoon num=5].
 
 == Changelog ==
+= 2.6.8.1 =
+* Fix: Fixed an issue introduced in the last update which caused photo feeds from Facebook Pages not to appear correctly
+
+= 2.6.8 =
+* Note: Due to Facebook deprecating version 2.0 of their API on August 8th, 2016, it will not longer be possible to display photo grid feeds from Facebook **Groups**. Photo grids from Facebook Pages will still work as normal.
+* Tweak: The plugin will now show up to 100 image attachments at the bottom of the popup lightbox for each post rather than the previous limit of 12
+* Tweak: Group wall feed posts are now ordered based on recent activity, rather than by the date they were created, to better reflect the order on the Facebook Group wall
+* Tweak: Album feeds are now ordered based on when the last photo was added to an album, as they are on Facebook, rather than by when they were created
+* Fix: Removed any dependencies on version 2.0 of the Facebook API
+* Fix: Fixed an issue where line breaks in event descriptions weren't being displayed correctly when the HTML was being minimized
+* Fix: Fixed a minor issue when using the keyboard to navigate through the popup lightbox
+* Fix: When using a custom event date format the end date can now be automatically hidden when it ends on the same day as it starts
+* Note: We're working hard on **version 3.0** which will be coming soon!
+
+= 2.6.7 =
+* Tweak: The "2 days ago" date format can now be translated via the shortcode
+* Fix: Fixed an issue with video titles not displaying due to a Facebook API change
+* Fix: The "post limit" setting is now working correctly in the video grid feed
+* Fix: Fixed an issue with some keyboard keys incidentally launching the lightbox
+* Fix: Fixed an issue with the font size not being applied to the post author text successfully in some themes
+* Fix: The `likeboxcover` shortcode option is now correctly correctly
+* Fix: The absolute path is no longer exposed in the page source code
+
+= 2.6.6.3 =
+* Updated to use the latest version of the Facebook API (2.6)
+* Fix: Fixed an issue with the post URLs when sharing to Facebook
+* Fix: Now using the Object ID in the post link for visitor posts as it's more reliable
+* Fix: Fixed an issue with the event name sometimes displaying twice on timeline events
+* Fix: Fixed an issue with the share link in the Facebook Like Box widget not working correctly
+* Fix: Added support for proxy settings defined in the wp-config file
+* Fix: When navigating through the lightbox using keyboard arrows the videos now stop playing as expected
+
+= 2.6.6.2 =
+* Fix: Fixed a JavaScript error in the admin area when using WordPress 4.5
+
+= 2.6.6.1 =
+* Fix: Fixed an issue with the Like Box not being displayed (unless a width was set) due to a recent Facebook change to the Like Box widget
+
+= 2.6.6 =
+* New: Added support for the [Reviews](https://smashballoon.com/extensions/reviews/) extension
+* Tweak: Added settings from the Carousel, Masonry Columns, and Reviews extensions to the System Info
+* Fix: Removed the Spanish .pot file as it isn't needed and was causing update issues occasionally
+* Fix: Fixed a rare error related to strange link formats when the post text is linked
+
+= 2.6.5.2 =
+* Fix: Fixed some stray PHP notices that appeared if image attachments in the comments of a post didn't have a title
+* Fix: Removed PHP notices that would appear when using the [Multifeed](https://smashballoon.com/extensions/multifeed/) extension if one of the Facebook pages wasn't public
+
+= 2.6.5.1 =
+* Fix: Fixed an issue where video titles weren't being displayed when displaying a video grid due to a Facebook API change
+* Fix: Fixed an issue with the order of events when using the Multifeed extension
+* Fix: Fixed an issue where the post offset setting wasn't working correctly with Multifeed events
+
+= 2.6.5 =
+* Tweak: Added the post text as the alt tag of the post images to help benefit SEO
+* Fix: Fixed an issue caused by the Photon setting in the Jetpack plugin which caused some images not to display successfully. The plugin now includes an automatic workaround for this.
+* Fix: Fixed an issue with the 'offset' setting not working for event feeds
+* Fix: Increased the width of the Share popup to accomodate the new Google+ icon
+* Fix: Fixed an issue where the Locale setting was not saving successfully on the settings page
+* Fix: Fixed a problem where thumbnails weren't appearing in the popup lightbox when displaying albums from a group, even when using an "User" Access Token
+* Fix: Fixed and issue where grids of videos wouldn't display when using a newly created Access Token due to a Facebook API change
+* Fix: Fixed an issue with the thumbnail HTML formatting which sometimes occured when first opening the popup lightbox
+* Fix: Fixed a rare issue with Ajax caching of the number of likes and comments
+* Fix: Renamed a function to prevent conflicts
+* Fix: Added a friendly error message if there is an error trying to retrieve events
+* Fix: Added a friendly error message if trying to display group events without using a "User" Access Token
+
+= 2.6.4 =
+* Fix: Fixed an issue with Facebook group album cover photos not being displayed successfully due to a Facebook API change
+* Fix: Fixed an issue with ajax caching
+* Fix: Fixed an issue when events are displayed within the new [Carousel](https://smashballoon.com/extensions/carousel/) extension which caused duplicate empty items
+* Fix: Fixed a margin issue in the new [Masonry Columns](https://smashballoon.com/extensions/masonry-columns/) extension when posts have a background color applied
+
+= 2.6.3 =
+* Fix: Fixed an issue with links not being formatted correctly in the lightbox caption
+* Fix: Fixed an issue where some upcoming events weren't being displayed correctly for some Facebook pages
+
+= 2.6.2 =
+* Fix: Fixed an issue with events in the Date Range and Featured Post extensions
+* Fix: Fixed an issue with some HTML code being displayed when photos were hidden from posts
+* Fix: Squished a bug where HTML5 video controls weren't displaying when playing videos in a feed with the lightbox disabled
+
+= 2.6.1 =
+* Fix: Fixed an formatting issue in the last update which occurred with some themes
+
+= 2.6 =
+* New: Added support for two new extensions; [Carousel](https://smashballoon.com/extensions/carousel/) and [Masonry Columns](https://smashballoon.com/extensions/masonry-columns/)
+* New: Added a 'Buy Tickets' link for event feeds
+* New: Added a setting to allow you to use a fixed pixel width for the feed on desktop but switch to a 100% width responsive layout on mobile
+* New: You can now click on the name of a setting on the admin pages to reveal the corresponding shortcode for that setting
+* New: Added quick links to the top of the Customize settings pages to make it easier to find certain settings
+* Tweak: Timeline events now use the layout select on the "Post Layout" settings page instead of always using the Thumbnail layout
+* Tweak: The selected thumbnail is now highlighted in the pop-up lightbox
+* Tweak: Event feeds now use the Graph API v2.5 instead of FQL in preparation for its deprecation this year
+* Tweak: Updated the event placeholder image which is shown when an event doesn't have an image on Facebook
+* Tweak: Moved a few of the settings to more logical locations
+* Fix: Hashtag linking now works with all languages and character sets
+* Fix: Caption text is now fully formatted in the pop-up lightbox for albums
+* Fix: Fixed a bug which affected the photo/album grid layout when the Like Box was displayed at the top of the feed
+* Fix: Fixed an issue where the Album extension wouldn't work if photos were selected as the only post type on the settings page
+* Fix: Fixed an issue where the hyphen/dash wasn't hidden with the event end date when using a specific date format
+* Fix: Fixed an issue with the height of photos in a grid when multiple grids were on the same page but with different numbers of columns
+* Fix: Updated the icon font link to use SSL
+
+= 2.5.15 =
+* New: Events posted on your timeline will now show the full event cover photo and use whichever layout you select on the 'Post Layout' settings page
+* Fix: Fixed an issue with messages tags in some posts when using an Access Tokens created using a Facebook API 2.5 app
+* Fix: Added a maximum width to images in the comments
+* Fix: Fixed an issue with group events and albums not displaying due to a change in the recent Facebook API 2.5 update
+* Fix: Added a check so that the plugin JavaScript isn't run twice even if it's included twice in the page
+
+= 2.5.14 =
+* Fix: Fixed an issue where if you had the plugin set to display more than 93 posts then it would result in an error due to a change in the recent Facebook API 2.5 update which limits the total amount of posts that can be requested
+* Fix: Added a check to the top of the plugin's JavaScript file so that it isn't run twice if included in the page more than once
+
+= 2.5.13 =
+* Fix: If you're experiencing an issue with your Facebook feed not automatically updating successfully then please update the plugin and enable the following setting: Custom Facebook Feed > Customize > Misc > Misc Settings > Force cache to clear on interval. If you set this setting to 'Yes' then it should force your plugin cache to clear either every hour, 12 hours, or 24 hours, depending on how often you have the plugin set to check Facebook for new posts.
+
+= 2.5.12 =
+* Fix: Fixed an issue caused by the recent Facebook API 2.5 update where some posts would display post tags incorrectly
+* Fix: Fixed an issue where shared links without a title would produce a PHP notice
+
+= 2.5.11 =
+* Fix: Fixed a positioning issue with the Facebook "Like Box / Page Plugin" widget caused by a recent Facebook update which was causing it to overlap on top of other content
+* Fix: Fixed an issue caused by the recent Facebook API 2.5 update where the posts wouldn't display when using a brand new Access Token
+* Fix: Hashtags containing Chinese characters are now linked
+* Fix: Fixed an issue where the photo lightbox was ocassionally intefering with other lightboxes used on a website
+* Tweak: Videos in the video grid layout can now be filtered using the plugin's 'Filter' settings
+* Tweak: Added a timezone for Sydney, Australia
+* Tweak: Removed the 'Featured Post ID' field from the Settings page when the extension is in use, as it makes more sense to just set the ID directly in the shortcode
+
 = 2.5.10 =
 * Fix: Fixed an issue caused by the WordPress 4.3 update where feeds from longer page IDs wouldn't update correctly due to the cache not clearing when expired
-* Fix: Fixed an issue where the number of likes wasn't appearing correctly below timeline events
 
 = 2.5.9 =
 * New: Added comments replies. If a comment has replies then a link is displayed beneath it which allows you to show them. The 'Reply' and 'Replies' text can be translated on the plugin's 'Custom Text / Translate' tab.
