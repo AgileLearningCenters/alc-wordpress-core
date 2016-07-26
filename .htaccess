@@ -17,3 +17,9 @@ RewriteRule ^ - [L]
 RewriteRule ^(wp-(content|admin|includes).*) $1 [L]
 RewriteRule ^(.*\.php)$ $1 [L]
 RewriteRule . index.php [L]
+
+# block access to xmlrpc.php
+<files xmlrpc.php>
+order allow,deny
+deny from all
+</files>
