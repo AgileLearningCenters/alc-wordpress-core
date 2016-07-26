@@ -1,8 +1,10 @@
 <?php
 /*
-Copyright 2013  I.T.RO.® (email : support.itro@live.com)
-This file is part of ITRO Popup Plugin.
+This file is part of ITRO Popup Plugin. (email : support@itroteam.com)
 */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 /* ------------------ADD MENU PAGE */
 function itro_plugin_menu() {
 	add_options_page( 'Popup Plugin Options', 'ITRO Popup', 'manage_options', 'itro-popup/admin/popup-admin.php', '' );
@@ -19,16 +21,17 @@ function itro_init()
 		itro_db_init();
 		
 		itro_update_option('popup_time',20);
+		itro_update_option('popup_delay',0);
 		itro_update_option('cookie_time_exp',0);
 		itro_update_option('popup_background','#FFFFFF');
 		itro_update_option('popup_border_color','#F7FF00');
-		itro_update_option('px_popup_width',300);
+		itro_update_option('px_popup_width',600);
 		itro_update_option('px_popup_height',0);
 		itro_update_option('show_countdown','yes');
 		itro_update_option('auto_margin_check','yes');
 		itro_update_option('select_popup_width','px');
 		itro_update_option('select_popup_height','auto');
-		itro_update_option('popup_bg_opacity',0.4);
+		itro_update_option('popup_bg_opacity',0.40);
 		itro_update_option('opaco_bg_color','#8A8A8A');
 		itro_update_option('popup_position','fixed'); 
 		itro_update_option('popup_border_width',3);
@@ -36,7 +39,7 @@ function itro_init()
 		itro_update_option('popup_padding',2);
 		itro_update_option('page_selection','none');
 		
-		switch(WPLANG)
+		switch(get_locale())
 		{
 			case 'en_US':
 				$welcome_text = '<h1 style="text-align: center;"><span style="color: #000000; font-size: 20;">Hello, this is a pop-up sample.</span></h1><p style="text-align: center;"><span style="color: #000000; font-size: 20;">The basic stetting to get started are: Popup height, Popup time, Next visualization, Popup border color, Popup background.</span></p><p style="text-align: center;"><span style="color: #000000; font-size: 20;">Write watever you want in the Custom text editor and enjoy our plugin!</span></p><p>&nbsp;</p>';
@@ -72,6 +75,13 @@ function itro_check_ver()
 /* --------------------------DISPLAY THE POPUP */
 function itro_display_popup()
 {
+	global $popup_fired; //it check if there is a popup visualization via shortcode or via automatic visualization
+	
+	//if a shortcode was fired it stop everything
+	if($popup_fired === true){
+		return;
+	}
+	
 	/* check if it is the preview visualization */
 	if(!empty($_GET['itro_preview']) && $_GET['itro_preview']=='yes' && is_user_logged_in() ){
 		$is_preview = true;
@@ -80,6 +90,8 @@ function itro_display_popup()
 	}
 	
 	/* woocommerce shop page identification */
+	$woo_shop = NULL;
+	$woo_shop_id = NULL;
 	if( function_exists('is_shop') && function_exists('woocommerce_get_page_id') ) /* if this functions exist, woocommerce is installed! */
 	{
 		if ( is_shop() ) /* if the actual page is the standard woocommerce shop page */
@@ -87,11 +99,6 @@ function itro_display_popup()
 			$woo_shop = true;
 			$woo_shop_id = woocommerce_get_page_id( 'shop' );
 		}
-	}
-	else
-	{
-		$woo_shop = NULL;
-		$woo_shop_id = NULL;
 	}	
 	
 	/* this condition, control if the popup must or not by displayed in a specified page */
@@ -122,12 +129,14 @@ function itro_display_popup()
 			}
 			if( $id_match != NULL || $is_preview )
 			{
+				$popup_fired = true;
 				itro_style();
 				itro_popup_template();
 				itro_popup_js();
 			}
 		break;
 		case 'all':
+			$popup_fired = true;
 			itro_style();
 			itro_popup_template();
 			itro_popup_js();
@@ -135,6 +144,7 @@ function itro_display_popup()
 		case 'none':
 			if( $is_preview )
 			{
+				$popup_fired = true;
 				itro_style();
 				itro_popup_template();
 				itro_popup_js();
@@ -178,6 +188,133 @@ function itro_list_pages()
 	</select>
 <?php
 }
+
+/**
+ * Sanitize data of popup options and custom content
+ *
+ * @since 4.9.3
+ * 
+ * @param	string	$data_name 	: the name of the data to sanitize/validate
+ * @param	string	$data 		: string value to sanitize/validate
+ * 
+ * @return 	string, int	: the clean data
+ *
+ */
+
+function ipp_validate_data($data_name, $data){
+	switch ($data_name){
+		case 'popup_time':
+		case 'popup_delay':
+		case 'popup_padding':
+		case 'popup_border_width':
+		case 'popup_border_radius':
+		case 'popup_top_margin':
+		case 'cookie_time_exp':
+		case 'px_popup_width':
+		case 'px_popup_height':
+		case 'perc_popup_width':
+		case 'perc_popup_height':
+			$data = intval($data);
+			break;
+		case 'enter_button_url':
+		case 'leave_button_url':
+		case 'background_source':
+		case 'close_cross_url':
+			$data = esc_url_raw($data);
+			break;
+		case 'auto_margin_check':
+		case 'advanced_settings':
+		case 'show_countdown':
+		case 'popup_unlockable':
+		case 'disable_mobile':
+		case 'absolute_mobile_pos':
+		case 'blog_home':
+		case 'age_restriction':
+		case 'background_select':
+		case 'delete_data':
+			$data = ($data != 'yes' ? NULL : $data );
+			break;
+		case 'page_selection':
+			if(!in_array($data, array('some','all','none'))){
+				$data = 'none';
+			}
+			break;
+		case 'countdown_text':
+		case 'enter_button_text':
+		case 'leave_button_text':
+			$data = sanitize_text_field($data);
+			break;
+		case 'custom_html':
+			$data = balanceTags($data);
+			break;
+		case 'enter_button_bg_color':
+		case 'enter_button_border_color':
+		case 'leave_button_bg_color':
+		case 'leave_button_border_color':
+		case 'enter_button_font_color':
+		case 'leave_button_font_color':
+		case 'popup_border_color':
+		case 'opaco_bg_color':
+		case 'popup_background':
+		case 'count_font_color':
+			if(preg_match("/^#[0-9a-fA-F]{6}$/", $data) !== 1){
+				$data = NULL;
+			}
+			break;
+		case 'popup_bg_opacity';
+		if(preg_match("/^[0-1]\.[0-9]{2}$/", $data) !== 1){
+			$data = '0.40';
+		}
+		break;
+		case 'cross_selected':
+			if(!in_array($data, array('white','black','white_border','url'))){
+				$data = 'black';
+			}
+			break;
+		case 'popup_position':
+			if(!in_array($data, array('fixed','absolute'))){
+				$data = 'absolute';
+			}
+			break;
+		case 'select_popup_width':
+			if(!in_array($data, array('perc','px'))){
+				$data = 'px';
+			}
+			break;
+		case 'select_popup_height':
+			if(!in_array($data, array('perc','px','auto'))){
+				$data = 'auto';
+			}
+			break;
+		//cleaned by json_encode() **to improve
+		case 'selected_page_id':
+			break;
+		default:
+			$data = NULL;
+	}
+	return $data;
+}
+
+/**
+ * Shortcode for popup appearing
+ *
+ * @since 4.9
+ *
+ */
+
+function itro_popup_shortcode(){
+	global $popup_fired; //it check if there is a popup visualization via shortcode or via automatic visualization
+	$popup_fired = true;
+	
+	ob_start();
+	
+	itro_style();
+	itro_popup_template();
+	itro_popup_js();
+	
+	return ob_get_clean();
+}
+add_shortcode('itroshowpopup', 'itro_popup_shortcode');
 
 /* ------------------------- DEBUG INFORMATION ON ADMIN PANNEL */
 function itro_get_serverinfo()
@@ -313,8 +450,6 @@ function itro_get_serverinfo()
 	} while(0); // control structure for use with break
 	$nonce = wp_create_nonce('itro-debug-nonce');
 	$buf =	'<textarea style="width:100%; height:400px; resize:none;" onclick="select();">' . $mail_text . '</textarea>';
-			//'<input name="itro_debug_send_email" type="text" value="" placeholder="' . __( "E-mail debug information", 'itro-plugin' ) . '"><input name="itro_debug_nonce" type="hidden" value="' .
-			//$nonce . '"><input name="itro_debug_submit" type="submit" value="' . __( 'Submit', 'itro-plugin' ) . '" class="button-primary"><p>';
 	return $buf;
 }
 ?>

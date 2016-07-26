@@ -1,3 +1,7 @@
+/*
+This file is part of ITRO Popup Plugin. (email : support@itroteam.com)
+*/
+
 /* Admin pages styles */
 .wpstyle
 {
@@ -55,6 +59,13 @@
 	overflow: show;
 }
 
-#donateForm
-{
+#stars_review_img{
+	-webkit-transition: height 0.5s; /* Safari */
+    transition: height 0.5s;
+    width: 150px;
+    height: 35px;
+    vertical-align: middle;
+}
+#stars_review_img:hover{
+	height: 70px;
 }

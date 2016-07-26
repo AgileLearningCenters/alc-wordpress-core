@@ -6,6 +6,7 @@
 			"forms":{
 				"optionForm":{
 					"fields":{
+						"countdown_text":{"name":"countdown_text"},						
 						"enter_button_text":{"name":"enter_button_text"},
 						"leave_button_text":{"name":"leave_button_text"},
 						"enter_button_url":{"name":"enter_button_url"},

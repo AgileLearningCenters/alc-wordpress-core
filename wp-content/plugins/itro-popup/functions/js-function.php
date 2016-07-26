@@ -1,19 +1,27 @@
 <?php
 /*
-Copyright 2013  I.T.RO.® (email : support.itro@live.com)
-This file is part of ITRO Popup Plugin.
+This file is part of ITRO Popup Plugin. (email : support@itroteam.com)
 */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /* ------------ LOAD SCRIPTS FOR POPUP VISUALIZATION */
 function itro_popup_js()
-{ ?>
+{
+	/* check if it is the preview visualization */
+	if(!empty($_GET['itro_preview']) && $_GET['itro_preview']=='yes' && is_user_logged_in() ){
+		$is_preview = 'true';
+	}else {
+		$is_preview = 'false';
+	}
+	?>
 	<script type="text/javascript">
 	/* init var */
 	itro_cookie_expiration = <?php echo itro_get_option('cookie_time_exp'); ?>;
-	itro_is_preview = <?php if ( itro_get_option('preview_id') == get_the_id() ){echo 'true';}else{ echo 'false'; } ?>;
+	itro_is_preview = <?php echo $is_preview; ?>;/* pass true if is the preview page. used for cookie control via js due W3 total cache or similar */
+	auto_margin = "<?php echo itro_get_option('auto_margin_check') ?>";
 	
-	/* pass true if is the preview page. used for cookie control via js due W3 total cache or similar */
-	itro_is_preview = <?php if( itro_get_option('preview_id') == get_the_id() ){ echo 'true'; }else{ echo 'false'; } ?>;
+	/* invert the color of the mobile close tab label text */
+	jQuery('#ipp_mobile_close_txt').css({color: itro_invert_color(itro_rgb2hex(jQuery('#itro_popup').css('border-bottom-color'))) });
 	<?php
 		if (itro_get_option('age_restriction') == NULL) /* OFF age validation */
 		{
@@ -26,7 +34,7 @@ function itro_popup_js()
 					var key = event.keyCode;
 					if(key==27)
 					{
-						jQuery("#itro_popup").fadeOut(function() {itro_opaco.style.visibility='Hidden';});
+						jQuery("#itro_popup").fadeOut(function() {jQuery("#itro_opaco").fadeOut();});
 					} 
 				}; <?php
 			}
@@ -34,12 +42,12 @@ function itro_popup_js()
 			if( itro_get_option('popup_delay') != 0 ) /* if is set the delay */
 			{ ?>
 				var delay = <?php echo itro_get_option('popup_delay') . '+' . '1'; ?> ;
-				interval_id_delay = setInterval(function(){popup_delay();},1000);
+				interval_id_delay = setInterval(function(){popup_delay(auto_margin);},1000);
 			<?php
 			}
 			else /* if popup delay is not setted */
 			{?>
-				itro_enter_anim();
+				itro_enter_anim(auto_margin);
 			<?php
 			}
 			
@@ -56,7 +64,7 @@ function itro_popup_js()
 								echo itro_get_option('popup_time');
 							}
 							?>;
-				interval_id = setInterval(function(){popTimer()},1000); /* the countdown  */
+				interval_id = setInterval(function(){popTimer();},1000); /* the countdown  */
 				<?php
 			}
 		}
@@ -65,23 +73,16 @@ function itro_popup_js()
 			if( itro_get_option('popup_delay') != 0 )
 			{ ?>
 				var delay = <?php echo itro_get_option('popup_delay') . '+' . '1'; ?> ;
-				interval_id_delay = setInterval(function(){popup_delay();},1000);
+				interval_id_delay = setInterval(function(){popup_delay(auto_margin);},1000);
 			<?php
 			}
 			else
 			{?>
-				itro_enter_anim();
+				itro_enter_anim(auto_margin);
 			  <?php
 			}
 		}
-		
-		/* ------- AUTOMATIC TOP MARGIN */
-		if( itro_get_option('auto_margin_check') != NULL )
-		{?>
-			var browserWidth = 0, browserHeight = 0;
-			setInterval(function(){marginRefresh()},100); /* refresh every 0.1 second the popup top margin (needed for browser window resizeing) */
-			<?php 
-		}?>
+		?>
 	</script>
 <?php	
 }

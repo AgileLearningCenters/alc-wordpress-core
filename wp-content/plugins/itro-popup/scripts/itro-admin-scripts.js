@@ -1,3 +1,7 @@
+/*
+This file is part of ITRO Popup Plugin. (email : support@itroteam.com)
+*/
+
 /* -------------- SCRIPTS FOR ADMIN PANNEL */
 
 function itro_pos(e)
@@ -29,10 +33,10 @@ jQuery(document).ready(function()
 	var orig_send_to_editor = window.send_to_editor;
 	var uploadID = ''; /*setup the var in a global scope*/
 
-	jQuery('#upload_button').click(function()
+	jQuery('.ipp_upload_button').click(function()
 	{
+		upload_button = jQuery(this);
 		uploadID = jQuery(this).prev('input'); /*set the uploadID variable to the value of the input before the upload button*/
-		formfield = jQuery('.upload').attr('name');
 		tb_show('', 'media-upload.php?type=image&amp;amp;amp;TB_iframe=true');
 		
 		/* restore send_to_editor() when tb closed */
@@ -46,7 +50,10 @@ jQuery(document).ready(function()
 		{
 			imgurl = jQuery('img',html).attr('src');
 			uploadID.val(imgurl); /*assign the value of the image src to the input*/
-			document.getElementById('yes_bg').checked=true;
+			//check the radio button if it is the background source
+			if(upload_button.attr('name') == 'bg_upload_button'){
+				jQuery('#yes_bg').prop("checked", true);
+			}
 			tb_remove();
 		};
 		return false;

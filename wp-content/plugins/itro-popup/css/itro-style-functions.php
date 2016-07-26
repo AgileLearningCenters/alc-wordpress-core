@@ -1,10 +1,25 @@
 <?php
 /*
-Copyright 2013  I.T.RO.® (email : support.itro@live.com)
-This file is part of ITRO Popup Plugin.
+This file is part of ITRO Popup Plugin. (email : support@itroteam.com)
 */
-function itro_style() { ?>
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+function itro_style() {
+	// check if user inputs no-sense values
+	if((itro_get_option('select_popup_height') == 'px' && itro_get_option('px_popup_height') == 0)
+	|| (itro_get_option('select_popup_height') == 'perc' && itro_get_option('perc_popup_height') == 0) ){
+		itro_update_option('select_popup_height', 'auto');
+	}
+	if(itro_get_option('select_popup_width') == 'px' && itro_get_option('px_popup_width') == 0 ){
+		itro_update_option('px_popup_width', '600');
+	}
+	if(itro_get_option('select_popup_width') == 'perc' && itro_get_option('perc_popup_width') == 0){
+		itro_update_option('perc_popup_width', '60');
+	}
+	?>
 	<style>
+		/* POP-UP */
 		#age_button_area
 		{
 			padding-top:10px;
@@ -42,13 +57,15 @@ function itro_style() { ?>
 		
 		#itro_popup
 		{
+			visibility: hidden;
+			opacity: 0;
 			position: <?php echo itro_get_option('popup_position');?>;
-			background-image: <?php if (itro_get_option('background_select') != NULL ) { echo 'url("' . itro_get_option('background_source') . '");'; } ?>
+			background-image: <?php if( itro_get_option('background_select') != NULL ) { echo 'url("' . itro_get_option('background_source') . '");'; } ?>
 			background-repeat: no-repeat;
 			background-position: center center;
 			margin: 0 auto;
-			left:30px;
-			right:30px;
+			left:1px;
+			right:1px;
 			z-index: 2147483647 !important;
 			<?php if( itro_get_option('popup_padding') != NULL ) { echo 'padding:' . itro_get_option('popup_padding') . 'px !important;'; }?>
 			<?php 
@@ -72,9 +89,19 @@ function itro_style() { ?>
 					if( itro_get_option('select_popup_width') == 'perc') { echo itro_get_option('perc_popup_width') . '%'; }
 					?>;
 			height: <?php 
-					if( itro_get_option('select_popup_height') == 'px') { echo itro_get_option('px_popup_height') . 'px'; }
-					if( itro_get_option('select_popup_height') == 'perc') { echo itro_get_option('perc_popup_height') . '%'; }
-					?>;
+					switch (itro_get_option('select_popup_height')){
+						case 'px':
+							echo itro_get_option('px_popup_height') . 'px';
+							break;
+						case 'perc':
+							echo itro_get_option('perc_popup_height') . '%';
+							break;
+						case 'auto':
+							echo 'auto';
+							break;
+						default:
+							echo 'auto';
+					}?>;
 			background-color: <?php echo itro_get_option('popup_background'); ?>;
 			<?php if( itro_get_option('show_countdown') != NULL ) { echo 'padding-bottom: 15px;'; } ?>
 		}
@@ -105,6 +132,7 @@ function itro_style() { ?>
 		}
 
 		#itro_opaco{
+			display: none;
 			position:fixed;
 			background-color:  <?php echo itro_get_option('opaco_bg_color'); ?>;
 			font-size: 10px;
@@ -119,17 +147,62 @@ function itro_style() { ?>
 			bottom: 0px;
 			opacity: <?php echo itro_get_option('popup_bg_opacity'); ?> ;
 			filter:alpha(opacity = <?php echo ( itro_get_option('popup_bg_opacity') * 100); ?>); /* For IE8 and earlier */
-		}<?php
+		}
 		
-		if( itro_get_option('disable_mobile') == 'yes' )
+		/* label under the popup used to close it for mobile devices */
+		#ipp_mobile_close_tab{
+			display: none;
+			border:none;
+			position: absolute;
+			padding: 5px;
+			width: 80px;
+			text-align: center;
+			left: 1px;
+			right: 1px;
+			margin: auto;
+			background-color: <?php echo (itro_get_option('popup_border_color') != NULL ? itro_get_option('popup_border_color') : 'white' ); ?>
+		}
+		#ipp_mobile_close_txt{
+			font-weight: bold;
+			cursor: pointer;
+		}
+		
+		/* RESPONSIVE CSS */
+		@media screen and (max-width: 780px)
 		{
+			#itro_popup{
+				max-width: 470px;
+				<?php
+				
+				if(itro_get_option('absolute_mobile_pos') == 'yes'){
+					echo "position: absolute; top: 50px";
+				}
+				?>
+			}
+			#close_cross{
+				display: none;
+			}
+			#ipp_mobile_close_tab{
+				display: block;
+			}
+		}
+		@media screen and (max-width: 480px){
+			#itro_popup{
+				max-width: 300px
+			}
+		}
+			
+		<?php
+		
+		if( itro_get_option('disable_mobile') == 'yes' ){
 			echo '
 			@media screen and (max-width: 1024px)
 			{
 				#itro_popup{display: none !important;}
 				#itro_opaco{display: none !important;}
 			}';
-		}?>
+		}
+		?>
 	</style>
 <?php 
 }

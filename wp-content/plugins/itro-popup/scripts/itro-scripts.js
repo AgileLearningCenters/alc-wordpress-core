@@ -1,32 +1,75 @@
+/*
+This file is part of ITRO Popup Plugin. (email : support@itroteam.com)
+*/
+
 /* init variables */
 var itro_is_preview;
 var itro_cookie_expiration;
 var itro_age_restriction;
 
-/* manage fade in animation */
-function itro_enter_anim()
-{
+/**
+ * Manage popup appearing
+ * 
+ *
+ * @since 1.0
+ *
+ */
+function itro_enter_anim(auto_margin)
+{	
 	if( document.cookie.indexOf("popup_cookie") == -1 || itro_is_preview === true )
 	{
-		itro_popup.style.visibility = '';
-		itro_opaco.style.visibility = '';
-		itro_popup.style.display = 'none';
-		itro_opaco.style.display = 'none';
+		//align the popup before fadein
+		if(auto_margin == 'yes'){
+			itro_margin_refresh(50);
+		}
+		
+		jQuery("#itro_popup").css('display', 'none');
+		jQuery("#itro_popup").css('opacity', 1);
+		jQuery("#itro_popup").css('visibility', 'visible');
+		
 		jQuery("#itro_opaco").fadeIn(function()
 		{
 			jQuery("#itro_popup").fadeIn();
 			if( itro_age_restriction === false )
 			{
 				itro_set_cookie("popup_cookie","one_time_popup", itro_cookie_expiration);
+				// refresh every 0.5 second the popup top margin (needed for browser window resizeing)
+				if(auto_margin == 'yes'){
+					setInterval(function(){itro_margin_refresh();},500);
+				}
 			}
 		});
 	}
 	
 }
 
-/* function for automatic top margin refresh, to center the popup vertically */
-function marginRefresh()
-{	
+/**
+ * Manage popup closing
+ * 
+ *
+ * @since 1.0
+ *
+ */
+function itro_exit_anim(){
+	jQuery('#itro_popup').fadeOut(function(){
+		jQuery('#popup_content').remove();
+		jQuery('#itro_opaco').fadeOut();
+	});
+}
+
+
+/**
+ * Center the popup vertically
+ * 
+ * @param int speed: the milesec speed fo the alignment animation
+ *
+ * @since 1.0
+ *
+ */
+function itro_margin_refresh(speed){
+	if(typeof(speed) == undefined){speed = 200;}
+	
+	//if( jQuery('#itro_popup').css('position') )
 	if( typeof( window.innerWidth ) == 'number' ) 
 	{
 		/* Non-IE */
@@ -43,39 +86,92 @@ function marginRefresh()
 		browserWidth = document.body.clientWidth;
 		browserHeight = document.body.clientHeight;
 	}
-	popupHeight = document.getElementById('itro_popup').offsetHeight ; 			/* get the actual px size of popup div */
-	document.getElementById('itro_popup').style.top = (browserHeight - popupHeight)/2 + "px"; /* update the top margin of popup					 */
+	popupHeight = document.getElementById('itro_popup').offsetHeight ;	//get the px size of popup div
+	parentOffset = jQuery('#itro_popup').position().top;
+	docOffset = jQuery('#itro_popup').offset().top;
+
+	desTopWindowMargin = Math.round((browserHeight - popupHeight)/2); 		//desired top margin of popup (window related)
+	desTopWindowMargin = desTopWindowMargin < 0 ? 0 : desTopWindowMargin; 	//avoid that negative top position will hide the popup 
+	popupTopMargin = desTopWindowMargin - docOffset + parentOffset;
+	
+	if(jQuery('#itro_popup').css('position') == 'absolute'){
+		//set a tollerance to avoid flickering
+		if(Math.abs(popupTopMargin - parentOffset) > 2){
+			jQuery('#itro_popup').animate({top: popupTopMargin}, speed);
+		}
+	}else{
+		if(Math.abs(popupTopMargin - parentOffset) > 2){
+			jQuery('#itro_popup').animate({top: desTopWindowMargin}, speed);
+		}
+	}
+	
+}
+
+/**
+ * Invert an hex color with the # char
+ * 
+ * @param string hexTripletColor: the hex string
+ *
+ * @since 4.9
+ *
+ */
+function itro_invert_color(hexTripletColor) {
+    var color = hexTripletColor;
+    color = color.substring(1);           // remove #
+    color = parseInt(color, 16);          // convert to integer
+    color = 0xFFFFFF ^ color;             // invert three bytes
+    color = color.toString(16);           // convert to hex
+    color = "#" + color;                  // prepend #
+    return color;
+}
+
+/**
+ * Convert an rgb string like rgb(255, 255, 255) to an hex code
+ * 
+ * @param string rgbString: the rgb string
+ *
+ * @since 4.9
+ *
+ */
+function itro_rgb2hex(rgbString){
+	var parts = rgbString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+	delete (parts[0]);
+	for (var i = 1; i <= 3; ++i) {
+	    parts[i] = parseInt(parts[i]).toString(16);
+	    if (parts[i].length == 1) parts[i] = '0' + parts[i];
+	} 
+	return '#'+parts.join('').toUpperCase();
 }
 
 /* function for countdown to show popup when the delay is set */
-function popup_delay() 
-{ 
+function popup_delay(auto_margin){ 
 	delay--;
 	if(delay <= 0) 
 	{
 		clearInterval(interval_id_delay);
-		itro_enter_anim();
+		itro_enter_anim(auto_margin);
 	}
 }
 
-/* countdown for automatic closing */
-function popTimer()
-{
-	if (popTime>0)
-	{
+
+/**
+ * Countdown for automatic closing
+ *
+ * @since 1.0
+ *
+ */
+function popTimer(){
+	if (popTime>0){
 		document.getElementById("timer").innerHTML=popTime;
 		popTime--;
-	}
-	else
-	{
+	}else{
 		clearInterval(interval_id);
-		jQuery("#itro_popup").fadeOut(function() {itro_opaco.style.visibility='Hidden';});
+		itro_exit_anim();
 	}
 }
 
 /* function use to set the cookie for next visualization time */
-function itro_set_cookie(c_name,value,exhours)
-{
+function itro_set_cookie(c_name,value,exhours){
 	var exdate=new Date();
 	exdate.setTime(exdate.getTime() + (exhours * 3600 * 1000));
 	var c_value=escape(value) + ((exhours==null) ? "" : "; expires="+exdate.toUTCString());
