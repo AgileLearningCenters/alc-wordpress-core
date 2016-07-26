@@ -2,7 +2,7 @@
 
 status_header(200);
 
-$debug_log = "ipn_handle_debug.log"; // Debug log file name
+$debug_log = "ipn_handle_debug.txt"; // Debug log file name
 
 class paypal_ipn_handler {
 
@@ -18,14 +18,15 @@ class paypal_ipn_handler {
     {
         $this->paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
       	$this->last_error = '';
-      	$this->ipn_log_file = WP_CART_PATH.'ipn_handle_debug.log';
+      	$this->ipn_log_file = WP_CART_PATH.'ipn_handle_debug.txt';
       	$this->ipn_response = '';
     }
 
     function validate_and_dispatch_product()
     {
-        // Check Product Name , Price , Currency , Receivers email ,
-        global $products,$currency,$paypal_email;
+        //Check Product Name, Price, Currency, Receivers email
+        $array_temp = $this->ipn_data;
+        $this->ipn_data = array_map('sanitize_text_field', $array_temp);
         $txn_id = $this->ipn_data['txn_id'];
         $transaction_type = $this->ipn_data['txn_type'];
         $payment_status = $this->ipn_data['payment_status'];
@@ -41,7 +42,7 @@ class paypal_ipn_handler {
         $zip = $this->ipn_data['address_zip'];
         $country = $this->ipn_data['address_country'];
         $phone = $this->ipn_data['contact_phone'];
-        $address = $street_address.", ".$city.", ".$state.", ".$zip.", ".$country;
+        $address = $street_address.", ".$city.", ".$state.", ".$zip.", ".$country;        
         $custom_values = wp_cart_get_custom_var_array($custom_value_str);
         $this->debug_log('Payment Status: '.$payment_status,true);
         if($payment_status == "Completed" || $payment_status == "Processed" ){
@@ -237,7 +238,8 @@ class paypal_ipn_handler {
         $args = array();
         $args['product_details'] = $product_details;
         $args['order_id'] = $post_id;
-        $args['coupon_code'] = $applied_coupon_code;        
+        $args['coupon_code'] = $applied_coupon_code; 
+        $args['address'] = $address;
         update_post_meta($post_id, 'wpspsc_items_ordered', $product_details);
         $from_email = get_option('wpspc_buyer_from_email');
         $subject = get_option('wpspc_buyer_email_subj');
@@ -302,78 +304,72 @@ class paypal_ipn_handler {
         
         do_action('wpspc_paypal_ipn_processed',$this->ipn_data);
         
+        //Empty any incomplete old cart orders.
+        wspsc_clean_incomplete_old_cart_orders();
+        
         return true;
     }
 	
    function validate_ipn() 
-   {
-      // parse the paypal URL
-      $url_parsed=parse_url($this->paypal_url);
+   {    
+        //Generate the post string from the _POST vars aswell as load the _POST vars into an array
+        $post_string = '';
+        foreach ($_POST as $field => $value) {
+            $this->ipn_data["$field"] = $value;
+            $post_string .= $field . '=' . urlencode(stripslashes($value)) . '&';
+        }
 
-      // generate the post string from the _POST vars aswell as load the _POST vars into an arry
-      $post_string = '';
-      foreach ($_POST as $field=>$value) {
-         $this->ipn_data["$field"] = $value;
-         $post_string .= $field.'='.urlencode(stripslashes($value)).'&';
-      }
+        $this->post_string = $post_string;
+        $this->debug_log('Post string : ' . $this->post_string, true);
 
-      $this->post_string = $post_string;
-      $this->debug_log('Post string : '. $this->post_string,true);
-
-      $post_string.="cmd=_notify-validate"; // append ipn command
-
-      // open the connection to paypal
-      if($this->sandbox_mode){//connect to PayPal sandbox
-	      $uri = 'ssl://'.$url_parsed['host'];
-	      $port = '443';         	
-	      $fp = fsockopen($uri,$port,$err_num,$err_str,30);
-      }
-      else{//connect to live PayPal site using standard approach
-      	$fp = fsockopen($url_parsed['host'],"80",$err_num,$err_str,30);
-      }
-      
-      if(!$fp)
-      {
-         // could not open the connection.  If loggin is on, the error message
-         // will be in the log.
-         $this->debug_log('Connection to '.$url_parsed['host']." failed. fsockopen error no. $errnum: $errstr",false);
-         return false;
-
-      }
-      else
-      {
-         // Post the data back to paypal
-         fputs($fp, "POST $url_parsed[path] HTTP/1.1\r\n");
-         fputs($fp, "Host: $url_parsed[host]\r\n");
-         fputs($fp, "User-Agent: Simple PayPal Shopping Cart Plugin\r\n" );
-         fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
-         fputs($fp, "Content-length: ".strlen($post_string)."\r\n");
-         fputs($fp, "Connection: close\r\n\r\n");
-         fputs($fp, $post_string . "\r\n\r\n");
-
-         // loop through the response from the server and append to variable
-         while(!feof($fp)) {
-            $this->ipn_response .= fgets($fp, 1024);
-         }
-
-         fclose($fp); // close connection
-
-         $this->debug_log('Connection to '.$url_parsed['host'].' successfuly completed.',true);
-      }
-
-      //if (eregi("VERIFIED",$this->ipn_response))
-      if (strpos($this->ipn_response, "VERIFIED") !== false)// Valid IPN transaction.
-      {
-         $this->debug_log('IPN successfully verified.',true);
-         return true;
-      }
-      else
-      {
-         // Invalid IPN transaction. Check the log for details.
-         $this->debug_log('IPN validation failed.',false);
-         return false;
-      }
+        //IPN validation check
+        if($this->validate_ipn_using_remote_post()){
+            //We can also use an alternative validation using the validate_ipn_using_curl() function
+            return true;
+        } else {
+            return false;
+        }
    }
+   
+   function validate_ipn_using_remote_post(){
+        $this->debug_log( 'Checking if PayPal IPN response is valid', true);
+        
+        // Get received values from post data
+        $validate_ipn = array( 'cmd' => '_notify-validate' );
+        $validate_ipn += wp_unslash( $_POST );
+
+        // Send back post vars to paypal
+        $params = array(
+                'body'        => $validate_ipn,
+                'timeout'     => 60,
+                'httpversion' => '1.1',
+                'compress'    => false,
+                'decompress'  => false,
+                'user-agent'  => 'Simple PayPal Shopping Cart/' . WP_CART_VERSION
+        );
+
+        // Post back to get a response.
+        $connection_url = $this->sandbox_mode ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
+        $this->debug_log('Connecting to: ' . $connection_url, true);
+        $response = wp_safe_remote_post( $connection_url, $params );
+
+        //The following two lines can be used for debugging
+        //$this->debug_log( 'IPN Request: ' . print_r( $params, true ) , true);
+        //$this->debug_log( 'IPN Response: ' . print_r( $response, true ), true);
+
+        // Check to see if the request was valid.
+        if ( ! is_wp_error( $response ) && strstr( $response['body'], 'VERIFIED' ) ) {
+            $this->debug_log('IPN successfully verified.', true);
+            return true;
+        }
+
+        // Invalid IPN transaction. Check the log for details.
+        $this->debug_log('IPN validation failed.', false);
+        if ( is_wp_error( $response ) ) {
+            $this->debug_log('Error response: ' . $response->get_error_message(), false);
+        }
+        return false;        
+    }
 
    function log_ipn_results($success)
    {
@@ -444,7 +440,7 @@ class paypal_ipn_handler {
 // Start of IPN handling (script execution)
 function wpc_handle_paypal_ipn()
 {
-    $debug_log = "ipn_handle_debug.log"; // Debug log file name    
+    $debug_log = "ipn_handle_debug.txt"; // Debug log file name    
     $ipn_handler_instance = new paypal_ipn_handler();
 
     $debug_enabled = false;

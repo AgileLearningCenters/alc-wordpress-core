@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP Simple Paypal Shopping cart
-Version: 4.1.4
+Version: 4.2.5
 Plugin URI: https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768
 Author: Tips and Tricks HQ, Ruhul Amin
 Author URI: https://www.tipsandtricks-hq.com/
@@ -10,7 +10,11 @@ Text Domain: wordpress-simple-paypal-shopping-cart
 Domain Path: /languages/
 */
 
-if (!defined('ABSPATH'))exit; //Exit if accessed directly
+//Slug - wspsc
+
+if (!defined('ABSPATH')){//Exit if accessed directly
+    exit;
+}
 
 if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
     if (session_status() == PHP_SESSION_NONE) {
@@ -22,13 +26,14 @@ if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
     }
 }
 
-define('WP_CART_VERSION', '4.1.4');
+define('WP_CART_VERSION', '4.2.5');
 define('WP_CART_FOLDER', dirname(plugin_basename(__FILE__)));
 define('WP_CART_PATH', plugin_dir_path(__FILE__));
 define('WP_CART_URL', plugins_url('', __FILE__));
 define('WP_CART_SITE_URL', site_url());
 define('WP_CART_LIVE_PAYPAL_URL', 'https://www.paypal.com/cgi-bin/webscr');
 define('WP_CART_SANDBOX_PAYPAL_URL', 'https://www.sandbox.paypal.com/cgi-bin/webscr');
+define('WP_CART_CURRENCY_SYMBOL', get_option('cart_currency_symbol'));
 if (!defined('WP_CART_MANAGEMENT_PERMISSION')){//This will allow the user to define custom capability for this constant in wp-config file
     define('WP_CART_MANAGEMENT_PERMISSION', 'manage_options');
 }
@@ -77,7 +82,7 @@ if (isset($_REQUEST["reset_wp_cart"]) && !empty($_REQUEST["reset_wp_cart"])) {
     reset_wp_cart();
 }
 
-//Clear the cart if the customer landed on the thank you page
+//Clear the cart if the customer landed on the thank you page (if this option is enabled)
 if (get_option('wp_shopping_cart_reset_after_redirection_to_return_page')) {
     //TODO - remove this field altogether later. Cart will always be reset using query prameter on the thank you page.
     if (get_option('cart_return_from_paypal_url') == cart_current_page_url()) {
@@ -104,29 +109,75 @@ function reset_wp_cart() {
 }
 
 function wpspc_cart_actions_handler() {
-    unset($_SESSION['wpspsc_cart_action_msg']);
-    if (isset($_POST['addcart'])) {
+    unset($_SESSION['wpspsc_cart_action_msg']); 
+    
+    if (isset($_POST['addcart'])) {//Add to cart action
+        
+        //Some sites using caching need to be able to disable nonce on the add cart button. Otherwise 48 hour old cached pages will have stale nonce value and fail for valid users.
+        if (get_option('wspsc_disable_nonce_add_cart')){
+            //This site has disabled the nonce check for add cart button.
+            //Do not check nonce for this site since the site admin has indicated that he does not want to check nonce for add cart button.
+        } else {
+            //Check nonce
+            $nonce = $_REQUEST['_wpnonce'];
+            if ( !wp_verify_nonce($nonce, 'wspsc_addcart')){
+                    wp_die('Error! Nonce Security Check Failed!');
+            }
+        }
+        
         setcookie("cart_in_use", "true", time() + 21600, "/", COOKIE_DOMAIN);  //useful to not serve cached page when using with a caching plugin
         if (function_exists('wp_cache_serve_cache_file')) {//WP Super cache workaround
             setcookie("comment_author_", "wp_cart", time() + 21600, "/", COOKIE_DOMAIN);
         }
-
-        //sanitize data
-        $_POST['wspsc_product'] = strip_tags($_POST['wspsc_product']); //for PHP5.2 use filter_var($_POST['wspsc_product'], FILTER_SANITIZE_STRING);
-        $_POST['item_number'] = strip_tags($_POST['item_number']);
+        
+        //Sanitize post data
+        $post_wspsc_product = isset($_POST['wspsc_product']) ? stripslashes(sanitize_text_field($_POST['wspsc_product'])) : '';
+        $post_item_number = isset($_POST['item_number']) ? sanitize_text_field($_POST['item_number']) : '';
+        $post_cart_link = isset($_POST['cartLink']) ? esc_url_raw(sanitize_text_field($_POST['cartLink'])) : '';
+        $post_stamp_pdf = isset($_POST['stamp_pdf']) ? sanitize_text_field($_POST['stamp_pdf']) : '';
+        $post_encoded_file_val = isset($_POST['file_url']) ? sanitize_text_field($_POST['file_url']) : '';
+        $post_thumbnail = isset($_POST['thumbnail']) ? esc_url_raw(sanitize_text_field($_POST['thumbnail'])) : '';
+        //Sanitize and validate price
         if (isset($_POST['price'])){
-            $_POST['price'] = strip_tags($_POST['price']);
-            //Validate price
-            $hash_once_p = strip_tags($_POST['hash_one']);
+            $price = sanitize_text_field($_POST['price']);
+            $hash_once_p = sanitize_text_field($_POST['hash_one']);
             $p_key = get_option('wspsc_private_key_one');
-            $hash_one_cm = md5($p_key.'|'.$_POST['price']);
-            if($hash_once_p != $hash_one_cm){//Validation failed
-                wp_die('Error! The price validation failed.');
+            $hash_one_cm = md5($p_key.'|'.$price);
+            if($hash_once_p != $hash_one_cm){//Security check failed. Price field has been tampered. Fail validation.
+                wp_die('Error! The price field may have been tampered. Security check failed.');
             }
+            $price = str_replace(WP_CART_CURRENCY_SYMBOL, "", $price);//Remove any currency symbol from the price.
+            //Check that the price field is numeric.
+            if(!is_numeric($price)){//Price validation failed
+                wp_die('Error! The price validation failed. The value must be numeric.');
+            }
+            //At this stage the price amt has already been sanitized and validated.
+            
+        } else {
+            wp_die('Error! Missing price value. The price must be set.');
         }
-        isset($_POST['shipping']) ? $_POST['shipping'] = strip_tags($_POST['shipping']) : $_POST['shipping'] = '';
-        isset($_POST['cartLink']) ? $_POST['cartLink'] = strip_tags($_POST['cartLink']) : $_POST['cartLink'] = '';
-        isset($_POST['stamp_pdf']) ? $_POST['stamp_pdf'] = strip_tags($_POST['stamp_pdf']) : $_POST['stamp_pdf'] = '';
+        
+        //Sanitize and validate shipping price
+        if (isset($_POST['shipping'])){
+            $shipping = sanitize_text_field($_POST['shipping']);
+            $hash_two_val = sanitize_text_field($_POST['hash_two']);
+            $p_key = get_option('wspsc_private_key_one');
+            $hash_two_cm = md5($p_key.'|'.$shipping);
+            if($hash_two_val != $hash_two_cm){//Shipping validation failed
+                wp_die('Error! The shipping price validation failed.');
+            }
+            
+            $shipping = str_replace(WP_CART_CURRENCY_SYMBOL, "", $shipping);//Remove any currency symbol from the price.
+            //Check that the shipping price field is numeric.
+            if(!is_numeric($shipping)){//Shipping price validation failed
+                wp_die('Error! The shipping price validation failed. The value must be numeric.');
+            }
+            //At this stage the shipping price amt has already been sanitized and validated.            
+            
+        } else {
+            wp_die('Error! Missing shipping price value. The price must be set.');
+        }        
+        
 
         $count = 1;
         $products = array();
@@ -134,7 +185,7 @@ function wpspc_cart_actions_handler() {
             $products = $_SESSION['simpleCart'];
             if (is_array($products)) {
                 foreach ($products as $key => $item) {
-                    if ($item['name'] == stripslashes($_POST['wspsc_product'])) {
+                    if ($item['name'] == $post_wspsc_product) {
                         $count += $item['quantity'];
                         $item['quantity']++;
                         unset($products[$key]);
@@ -147,31 +198,17 @@ function wpspc_cart_actions_handler() {
         }
 
         if ($count == 1) {
-            if (!empty($_POST[$_POST['wspsc_product']])) {
-                $price = $_POST[$_POST['wspsc_product']];
-            } else {
-                $price = $_POST['price'];
+            //This is the first quantity of this item.
+            
+            $product = array('name' => $post_wspsc_product, 'price' => $price, 'price_orig' => $price, 'quantity' => $count, 'shipping' => $shipping, 'cartLink' => $post_cart_link, 'item_number' => $post_item_number);
+            if (!empty($post_encoded_file_val)) {
+                $product['file_url'] = $post_encoded_file_val;
             }
-
-            $default_cur_symbol = get_option('cart_currency_symbol');
-            $price = str_replace($default_cur_symbol, "", $price);
-
-            $shipping = $_POST['shipping'];
-            $shipping = str_replace($default_cur_symbol, "", $shipping);
-
-            $product = array('name' => stripslashes($_POST['wspsc_product']), 'price' => $price, 'price_orig' => $price, 'quantity' => $count, 'shipping' => $shipping, 'cartLink' => $_POST['cartLink'], 'item_number' => $_POST['item_number']);
-            if (isset($_POST['file_url']) && !empty($_POST['file_url'])) {
-                $file_url = strip_tags($_POST['file_url']);
-                $product['file_url'] = $file_url;
+            if (!empty($post_thumbnail)) {
+                $product['thumbnail'] = $post_thumbnail;
             }
-            if (isset($_POST['thumbnail']) && !empty($_POST['thumbnail'])) {
-                $thumbnail = strip_tags($_POST['thumbnail']);
-                $product['thumbnail'] = $thumbnail;
-            }
-            if (isset($_POST['stamp_pdf']) && !empty($_POST['stamp_pdf'])) {
-                $stamp_pdf = strip_tags($_POST['stamp_pdf']);
-                $product['stamp_pdf'] = $stamp_pdf;
-            }     
+            $product['stamp_pdf'] = $post_stamp_pdf;
+            
             array_push($products, $product);
         }
 
@@ -203,13 +240,22 @@ function wpspc_cart_actions_handler() {
             }
         }
     } else if (isset($_POST['cquantity'])) {
+        $nonce = $_REQUEST['_wpnonce'];
+        if ( !wp_verify_nonce($nonce, 'wspsc_cquantity')){
+                wp_die('Error! Nonce Security Check Failed!');
+        }
+        $post_wspsc_product = isset($_POST['wspsc_product']) ? stripslashes(sanitize_text_field($_POST['wspsc_product'])) : '';
+        $post_quantity = isset($_POST['quantity']) ? sanitize_text_field($_POST['quantity']) : '';
+        if (!is_numeric($post_quantity)){
+            wp_die('Error! The quantity value must be numeric.');
+        }
         $products = $_SESSION['simpleCart'];
         foreach ($products as $key => $item) {
-            if ((stripslashes($item['name']) == stripslashes($_POST['wspsc_product'])) && $_POST['quantity']) {
-                $item['quantity'] = $_POST['quantity'];
+            if ((stripslashes($item['name']) == $post_wspsc_product) && $post_quantity) {
+                $item['quantity'] = $post_quantity;
                 unset($products[$key]);
                 array_push($products, $item);
-            } else if (($item['name'] == stripslashes($_POST['wspsc_product'])) && !$_POST['quantity']) {
+            } else if (($item['name'] == $post_wspsc_product) && !$post_quantity) {
                 unset($products[$key]);
             }
         }
@@ -222,9 +268,14 @@ function wpspc_cart_actions_handler() {
             wpspc_update_cart_items_record();
         }
     } else if (isset($_POST['delcart'])) {
+        $nonce = $_REQUEST['_wpnonce'];
+        if ( !wp_verify_nonce($nonce, 'wspsc_delcart')){
+                wp_die('Error! Nonce Security Check Failed!');
+        }
+        $post_wspsc_product = isset($_POST['wspsc_product']) ? stripslashes(sanitize_text_field($_POST['wspsc_product'])) : '';
         $products = $_SESSION['simpleCart'];
         foreach ($products as $key => $item) {
-            if ($item['name'] == stripslashes($_POST['wspsc_product']))
+            if ($item['name'] == $post_wspsc_product)
                 unset($products[$key]);
         }
         $_SESSION['simpleCart'] = $products;
@@ -238,8 +289,15 @@ function wpspc_cart_actions_handler() {
             reset_wp_cart();
         }
     } else if (isset($_POST['wpspsc_coupon_code'])) {
-        $coupon_code = strip_tags($_POST['wpspsc_coupon_code']);
+        $nonce = $_REQUEST['_wpnonce'];
+        if ( !wp_verify_nonce($nonce, 'wspsc_coupon')){
+                wp_die('Error! Nonce Security Check Failed!');
+        }
+        $coupon_code = isset($_POST['wpspsc_coupon_code']) ? sanitize_text_field($_POST['wpspsc_coupon_code']) : '';
         wpspsc_apply_cart_discount($coupon_code);
+        if (isset($_SESSION['simple_cart_id']) && !empty($_SESSION['simple_cart_id'])) {
+            wpspc_update_cart_items_record();
+        }
     }
 }
 
@@ -297,11 +355,9 @@ function print_wp_cart_button_new($content) {
             // Variation control is used
             $pos2 = strpos($match, ":var2");
             if ($pos2) {
-                //echo '<br />'.$match_tmp.'<br />';
                 $pattern = '#var2\[.*]:#';
                 preg_match_all($pattern, $match_tmp, $matches3);
                 $match3 = $matches3[0][0];
-                //echo '<br />'.$match3.'<br />';
                 $match_tmp = str_replace($match3, '', $match_tmp);
 
                 $pattern = 'var2[';
@@ -354,30 +410,44 @@ function print_wp_cart_button_new($content) {
 
         $replacement = '<div class="wp_cart_button_wrapper">';
         $replacement .= '<form method="post" class="wp-cart-button-form" action="" style="display:inline" onsubmit="return ReadForm(this, true);" ' . apply_filters("wspsc_add_cart_button_form_attr", "") . '>';
+        $replacement .= wp_nonce_field('wspsc_addcart', '_wpnonce', true, false);//nonce value
+        
         if (!empty($var_output)) {
             $replacement .= $var_output;
         }
 
-        if (preg_match("/http/", $addcart)) { // Use the image as the 'add to cart' button
+        if (preg_match("/http/", $addcart)) { 
+            //Use the image as the add to cart button
             $replacement .= '<input type="image" src="' . $addcart . '" class="wp_cart_button" alt="' . (__("Add to Cart", "wordpress-simple-paypal-shopping-cart")) . '"/>';
         } else {
-            $replacement .= '<input type="submit" value="' . $addcart . '" />';
+            //Plain text add to cart button
+            $replacement .= '<input type="submit" class="wspsc_add_cart_submit" name="wspsc_add_cart_submit" value="' . $addcart . '" />';
         }
 
         $replacement .= '<input type="hidden" name="wspsc_product" value="' . $pieces['0'] . '" /><input type="hidden" name="price" value="' . $pieces['1'] . '" />';
         $replacement .= '<input type="hidden" name="product_tmp" value="' . $pieces['0'] . '" />';
         if (sizeof($pieces) > 2) {
-            //we have shipping
+            //We likely have shipping
+            if(!is_numeric($pieces['2'])){//Shipping parameter has non-numeric value. Discard it and set it to 0.
+                $pieces['2'] = 0;
+            }
             $replacement .= '<input type="hidden" name="shipping" value="' . $pieces['2'] . '" />';
+        } else {
+            //Set shipping to 0 by default (when no shipping is specified in the shortcode)
+            $pieces['2'] = 0;
+            $replacement .= '<input type="hidden" name="shipping" value="'.$pieces['2'].'" />';
         }
         
         $p_key = get_option('wspsc_private_key_one');
         if(empty($p_key)){
-            $p_key = uniqid();
+            $p_key = uniqid('', true);
             update_option('wspsc_private_key_one',$p_key);
         }
-        $hash_one = md5($p_key.'|'.$pieces['1']);
+        $hash_one = md5($p_key.'|'.$pieces['1']);//Price hash
         $replacement .= '<input type="hidden" name="hash_one" value="' . $hash_one . '" />';
+
+        $hash_two = md5($p_key.'|'.$pieces['2']);//Shipping hash
+        $replacement .= '<input type="hidden" name="hash_two" value="' . $hash_two . '" />';        
     
         $replacement .= '<input type="hidden" name="cartLink" value="' . cart_current_page_url() . '" />';
         $replacement .= '<input type="hidden" name="addcart" value="1" /></form>';
@@ -461,6 +531,7 @@ function print_wp_cart_button_for_product($name, $price, $shipping = 0, $var1 = 
 
     $replacement = '<div class="wp_cart_button_wrapper">';
     $replacement .= '<form method="post" class="wp-cart-button-form" action="" style="display:inline" onsubmit="return ReadForm(this, true);" ' . apply_filters("wspsc_add_cart_button_form_attr", "") . '>';
+    $replacement .= wp_nonce_field('wspsc_addcart', '_wpnonce', true, false);
     if (!empty($var_output)) {//Show variation
         $replacement .= '<div class="wp_cart_variation_section">' . $var_output . '</div>';
     }
@@ -470,10 +541,12 @@ function print_wp_cart_button_for_product($name, $price, $shipping = 0, $var1 = 
         $replacement .= '<input type="image" src="' . $atts['button_image'] . '" class="wp_cart_button" alt="' . (__("Add to Cart", "wordpress-simple-paypal-shopping-cart")) . '"/>';
     } else {
         //Use the button text or image value from the settings
-        if (preg_match("/http:/", $addcart) || preg_match("/https:/", $addcart)) { // Use the image as the 'add to cart' button
+        if (preg_match("/http:/", $addcart) || preg_match("/https:/", $addcart)) { 
+            //Use the image as the add to cart button
             $replacement .= '<input type="image" src="' . $addcart . '" class="wp_cart_button" alt="' . (__("Add to Cart", "wordpress-simple-paypal-shopping-cart")) . '"/>';
         } else {
-            $replacement .= '<input type="submit" value="' . apply_filters('wspsc_add_cart_submit_button_value', $addcart, $price) . '" />';
+            //Use plain text add to cart button
+            $replacement .= '<input type="submit" class="wspsc_add_cart_submit" name="wspsc_add_cart_submit" value="' . apply_filters('wspsc_add_cart_submit_button_value', $addcart, $price) . '" />';
         }
     }
 
@@ -496,11 +569,14 @@ function print_wp_cart_button_for_product($name, $price, $shipping = 0, $var1 = 
         
     $p_key = get_option('wspsc_private_key_one');
     if(empty($p_key)){
-        $p_key = uniqid();
+        $p_key = uniqid('', true);
         update_option('wspsc_private_key_one',$p_key);
     }
     $hash_one = md5($p_key.'|'.$price);
     $replacement .= '<input type="hidden" name="hash_one" value="' . $hash_one . '" />';
+    
+    $hash_two = md5($p_key.'|'.$shipping);
+    $replacement .= '<input type="hidden" name="hash_two" value="' . $hash_two . '" />';
     
     $replacement .= '</form>';
     $replacement .= '</div>';
@@ -644,7 +720,6 @@ add_action('widgets_init', 'wp_paypal_shopping_cart_load_widgets');
 add_action('init', 'wp_cart_init_handler');
 add_action('admin_init', 'wp_cart_admin_init_handler');
 
-//add_filter('the_content', 'print_wp_cart_button',11);
 add_filter('the_content', 'print_wp_cart_button_new', 11);
 add_filter('the_content', 'shopping_cart_show');
 

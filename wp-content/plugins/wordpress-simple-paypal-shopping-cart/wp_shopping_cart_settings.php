@@ -1,13 +1,22 @@
 <?php
 
+/*
+ * Main settings menu. Only admin user with "manage_options" permission can access this menu page.
+ */
 function wp_cart_options()
-{    
+{
+    if(!current_user_can('manage_options')){
+        wp_die('You do not have permission to access this settings page.');
+    }
+    
     $wpspc_plugin_tabs = array(
         'wordpress-paypal-shopping-cart' => 'General Settings',
         'wordpress-paypal-shopping-cart&action=email-settings' => 'Email Settings',
         'wordpress-paypal-shopping-cart&action=discount-settings' => 'Coupon/Discount'
     );
-    echo '<div class="wrap">'.screen_icon( ).'<h2>'.(__("WP Paypal Shopping Cart Options", "wordpress-simple-paypal-shopping-cart")).'</h2>';
+    echo '<div class="wrap">';
+    echo '<h1>'.(__("WP Paypal Shopping Cart Options", "wordpress-simple-paypal-shopping-cart")).'</h1>';
+    
     $current = "";
     if(isset($_GET['page'])){
         $current = $_GET['page'];
@@ -50,47 +59,56 @@ function wp_cart_options()
     echo '</div>';
 }
 
+/*
+ * General settings menu page
+ */
 function show_wp_cart_options_page () 
 {
+    if(!current_user_can('manage_options')){
+        wp_die('You do not have permission to access this settings page.');
+    }
+    
     if(isset($_POST['wspsc_reset_logfile'])) {
         // Reset the debug log file
         if(wspsc_reset_logfile()){
             echo '<div id="message" class="updated fade"><p><strong>Debug log file has been reset!</strong></p></div>';
         }
         else{
-                echo '<div id="message" class="updated fade"><p><strong>Debug log file could not be reset!</strong></p></div>';
+            echo '<div id="message" class="updated fade"><p><strong>Debug log file could not be reset!</strong></p></div>';
         }
     }
     if (isset($_POST['info_update']))
     {
     	$nonce = $_REQUEST['_wpnonce'];
-		if ( !wp_verify_nonce($nonce, 'wp_simple_cart_settings_update')){
-			wp_die('Error! Nonce Security Check Failed! Go back to settings menu and save the settings again.');
-		}
+        if ( !wp_verify_nonce($nonce, 'wp_simple_cart_settings_update')){
+                wp_die('Error! Nonce Security Check Failed! Go back to settings menu and save the settings again.');
+        }
 
-        update_option('cart_payment_currency', (string)$_POST["cart_payment_currency"]);
-        update_option('cart_currency_symbol', (string)$_POST["cart_currency_symbol"]);
-        update_option('cart_base_shipping_cost', (string)$_POST["cart_base_shipping_cost"]);
-        update_option('cart_free_shipping_threshold', (string)$_POST["cart_free_shipping_threshold"]);   
+        update_option('cart_payment_currency', sanitize_text_field($_POST["cart_payment_currency"]));
+        update_option('cart_currency_symbol', sanitize_text_field($_POST["cart_currency_symbol"]));
+        update_option('cart_base_shipping_cost', sanitize_text_field($_POST["cart_base_shipping_cost"]));
+        update_option('cart_free_shipping_threshold', sanitize_text_field($_POST["cart_free_shipping_threshold"]));   
         update_option('wp_shopping_cart_collect_address', (isset($_POST['wp_shopping_cart_collect_address']) && $_POST['wp_shopping_cart_collect_address']!='') ? 'checked="checked"':'' );    
         update_option('wp_shopping_cart_use_profile_shipping', (isset($_POST['wp_shopping_cart_use_profile_shipping']) && $_POST['wp_shopping_cart_use_profile_shipping']!='') ? 'checked="checked"':'' );
                 
-        update_option('cart_paypal_email', (string)$_POST["cart_paypal_email"]);
-        update_option('addToCartButtonName', (string)$_POST["addToCartButtonName"]);
-        update_option('wp_cart_title', (string)$_POST["wp_cart_title"]);
-        update_option('wp_cart_empty_text', (string)$_POST["wp_cart_empty_text"]);
-        update_option('cart_return_from_paypal_url', (string)$_POST["cart_return_from_paypal_url"]);
-        update_option('cart_products_page_url', (string)$_POST["cart_products_page_url"]);
-                
+        update_option('cart_paypal_email', sanitize_email($_POST["cart_paypal_email"]));
+        update_option('addToCartButtonName', sanitize_text_field($_POST["addToCartButtonName"]));
+        update_option('wp_cart_title', sanitize_text_field($_POST["wp_cart_title"]));
+        update_option('wp_cart_empty_text', sanitize_text_field($_POST["wp_cart_empty_text"]));
+        update_option('cart_return_from_paypal_url', sanitize_text_field($_POST["cart_return_from_paypal_url"]));
+        update_option('cart_cancel_from_paypal_url', sanitize_text_field($_POST["cart_cancel_from_paypal_url"]));
+        update_option('cart_products_page_url', sanitize_text_field($_POST["cart_products_page_url"]));
+
         update_option('wp_shopping_cart_auto_redirect_to_checkout_page', (isset($_POST['wp_shopping_cart_auto_redirect_to_checkout_page']) && $_POST['wp_shopping_cart_auto_redirect_to_checkout_page']!='') ? 'checked="checked"':'' );
-        update_option('cart_checkout_page_url', (string)$_POST["cart_checkout_page_url"]);
+        update_option('cart_checkout_page_url', sanitize_text_field($_POST["cart_checkout_page_url"]));
         update_option('wspsc_open_pp_checkout_in_new_tab', (isset($_POST['wspsc_open_pp_checkout_in_new_tab']) && $_POST['wspsc_open_pp_checkout_in_new_tab']!='') ? 'checked="checked"':'' );
         update_option('wp_shopping_cart_reset_after_redirection_to_return_page', (isset($_POST['wp_shopping_cart_reset_after_redirection_to_return_page']) && $_POST['wp_shopping_cart_reset_after_redirection_to_return_page']!='') ? 'checked="checked"':'' );        
-                
+
         update_option('wp_shopping_cart_image_hide', (isset($_POST['wp_shopping_cart_image_hide']) && $_POST['wp_shopping_cart_image_hide']!='') ? 'checked="checked"':'' );
-        update_option('wp_cart_note_to_seller_text', (string)$_POST["wp_cart_note_to_seller_text"]);
-        update_option('wp_cart_paypal_co_page_style', (string)$_POST["wp_cart_paypal_co_page_style"]);
+        update_option('wp_cart_note_to_seller_text', sanitize_text_field($_POST["wp_cart_note_to_seller_text"]));
+        update_option('wp_cart_paypal_co_page_style', sanitize_text_field($_POST["wp_cart_paypal_co_page_style"]));
         update_option('wp_shopping_cart_strict_email_check', (isset($_POST['wp_shopping_cart_strict_email_check']) && $_POST['wp_shopping_cart_strict_email_check']!='') ? 'checked="checked"':'' );
+        update_option('wspsc_disable_nonce_add_cart', (isset($_POST['wspsc_disable_nonce_add_cart']) && $_POST['wspsc_disable_nonce_add_cart']!='') ? 'checked="checked"':'' );
         update_option('wp_use_aff_platform', (isset($_POST['wp_use_aff_platform']) && $_POST['wp_use_aff_platform']!='') ? 'checked="checked"':'' );
         
         update_option('wp_shopping_cart_enable_sandbox', (isset($_POST['wp_shopping_cart_enable_sandbox']) && $_POST['wp_shopping_cart_enable_sandbox']!='') ? 'checked="checked"':'' );
@@ -115,17 +133,15 @@ function show_wp_cart_options_page ()
     if (empty($defaultEmail)) $defaultEmail = get_bloginfo('admin_email');
     
     $return_url =  get_option('cart_return_from_paypal_url');
-
+    $cancel_url = get_option('cart_cancel_from_paypal_url');
     $addcart = get_option('addToCartButtonName');
     if (empty($addcart)) $addcart = __("Add to Cart", "wordpress-simple-paypal-shopping-cart");           
 
-	$title = get_option('wp_cart_title');
-	//if (empty($title)) $title = __("Your Shopping Cart", "wordpress-simple-paypal-shopping-cart");
-	
-	$emptyCartText = get_option('wp_cart_empty_text');
-	$cart_products_page_url = get_option('cart_products_page_url');	  
-
-	$cart_checkout_page_url = get_option('cart_checkout_page_url');
+    $title = get_option('wp_cart_title');
+    $emptyCartText = get_option('wp_cart_empty_text');
+    $cart_products_page_url = get_option('cart_products_page_url');	  
+    $cart_checkout_page_url = get_option('cart_checkout_page_url');
+    
     if (get_option('wp_shopping_cart_auto_redirect_to_checkout_page'))
         $wp_shopping_cart_auto_redirect_to_checkout_page = 'checked="checked"';
     else
@@ -163,11 +179,18 @@ function show_wp_cart_options_page ()
     if (get_option('wp_shopping_cart_strict_email_check')){
         $wp_shopping_cart_strict_email_check = 'checked="checked"';
     }
-        
-    if (get_option('wp_use_aff_platform'))
+    
+    $wspsc_disable_nonce_add_cart = '';
+    if (get_option('wspsc_disable_nonce_add_cart')){
+        $wspsc_disable_nonce_add_cart = 'checked="checked"';
+    }
+    
+    if (get_option('wp_use_aff_platform')){
         $wp_use_aff_platform = 'checked="checked"';
-    else
+    }
+    else{
         $wp_use_aff_platform = '';
+    }
                               
 	//$wp_shopping_cart_enable_sandbox = get_option('wp_shopping_cart_enable_sandbox');
     if (get_option('wp_shopping_cart_enable_sandbox'))
@@ -188,7 +211,7 @@ function show_wp_cart_options_page ()
     </div>
     
     <div class="postbox">
-    <h3><label for="title"><?php _e("Quick Usage Guide", "wordpress-simple-paypal-shopping-cart"); ?></label></h3>
+    <h3 class="hndle"><label for="title"><?php _e("Quick Usage Guide", "wordpress-simple-paypal-shopping-cart"); ?></label></h3>
     <div class="inside">
 	
         <p><strong><?php _e("Step 1) ","wordpress-simple-paypal-shopping-cart"); ?></strong><?php _e("To add an 'Add to Cart' button for a product simply add the shortcode", "wordpress-simple-paypal-shopping-cart"); ?> [wp_cart_button name="<?php _e("PRODUCT-NAME", "wordpress-simple-paypal-shopping-cart"); ?>" price="<?php _e("PRODUCT-PRICE", "wordpress-simple-paypal-shopping-cart"); ?>"] <?php _e("to a post or page next to the product. Replace PRODUCT-NAME and PRODUCT-PRICE with the actual name and price of your product.", "wordpress-simple-paypal-shopping-cart"); ?></p>
@@ -203,41 +226,41 @@ function show_wp_cart_options_page ()
 <?php
 echo '
 	<div class="postbox">
-	<h3><label for="title">'.(__("PayPal and Shopping Cart Settings", "wordpress-simple-paypal-shopping-cart")).'</label></h3>
+	<h3 class="hndle"><label for="title">'.(__("PayPal and Shopping Cart Settings", "wordpress-simple-paypal-shopping-cart")).'</label></h3>
 	<div class="inside">';
 
 echo '
 <table class="form-table">
 <tr valign="top">
 <th scope="row">'.(__("Paypal Email Address", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_paypal_email" value="'.$defaultEmail.'" size="40" /></td>
+<td><input type="text" name="cart_paypal_email" value="'.esc_attr($defaultEmail).'" size="40" /></td>
 </tr>
 <tr valign="top">
 <th scope="row">'.(__("Shopping Cart title", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="wp_cart_title" value="'.$title.'" size="40" /></td>
+<td><input type="text" name="wp_cart_title" value="'.esc_attr($title).'" size="40" /></td>
 </tr>
 <tr valign="top">
 <th scope="row">'.(__("Text/Image to Show When Cart Empty", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="wp_cart_empty_text" value="'.$emptyCartText.'" size="60" /><br />'.(__("You can either enter plain text or the URL of an image that you want to show when the shopping cart is empty", "wordpress-simple-paypal-shopping-cart")).'</td>
+<td><input type="text" name="wp_cart_empty_text" value="'.esc_attr($emptyCartText).'" size="60" /><br />'.(__("You can either enter plain text or the URL of an image that you want to show when the shopping cart is empty", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 <tr valign="top">
 <th scope="row">'.(__("Currency", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_payment_currency" value="'.$defaultCurrency.'" size="6" /> ('.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' USD, EUR, GBP, AUD)</td>
+<td><input type="text" name="cart_payment_currency" value="'.esc_attr($defaultCurrency).'" size="6" /> ('.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' USD, EUR, GBP, AUD)</td>
 </tr>
 <tr valign="top">
 <th scope="row">'.(__("Currency Symbol", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_currency_symbol" value="'.$defaultSymbol.'" size="2" style="width: 1.5em;" /> ('.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' $, &#163;, &#8364;) 
+<td><input type="text" name="cart_currency_symbol" value="'.esc_attr($defaultSymbol).'" size="3" style="width: 2em;" /> ('.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' $, &#163;, &#8364;) 
 </td>
 </tr>
 
 <tr valign="top">
 <th scope="row">'.(__("Base Shipping Cost", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_base_shipping_cost" value="'.$baseShipping.'" size="5" /> <br />'.(__("This is the base shipping cost that will be added to the total of individual products shipping cost. Put 0 if you do not want to charge shipping cost or use base shipping cost.", "wordpress-simple-paypal-shopping-cart")).' <a href="http://www.tipsandtricks-hq.com/ecommerce/?p=297" target="_blank">'.(__("Learn More on Shipping Calculation", "wordpress-simple-paypal-shopping-cart")).'</a></td>
+<td><input type="text" name="cart_base_shipping_cost" value="'.esc_attr($baseShipping).'" size="5" /> <br />'.(__("This is the base shipping cost that will be added to the total of individual products shipping cost. Put 0 if you do not want to charge shipping cost or use base shipping cost.", "wordpress-simple-paypal-shopping-cart")).' <a href="http://www.tipsandtricks-hq.com/ecommerce/?p=297" target="_blank">'.(__("Learn More on Shipping Calculation", "wordpress-simple-paypal-shopping-cart")).'</a></td>
 </tr>
 
 <tr valign="top">
 <th scope="row">'.(__("Free Shipping for Orders Over", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_free_shipping_threshold" value="'.$cart_free_shipping_threshold.'" size="5" /> <br />'.(__("When a customer orders more than this amount he/she will get free shipping. Leave empty if you do not want to use it.", "wordpress-simple-paypal-shopping-cart")).'</td>
+<td><input type="text" name="cart_free_shipping_threshold" value="'.esc_attr($cart_free_shipping_threshold).'" size="5" /> <br />'.(__("When a customer orders more than this amount he/she will get free shipping. Leave empty if you do not want to use it.", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 
 <tr valign="top">
@@ -252,7 +275,7 @@ echo '
 		
 <tr valign="top">
 <th scope="row">'.(__("Add to Cart button text or Image", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="addToCartButtonName" value="'.$addcart.'" size="100" />
+<td><input type="text" name="addToCartButtonName" value="'.esc_attr($addcart).'" size="100" />
 <br />'.(__("To use a customized image as the button simply enter the URL of the image file.", "wordpress-simple-paypal-shopping-cart")).' '.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' http://www.your-domain.com/wp-content/plugins/wordpress-paypal-shopping-cart/images/buy_now_button.png
 <br />You can download nice add to cart button images from <a href="http://www.tipsandtricks-hq.com/ecommerce/add-to-cart-button-images-for-shopping-cart-631" target="_blank">this page</a>.
 </td>
@@ -260,12 +283,17 @@ echo '
 
 <tr valign="top">
 <th scope="row">'.(__("Return URL", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_return_from_paypal_url" value="'.$return_url.'" size="100" /><br />'.(__("This is the URL the customer will be redirected to after a successful payment", "wordpress-simple-paypal-shopping-cart")).'</td>
+<td><input type="text" name="cart_return_from_paypal_url" value="'.esc_attr($return_url).'" size="100" /><br />'.(__("This is the URL the customer will be redirected to after a successful payment", "wordpress-simple-paypal-shopping-cart")).'</td>
+</tr>
+
+<tr valign="top">
+<th scope="row">'.(__("Cancel URL", "wordpress-simple-paypal-shopping-cart")).'</th>
+<td><input type="text" name="cart_cancel_from_paypal_url" value="'.esc_attr($cancel_url).'" size="100" /><br />'.(__("The customer will be sent to the above page if the cancel link is clicked on the PayPal checkout page.", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 		
 <tr valign="top">
 <th scope="row">'.(__("Products Page URL", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_products_page_url" value="'.$cart_products_page_url.'" size="100" /><br />'.(__("This is the URL of your products page if you have any. If used, the shopping cart widget will display a link to this page when cart is empty", "wordpress-simple-paypal-shopping-cart")).'</td>
+<td><input type="text" name="cart_products_page_url" value="'.esc_attr($cart_products_page_url).'" size="100" /><br />'.(__("This is the URL of your products page if you have any. If used, the shopping cart widget will display a link to this page when cart is empty", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 
 <tr valign="top">
@@ -299,7 +327,7 @@ echo '
 <table class="form-table">
 <tr valign="top">
 <th scope="row">'.(__("Customize the Note to Seller Text", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="wp_cart_note_to_seller_text" value="'.$wp_cart_note_to_seller_text.'" size="100" />
+<td><input type="text" name="wp_cart_note_to_seller_text" value="'.esc_attr($wp_cart_note_to_seller_text).'" size="100" />
 <br />'.(__("Specify the text that you want to use for the note field on PayPal checkout page to collect special instruction (leave this field empty if you don't need to customize it). The default label for the note field is \"Add special instructions to merchant\".", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 </table>
@@ -307,7 +335,7 @@ echo '
 <table class="form-table">
 <tr valign="top">
 <th scope="row">'.(__("Custom Checkout Page Style Name", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="wp_cart_paypal_co_page_style" value="'.$wp_cart_paypal_co_page_style.'" size="40" />
+<td><input type="text" name="wp_cart_paypal_co_page_style" value="'.esc_attr($wp_cart_paypal_co_page_style).'" size="40" />
 <br />'.(__("Specify the page style name here if you want to customize the paypal checkout page with custom page style otherwise leave this field empty.", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 </table>
@@ -321,6 +349,14 @@ echo '
 
 <table class="form-table">
 <tr valign="top">
+<th scope="row">'.(__("Disable Nonce Check for Add to Cart", "wordpress-simple-paypal-shopping-cart")).'</th>
+<td><input type="checkbox" name="wspsc_disable_nonce_add_cart" value="1" '.$wspsc_disable_nonce_add_cart.' />
+<br />'.(__("Check this option if you are using a caching solution on your site. This will bypass the nonce check on the add to cart buttons.", "wordpress-simple-paypal-shopping-cart")).'</td>
+</tr>
+</table>
+
+<table class="form-table">
+<tr valign="top">
 <th scope="row">'.(__("Use WP Affiliate Platform", "wordpress-simple-paypal-shopping-cart")).'</th>
 <td><input type="checkbox" name="wp_use_aff_platform" value="1" '.$wp_use_aff_platform.' />
 <br />'.(__("Check this if using with the", "wordpress-simple-paypal-shopping-cart")).' <a href="https://www.tipsandtricks-hq.com/?p=1474" target="_blank">WP Affiliate Platform plugin</a>. '.(__("This plugin lets you run your own affiliate campaign/program and allows you to reward (pay commission) your affiliates for referred sales", "wordpress-simple-paypal-shopping-cart")).'</td>
@@ -329,7 +365,7 @@ echo '
 </div></div>
 
 <div class="postbox">
-    <h3><label for="title">'.(__("Testing and Debugging Settings", "wordpress-simple-paypal-shopping-cart")).'</label></h3>
+    <h3 class="hndle"><label for="title">'.(__("Testing and Debugging Settings", "wordpress-simple-paypal-shopping-cart")).'</label></h3>
     <div class="inside">
     
     <table class="form-table"> 
@@ -340,7 +376,7 @@ echo '
     <br />'.(__("If checked, debug output will be written to the log file. This is useful for troubleshooting post payment failures", "wordpress-simple-paypal-shopping-cart")).'
         <p><i>You can check the debug log file by clicking on the link below (The log file can be viewed using any text editor):</i>
         <ul>
-            <li><a href="'.WP_CART_URL.'/ipn_handle_debug.log" target="_blank">ipn_handle_debug.log</a></li>
+            <li><a href="'.WP_CART_URL.'/ipn_handle_debug.txt" target="_blank">ipn_handle_debug.txt</a></li>
         </ul>
         </p>
         <input type="submit" name="wspsc_reset_logfile" class="button" style="font-weight:bold; color:red" value="Reset Debug Log file"/> 
@@ -369,6 +405,10 @@ echo '
 
 function show_wp_cart_email_settings_page()
 {
+    if(!current_user_can('manage_options')){
+        wp_die('You do not have permission to access the settings page.');
+    }
+    
     if (isset($_POST['wpspc_email_settings_update']))
     {
         $nonce = $_REQUEST['_wpnonce'];
@@ -428,7 +468,7 @@ function show_wp_cart_email_settings_page()
     <input type="hidden" name="info_update" id="info_update" value="true" />
     
     <div class="postbox">
-    <h3><label for="title"><?php _e("Purchase Confirmation Email Settings", "wordpress-simple-paypal-shopping-cart");?></label></h3>
+    <h3 class="hndle"><label for="title"><?php _e("Purchase Confirmation Email Settings", "wordpress-simple-paypal-shopping-cart");?></label></h3>
     <div class="inside">
 
     <p><i><?php _e("The following options affect the emails that gets sent to your buyers after a purchase.", "wordpress-simple-paypal-shopping-cart");?></i></p>
@@ -442,23 +482,25 @@ function show_wp_cart_email_settings_page()
     
     <tr valign="top">
     <th scope="row"><?php _e("From Email Address", "wordpress-simple-paypal-shopping-cart");?></th>
-    <td><input type="text" name="wpspc_buyer_from_email" value="<?php echo $wpspc_buyer_from_email; ?>" size="50" />
+    <td><input type="text" name="wpspc_buyer_from_email" value="<?php echo esc_attr($wpspc_buyer_from_email); ?>" size="50" />
     <br /><p class="description"><?php _e("Example: Your Name &lt;sales@your-domain.com&gt; This is the email address that will be used to send the email to the buyer. This name and email address will appear in the from field of the email.", "wordpress-simple-paypal-shopping-cart");?></p></td>
     </tr>
 
     <tr valign="top">
     <th scope="row"><?php _e("Buyer Email Subject", "wordpress-simple-paypal-shopping-cart");?></th>
-    <td><input type="text" name="wpspc_buyer_email_subj" value="<?php echo $wpspc_buyer_email_subj; ?>" size="50" />
+    <td><input type="text" name="wpspc_buyer_email_subj" value="<?php echo esc_attr($wpspc_buyer_email_subj); ?>" size="50" />
     <br /><p class="description"><?php _e("This is the subject of the email that will be sent to the buyer.", "wordpress-simple-paypal-shopping-cart");?></p></td>
     </tr>
 
     <tr valign="top">
     <th scope="row"><?php _e("Buyer Email Body", "wordpress-simple-paypal-shopping-cart");?></th>
     <td>
-    <textarea name="wpspc_buyer_email_body" cols="90" rows="7"><?php echo $wpspc_buyer_email_body; ?></textarea>
+    <textarea name="wpspc_buyer_email_body" cols="90" rows="7"><?php echo esc_textarea($wpspc_buyer_email_body); ?></textarea>
     <br /><p class="description"><?php _e("This is the body of the email that will be sent to the buyer. Do not change the text within the braces {}. You can use the following email tags in this email body field:", "wordpress-simple-paypal-shopping-cart");?>
     <br />{first_name} – <?php _e("First name of the buyer", "wordpress-simple-paypal-shopping-cart");?>
     <br />{last_name} – <?php _e("Last name of the buyer", "wordpress-simple-paypal-shopping-cart");?>
+    <br />{payer_email} – <?php _e("Email Address of the buyer", "wordpress-simple-paypal-shopping-cart");?>
+    <br />{address} – <?php _e("Address of the buyer", "wordpress-simple-paypal-shopping-cart");?>     
     <br />{product_details} – <?php _e("The item details of the purchased product (this will include the download link for digital items).", "wordpress-simple-paypal-shopping-cart");?>   
     <br />{transaction_id} – <?php _e("The unique transaction ID of the purchase", "wordpress-simple-paypal-shopping-cart");?> 
     <br />{purchase_amt} – <?php _e("The amount paid for the current transaction", "wordpress-simple-paypal-shopping-cart");?>
@@ -474,24 +516,25 @@ function show_wp_cart_email_settings_page()
     
     <tr valign="top">
     <th scope="row"><?php _e("Notification Email Address*", "wordpress-simple-paypal-shopping-cart");?></th>
-    <td><input type="text" name="wpspc_notify_email_address" value="<?php echo $wpspc_notify_email_address; ?>" size="50" />
+    <td><input type="text" name="wpspc_notify_email_address" value="<?php echo esc_attr($wpspc_notify_email_address); ?>" size="50" />
     <br /><p class="description"><?php _e("This is the email address where the seller will be notified of product sales. You can put multiple email addresses separated by comma (,) in the above field to send the notification to multiple email addresses.", "wordpress-simple-paypal-shopping-cart");?></p></td>
     </tr>
 
     <tr valign="top">
     <th scope="row"><?php _e("Seller Email Subject*", "wordpress-simple-paypal-shopping-cart");?></th>
-    <td><input type="text" name="wpspc_seller_email_subj" value="<?php echo $wpspc_seller_email_subj; ?>" size="50" />
+    <td><input type="text" name="wpspc_seller_email_subj" value="<?php echo esc_attr($wpspc_seller_email_subj); ?>" size="50" />
     <br /><p class="description"><?php _e("This is the subject of the email that will be sent to the seller for record.", "wordpress-simple-paypal-shopping-cart");?></p></td>
     </tr>
 
     <tr valign="top">
     <th scope="row"><?php _e("Seller Email Body*", "wordpress-simple-paypal-shopping-cart");?></th>
     <td>
-    <textarea name="wpspc_seller_email_body" cols="90" rows="7"><?php echo $wpspc_seller_email_body; ?></textarea>
+    <textarea name="wpspc_seller_email_body" cols="90" rows="7"><?php echo esc_textarea($wpspc_seller_email_body); ?></textarea>
     <br /><p class="description"><?php _e("This is the body of the email that will be sent to the seller for record. Do not change the text within the braces {}. You can use the following email tags in this email body field:", "wordpress-simple-paypal-shopping-cart");?>
     <br />{first_name} – <?php _e("First name of the buyer", "wordpress-simple-paypal-shopping-cart");?>
     <br />{last_name} – <?php _e("Last name of the buyer", "wordpress-simple-paypal-shopping-cart");?>
     <br />{payer_email} – <?php _e("Email Address of the buyer", "wordpress-simple-paypal-shopping-cart");?>
+    <br />{address} – <?php _e("Address of the buyer", "wordpress-simple-paypal-shopping-cart");?>    
     <br />{product_details} – <?php _e("The item details of the purchased product (this will include the download link for digital items).", "wordpress-simple-paypal-shopping-cart");?>  
     <br />{transaction_id} – <?php _e("The unique transaction ID of the purchase", "wordpress-simple-paypal-shopping-cart");?> 
     <br />{purchase_amt} – <?php _e("The amount paid for the current transaction", "wordpress-simple-paypal-shopping-cart");?>

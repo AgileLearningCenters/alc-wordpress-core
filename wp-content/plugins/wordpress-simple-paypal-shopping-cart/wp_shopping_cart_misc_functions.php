@@ -78,7 +78,7 @@ function wp_cart_get_custom_var_array($custom_val_string)
 function wspsc_reset_logfile()
 {
     $log_reset = true;
-    $logfile = dirname(__FILE__).'/ipn_handle_debug.log';
+    $logfile = dirname(__FILE__).'/ipn_handle_debug.txt';
     $text = '['.date('m/d/Y g:i A').'] - SUCCESS : Log file reset';
     $text .= "\n------------------------------------------------------------------\n\n";
     $fp = fopen($logfile, 'w');
@@ -147,8 +147,8 @@ function wpspc_apply_dynamic_tags_on_email_body($ipn_data, $args)
     $order_id = $args['order_id'];
     $purchase_amount = get_post_meta( $order_id, 'wpsc_total_amount', true );
     $purchase_date = date("Y-m-d");
-    $tags = array("{first_name}","{last_name}","{product_details}","{payer_email}","{transaction_id}","{purchase_amt}","{purchase_date}","{coupon_code}");
-    $vals = array($ipn_data['first_name'], $ipn_data['last_name'], $args['product_details'], $args['payer_email'], $ipn_data['txn_id'], $purchase_amount, $purchase_date, $args['coupon_code']);
+    $tags = array("{first_name}","{last_name}","{product_details}","{payer_email}","{transaction_id}","{purchase_amt}","{purchase_date}","{coupon_code}","{address}");
+    $vals = array($ipn_data['first_name'], $ipn_data['last_name'], $args['product_details'], $args['payer_email'], $ipn_data['txn_id'], $purchase_amount, $purchase_date, $args['coupon_code'], $args['address']);
 
     $body = stripslashes(str_replace($tags, $vals, $args['email_body']));
     return $body;
@@ -184,7 +184,7 @@ function wpspc_run_activation()
     add_option('wpspc_seller_email_body', $seller_email_body);
     
     //Generate and save a private key for this site
-    $unique_id = uniqid();
+    $unique_id = uniqid('', true);
     add_option('wspsc_private_key_one',$unique_id);
 }
 

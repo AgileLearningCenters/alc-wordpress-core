@@ -61,7 +61,7 @@ function wp_cart_display_product_handler($atts)
         $thumbnail_code = '<a href="'.$thumb_target.'"><img src="'.$thumbnail.'"></a>';
     }
     $thumbnail_code = apply_filters('wspsc_product_box_thumbnail_code', $thumbnail_code, $atts);
-    $currency_symbol = get_option('cart_currency_symbol');
+    $currency_symbol = WP_CART_CURRENCY_SYMBOL;
     $formatted_price = print_payment_currency($price, $currency_symbol);
     $button_code = print_wp_cart_button_for_product($name, $price, $shipping, $var1, $var2, $var3, $atts);
     
@@ -92,7 +92,7 @@ EOT;
 function wspsc_compact_cart_handler($args)
 {
     $num_items = wpspc_get_total_cart_qty();
-    $curSymbol = get_option('cart_currency_symbol');
+    $curSymbol = WP_CART_CURRENCY_SYMBOL;
     $checkout_url = get_option('cart_checkout_page_url');
 
     $output = "";

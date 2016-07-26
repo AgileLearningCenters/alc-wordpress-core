@@ -1,7 +1,11 @@
 <?php
 
 function show_wp_cart_coupon_discount_settings_page()
-{    
+{
+    if(!current_user_can('manage_options')){
+        wp_die('You do not have permission to access this settings page.');
+    }
+    
     if (isset($_POST['wpspsc_coupon_settings']))
     {
         $nonce = $_REQUEST['_wpnonce'];
@@ -21,9 +25,9 @@ function show_wp_cart_coupon_discount_settings_page()
         }
         
         $collection_obj = WPSPSC_Coupons_Collection::get_instance();
-        $coupon_code = trim(stripcslashes($_POST["wpspsc_coupon_code"]));
-        $discount_rate = trim($_POST["wpspsc_coupon_rate"]);
-        $expiry_date = trim($_POST["wpspsc_coupon_expiry_date"]);
+        $coupon_code = trim(stripslashes(sanitize_text_field($_POST["wpspsc_coupon_code"])));
+        $discount_rate = trim(sanitize_text_field($_POST["wpspsc_coupon_rate"]));
+        $expiry_date = trim(sanitize_text_field($_POST["wpspsc_coupon_expiry_date"]));
         $coupon_item = new WPSPSC_COUPON_ITEM($coupon_code, $discount_rate, $expiry_date);
         $collection_obj->add_coupon_item($coupon_item);
         WPSPSC_Coupons_Collection::save_object($collection_obj);
@@ -58,7 +62,7 @@ function show_wp_cart_coupon_discount_settings_page()
     <input type="hidden" name="coupon_settings_update" id="coupon_settings_update" value="true" />
 
     <div class="postbox">
-    <h3><label for="title"><?php _e("Coupon/Discount Settings", "wordpress-simple-paypal-shopping-cart");?></label></h3>
+    <h3 class="hndle"><label for="title"><?php _e("Coupon/Discount Settings", "wordpress-simple-paypal-shopping-cart");?></label></h3>
     <div class="inside">
 
     <form method="post" action="">
@@ -91,7 +95,7 @@ function show_wp_cart_coupon_discount_settings_page()
     <input type="hidden" name="info_update" id="info_update" value="true" />
 
     <div class="postbox">
-    <h3><label for="title"><?php _e("Add Coupon/Discount", "wordpress-simple-paypal-shopping-cart");?></label></h3>
+    <h3 class="hndle"><label for="title"><?php _e("Add Coupon/Discount", "wordpress-simple-paypal-shopping-cart");?></label></h3>
     <div class="inside">
 
     <form method="post" action="">
@@ -182,7 +186,6 @@ function show_wp_cart_coupon_discount_settings_page()
     $output .= '</tbody>
     </table>';
 
-    //$output .= '<p><a href="options-general.php?page=wordpress-paypal-shopping-cart&action=discount-settings">Add New</a></p>';   
     echo $output;
     wpspsc_settings_menu_footer();
 }

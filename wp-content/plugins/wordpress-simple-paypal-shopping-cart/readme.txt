@@ -3,8 +3,8 @@ Contributors: Tips and Tricks HQ, Ruhul Amin, wptipsntricks, mbrsolution
 Donate link: https://www.tipsandtricks-hq.com
 Tags: cart, shopping cart, WordPress shopping cart, Paypal shopping cart, sell, selling, sell products, online shop, shop, e-commerce, wordpress ecommerce, wordpress store, store, PayPal cart widget, sell digital products, sell service, digital downloads, paypal, paypal cart, e-shop, compact cart, coupon, discount
 Requires at least: 3.0
-Tested up to: 4.3
-Stable tag: 4.1.4
+Tested up to: 4.5
+Stable tag: 4.2.5
 License: GPLv2 or later
 
 Very easy to use Simple WordPress Paypal Shopping Cart Plugin. Great for selling products online in one click from your WordPress site.
@@ -15,7 +15,7 @@ WordPress Simple Paypal Shopping Cart allows you to add an 'Add to Cart' button 
 
 It also allows you to add/display the shopping cart on any post or page or sidebar easily. The shopping cart shows the user what they currently have in the cart and allows them to change quantity or remove the items. 
 
-http://www.youtube.com/watch?v=tEZWfTmZ2kk
+https://www.youtube.com/watch?v=tEZWfTmZ2kk
 
 You will be able to create products by using shortcodes dynamically.
 
@@ -85,8 +85,9 @@ The following language translations are already available:
 * Norwegian
 * Danish
 * Turkish
+* Dutch
 
-You can translate the plugin using [this documentation](http://www.tipsandtricks-hq.com/ecommerce/translating-the-wp-simple-shopping-cart-plugin-2627).
+You can translate the plugin using [this documentation](https://www.tipsandtricks-hq.com/ecommerce/translating-the-wp-simple-shopping-cart-plugin-2627).
 
 = Note =
 
@@ -156,9 +157,9 @@ example usage: [wp_cart_button name="Test Product" price="29.95" var1="Size|smal
 5. Is the 'Add to Cart' button customizable? Yes.
 6. Does this plugin use a return URL to redirect customers to a specified page after Paypal has processed the payment? Yes.
 7. How can I add a buy button on the sidebar widget of my site?
-Check the documentation on [how to add buy buttons to the sidebar](http://www.tipsandtricks-hq.com/ecommerce/wordpress-shopping-cart-additional-resources-322#add_button_in_sidebar)
+Check the documentation on [how to add buy buttons to the sidebar](https://www.tipsandtricks-hq.com/ecommerce/wordpress-shopping-cart-additional-resources-322#add_button_in_sidebar)
 8. Can I use this plugin to sell digital downloads? 
-Yes. See the [digital download usage documentation] (http://www.tipsandtricks-hq.com/ecommerce/wp-simple-cart-sell-digital-downloads-2468)
+Yes. See the [digital download usage documentation] (https://www.tipsandtricks-hq.com/ecommerce/wp-simple-cart-sell-digital-downloads-2468)
 9. Can I configure discount coupon with this shopping cart plugin?
 Yes. you can setup discount coupons from the "Coupon/Discount" interface of the plugin.
 10. Can I configure product sale notification so I get notified when a sale is made? 
@@ -166,6 +167,8 @@ Yes. You can configure sale notification from the "Email Settings" interface of 
 11. Can I modify the product box thumbnail image?
 Yes.
 12. Can I customize the format of the price display?
+Yes.
+13. Can the customers be sent to a cancel URL when they click "cancel" from the PayPal checkout page?
 Yes.
 
 == Screenshots ==
@@ -176,6 +179,52 @@ Visit the plugin site at https://www.tipsandtricks-hq.com/wordpress-simple-paypa
 None
 
 == Changelog ==
+
+= 4.2.5 =
+- Minor update for backwards compatibility with an old shortcode using variation.
+
+= 4.2.4 =
+- Added a new filter for the checkout button image. It can be used to specify a custom button image for the checkout button.
+  Example code: https://www.tipsandtricks-hq.com/ecommerce/customize-the-paypal-checkout-button-image-4026
+- Incomplete old cart orders will now be automatically cleaned by the plugin.
+- Made some improvements to the PayPal IPN validation code. It is fully compatible with the upcoming PayPal IPN changes.
+
+= 4.2.2 =
+- Minor update for backwards compatibility with an old shortcode.
+- WordPress 4.5 compatibility.
+
+= 4.2.1 =
+- Added backwards compatibility for the old shortcodes. So the old add to cart button shortcodes will continue to work as usual.
+
+= 4.2.0 =
+- Added an option in the settings to disable nonce check for the add to cart button. 
+This is useful for some sites that are using caching. Otherwise 48 hour old cached pages will have stale nonce and the nonce security check will fail.
+If you are using a caching solution on your site and having issue with nonce security check failing, then enable this option from the settings.
+
+= 4.1.9 =
+- Added more sanitization and validation on POST/GET/REQUEST data.
+
+= 4.1.8 =
+- Added a new filter in the cart (wspsc_cart_extra_paypal_fields) that will allow you to add extra hidden fields for the PayPal cart checkout.
+- Deleted the local copy of the Spanish language file so the plugin loads the language file from translate.wordpress.org.
+- Deleted the local copy of the Italian language file so the plugin loads the language file from translate.wordpress.org.
+- Deleted the local copy of the Swedish language file so the plugin loads the language file from translate.wordpress.org.
+- Deleted the local copy of the Turkish language file so the plugin loads the language file from translate.wordpress.org.
+- Improved the add to cart price validation code against potential vulnerability.
+
+= 4.1.7 =
+- Added a new text field in the settings - Cancel URL.
+- Debug log file has been renamed to "ipn_handle_debug.txt".
+- Added CSS class to the plain text add to cart button so it can be customized via custom CSS code.
+
+= 4.1.6 =
+- Fixed an issue where post payment price validation would fail for a transaction with a discount coupon.
+
+= 4.1.5 =
+- Added CSS classes to all the "tr" elements in the cart.
+- Added alt tag to all the images and icons in the cart.
+- Added Dutch Language translation to the plugin. The Turkish translation file was submitted by Boye Dorenbos.
+- Added a new email tag {address} that can be used in the notification email to include the buyers address.
 
 = 4.1.4 =
 - Our plugin is being imported to translate.wordpress.org. Changed the plugin text domain so it can be imported into translate.wordpress.org.
