@@ -1,5 +1,4 @@
 <?php
-
 /**
  * BuddyPress Common Functions.
  *
@@ -7,7 +6,7 @@
  * @subpackage Functions
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /** Versions ******************************************************************/
@@ -15,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Output the BuddyPress version.
  *
- * @since BuddyPress (1.6.0)
+ * @since 1.6.0
  *
  * @uses bp_get_version() To get the BuddyPress version.
  */
@@ -25,7 +24,7 @@ function bp_version() {
 	/**
 	 * Return the BuddyPress version.
 	 *
-	 * @since BuddyPress (1.6.0)
+	 * @since 1.6.0
 	 *
 	 * @return string The BuddyPress version.
 	 */
@@ -36,7 +35,7 @@ function bp_version() {
 /**
  * Output the BuddyPress database version.
  *
- * @since BuddyPress (1.6.0)
+ * @since 1.6.0
  *
  * @uses bp_get_db_version() To get the BuddyPress database version.
  */
@@ -46,7 +45,7 @@ function bp_db_version() {
 	/**
 	 * Return the BuddyPress database version.
 	 *
-	 * @since BuddyPress (1.6.0)
+	 * @since 1.6.0
 	 * @return string The BuddyPress database version.
 	 */
 	function bp_get_db_version() {
@@ -56,7 +55,7 @@ function bp_db_version() {
 /**
  * Output the BuddyPress database version.
  *
- * @since BuddyPress (1.6.0)
+ * @since 1.6.0
  *
  * @uses bp_get_db_version_raw() To get the current database BuddyPress version.
  */
@@ -64,14 +63,14 @@ function bp_db_version_raw() {
 	echo bp_get_db_version_raw();
 }
 	/**
-	 * Return the BuddyPress database version
+	 * Return the BuddyPress database version.
 	 *
-	 * @since BuddyPress (1.6)
+	 * @since 1.6.0
 	 *
 	 * @return string The BuddyPress version direct from the database.
 	 */
 	function bp_get_db_version_raw() {
-		$bp     = buddypress();
+		$bp = buddypress();
 		return !empty( $bp->db_version_raw ) ? $bp->db_version_raw : 0;
 	}
 
@@ -89,6 +88,15 @@ function bp_db_version_raw() {
 function bp_core_get_table_prefix() {
 	global $wpdb;
 
+	/**
+	 * Filters the $wpdb base prefix.
+	 *
+	 * Intended primarily for use in multinetwork installations.
+	 *
+	 * @since 1.2.6
+	 *
+	 * @param string $base_prefix Base prefix to use.
+	 */
 	return apply_filters( 'bp_core_get_table_prefix', $wpdb->base_prefix );
 }
 
@@ -98,7 +106,7 @@ function bp_core_get_table_prefix() {
  * The main purpose for this function is so that you can avoid having to create
  * your own awkward callback function for usort().
  *
- * @since BuddyPress (2.2.0)
+ * @since 2.2.0
  *
  * @param  array      $items The items to be sorted. Its constituent items can be either associative arrays or objects.
  * @param  string|int $key   The array index or property name to sort by.
@@ -147,7 +155,7 @@ function bp_sort_by_key( $items, $key, $type = 'alpha' ) {
  * them by post_name as follows:
  *     $sorted_posts = bp_alpha_sort_by_key( $posts, 'post_name' );
  *
- * @since BuddyPress (1.9.0)
+ * @since 1.9.0
  *
  * @param  array      $items The items to be sorted. Its constituent items can be either associative arrays or objects.
  * @param  string|int $key   The array index or property name to sort by.
@@ -160,8 +168,9 @@ function bp_alpha_sort_by_key( $items, $key ) {
 /**
  * Format numbers the BuddyPress way.
  *
- * @param int $number The number to be formatted.
+ * @param int  $number   The number to be formatted.
  * @param bool $decimals Whether to use decimals. See {@link number_format_i18n()}.
+ *
  * @return string The formatted number.
  */
 function bp_core_number_format( $number = 0, $decimals = false ) {
@@ -171,6 +180,15 @@ function bp_core_number_format( $number = 0, $decimals = false ) {
 		$number = 0;
 	}
 
+	/**
+	 * Filters the BuddyPress formatted number.
+	 *
+	 * @since 1.2.4
+	 *
+	 * @param string $value    BuddyPress formatted value.
+	 * @param int    $number   The number to be formatted.
+	 * @param bool   $decimals Whether or not to use decimals.
+	 */
 	return apply_filters( 'bp_core_number_format', number_format_i18n( $number, $decimals ), $number, $decimals );
 }
 
@@ -204,9 +222,11 @@ function bp_core_number_format( $number = 0, $decimals = false ) {
  *
  * For the second argument, $func_args, you should just pass the value of func_get_args().
  *
- * @since BuddyPress (1.6)
+ * @since 1.6.0
+ *
  * @param array $old_args_keys Old argument indexs, keyed to their positions.
- * @param array $func_args The parameters passed to the originating function.
+ * @param array $func_args     The parameters passed to the originating function.
+ *
  * @return array $new_args The parsed arguments.
  */
 function bp_core_parse_args_array( $old_args_keys, $func_args ) {
@@ -230,11 +250,12 @@ function bp_core_parse_args_array( $old_args_keys, $func_args ) {
  * the optional $filter_key parameter. If no $filter_key is passed, no filters
  * are applied.
  *
- * @since BuddyPress (r7704)
+ * @since r7704
  *
- * @param string|array $args Value to merge with $defaults
- * @param array $defaults Array that serves as the defaults.
- * @param string $filter_key String to key the filters from
+ * @param string|array $args       Value to merge with $defaults.
+ * @param array        $defaults   Array that serves as the defaults.
+ * @param string       $filter_key String to key the filters from.
+ *
  * @return array Merged user defined values with defaults.
  */
 function bp_parse_args( $args, $defaults = array(), $filter_key = '' ) {
@@ -250,6 +271,16 @@ function bp_parse_args( $args, $defaults = array(), $filter_key = '' ) {
 
 	// Passively filter the args before the parse
 	if ( !empty( $filter_key ) ) {
+
+		/**
+		 * Filters the arguments key before parsing if filter key provided.
+		 *
+		 * This is a dynamic filter dependent on the specified key.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $r Array of arguments to use.
+		 */
 		$r = apply_filters( 'bp_before_' . $filter_key . '_parse_args', $r );
 	}
 
@@ -260,6 +291,16 @@ function bp_parse_args( $args, $defaults = array(), $filter_key = '' ) {
 
 	// Aggressively filter the args after the parse
 	if ( !empty( $filter_key ) ) {
+
+		/**
+		 * Filters the arguments key after parsing if filter key provided.
+		 *
+		 * This is a dynamic filter dependent on the specified key.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $r Array of parsed arguments.
+		 */
 		$r = apply_filters( 'bp_after_' . $filter_key . '_parse_args', $r );
 	}
 
@@ -272,11 +313,12 @@ function bp_parse_args( $args, $defaults = array(), $filter_key = '' ) {
  * original value submitted via a query argument, likely to a template class
  * responsible for limiting the resultset of a template loop.
  *
- * @since BuddyPress (2.2.0)
+ * @since 2.2.0
  *
- * @param  string $page_arg The $_REQUEST argument to look for
- * @param  int    $page     The original page value to fall back to
- * @return int              A sanitized integer value, good for pagination
+ * @param  string $page_arg The $_REQUEST argument to look for.
+ * @param  int    $page     The original page value to fall back to.
+ *
+ * @return int              A sanitized integer value, good for pagination.
  */
 function bp_sanitize_pagination_arg( $page_arg = '', $page = 1 ) {
 
@@ -302,9 +344,10 @@ function bp_sanitize_pagination_arg( $page_arg = '', $page = 1 ) {
  * Strings like 'DESC', 'desc', ' desc' will be interpreted into 'DESC'.
  * Everything else becomes 'ASC'.
  *
- * @since BuddyPress (1.8.0)
+ * @since 1.8.0
  *
  * @param string $order The 'order' string, as passed to the SQL constructor.
+ *
  * @return string The sanitized value 'DESC' or 'ASC'.
  */
 function bp_esc_sql_order( $order = '' ) {
@@ -320,13 +363,14 @@ function bp_esc_sql_order( $order = '' ) {
  * maintain compatibility with versions of WP before 4.0, we duplicate the
  * logic of the replacement, wpdb::esc_like().
  *
- * @since BuddyPress (2.1.0)
+ * @since 2.1.0
  *
  * @see wpdb::esc_like() for more details on proper use.
  *
  * @param string $text The raw text to be escaped.
+ *
  * @return string Text in the form of a LIKE phrase. Not SQL safe. Run through
- *         wpdb::prepare() before use.
+ *                wpdb::prepare() before use.
  */
 function bp_esc_like( $text ) {
 	global $wpdb;
@@ -341,15 +385,23 @@ function bp_esc_like( $text ) {
 /**
  * Are we running username compatibility mode?
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @uses apply_filters() Filter 'bp_is_username_compatibility_mode' to alter.
  * @todo Move to members component?
  *
  * @return bool False when compatibility mode is disabled, true when enabled.
- *         Default: false.
+ *              Default: false.
  */
 function bp_is_username_compatibility_mode() {
+
+	/**
+	 * Filters whether or not to use username compatibility mode.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $value Whether or not username compatibility mode should be used.
+	 */
 	return apply_filters( 'bp_is_username_compatibility_mode', defined( 'BP_ENABLE_USERNAME_COMPATIBILITY_MODE' ) && BP_ENABLE_USERNAME_COMPATIBILITY_MODE );
 }
 
@@ -359,7 +411,7 @@ function bp_is_username_compatibility_mode() {
  * The WP Toolbar, introduced in WP 3.1, is fully supported in BuddyPress as
  * of BP 1.5. For BP 1.6, the WP Toolbar is the default.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @uses apply_filters() Filter 'bp_use_wp_admin_bar' to alter.
  *
@@ -379,6 +431,13 @@ function bp_use_wp_admin_bar() {
 		$use_admin_bar = false;
 	}
 
+	/**
+	 * Filters whether or not to use the admin bar.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $use_admin_bar Whether or not to use the admin bar.
+	 */
 	return (bool) apply_filters( 'bp_use_wp_admin_bar', $use_admin_bar );
 }
 
@@ -387,7 +446,7 @@ function bp_use_wp_admin_bar() {
 /**
  * Returns an array of core component IDs.
  *
- * @since BuddyPress (2.1.0)
+ * @since 2.1.0
  *
  * @return array
  */
@@ -416,11 +475,12 @@ function bp_core_get_packaged_component_ids() {
 /**
  * Fetch a list of BP directory pages from the appropriate meta table.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @param string $status 'active' to return only pages associated with active components, 'all' to return all saved
  *                       pages. When running save routines, use 'all' to avoid removing data related to inactive
  *                       components. Default: 'active'.
+ *
  * @return array|string An array of page IDs, keyed by component names, or an
  *                      empty string if the list is not found.
  */
@@ -452,6 +512,13 @@ function bp_core_get_directory_page_ids( $status = 'active' ) {
 		}
 	}
 
+	/**
+	 * Filters the list of BP directory pages from the appropriate meta table.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param array $page_ids Array of directory pages.
+	 */
 	return apply_filters( 'bp_core_get_directory_page_ids', $page_ids );
 }
 
@@ -462,10 +529,10 @@ function bp_core_get_directory_page_ids( $status = 'active' ) {
  * in an array keyed by blog_id. This allows you to change your
  * bp_get_root_blog_id() and go through the setup process again.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @param array $blog_page_ids The IDs of the WP pages corresponding to BP
- *        component directories.
+ *                             component directories.
  */
 function bp_core_update_directory_page_ids( $blog_page_ids ) {
 	bp_update_option( 'bp-pages', $blog_page_ids );
@@ -474,7 +541,7 @@ function bp_core_update_directory_page_ids( $blog_page_ids ) {
 /**
  * Get names and slugs for BuddyPress component directory pages.
  *
- * @since BuddyPress (1.5.0).
+ * @since 1.5.0
  *
  * @return object Page names, IDs, and slugs.
  */
@@ -529,6 +596,13 @@ function bp_core_get_directory_pages() {
 		wp_cache_set( 'directory_pages', $pages, 'bp' );
 	}
 
+	/**
+	 * Filters the names and slugs for BuddyPress component directory pages.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param object $pages Object holding page names and slugs.
+	 */
 	return apply_filters( 'bp_core_get_directory_pages', $pages );
 }
 
@@ -538,12 +612,12 @@ function bp_core_get_directory_pages() {
  * Directory pages are those WordPress pages used by BP components to display
  * content (eg, the 'groups' page created by BP).
  *
- * @since BuddyPress (1.7.0)
+ * @since 1.7.0
  *
- * @param array $components Components to create pages for.
- * @param string $existing 'delete' if you want to delete existing page
- *        mappings and replace with new ones. Otherwise existing page mappings
- *        are kept, and the gaps filled in with new pages. Default: 'keep'.
+ * @param array  $components Components to create pages for.
+ * @param string $existing   'delete' if you want to delete existing page mappings
+ *                           and replace with new ones. Otherwise existing page mappings
+ *                           are kept, and the gaps filled in with new pages. Default: 'keep'.
  */
 function bp_core_add_page_mappings( $components, $existing = 'keep' ) {
 
@@ -638,7 +712,7 @@ function bp_core_add_page_mappings( $components, $existing = 'keep' ) {
  * Bails early on multisite installations when not viewing the root site.
  * @link https://buddypress.trac.wordpress.org/ticket/6226
  *
- * @since BuddyPress (2.2.0)
+ * @since 2.2.0
  *
  * @param int $post_id Post ID.
  */
@@ -678,15 +752,24 @@ add_action( 'delete_post', 'bp_core_on_directory_page_delete' );
  * in general, or define a specific component slug constant (e.g.
  * BP_MEMBERS_SLUG) to override specific component slugs.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @param string $root_slug The root slug, which comes from $bp->pages->[component]->slug.
+ *
  * @return string The short slug for use in the middle of URLs.
  */
 function bp_core_component_slug_from_root_slug( $root_slug ) {
 	$slug_chunks = explode( '/', $root_slug );
  	$slug        = array_pop( $slug_chunks );
 
+	/**
+	 * Filters the default component slug from a WP page root_slug.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $slug      Short slug for use in the middle of URLs.
+	 * @param string $root_slug The root slug which comes from $bp->pages-[component]->slug.
+	 */
  	return apply_filters( 'bp_core_component_slug_from_root_slug', $slug, $root_slug );
 }
 
@@ -771,9 +854,34 @@ function bp_core_add_illegal_names() {
 }
 
 /**
+ * Get the 'search' query argument for a given component.
+ *
+ * @since 2.4.0
+ *
+ * @param string $component Component name.
+ * @return string|bool Query argument on success. False on failure.
+ */
+function bp_core_get_component_search_query_arg( $component ) {
+	$query_arg = false;
+	if ( isset( buddypress()->{$component}->search_query_arg ) ) {
+		$query_arg = sanitize_title( buddypress()->{$component}->search_query_arg );
+	}
+
+	/**
+	 * Filters the query arg for a component search string.
+	 *
+	 * @since 2.4.0
+	 *
+	 * @param string $query_arg Query argument.
+	 * @param string $component Component name.
+	 */
+	return apply_filters( 'bp_core_get_component_search_query_arg', $query_arg, $component );
+}
+
+/**
  * Determine whether BuddyPress should register the bp-themes directory.
  *
- * @since BuddyPress (1.9.0)
+ * @since 1.9.0
  *
  * @return bool True if bp-themes should be registered, false otherwise.
  */
@@ -797,6 +905,13 @@ function bp_do_register_theme_directory() {
 		$register = true;
 	}
 
+	/**
+	 * Filters whether BuddyPress should register the bp-themes directory.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param bool $register If bp-themes should be registered.
+	 */
 	return apply_filters( 'bp_do_register_theme_directory', $register );
 }
 
@@ -815,6 +930,13 @@ function bp_core_get_root_domain() {
 
 	$domain = get_home_url( bp_get_root_blog_id() );
 
+	/**
+	 * Filters the domain for the root blog.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @param string $domain The domain URL for the blog.
+	 */
 	return apply_filters( 'bp_core_get_root_domain', $domain );
 }
 
@@ -824,8 +946,8 @@ function bp_core_get_root_domain() {
  * @uses wp_safe_redirect()
  *
  * @param string $location The redirect URL.
- * @param int $status Optional. The numeric code to give in the redirect
- *        headers. Default: 302.
+ * @param int    $status   Optional. The numeric code to give in the redirect
+ *                         headers. Default: 302.
  */
 function bp_core_redirect( $location = '', $status = 302 ) {
 
@@ -845,18 +967,31 @@ function bp_core_redirect( $location = '', $status = 302 ) {
 }
 
 /**
- * Return the referrer URL without the http(s)://
+ * Return the URL path of the referring page.
  *
- * @return string The referrer URL.
+ * This is a wrapper for `wp_get_referer()` that sanitizes the referer URL to
+ * a webroot-relative path. For example, 'http://example.com/foo/' will be
+ * reduced to '/foo/'.
+ *
+ * @since 2.3.0
+ *
+ * @return bool|string Returns false on error, a URL path on success.
  */
-function bp_core_referrer() {
-	$referer = explode( '/', wp_get_referer() );
-	unset( $referer[0], $referer[1], $referer[2] );
-	return implode( '/', $referer );
+function bp_get_referer_path() {
+	$referer = wp_get_referer();
+
+	if ( false === $referer ) {
+		return false;
+	}
+
+	// Turn into an absolute path.
+	$referer = preg_replace( '|https?\://[^/]+/|', '/', $referer );
+
+	return $referer;
 }
 
 /**
- * Get the path of of the current site.
+ * Get the path of the current site.
  *
  * @global object $current_site
  *
@@ -886,6 +1021,13 @@ function bp_core_get_site_path() {
 		}
 	}
 
+	/**
+	 * Filters the path of the current site.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param string $site_path URL to the current site.
+	 */
 	return apply_filters( 'bp_core_get_site_path', $site_path );
 }
 
@@ -894,14 +1036,23 @@ function bp_core_get_site_path() {
 /**
  * Get the current GMT time to save into the DB.
  *
- * @since BuddyPress (1.2.6)
+ * @since 1.2.6
  *
- * @param bool $gmt True to use GMT (rather than local) time. Default: true.
+ * @param bool   $gmt  True to use GMT (rather than local) time. Default: true.
  * @param string $type See the 'type' parameter in {@link current_time()}.
-          Default: 'mysql'.
+ *                     Default: 'mysql'.
+ *
  * @return string Current time in 'Y-m-d h:i:s' format.
  */
 function bp_core_current_time( $gmt = true, $type = 'mysql' ) {
+
+	/**
+	 * Filters the current GMT time to save into the DB.
+	 *
+	 * @since 1.2.6
+	 *
+	 * @param string $value Current GMT time.
+	 */
 	return apply_filters( 'bp_core_current_time', current_time( $type, $gmt ) );
 }
 
@@ -924,24 +1075,55 @@ function bp_core_current_time( $gmt = true, $type = 'mysql' ) {
  * @uses apply_filters() Filter 'bp_core_time_since' to modify BP's calculations.
  *
  * @param int|string $older_date The earlier time from which you're calculating
- *        the time elapsed. Enter either as an integer Unix timestamp, or as a
- *        date string of the format 'Y-m-d h:i:s'.
- * @param int $newer_date Optional. Unix timestamp of date to compare older
- *        date to. Default: false (current time).
+ *                               the time elapsed. Enter either as an integer Unix timestamp,
+ *                               or as a date string of the format 'Y-m-d h:i:s'.
+ * @param int|bool   $newer_date Optional. Unix timestamp of date to compare older
+ *                               date to. Default: false (current time).
+ *
  * @return string String representing the time since the older date, eg
  *         "2 hours and 50 minutes".
  */
 function bp_core_time_since( $older_date, $newer_date = false ) {
 
-	// Use this filter to bypass BuddyPress's time_since calculations
+	/**
+	 * Filters whether or not to bypass BuddyPress' time_since calculations.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param bool   $value      Whether or not to bypass.
+	 * @param string $older_date Earlier time from which we're calculating time elapsed.
+	 * @param string $newer_date Unix timestamp of date to compare older time to.
+	 */
 	$pre_value = apply_filters( 'bp_core_time_since_pre', false, $older_date, $newer_date );
 	if ( false !== $pre_value ) {
 		return $pre_value;
 	}
 
-	// Setup the strings
+	/**
+	 * Filters the value to use if the time since is unknown.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $value String representing the time since the older date.
+	 */
 	$unknown_text   = apply_filters( 'bp_core_time_since_unknown_text',   __( 'sometime',  'buddypress' ) );
+
+	/**
+	 * Filters the value to use if the time since is right now.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $value String representing the time since the older date.
+	 */
 	$right_now_text = apply_filters( 'bp_core_time_since_right_now_text', __( 'right now', 'buddypress' ) );
+
+	/**
+	 * Filters the value to use if the time since is some time ago.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $value String representing the time since the older date.
+	 */
 	$ago_text       = apply_filters( 'bp_core_time_since_ago_text',       __( '%s ago',    'buddypress' ) );
 
 	// array of time period chunks
@@ -1072,6 +1254,15 @@ function bp_core_time_since( $older_date, $newer_date = false ) {
 		$output = sprintf( $ago_text, $output );
 	}
 
+	/**
+	 * Filters the English-language representation of the time elapsed since a given date.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param string $output     Final 'time since' string.
+	 * @param string $older_date Earlier time from which we're calculating time elapsed.
+	 * @param string $newer_date Unix timestamp of date to compare older time to.
+	 */
 	return apply_filters( 'bp_core_time_since', $output, $older_date, $newer_date );
 }
 
@@ -1081,8 +1272,8 @@ function bp_core_time_since( $older_date, $newer_date = false ) {
  * Add a feedback (error/success) message to the WP cookie so it can be displayed after the page reloads.
  *
  * @param string $message Feedback message to be displayed.
- * @param string $type Message type. 'updated', 'success', 'error', 'warning'.
- *        Default: 'success'.
+ * @param string $type    Message type. 'updated', 'success', 'error', 'warning'.
+ *                        Default: 'success'.
  */
 function bp_core_add_message( $message, $type = '' ) {
 
@@ -1156,6 +1347,16 @@ function bp_core_render_message() {
 
 	if ( !empty( $bp->template_message ) ) :
 		$type    = ( 'success' === $bp->template_message_type ) ? 'updated' : 'error';
+
+		/**
+		 * Filters the 'template_notices' feedback message content.
+		 *
+		 * @since 1.5.5
+		 *
+		 * @param string $template_message Feedback message content.
+		 * @param string $type             The type of message being displayed.
+		 *                                 Either 'updated' or 'error'.
+		 */
 		$content = apply_filters( 'bp_core_render_message_content', $bp->template_message, $type ); ?>
 
 		<div id="message" class="bp-template-notice <?php echo esc_attr( $type ); ?>">
@@ -1166,6 +1367,11 @@ function bp_core_render_message() {
 
 	<?php
 
+		/**
+		 * Fires after the display of any template_notices feedback messages.
+		 *
+		 * @since 1.1.0
+		 */
 		do_action( 'bp_core_render_message' );
 
 	endif;
@@ -1214,6 +1420,16 @@ function bp_core_record_activity() {
 
 	// Use this action to detect the very first activity for a given member
 	if ( empty( $activity ) ) {
+
+		/**
+		 * Fires inside the recording of an activity item.
+		 *
+		 * Use this action to detect the very first activity for a given member.
+		 *
+		 * @since 1.6.0
+		 *
+		 * @param int $user_id ID of the user whose activity is recorded.
+		 */
 		do_action( 'bp_first_activity_for_member', $user_id );
 	}
 
@@ -1231,7 +1447,8 @@ add_action( 'wp_head', 'bp_core_record_activity' );
  *       representation of the time elapsed.
  *
  * @param int|string $last_activity_date The date of last activity.
- * @param string $string A sprintf()-able statement of the form 'active %s'
+ * @param string     $string             A sprintf()-able statement of the form 'active %s'.
+ *
  * @return string $last_active A string of the form '3 years ago'.
  */
 function bp_core_get_last_activity( $last_activity_date = '', $string = '' ) {
@@ -1246,7 +1463,15 @@ function bp_core_get_last_activity( $last_activity_date = '', $string = '' ) {
 		? __( 'Not recently active', 'buddypress' )
 		: sprintf( $string, bp_core_time_since( $last_activity_date ) );
 
-	// Filter and return
+	/**
+	 * Filters last activity string based on time since date given.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param string $last_active        Last activity string based on time since date given.
+	 * @param string $last_activity_date The date of last activity.
+	 * @param string $string             A sprintf()-able statement of the form 'active %s'.
+	 */
 	return apply_filters( 'bp_core_get_last_activity', $last_active, $last_activity_date, $string );
 }
 
@@ -1268,14 +1493,23 @@ function bp_core_get_last_activity( $last_activity_date = '', $string = '' ) {
  *    $friend_count = get_user_meta( $user_id, bp_get_user_meta_key( 'total_friend_count' ), true );
  * If using the WP functions, do not not hardcode your meta keys.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @uses apply_filters() Filter 'bp_get_user_meta_key' to modify keys individually.
  *
- * @param string $key The usermeta meta_key.
+ * @param string|bool $key The usermeta meta_key.
+ *
  * @return string $key The usermeta meta_key.
  */
 function bp_get_user_meta_key( $key = false ) {
+
+	/**
+	 * Filters the meta_key for a given piece of user metadata.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $key The usermeta meta key.
+	 */
 	return apply_filters( 'bp_get_user_meta_key', $key );
 }
 
@@ -1286,14 +1520,15 @@ function bp_get_user_meta_key( $key = false ) {
  * bp_get_user_meta_key(), thereby increasing compatibility with non-standard
  * BP setups.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @see get_user_meta() For complete details about parameters and return values.
  * @uses bp_get_user_meta_key() For a filterable version of the meta key.
  *
- * @param int $user_id The ID of the user whose meta you're fetching.
- * @param string $key The meta key to retrieve.
- * @param bool $single Whether to return a single value.
+ * @param int    $user_id The ID of the user whose meta you're fetching.
+ * @param string $key     The meta key to retrieve.
+ * @param bool   $single  Whether to return a single value.
+ *
  * @return mixed Will be an array if $single is false. Will be value of meta data field if $single
  *         is true.
  */
@@ -1308,15 +1543,16 @@ function bp_get_user_meta( $user_id, $key, $single = false ) {
  * bp_get_user_meta_key(), thereby increasing compatibility with non-standard
  * BP setups.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @see update_user_meta() For complete details about parameters and return values.
  * @uses bp_get_user_meta_key() For a filterable version of the meta key.
  *
- * @param int $user_id The ID of the user whose meta you're setting.
- * @param string $key The meta key to set.
- * @param mixed $value Metadata value.
- * @param mixed $prev_value Optional. Previous value to check before removing.
+ * @param int    $user_id    The ID of the user whose meta you're setting.
+ * @param string $key        The meta key to set.
+ * @param mixed  $value      Metadata value.
+ * @param mixed  $prev_value Optional. Previous value to check before removing.
+ *
  * @return bool False on failure, true on success.
  */
 function bp_update_user_meta( $user_id, $key, $value, $prev_value = '' ) {
@@ -1330,14 +1566,15 @@ function bp_update_user_meta( $user_id, $key, $value, $prev_value = '' ) {
  * bp_get_user_meta_key(), thereby increasing compatibility with non-standard
  * BP setups.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @see delete_user_meta() For complete details about parameters and return values.
  * @uses bp_get_user_meta_key() For a filterable version of the meta key.
  *
- * @param int $user_id The ID of the user whose meta you're deleting.
- * @param string $key The meta key to delete.
- * @param mixed $value Optional. Metadata value.
+ * @param int    $user_id The ID of the user whose meta you're deleting.
+ * @param string $key     The meta key to delete.
+ * @param mixed  $value   Optional. Metadata value.
+ *
  * @return bool False for failure. True for success.
  */
 function bp_delete_user_meta( $user_id, $key, $value = '' ) {
@@ -1349,7 +1586,7 @@ function bp_delete_user_meta( $user_id, $key, $value = '' ) {
 /**
  * Initializes {@link BP_Embed} after everything is loaded.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  */
 function bp_embed_init() {
 
@@ -1365,48 +1602,80 @@ add_action( 'bp_init', 'bp_embed_init', 9 );
 /**
  * Are oembeds allowed in activity items?
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @return bool False when activity embed support is disabled; true when
- *         enabled. Default: true.
+ *              enabled. Default: true.
  */
 function bp_use_embed_in_activity() {
+
+	/**
+	 * Filters whether or not oEmbeds are allowed in activity items.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $value Whether or not oEmbeds are allowed.
+	 */
 	return apply_filters( 'bp_use_oembed_in_activity', !defined( 'BP_EMBED_DISABLE_ACTIVITY' ) || !BP_EMBED_DISABLE_ACTIVITY );
 }
 
 /**
  * Are oembeds allowed in activity replies?
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @return bool False when activity replies embed support is disabled; true
- *         when enabled. Default: true.
+ *              when enabled. Default: true.
  */
 function bp_use_embed_in_activity_replies() {
+
+	/**
+	 * Filters whether or not oEmbeds are allowed in activity replies.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $value Whether or not oEmbeds are allowed.
+	 */
 	return apply_filters( 'bp_use_embed_in_activity_replies', !defined( 'BP_EMBED_DISABLE_ACTIVITY_REPLIES' ) || !BP_EMBED_DISABLE_ACTIVITY_REPLIES );
 }
 
 /**
  * Are oembeds allowed in forum posts?
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @return bool False when forum post embed support is disabled; true when
- *         enabled. Default: true.
+ *              enabled. Default: true.
  */
 function bp_use_embed_in_forum_posts() {
+
+	/**
+	 * Filters whether or not oEmbeds are allowed in forum posts.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $value Whether or not oEmbeds are allowed.
+	 */
 	return apply_filters( 'bp_use_embed_in_forum_posts', !defined( 'BP_EMBED_DISABLE_FORUM_POSTS' ) || !BP_EMBED_DISABLE_FORUM_POSTS );
 }
 
 /**
  * Are oembeds allowed in private messages?
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @return bool False when private message embed support is disabled; true when
- *         enabled. Default: true.
+ *              enabled. Default: true.
  */
 function bp_use_embed_in_private_messages() {
+
+	/**
+	 * Filters whether or not oEmbeds are allowed in private messages.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $value Whether or not oEmbeds are allowed.
+	 */
 	return apply_filters( 'bp_use_embed_in_private_messages', !defined( 'BP_EMBED_DISABLE_PRIVATE_MESSAGES' ) || !BP_EMBED_DISABLE_PRIVATE_MESSAGES );
 }
 
@@ -1415,11 +1684,11 @@ function bp_use_embed_in_private_messages() {
 /**
  * Output the correct admin URL based on BuddyPress and WordPress configuration.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @see bp_get_admin_url() For description of parameters.
  *
- * @param string $path See {@link bp_get_admin_url()}.
+ * @param string $path   See {@link bp_get_admin_url()}.
  * @param string $scheme See {@link bp_get_admin_url()}.
  */
 function bp_admin_url( $path = '', $scheme = 'admin' ) {
@@ -1428,17 +1697,18 @@ function bp_admin_url( $path = '', $scheme = 'admin' ) {
 	/**
 	 * Return the correct admin URL based on BuddyPress and WordPress configuration.
 	 *
-	 * @since BuddyPress (1.5.0)
+	 * @since 1.5.0
 	 *
 	 * @uses bp_core_do_network_admin()
 	 * @uses network_admin_url()
 	 * @uses admin_url()
 	 *
-	 * @param string $path Optional. The sub-path under /wp-admin to be
-	 *        appended to the admin URL.
+	 * @param string $path   Optional. The sub-path under /wp-admin to be
+	 *                       appended to the admin URL.
 	 * @param string $scheme The scheme to use. Default is 'admin', which
-	 *        obeys {@link force_ssl_admin()} and {@link is_ssl()}. 'http'
-	 *        or 'https' can be passed to force those schemes.
+	 *                       obeys {@link force_ssl_admin()} and {@link is_ssl()}. 'http'
+	 *                       or 'https' can be passed to force those schemes.
+	 *
 	 * @return string Admin url link with optional path appended.
 	 */
 	function bp_get_admin_url( $path = '', $scheme = 'admin' ) {
@@ -1462,13 +1732,13 @@ function bp_admin_url( $path = '', $scheme = 'admin' ) {
  * configurations, we need to check a few things to be confident about where
  * to hook into certain areas of WordPress's admin.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @uses bp_is_network_activated()
  * @uses bp_is_multiblog_mode()
  *
  * @return bool True if the BP admin screen should appear in the Network Admin,
- *         otherwise false.
+ *              otherwise false.
  */
 function bp_core_do_network_admin() {
 
@@ -1479,6 +1749,13 @@ function bp_core_do_network_admin() {
 		$retval = false;
 	}
 
+	/**
+	 * Filters whether or not BuddyPress should appear in network admin.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $retval Whether or not BuddyPress should be in the network admin.
+	 */
 	return (bool) apply_filters( 'bp_core_do_network_admin', $retval );
 }
 
@@ -1497,6 +1774,13 @@ function bp_core_do_network_admin() {
 function bp_core_admin_hook() {
 	$hook = bp_core_do_network_admin() ? 'network_admin_menu' : 'admin_menu';
 
+	/**
+	 * Filters the action name that BuddyPress nav setup callbacks should be hooked to.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $hook Action name to be attached to.
+	 */
 	return apply_filters( 'bp_core_admin_hook', $hook );
 }
 
@@ -1505,9 +1789,10 @@ function bp_core_admin_hook() {
 /**
  * Is this the root blog?
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @param int $blog_id Optional. Default: the ID of the current blog.
+ *
  * @return bool $is_root_blog Returns true if this is bp_get_root_blog_id().
  */
 function bp_is_root_blog( $blog_id = 0 ) {
@@ -1516,15 +1801,22 @@ function bp_is_root_blog( $blog_id = 0 ) {
 	$is_root_blog = false;
 
 	// Use current blog if no ID is passed
-	if ( empty( $blog_id ) ) {
+	if ( empty( $blog_id ) || ! is_int( $blog_id ) ) {
 		$blog_id = get_current_blog_id();
 	}
 
 	// Compare to root blog ID
-	if ( $blog_id == bp_get_root_blog_id() ) {
+	if ( bp_get_root_blog_id() === $blog_id ) {
 		$is_root_blog = true;
 	}
 
+	/**
+	 * Filters whether or not we're on the root blog.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $is_root_blog Whether or not we're on the root blog.
+	 */
 	return (bool) apply_filters( 'bp_is_root_blog', (bool) $is_root_blog );
 }
 
@@ -1535,11 +1827,19 @@ function bp_is_root_blog( $blog_id = 0 ) {
  * appears (where member profile URLs resolve, where a given theme is loaded,
  * etc.).
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @return int The root site ID.
  */
 function bp_get_root_blog_id() {
+
+	/**
+	 * Filters the ID for the root blog.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param int $root_blog_id ID for the root blog.
+	 */
 	return (int) apply_filters( 'bp_get_root_blog_id', (int) buddypress()->root_blog_id );
 }
 
@@ -1566,12 +1866,12 @@ function bp_get_root_blog_id() {
  * a very small use-case with large architectural shortcomings, so do not go
  * down this road unless you specifically need to.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @uses apply_filters() Filter 'bp_is_multiblog_mode' to alter.
  *
  * @return bool False when multiblog mode is disabled; true when enabled.
- *         Default: false.
+ *              Default: false.
  */
 function bp_is_multiblog_mode() {
 
@@ -1590,6 +1890,13 @@ function bp_is_multiblog_mode() {
 		$retval = true;
 	}
 
+	/**
+	 * Filters whether or not we're running in multiblog mode.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool $retval Whether or not we're running multiblog mode.
+	 */
 	return apply_filters( 'bp_is_multiblog_mode', $retval );
 }
 
@@ -1601,7 +1908,7 @@ function bp_is_multiblog_mode() {
  * with an mu-plugin or some other method, you'll want to filter
  * 'bp_is_network_activated' and override the auto-determined value.
  *
- * @since BuddyPress (1.7.0)
+ * @since 1.7.0
  *
  * @return bool True if BuddyPress is network activated.
  */
@@ -1619,6 +1926,13 @@ function bp_is_network_activated() {
 		$retval = false;
 	}
 
+	/**
+	 * Filters whether or not we're active at the network level.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param bool $retval Whether or not we're network activated.
+	 */
 	return (bool) apply_filters( 'bp_is_network_activated', $retval );
 }
 
@@ -1627,9 +1941,9 @@ function bp_is_network_activated() {
 /**
  * Set the "is_directory" global.
  *
- * @param bool $is_directory Optional. Default: false.
- * @param string $component Optional. Component name. Default: the current
- *        component.
+ * @param bool   $is_directory Optional. Default: false.
+ * @param string $component    Optional. Component name. Default: the current
+ *                             component.
  */
 function bp_update_is_directory( $is_directory = false, $component = '' ) {
 
@@ -1637,15 +1951,23 @@ function bp_update_is_directory( $is_directory = false, $component = '' ) {
 		$component = bp_current_component();
 	}
 
+	/**
+	 * Filters the "is_directory" global value.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool   $is_directory Whether or not we're "is_directory".
+	 * @param string $component    Component name. Default: the current component.
+	 */
 	buddypress()->is_directory = apply_filters( 'bp_update_is_directory', $is_directory, $component );
 }
 
 /**
  * Set the "is_item_admin" global.
  *
- * @param bool $is_item_admin Optional. Default: false.
- * @param string $component Optional. Component name. Default: the current
- *        component.
+ * @param bool   $is_item_admin Optional. Default: false.
+ * @param string $component     Optional. Component name. Default: the current
+ *                              component.
  */
 function bp_update_is_item_admin( $is_item_admin = false, $component = '' ) {
 
@@ -1653,15 +1975,23 @@ function bp_update_is_item_admin( $is_item_admin = false, $component = '' ) {
 		$component = bp_current_component();
 	}
 
+	/**
+	 * Filters the "is_item_admin" global value.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool   $is_item_admin Whether or not we're "is_item_admin".
+	 * @param string $component     Component name. Default: the current component.
+	 */
 	buddypress()->is_item_admin = apply_filters( 'bp_update_is_item_admin', $is_item_admin, $component );
 }
 
 /**
  * Set the "is_item_mod" global.
  *
- * @param bool $is_item_mod Optional. Default: false.
- * @param string $component Optional. Component name. Default: the current
- *        component.
+ * @param bool   $is_item_mod Optional. Default: false.
+ * @param string $component   Optional. Component name. Default: the current
+ *                            component.
  */
 function bp_update_is_item_mod( $is_item_mod = false, $component = '' ) {
 
@@ -1669,22 +1999,38 @@ function bp_update_is_item_mod( $is_item_mod = false, $component = '' ) {
 		$component = bp_current_component();
 	}
 
+	/**
+	 * Filters the "is_item_mod" global value.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param bool   $is_item_mod Whether or not we're "is_item_mod".
+	 * @param string $component   Component name. Default: the current component.
+	 */
 	buddypress()->is_item_mod = apply_filters( 'bp_update_is_item_mod', $is_item_mod, $component );
 }
 
 /**
  * Trigger a 404.
  *
- * @since BuddyPress (1.5.0)
+ * @since 1.5.0
  *
  * @global WP_Query $wp_query WordPress query object.
  *
- * @param string $redirect If 'remove_canonical_direct', remove WordPress'
- *        "helpful" redirect_canonical action. Default: 'remove_canonical_redirect'.
+ * @param string $redirect If 'remove_canonical_direct', remove WordPress' "helpful"
+ *                         redirect_canonical action. Default: 'remove_canonical_redirect'.
  */
 function bp_do_404( $redirect = 'remove_canonical_direct' ) {
 	global $wp_query;
 
+	/**
+	 * Fires inside the triggering of a 404.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param string $redirect Redirect type used to determine if redirect_canonical
+	 *                         function should be be removed.
+	 */
 	do_action( 'bp_do_404', $redirect );
 
 	$wp_query->set_404();
@@ -1703,12 +2049,13 @@ function bp_do_404( $redirect = 'remove_canonical_direct' ) {
  *
  * To avoid security exploits within the theme.
  *
- * @since BuddyPress (1.6.0)
+ * @since 1.6.0
  *
  * @uses do_action() Calls 'bp_verify_nonce_request' on $action.
  *
- * @param string $action Action nonce.
- * @param string $query_arg where to look for nonce in $_REQUEST.
+ * @param string $action    Action nonce.
+ * @param string $query_arg Where to look for nonce in $_REQUEST.
+ *
  * @return bool True if the nonce is verified, otherwise false.
  */
 function bp_verify_nonce_request( $action = '', $query_arg = '_wpnonce' ) {
@@ -1717,9 +2064,9 @@ function bp_verify_nonce_request( $action = '', $query_arg = '_wpnonce' ) {
 
 	// Parse home_url() into pieces to remove query-strings, strange characters,
 	// and other funny things that plugins might to do to it.
-	$parsed_home = parse_url( home_url( '/', ( is_ssl() ? 'https://' : 'http://' ) ) );
+	$parsed_home = parse_url( home_url( '/', ( is_ssl() ? 'https' : 'http' ) ) );
 
-	// Maybe include the port, if it's included
+	// Maybe include the port, if it's included in home_url()
 	if ( isset( $parsed_home['port'] ) ) {
 		$parsed_host = $parsed_home['host'] . ':' . $parsed_home['port'];
 	} else {
@@ -1732,7 +2079,7 @@ function bp_verify_nonce_request( $action = '', $query_arg = '_wpnonce' ) {
 	/** Requested URL *********************************************************/
 
 	// Maybe include the port, if it's included in home_url()
-	if ( isset( $parsed_home['port'] ) ) {
+	if ( isset( $parsed_home['port'] ) && false === strpos( $_SERVER['HTTP_HOST'], ':' ) ) {
 		$request_host = $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'];
 	} else {
 		$request_host = $_SERVER['HTTP_HOST'];
@@ -1744,7 +2091,15 @@ function bp_verify_nonce_request( $action = '', $query_arg = '_wpnonce' ) {
 
 	/** Look for match ********************************************************/
 
-	// Filter the requested URL, for configurations like reverse proxying
+	/**
+	 * Filters the requested URL being nonce-verified.
+	 *
+	 * Useful for configurations like reverse proxying.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param string $requested_url The requested URL.
+	 */
 	$matched_url = apply_filters( 'bp_verify_nonce_request_url', $requested_url );
 
 	// Check the nonce
@@ -1755,7 +2110,14 @@ function bp_verify_nonce_request( $action = '', $query_arg = '_wpnonce' ) {
 		$result = false;
 	}
 
-	// Do extra things
+	/**
+	 * Fires at the end of the nonce verification check.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @param string $action Action nonce.
+	 * @param bool   $result Boolean result of nonce verification.
+	 */
 	do_action( 'bp_verify_nonce_request', $action, $result );
 
 	return $result;
@@ -1764,9 +2126,9 @@ function bp_verify_nonce_request( $action = '', $query_arg = '_wpnonce' ) {
 /** Requests ******************************************************************/
 
 /**
- * Return true|false if this is a POST request
+ * Return true|false if this is a POST request.
  *
- * @since BuddyPress (1.9.0)
+ * @since 1.9.0
  * @return bool
  */
 function bp_is_post_request() {
@@ -1774,9 +2136,9 @@ function bp_is_post_request() {
 }
 
 /**
- * Return true|false if this is a GET request
+ * Return true|false if this is a GET request.
  *
- * @since BuddyPress (1.9.0)
+ * @since 1.9.0
  * @return bool
  */
 function bp_is_get_request() {
@@ -1795,8 +2157,23 @@ function bp_is_get_request() {
  */
 function bp_core_load_buddypress_textdomain() {
 	$domain = 'buddypress';
+
+	/**
+	 * Filters the locale to be loaded for the language files.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @param string $value Current locale for the install.
+	 */
 	$mofile_custom = sprintf( '%s-%s.mo', $domain, apply_filters( 'buddypress_locale', get_locale() ) );
 
+	/**
+	 * Filters the locations to load language files from.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param array $value Array of directories to check for language files in.
+	 */
 	$locations = apply_filters( 'buddypress_locale_locations', array(
 		trailingslashit( WP_LANG_DIR . '/' . $domain  ),
 		trailingslashit( WP_LANG_DIR ),
@@ -1815,7 +2192,7 @@ function bp_core_load_buddypress_textdomain() {
 add_action ( 'bp_core_loaded', 'bp_core_load_buddypress_textdomain' );
 
 /**
- * A javascript-free implementation of the search functions in BuddyPress.
+ * A JavaScript-free implementation of the search functions in BuddyPress.
  *
  * @param string $slug The slug to redirect to for searching.
  */
@@ -1876,6 +2253,14 @@ function bp_core_action_search_site( $slug = '' ) {
 		}
 	}
 
+	/**
+	 * Filters the constructed url for use with site searching.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $value        URL for use with site searching.
+	 * @param array  $search_terms Array of search terms.
+	 */
 	bp_core_redirect( apply_filters( 'bp_core_search_site', home_url( $slug . $query_string . urlencode( $search_terms ) ), $search_terms ) );
 }
 add_action( 'bp_init', 'bp_core_action_search_site', 7 );
@@ -1900,7 +2285,7 @@ add_action( 'wp_footer', 'bp_core_print_generation_time' );
  * function, we remove these links when on a BuddyPress page.  This also
  * prevents additional, unnecessary queries from running.
  *
- * @since BuddyPress (2.1.0)
+ * @since 2.1.0
  */
 function bp_remove_adjacent_posts_rel_link() {
 	if ( ! is_buddypress() ) {
@@ -1910,6 +2295,23 @@ function bp_remove_adjacent_posts_rel_link() {
 	remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0 );
 }
 add_action( 'bp_init', 'bp_remove_adjacent_posts_rel_link' );
+
+/**
+ * Strip the span count of a menu item or of a title part.
+ *
+ * @since 2.2.2
+ *
+ * @param string $title_part Title part to clean up.
+ * @return string
+ */
+function _bp_strip_spans_from_title( $title_part = '' ) {
+	$title = $title_part;
+	$span = strpos( $title, '<span' );
+	if ( false !== $span ) {
+		$title = substr( $title, 0, $span - 1 );
+	}
+	return trim( $title );
+}
 
 /** Nav Menu ******************************************************************/
 
@@ -1927,7 +2329,7 @@ add_action( 'bp_init', 'bp_remove_adjacent_posts_rel_link' );
  * example, "My Profile" will always point to the URL of the profile of the
  * logged-in user.
  *
- * @since BuddyPress (1.9.0)
+ * @since 1.9.0
  *
  * @return mixed A URL or an array of dummy pages.
  */
@@ -1962,8 +2364,7 @@ function bp_nav_menu_get_loggedin_pages() {
 	foreach ( $bp_menu_items as $bp_item ) {
 
 		// Remove <span>number</span>
-		$item_name = preg_replace( '/([.0-9]+)/', '', $bp_item['name'] );
-		$item_name = trim( strip_tags( $item_name ) );
+		$item_name = _bp_strip_spans_from_title( $bp_item['name'] );
 
 		$page_args[ $bp_item['slug'] ] = (object) array(
 			'ID'             => -1,
@@ -1997,7 +2398,7 @@ function bp_nav_menu_get_loggedin_pages() {
  * nor tax terms, so we fake a post-like object so as to be compatible with the
  * menu.
  *
- * @since BuddyPress (1.9.0)
+ * @since 1.9.0
  *
  * @return mixed A URL or an array of dummy pages.
  */
@@ -2068,10 +2469,11 @@ function bp_nav_menu_get_loggedout_pages() {
  * based on the identity of the current user. This function lets you fetch the
  * proper URL for a given nav item slug (such as 'login' or 'messages').
  *
- * @since BuddyPress (1.9.0)
+ * @since 1.9.0
  *
  * @param string $slug The slug of the nav item: login, register, or one of the
- *        slugs from buddypress()->bp_nav.
+ *                     slugs from buddypress()->bp_nav.
+ *
  * @return string $nav_item_url The URL generated for the current user.
  */
 function bp_nav_menu_get_item_url( $slug ) {
@@ -2093,9 +2495,11 @@ function bp_nav_menu_get_item_url( $slug ) {
  * This is used to power BuddyPress' at-mentions suggestions, but it is flexible enough to be used
  * for similar kinds of future requirements, or those implemented by third-party developers.
  *
+ * @since 2.1.0
+ *
  * @param array $args
+ *
  * @return array|WP_Error Array of results. If there were any problems, returns a WP_Error object.
- * @since BuddyPress (2.1.0)
  */
 function bp_core_get_suggestions( $args ) {
 	$args = bp_parse_args( $args, array(), 'get_suggestions' );
@@ -2114,7 +2518,18 @@ function bp_core_get_suggestions( $args ) {
 		}
 
 	} else {
-		// If you've built a custom suggestions service, use this to tell BP the name of your class.
+
+		/**
+		 * Filters the default suggestions service to use.
+		 *
+		 * Use this hook to tell BP the name of your class
+		 * if you've built a custom suggestions service.
+		 *
+		 * @since 2.1.0
+		 *
+		 * @param string $value Custom class to use. Default: none.
+		 * @param array  $args  Array of arguments for sugggestions.
+		 */
 		$class = apply_filters( 'bp_suggestions_services', '', $args );
 	}
 
@@ -2132,5 +2547,60 @@ function bp_core_get_suggestions( $args ) {
 		$retval = $suggestions->get_suggestions();
 	}
 
+	/**
+	 * Filters the available type of at-mentions.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array|WP_Error $retval Array of results or WP_Error object.
+	 * @param array          $args   Array of arguments for suggestions.
+	 */
 	return apply_filters( 'bp_core_get_suggestions', $retval, $args );
+}
+
+/**
+ * Set data from the BP root blog's upload directory.
+ *
+ * Handy for multisite instances because all uploads are made on the BP root
+ * blog and we need to query the BP root blog for the upload directory data.
+ *
+ * This function ensures that we only need to use {@link switch_to_blog()}
+ * once to get what we need.
+ *
+ * @since 2.3.0
+ *
+ * @uses  is_multisite()
+ * @uses  bp_is_root_blog()
+ * @uses  switch_to_blog()
+ * @uses  wp_upload_dir()
+ * @uses  restore_current_blog()
+ */
+function bp_upload_dir() {
+	$bp = buddypress();
+
+	if ( empty( $bp->upload_dir ) ) {
+		$need_switch = (bool) ( is_multisite() && ! bp_is_root_blog() );
+
+		// Maybe juggle to root blog
+		if ( true === $need_switch ) {
+			switch_to_blog( bp_get_root_blog_id() );
+		}
+
+		// Get the upload directory (maybe for root blog)
+		$wp_upload_dir = wp_upload_dir();
+
+		// Maybe juggle back to current blog
+		if ( true === $need_switch ) {
+			restore_current_blog();
+		}
+
+		// Bail if an error occurred
+		if ( ! empty( $wp_upload_dir['error'] ) ) {
+			return false;
+		}
+
+		$bp->upload_dir = $wp_upload_dir;
+	}
+
+	return $bp->upload_dir;
 }

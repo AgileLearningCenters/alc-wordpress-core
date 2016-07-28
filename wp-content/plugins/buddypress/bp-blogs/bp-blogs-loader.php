@@ -1,5 +1,4 @@
 <?php
-
 /**
  * BuddyPress Blogs Loader
  *
@@ -8,7 +7,7 @@
  * information from those blogs to make querying blogs in bulk more performant.
  *
  * @package BuddyPress
- * @subpackage Blogs Core
+ * @subpackage BlogsCore
  */
 
 // Exit if accessed directly
@@ -19,7 +18,7 @@ class BP_Blogs_Component extends BP_Component {
 	/**
 	 * Start the blogs component creation process.
 	 *
-	 * @since BuddyPress (1.5.0)
+	 * @since 1.5.0
 	 */
 	public function __construct() {
 		parent::start(
@@ -27,7 +26,8 @@ class BP_Blogs_Component extends BP_Component {
 			__( 'Site Directory', 'buddypress' ),
 			buddypress()->plugin_dir,
 			array(
-				'adminbar_myaccount_order' => 30
+				'adminbar_myaccount_order' => 30,
+				'search_query_arg' => 'sites_search',
 			)
 		);
 	}
@@ -38,7 +38,7 @@ class BP_Blogs_Component extends BP_Component {
 	 * The BP_BLOGS_SLUG constant is deprecated, and only used here for
 	 * backwards compatibility.
 	 *
-	 * @since BuddyPress (1.5.0)
+	 * @since 1.5.0
 	 *
 	 * @see BP_Component::setup_globals() for description of parameters.
 	 *
@@ -66,6 +66,7 @@ class BP_Blogs_Component extends BP_Component {
 			'slug'                  => BP_BLOGS_SLUG,
 			'root_slug'             => isset( $bp->pages->blogs->slug ) ? $bp->pages->blogs->slug : BP_BLOGS_SLUG,
 			'has_directory'         => is_multisite(), // Non-multisite installs don't need a top-level Sites directory, since there's only one site
+			'directory_title'       => _x( 'Sites', 'component directory title', 'buddypress' ),
 			'notification_callback' => 'bp_blogs_format_notifications',
 			'search_string'         => __( 'Search sites...', 'buddypress' ),
 			'autocomplete_all'      => defined( 'BP_MESSAGES_AUTOCOMPLETE_ALL' ),
@@ -77,16 +78,21 @@ class BP_Blogs_Component extends BP_Component {
 		parent::setup_globals( $args );
 
 		/*
-		 * Set up the post post type to track.
+		 * Filters if a blog is public.
 		 *
 		 * In case the config is not multisite, the blog_public option is ignored.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @oaram int $value Whether or not the blog is public.
 		 */
 		if ( 0 !== apply_filters( 'bp_is_blog_public', (int) get_option( 'blog_public' ) ) || ! is_multisite() ) {
 
 			/**
-			 * Filters the post types to track for the Blog component.
+			 * Filters the post types to track for the Blogs component.
 			 *
-			 * @since BuddyPress (1.5.0)
+			 * @since 1.5.0
+			 * @deprecated 2.3.0
 			 *
 			 * @param array $value Array of post types to track.
 			 */
@@ -136,12 +142,11 @@ class BP_Blogs_Component extends BP_Component {
 	 * @see BP_Component::setup_nav() for a description of arguments.
 	 *
 	 * @param array $main_nav Optional. See BP_Component::setup_nav() for
-	 *        description.
-	 * @param array $sub_nav Optional. See BP_Component::setup_nav() for
-	 *        description.
+	 *                        description.
+	 * @param array $sub_nav  Optional. See BP_Component::setup_nav() for
+	 *                        description.
 	 */
 	public function setup_nav( $main_nav = array(), $sub_nav = array() ) {
-		$bp = buddypress();
 
 		/**
 		 * Blog/post/comment menus should not appear on single WordPress setups.
@@ -152,16 +157,6 @@ class BP_Blogs_Component extends BP_Component {
 			return false;
 		}
 
-		// Add 'Sites' to the main navigation
-		$main_nav =  array(
-			'name'                => sprintf( __( 'Sites <span>%d</span>', 'buddypress' ), bp_get_total_blog_count_for_user() ),
-			'slug'                => $this->slug,
-			'position'            => 30,
-			'screen_function'     => 'bp_blogs_screen_my_blogs',
-			'default_subnav_slug' => 'my-sites',
-			'item_css_id'         => $this->id
-		);
-
 		// Determine user to use
 		if ( bp_displayed_user_domain() ) {
 			$user_domain = bp_displayed_user_domain();
@@ -171,13 +166,27 @@ class BP_Blogs_Component extends BP_Component {
 			return;
 		}
 
-		$parent_url = trailingslashit( $user_domain . bp_get_blogs_slug() );
+		$slug       = bp_get_blogs_slug();
+		$parent_url = trailingslashit( $user_domain . $slug );
+
+		// Add 'Sites' to the main navigation
+		$count    = (int) bp_get_total_blog_count_for_user();
+		$class    = ( 0 === $count ) ? 'no-count' : 'count';
+		$nav_text = sprintf( __( 'Sites <span class="%s">%s</span>', 'buddypress' ), esc_attr( $class ), bp_core_number_format( $count )  );
+		$main_nav = array(
+			'name'                => $nav_text,
+			'slug'                => $slug,
+			'position'            => 30,
+			'screen_function'     => 'bp_blogs_screen_my_blogs',
+			'default_subnav_slug' => 'my-sites',
+			'item_css_id'         => $this->id
+		);
 
 		$sub_nav[] = array(
 			'name'            => __( 'My Sites', 'buddypress' ),
 			'slug'            => 'my-sites',
 			'parent_url'      => $parent_url,
-			'parent_slug'     => $bp->blogs->slug,
+			'parent_slug'     => $slug,
 			'screen_function' => 'bp_blogs_screen_my_blogs',
 			'position'        => 10
 		);
@@ -189,15 +198,16 @@ class BP_Blogs_Component extends BP_Component {
 	/**
 	 * Set up bp-blogs integration with the WordPress admin bar.
 	 *
-	 * @since BuddyPress (1.5.0)
+	 * @since 1.5.0
 	 *
 	 * @see BP_Component::setup_admin_bar() for a description of arguments.
 	 *
 	 * @param array $wp_admin_nav See BP_Component::setup_admin_bar()
-	 *        for description.
+	 *                            for description.
+	 *
+	 * @return bool
 	 */
 	public function setup_admin_bar( $wp_admin_nav = array() ) {
-		$bp = buddypress();
 
 		/**
 		 * Site/post/comment menus should not appear on single WordPress setups.
@@ -211,14 +221,15 @@ class BP_Blogs_Component extends BP_Component {
 		// Menus for logged in user
 		if ( is_user_logged_in() ) {
 
-			$blogs_link = trailingslashit( bp_loggedin_user_domain() . $this->slug );
+			// Setup the logged in user variables
+			$blogs_link = trailingslashit( bp_loggedin_user_domain() . bp_get_blogs_slug() );
 
 			// Add the "Sites" sub menu
 			$wp_admin_nav[] = array(
-				'parent' => $bp->my_account_menu_id,
+				'parent' => buddypress()->my_account_menu_id,
 				'id'     => 'my-account-' . $this->id,
 				'title'  => __( 'Sites', 'buddypress' ),
-				'href'   => trailingslashit( $blogs_link )
+				'href'   => $blogs_link
 			);
 
 			// My Sites
@@ -226,7 +237,7 @@ class BP_Blogs_Component extends BP_Component {
 				'parent' => 'my-account-' . $this->id,
 				'id'     => 'my-account-' . $this->id . '-my-sites',
 				'title'  => __( 'My Sites', 'buddypress' ),
-				'href'   => trailingslashit( $blogs_link )
+				'href'   => $blogs_link
 			);
 
 			// Create a Site
@@ -247,10 +258,11 @@ class BP_Blogs_Component extends BP_Component {
 	 * Set up the title for pages and <title>
 	 */
 	public function setup_title() {
-		$bp = buddypress();
 
 		// Set up the component options navigation for Site
 		if ( bp_is_blogs_component() ) {
+			$bp = buddypress();
+
 			if ( bp_is_my_profile() ) {
 				if ( bp_is_active( 'xprofile' ) ) {
 					$bp->bp_options_title = __( 'My Sites', 'buddypress' );
@@ -274,7 +286,7 @@ class BP_Blogs_Component extends BP_Component {
 	/**
 	 * Setup cache groups
 	 *
-	 * @since BuddyPress (2.2.0)
+	 * @since 2.2.0
 	 */
 	public function setup_cache_groups() {
 
@@ -289,12 +301,33 @@ class BP_Blogs_Component extends BP_Component {
 	/**
 	 * Set up the tracking arguments for the 'post' post type.
 	 *
-	 * @since BuddyPress (2.2.0)
+	 * @since 2.2.0
 	 *
 	 * @see bp_activity_get_post_type_tracking_args() for information on parameters.
+	 *
+	 * @param object|null $params
+	 * @param string|int  $post_type
+	 *
+	 * @return object
 	 */
-	public function post_tracking_args( $params = array(), $post_type = 0 ) {
-		if ( 'post' != $post_type ) {
+	public function post_tracking_args( $params = null, $post_type = 0 ) {
+
+		/**
+		 * Filters the post types to track for the Blogs component.
+		 *
+		 * @since 1.5.0
+		 * @deprecated 2.3.0
+		 *
+		 * Make sure plugins still using 'bp_blogs_record_post_post_types'
+		 * to track their post types will generate new_blog_post activities
+		 * See https://buddypress.trac.wordpress.org/ticket/6306
+		 *
+		 * @param array $value Array of post types to track.
+		 */
+		$post_types = apply_filters( 'bp_blogs_record_post_post_types', array( 'post' ) );
+		$post_types_array = array_flip( $post_types );
+
+		if ( ! isset( $post_types_array[ $post_type ] ) ) {
 			return $params;
 		}
 
