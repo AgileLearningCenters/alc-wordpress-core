@@ -2,9 +2,9 @@
 Contributors: dwenaus, boonebgorges, r-a-y
 Description: Allow users to receive email notifications of group activity. Weekly or daily digests are available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
-Requires at least: 2.9.1 (BP 1.2)
-Tested up to: 4.4.2 (BP 2.4.3)
-Stable tag: 3.6.0
+Requires at least: 3.2 (BP 1.5)
+Tested up to: 4.7 (BP 2.8)
+Stable tag: 3.7.1
 
 == Description ==
 
@@ -45,19 +45,20 @@ To protect against spam, you can set a minimum number of days users need to be r
 
 TRANSLATORS
 
-- Japanese - http://buddypress.org/community/members/chestnut_jp/
-- Spanish - Williams Castillo, Gregor Gimmy
-- Italian - Stefano Russo
-- French - http://www.claudegagne-photo.com
 - Brazilian Portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
-- Dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
-- Swedish - Thomas Schneider
-- German - Peter Peterson, Thorsten Wollenhöfer
-- Russian - http://www.viaestvita.net/groups/
-- Farsi - Vahid Masoomi http://www.AzUni.ir
-- Lithuanian - Vincent G http://www.Host1Free.com
+- Catalan - Sara Arjona Téllez
 - Danish - Morten Nalholm
+- Dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
+- Farsi - Vahid Masoomi http://www.AzUni.ir
+- French - http://www.claudegagne-photo.com, Sylvain Ghysens
+- German - Peter Peterson, Thorsten Wollenhöfer, Jörg Lohrer
 - Hebrew - Iggy Pritzker
+- Italian - Stefano Russo
+- Japanese - http://buddypress.org/community/members/chestnut_jp/
+- Lithuanian - Vincent G http://www.Host1Free.com
+- Russian - http://www.viaestvita.net/groups/
+- Spanish - Williams Castillo, Gregor Gimmy
+- Swedish - Thomas Schneider, Joakim Hising
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members receive them, you can filter 'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.phpfor more info.
@@ -88,6 +89,32 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 3.7.1 =
+* Fix incorrect activity comment permalinks in digest emails.
+* Use login redirect links in digest emails, for improved navigation when not logged in.
+* Improve compatibility with non-standard Multisite configurations.
+* Improve compatibility with PHP 7.1+.
+* Improve compatibility with BP 2.5+ function signatures.
+* Improve HTML character encoding in digests.
+
+= 3.7.0 =
+* Add support for BuddyPress HTML emails, available since BuddyPress 2.5. (View the accompanying wiki article for more info - https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens)
+* Reduce the amount of code loaded by GES on any given page.
+* Fix issue with the email options popup being displayed automatically when changing the group filter or when clicking on a paginated link.
+* Do not send email to a banned group member.
+* Improve JavaScript event binding for better compatibility with AJAX page loading
+* Pass user information to 'ass_welcome_email' filter.
+* Add Catalan translation
+* Admin menu moved to "Settings > BP Group Email Options" for those using BP 1.6+.
+* Drop support for BuddyPress 1.2.
+
+= 3.6.1 =
+* Fix bug that could cause fatal error when sending digests in some cases.
+* Improve appearance of "Get email updates" link in directories when using Twenty* themes.
+* Add filter that enables JS/CSS assets to be loaded in custom locations.
+* Update Swedish translation.
+* Update German translation.
 
 = 3.6.0 =
 * Introduce `ass_generate_notification()`, a generic handler for sending notifications.
