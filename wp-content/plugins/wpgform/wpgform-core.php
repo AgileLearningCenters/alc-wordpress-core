@@ -475,10 +475,10 @@ class wpGForm
     /**
      * Constructor
      */
-    function wpGForm()
-    {
-        // empty for now
-    }
+    //function wpGForm()
+    //{
+    //    // empty for now - this syntax is deprecated in PHP7!
+    //}
 
     /**
      * 'gform' short code handler
@@ -966,6 +966,12 @@ class wpGForm
 
         if ((int)$wpgform_options['disable_html_filtering'] !== 1) 
         {
+            if (WPGFORM_DEBUG)
+            {
+                wpgform_whereami(__FILE__, __LINE__, 'ConstructGoogleForm (before wp_kses())') ;
+                wpgform_htmlspecialchars_preprint_r($html) ;
+            }
+
             //  Need to filter the HTML retrieved from the form and strip off the stuff
             //  we don't want.  This gets rid of the HTML wrapper from the Google page.
     
@@ -1010,6 +1016,13 @@ class wpGForm
             //  Process the HTML
     
             $html = wp_kses($html, $allowed_tags) ;
+
+            if (WPGFORM_DEBUG)
+            {
+                wpgform_whereami(__FILE__, __LINE__, 'ConstructGoogleForm (after wp_kses())') ;
+                wpgform_htmlspecialchars_preprint_r($html) ;
+            }
+
         }
 
         $patterns = array(
@@ -1120,12 +1133,15 @@ class wpGForm
             //$html = str_replace($action, 'action="' . get_permalink(get_the_ID()) . '"', $html) ;
             $html = str_replace($action, 'action=""', $html) ;
             $action = preg_replace(array('/^action=/i', '/"/'), array('', ''), $action) ;
-            $action = base64_encode(serialize($action)) ;
+
+            $action = base64_encode(json_encode($action)) ;
+
             $wgformid = self::$wpgform_form_id++ ;
+            $nonce = wp_nonce_field('wpgform_submit', 'wpgform_nonce', true, false) ;
 
             //  Add some hidden input fields to faciliate control of subsquent actions
             $html = preg_replace('/<\/form>/i',
-                "<input type=\"hidden\" value=\"{$action}\" name=\"wpgform-action\"><input type=\"hidden\" value=\"{$wgformid}\" name=\"wpgform-form-id\"></form>", $html) ;
+                $nonce . "<input type=\"hidden\" value='{$action}' name=\"wpgform-action\"><input type=\"hidden\" value=\"{$wgformid}\" name=\"wpgform-form-id\"></form>", $html) ;
         } 
         else 
         {
@@ -1173,7 +1189,7 @@ class wpGForm
         //  be referenced if/when needed during form processing.
 
         $html = preg_replace('/<\/form>/i', "<input type=\"hidden\" value=\"" .
-            base64_encode(serialize($o)) . "\" name=\"wpgform-options\"></form>", $html) ;
+            esc_attr(base64_encode(json_encode($o))) . "\" name=\"wpgform-options\"></form>", $html) ;
 
         //  Output custom CSS?
 
@@ -1726,6 +1742,12 @@ jQuery(document).ready(function($) {
         if (WPGFORM_DEBUG) wpgform_preprint_r($_POST) ;
         if (!empty($_POST) && array_key_exists('wpgform-action', $_POST))
         {
+            //  Verify WordPress nonce
+            if ( ! isset( $_POST['wpgform_nonce'] ) || ! wp_verify_nonce( $_POST['wpgform_nonce'], 'wpgform_submit' ) ) {
+                wp_die('Sorry, your nonce did not verify.');
+                exit;
+            }
+        
             if (WPGFORM_DEBUG) wpgform_whereami(__FILE__, __LINE__, 'ProcessGoogleForm') ;
 
             self::$posted = true ;
@@ -1743,20 +1765,31 @@ jQuery(document).ready(function($) {
             //  Need the form ID to handle multiple forms per page
             if (array_key_exists('wpgform-user-email', $_POST))
             {
-                self::$wpgform_user_sendto = $_POST['wpgform-user-email'] ;
+                self::$wpgform_user_sendto = sanitize_email($_POST['wpgform-user-email']) ;
                 unset($_POST['wpgform-user-email']) ;
             }
 
             //  Need the form ID to handle multiple forms per page
-            self::$wpgform_submitted_form_id = $_POST['wpgform-form-id'] ;
+            self::$wpgform_submitted_form_id = absint(sanitize_text_field($_POST['wpgform-form-id'])) ;
             unset($_POST['wpgform-form-id']) ;
 
             //  Need the action which was saved during form construction
-            $action = unserialize(base64_decode($_POST['wpgform-action'])) ;
+            $action = json_decode(base64_decode(sanitize_text_field($_POST['wpgform-action'])), true) ;
+
             unset($_POST['wpgform-action']) ;
-            $options = $_POST['wpgform-options'] ;
+
+            if (WPGFORM_DEBUG) wpgform_whereami(__FILE__, __LINE__, 'ProcessGoogleForm (action)') ;
+            if (WPGFORM_DEBUG) wpgform_preprint_r($action) ;
+
+            //  As a safety precaution make sure the action provided resolves to Google (docs.google.com drive.google.com).
+            if (!preg_match( '/^(http|https):\\/\\/(docs|drive)\.google\.com/i' ,$action))
+            {
+                wp_die(sprintf('<div class="wpgform-google-error gform-google-error">%s</div>',
+                   __('Google Form submit action does not resolve to <b>drive.google.com</b>.  Form submission aborted.', WPGFORM_I18N_DOMAIN))) ;
+            }
+
+            $options = json_decode(base64_decode(sanitize_text_field($_POST['wpgform-options'])), true) ;
             unset($_POST['wpgform-options']) ;
-            $options = unserialize(base64_decode($options)) ;
 
             if (WPGFORM_DEBUG) wpgform_preprint_r($options) ;
             $form = $options['form'] ;
