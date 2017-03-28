@@ -42,7 +42,7 @@ $this->render_header( $page_title );
 
 <div class="row row-projects updates hide-empty">
 	<h3 class="section-title" id="section1">
-		<span class="title"><?php esc_html_e( 'Available updates', 'wpmduev' ); ?></span>
+		<span class="title"><?php esc_html_e( 'Available updates', 'wpmudev' ); ?></span>
 		<span class="count"></span>
 	</h3>
 	<div class="content">

@@ -29,7 +29,7 @@ if ( ! is_array( $history ) ) { $history = array(); }
 $url_profile = $urls->remote_site . 'hub/profile/';
 
 // Upgrade membership URL.
-$url_upgrade = $urls->remote_site . 'hub/account/#pricing';
+$url_upgrade = $urls->remote_site . 'hub/account/';
 
 // Details on "Earn points".
 $url_points = $urls->remote_site . 'earn-your-wpmudev-membership/';

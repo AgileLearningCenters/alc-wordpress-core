@@ -129,7 +129,7 @@
 	height: auto;
 	background-size: 18px;
 }
-/* http://loading.io/loader/?use=eyJzaXplIjoyNCwic3BlZWQiOjEsImNiayI6IiNkZGRkZGQiLCJjMSI6IiNjY2NjY2MiLCJjMiI6IjciLCJjMyI6IjEwIiwiYzQiOiJ5LWF4aXMiLCJ0eXBlIjoic3BpbiJ9 */	  								 		 				
+/* http://loading.io/loader/?use=eyJzaXplIjoyNCwic3BlZWQiOjEsImNiayI6IiNkZGRkZGQiLCJjMSI6IiNjY2NjY2MiLCJjMiI6IjciLCJjMyI6IjEwIiwiYzQiOiJ5LWF4aXMiLCJ0eXBlIjoic3BpbiJ9 */
 .wpmud .project-box .project-image > .img {
 	display: block;
 	width: 100%;
@@ -368,6 +368,16 @@
 	text-transform: none;
 	font-weight: 400;
 	font-size: 14px;
+}
+.wpmud #login .buttons .button-text:hover:not(:focus):not(:active):not(.wph-button):not(#collapse-button):not([tooltip]) {
+	background-color: transparent;
+	color: #666666;
+}
+.wpmud #login .buttons .button-text:active, .wpmud #login .buttons .button-text:focus {
+	color: #666666;
+	transform: none;
+	-moz-transform: none;
+	-webkit-transform: none;
 }
 .wpmud #login .right {
 	float: right;
@@ -950,4 +960,4 @@
 }
 
 
-/* 327416-1469576461-au */
+/* 327416-1490728276-au */

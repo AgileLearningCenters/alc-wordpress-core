@@ -19,7 +19,7 @@
  * @package WPMUDEV_Dashboard
  */
 
-$url_upgrade = $urls->remote_site . 'hub/account/#pricing';
+$url_upgrade = $urls->remote_site . 'hub/account/';
 $url_logout = $urls->dashboard_url . '&clear_key=1';
 $url_refresh = wp_nonce_url( add_query_arg( 'action', 'check-updates' ), 'check-updates', 'hash' );
 $url_devman = WPMUDEV_Dashboard::$site->plugin_url . '/image/devman.svg';

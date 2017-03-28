@@ -15,7 +15,7 @@
  * @package WPMUDEV_Dashboard
  */
 
-$register_url = 'https://premium.wpmudev.org/#pricing';
+$register_url = 'https://premium.wpmudev.org/#trial';
 $reset_url = 'https://premium.wpmudev.org/wp-login.php?action=lostpassword';
 $account_url = 'https://premium.wpmudev.org/hub/account/';
 $trial_info_url = 'https://premium.wpmudev.org/manuals/how-free-trials-work/';
@@ -44,25 +44,47 @@ if ( isset( $_GET['api_error'] ) ) {
 
 	} else if ( 'in_trial' == $_GET['api_error'] ) { //trial members can only login to first time domains
 
-		$errors[] = sprintf(
-			'%s<br><a href="%s" target="_blank">%s</a> <a href="%s" target="_blank" class="right">%s</a>',
-			sprintf( __( 'This domain has previously been registered with WPMU DEV by the user %s. To use the dashboard plugin on this domain, you can either login with the original account (and upgrade it if necessary), or upgrade your trial to a full WPMU DEV membership.', 'wpmudev' ), esc_html( $_GET['display_name'] ) ),
-			$account_url,
-			__( 'Upgrade membership', 'wpmudev' ),
-			$trial_info_url,
-			__( 'More information &raquo;', 'wpmudev' )
-		);
+		if ( WPMUDEV_Dashboard::$site->is_localhost() ) {
+			$errors[] = sprintf(
+				'%s<br><a href="%s" target="_blank">%s</a> <a href="%s" target="_blank" class="right">%s</a>',
+				sprintf( __( 'This local development site url has previously been registered with WPMU DEV by the user %s. To use this site url, login with the original user or upgrade your trial to a full membership. Alternatively, try a more uniquely named development site url. Contact support if you need further assistance.', 'wpmudev' ), esc_html( $_GET['display_name'] ) ),
+				$account_url,
+				__( 'Upgrade membership', 'wpmudev' ),
+				$trial_info_url,
+				__( 'More information &raquo;', 'wpmudev' )
+			);
+		} else {
+			$errors[] = sprintf(
+				'%s<br><a href="%s" target="_blank">%s</a> <a href="%s" target="_blank" class="right">%s</a>',
+				sprintf( __( 'This domain has previously been registered with WPMU DEV by the user %s. To use the dashboard plugin on this domain, you can either login with the original account (and upgrade it if necessary), or upgrade your trial to a full WPMU DEV membership.', 'wpmudev' ), esc_html( $_GET['display_name'] ) ),
+				$account_url,
+				__( 'Upgrade membership', 'wpmudev' ),
+				$trial_info_url,
+				__( 'More information &raquo;', 'wpmudev' )
+			);
+		}
 
 	} else if ( 'already_registered' == $_GET['api_error'] ) { //IMPORTANT for security we make sure this site has been logged out of before another user can take it over
 
-		$errors[] = sprintf(
-			'%s<br><a href="%s" target="_blank">%s</a> <a href="%s" target="_blank" class="right">%s</a>',
-			sprintf( __( 'This site is currently registered to %s. For security reasons they will need to go to the WPMU DEV Hub and remove this domain before you can login. If you do not have access to that account, and have no way of contacting that user, please contact support for assistance.', 'wpmudev' ), esc_html( $_GET['display_name'] ) ),
-			$websites_url,
-			__( 'Remove site', 'wpmudev' ),
-			$security_info_url,
-			__( 'More information &raquo;', 'wpmudev' )
-		);
+		if ( WPMUDEV_Dashboard::$site->is_localhost() ) {
+			$errors[] = sprintf(
+				'%s<br><a href="%s" target="_blank">%s</a> <a href="%s" target="_blank" class="right">%s</a>',
+				sprintf( __( 'This local development site url is currently registered to %s. For security reasons they will need to go to the WPMU DEV Hub and remove this domain before you can login. If that account is not yours, then make your local development site url more unique. Contact support if you need further assistance.', 'wpmudev' ), esc_html( $_GET['display_name'] ) ),
+				$websites_url,
+				__( 'Remove site', 'wpmudev' ),
+				$security_info_url,
+				__( 'More information &raquo;', 'wpmudev' )
+			);
+		} else {
+			$errors[] = sprintf(
+				'%s<br><a href="%s" target="_blank">%s</a> <a href="%s" target="_blank" class="right">%s</a>',
+				sprintf( __( 'This site is currently registered to %s. For security reasons they will need to go to the WPMU DEV Hub and remove this domain before you can login. If you do not have access to that account, and have no way of contacting that user, please contact support for assistance.', 'wpmudev' ), esc_html( $_GET['display_name'] ) ),
+				$websites_url,
+				__( 'Remove site', 'wpmudev' ),
+				$security_info_url,
+				__( 'More information &raquo;', 'wpmudev' )
+			);
+		}
 
 	} else { //this in case we add new error types in the future
 

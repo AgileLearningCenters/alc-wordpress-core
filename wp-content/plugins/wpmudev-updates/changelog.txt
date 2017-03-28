@@ -5,6 +5,46 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+4.3 - 1/30/2017 - Aaron
+----------------------------------------------------------------------
+- Full rewrite of remote API, to support Update/Install/Activate/Deactivate/Delete from hub
+- Register all third party plugins/themes with Hub even if they don't have available updates
+- Internal API for other WPMU DEV plugins to register their own Hub actions
+- Support updates and installs from Hub on WP Engine hosting
+- Improve error detection and messages on update/install
+- Fix wrong date string on support access box and last refreshed message
+- Fix style issues on various screens
+- Fix possible infinite loop when resetting api key remotely
+
+4.2.1 - 12/15/2016 - Aaron
+----------------------------------------------------------------------
+- Comprehensive support for RTL languages
+- Fix missing strings in textdomain - props @Julian
+- Fix changelog showing error when non-allowed user clicks the link on plugins list
+- Remove broken more info links on update core list for non-allowed users
+- Bypass API cache when logging in to avoid hub sync issues
+- Fix WooCommerce notices showing up on Dashboard pages with crazy styles
+- Fix various style issues
+
+4.2 - 09/28/2016 - Aaron
+----------------------------------------------------------------------
+- Add support for wp.org repo updates from Hub!
+- Revoke outstanding support access when logging out
+- Optimize remote data refresh calls and duplicate queries
+- Add clearer error messages when logging into localhost installs
+- Don't show update notices on subsite plugin list pages in multisite, like core
+- Fix style issues of update notices for activated plugin in core plugins list
+- Fix premium/wp.org theme slug conflicts
+- Remove premium/wp.org slug conflicts for Hub wp.org updates
+- Update WPMU DEV urls
+
+4.1.2 - 08/17/2016 - Aaron
+----------------------------------------------------------------------
+- WP 4.6 compatibility fixes
+- Add support for upcoming Upfront Builder plugin (dependency management)
+- Fix PHP7 compatibility issue on system info page
+- Use new changelog on single site themes page
+
 4.1.1 - 07/21/2016 - Aaron
 ----------------------------------------------------------------------
 - Enable shiny updates on core plugins list for WPMU DEV plugins
@@ -398,4 +438,4 @@ Added option to disable admin notices.
 Initial Release.
 
 
-327416-1469576461-au
+327416-1490728276-au

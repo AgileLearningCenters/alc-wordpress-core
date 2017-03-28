@@ -4,7 +4,7 @@
  * Plugin URI:  https://premium.wpmudev.org/project/wpmu-dev-dashboard/
  * Description: Brings the powers of WPMU DEV directly to you. It will revolutionize how you use WordPress. Activate now!
  * Author:      WPMU DEV
- * Version:     4.1.1
+ * Version:     4.3
  * Author URI:  https://premium.wpmudev.org/
  * Text Domain: wpmudev
  * Domain Path: includes/languages/
@@ -15,7 +15,7 @@
  */
 
 /*
-Copyright 2007-2015 Incsub (http://incsub.com)
+Copyright 2007-2017 Incsub (http://incsub.com)
 Author - Aaron Edwards
 Contributors - Philipp Stracker, Victor Ivanov, Vladislav Bailovic, Jeffri H, Marko Miljus
 
@@ -44,7 +44,7 @@ class WPMUDEV_Dashboard {
 	 *
 	 * @var string (Version number)
 	 */
-	static public $version = '4.1.1';
+	static public $version = '4.3';
 
 	/**
 	 * Holds the API module.
@@ -54,6 +54,15 @@ class WPMUDEV_Dashboard {
 	 * @since 4.0.0
 	 */
 	static $api = null;
+
+	/**
+	 * Holds the Remote module.
+	 * Handles all the Hub calls from the WPMUDEV Servers.
+	 *
+	 * @var   WPMUDEV_Dashboard_Remote
+	 * @since 4.0.0
+	 */
+	static $remote = null;
 
 	/**
 	 * Holds the Site/Settings module.
@@ -122,12 +131,14 @@ class WPMUDEV_Dashboard {
 
 		require_once 'includes/class-wpmudev-dashboard-site.php';
 		require_once 'includes/class-wpmudev-dashboard-api.php';
+		require_once 'includes/class-wpmudev-dashboard-remote.php';
 		require_once 'includes/class-wpmudev-dashboard-ui.php';
 		require_once 'includes/class-wpmudev-dashboard-upgrader.php';
 		require_once 'includes/class-wpmudev-dashboard-notice.php';
 
 		self::$site = new WPMUDEV_Dashboard_Site( __FILE__ );
 		self::$api = new WPMUDEV_Dashboard_Api();
+		self::$remote = new WPMUDEV_Dashboard_Remote();
 		self::$notice = new WPMUDEV_Dashboard_Message();
 		self::$upgrader = new WPMUDEV_Dashboard_Upgrader();
 

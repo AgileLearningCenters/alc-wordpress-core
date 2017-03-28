@@ -56,7 +56,7 @@ $this->render_header( $page_title );
 
 <div class="row row-projects updates hide-empty">
 	<h3 class="section-title" id="section1">
-		<span class="title"><?php esc_html_e( 'Available updates', 'wpmduev' ); ?></span>
+		<span class="title"><?php esc_html_e( 'Available updates', 'wpmudev' ); ?></span>
 		<span class="count"></span>
 	</h3>
 	<div class="content">
@@ -68,7 +68,7 @@ $this->render_header( $page_title );
 
 <div class="row row-projects installed hide-empty">
 	<h3 class="section-title" id="section1">
-		<span class="title" data-title="<?php esc_attr_e( 'Installed %s Plugins', 'wpmduev' ); ?>"></span>
+		<span class="title" data-title="<?php esc_attr_e( 'Installed %s Plugins', 'wpmudev' ); ?>"></span>
 		<span class="count"></span>
 	</h3>
 	<div class="content">
@@ -82,7 +82,7 @@ $this->render_header( $page_title );
 
 <div class="row row-projects uninstalled">
 	<h3 class="section-title" id="section2">
-		<span class="title" data-title="<?php esc_attr_e( 'Available %s Plugins', 'wpmduev' ); ?>"></span>
+		<span class="title" data-title="<?php esc_attr_e( 'Available %s Plugins', 'wpmudev' ); ?>"></span>
 		<span class="count"></span>
 	</h3>
 	<div class="content">

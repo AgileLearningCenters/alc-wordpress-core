@@ -147,23 +147,22 @@ if ( ! $res->is_installed ) {
 	}
 }
 
-// Special Theme checks: Upfront installed?
-if ( 'theme' == $res->type ) {
-	if ( $res->is_installed && $res->need_upfront ) {
-		if ( ! WPMUDEV_Dashboard::$site->is_upfront_installed() ) {
-			// This upfront theme needs Upfront parent to work!
-			$show_badge = 'warning';
+// Show special error and message if Upfront not installed
+if ( $res->is_installed && $res->need_upfront ) {
+	if ( ! WPMUDEV_Dashboard::$site->is_upfront_installed() ) {
+		// This upfront theme needs Upfront parent to work!
+		$show_badge = 'warning';
 
-			$id_upfront = WPMUDEV_Dashboard::$site->id_upfront;
-			$upfront = WPMUDEV_Dashboard::$site->get_project_infos( $id_upfront );
+		$id_upfront = WPMUDEV_Dashboard::$site->id_upfront;
+		$upfront = WPMUDEV_Dashboard::$site->get_project_infos( $id_upfront );
 
-			$action = __( 'Install Upfront Parent', 'wpmudev' );
-			$action_url = $upfront->url->install;
-			$action_ajax = 'project-install-upfront';
-			$action_class = 'button-red';
-		}
+		$action = __( 'Install Upfront Parent', 'wpmudev' );
+		$action_url = $upfront->url->install;
+		$action_ajax = 'project-install-upfront';
+		$action_class = 'button-red';
 	}
 }
+
 
 if ( ! $action ) {
 	if ( 'theme' == $res->type ) {

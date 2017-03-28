@@ -33,20 +33,6 @@ $url_all_tickets = $urls->remote_site . 'hub/support';
 $url_search = $urls->remote_site . 'forums/search.php';
 $url_open_ticket = $urls->remote_site . 'forums/forum/support/#question-modal';
 
-$access_days = date( 'Yz', $staff_login->expires ) - current_time( 'Yz' );
-if ( $access_days < 1 ) {
-	$day_expression = __( 'today', 'wpmudev' );
-} elseif ( 1 == $access_days ) {
-	$day_expression = __( 'tomorrow', 'wpmudev' );
-} elseif ( $access_days < 14 ) {
-	$day_expression = sprintf( __( 'in %s days', 'wpmudev' ), $access_days );
-} else {
-	$day_expression = sprintf(
-		_x( 'on %s', 'As in: on 14. March', 'wpmudev' ),
-		date_i18n( _x( 'j.M', 'Date format', 'wpmudev' ), $staff_login->expires )
-	);
-}
-
 if ( $notes && ! empty( $_COOKIE['wpmudev_is_staff'] ) || ! empty( $_GET['staff'] ) ) {
 	$notes_class = 'active';
 } else {
@@ -152,7 +138,7 @@ $time_format = get_option( 'time_format' );
 					<?php esc_html_e( 'Revoke', 'wpmudev' ); ?>
 				</a>
 				<?php endif; ?>
-				<a href="#access-info" rel="dialog" tooltip="<?php esc_attr_e( 'Security details', 'wpmudev' ); ?>" class="tooltip-right tooltip-s button button-text button-small">
+				<a href="#access-info" rel="dialog" tooltip="<?php esc_attr_e( 'Security details', 'wpmudev' ); ?>" class="tooltip-<?php echo is_rtl() ? 'left' : 'right' ?> tooltip-s button button-text button-small">
 					<i class="dev-icon dev-icon-info"></i>
 				</a>
 			</span>
@@ -167,13 +153,12 @@ $time_format = get_option( 'time_format' );
 				<?php esc_html_e( 'Grant Support Access', 'wpmudev' ); ?>
 			</a>
 			<?php else : ?>
-			<div class="active-staff-access tc tooltip-l" tooltip="<?php echo esc_html( __( 'Expires:', 'wpmudev' ) . ' ' . date( 'D j.M Y (H:i:s)', $staff_login->expires ) ); ?>">
+			<div class="active-staff-access tc tooltip-l" tooltip="<?php echo esc_html( __( 'Expires:', 'wpmudev' ) . ' ' . date( get_option( 'date_format') . ' ' . get_option( 'time_format'), $staff_login->expires ) ); ?>">
 				<i class="dev-icon dev-icon-lock"></i>
 				<?php
 				printf(
-					esc_html__( 'Access active until %1$s %2$s', 'wpmudev' ),
-					'<strong>' . esc_html( date( 'g:ia', $staff_login->expires ) ) .  '</strong>',
-					'<strong>' . esc_html( $day_expression ) . '</strong>'
+					esc_html__( 'Access active for %1$s', 'wpmudev' ),
+					'<strong>' . esc_html( human_time_diff( $staff_login->expires ) ) . '</strong>'
 				);
 				?>
 			</div>
