@@ -2,11 +2,11 @@
 /*
 Plugin Name: Simple Social Icons
 Plugin URI: http://wordpress.org/plugins/simple-social-icons/
-Description: A simple, CSS and icon font driven social icons widget.
+Description: A simple CSS and SVG driven social icons widget.
 Author: Nathan Rice
 Author URI: http://www.nathanrice.net/
 
-Version: 1.0.13
+Version: 2.0.1
 
 Text Domain: simple-social-icons
 Domain Path: /languages
@@ -26,6 +26,13 @@ function simple_social_icons_load_textdomain() {
 class Simple_Social_Icons_Widget extends WP_Widget {
 
 	/**
+	 * Plugin version for enqueued static resources.
+	 *
+	 * @var string
+	 */
+	protected $version = '2.0.1';
+
+	/**
 	 * Default widget values.
 	 *
 	 * @var array
@@ -38,13 +45,6 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 	 * @var array
 	 */
 	protected $sizes;
-
-	/**
-	 * Default widget profile glyphs.
-	 *
-	 * @var array
-	 */
-	protected $glyphs;
 
 	/**
 	 * Default widget profile values.
@@ -76,6 +76,7 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 			'background_color'       => '#999999',
 			'background_color_hover' => '#666666',
 			'alignment'              => 'alignleft',
+			'behance'                => '',
 			'bloglovin'              => '',
 			'dribbble'               => '',
 			'email'                  => '',
@@ -85,104 +86,111 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 			'gplus'                  => '',
 			'instagram'              => '',
 			'linkedin'               => '',
+			'medium'                 => '',
+			'periscope'              => '',
+			'phone'                  => '',
 			'pinterest'              => '',
 			'rss'                    => '',
+			'snapchat'               => '',
 			'stumbleupon'            => '',
 			'tumblr'                 => '',
 			'twitter'                => '',
 			'vimeo'                  => '',
+			'xing'                   => '',
 			'youtube'                => '',
-		) );
-
-		/**
-		 * Social profile glyphs.
-		 */
-		$this->glyphs = apply_filters( 'simple_social_default_glyphs', array(
-			'bloglovin'		=> '&#xe60c;',
-			'dribbble'		=> '&#xe602;',
-			'email'			=> '&#xe60d;',
-			'facebook'		=> '&#xe606;',
-			'flickr'		=> '&#xe609;',
-			'github'		=> '&#xe60a;',
-			'gplus'			=> '&#xe60e;',
-			'instagram' 	=> '&#xe600;',
-			'linkedin'		=> '&#xe603;',
-			'pinterest'		=> '&#xe605;',
-			'rss'			=> '&#xe60b;',
-			'stumbleupon'	=> '&#xe601;',
-			'tumblr'		=> '&#xe604;',
-			'twitter'		=> '&#xe607;',
-			'vimeo'			=> '&#xe608;',
-			'youtube'		=> '&#xe60f;',
 		) );
 
 		/**
 		 * Social profile choices.
 		 */
 		$this->profiles = apply_filters( 'simple_social_default_profiles', array(
+			'behance' => array(
+				'label'   => __( 'Behance URI', 'simple-social-icons' ),
+				'pattern' => '<li class="ssi-behance"><a href="%s" %s><svg role="img" class="social-behance" aria-labelledby="social-behance"><title id="social-behance">' . __( 'Behance', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-behance' ) . '"></use></svg></a></li>',
+			),
 			'bloglovin' => array(
 				'label'   => __( 'Bloglovin URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-bloglovin"><a href="%s" %s>' . $this->glyphs['bloglovin'] . '</a></li>',
+				'pattern' => '<li class="ssi-bloglovin"><a href="%s" %s><svg role="img" class="social-bloglovin" aria-labelledby="social-bloglovin"><title id="social-bloglovin">' . __( 'Bloglovin', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-bloglovin' ) . '"></use></svg></a></li>',
 			),
 			'dribbble' => array(
 				'label'   => __( 'Dribbble URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-dribbble"><a href="%s" %s>' . $this->glyphs['dribbble'] . '</a></li>',
+				'pattern' => '<li class="ssi-dribbble"><a href="%s" %s><svg role="img" class="social-dribbble" aria-labelledby="social-dribbble"><title id="social-dribbble">' . __( 'Dribbble', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-dribbble' ) . '"></use></svg></a></li>',
 			),
 			'email' => array(
 				'label'   => __( 'Email URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-email"><a href="%s" %s>' . $this->glyphs['email'] . '</a></li>',
+				'pattern' => '<li class="ssi-email"><a href="%s" %s><svg role="img" class="social-email" aria-labelledby="social-email"><title id="social-email">' . __( 'Email', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-email' ) . '"></use></svg></a></li>',
 			),
 			'facebook' => array(
 				'label'   => __( 'Facebook URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-facebook"><a href="%s" %s>' . $this->glyphs['facebook'] . '</a></li>',
+				'pattern' => '<li class="ssi-facebook"><a href="%s" %s><svg role="img" class="social-facebook" aria-labelledby="social-facebook"><title id="social-facebook">' . __( 'Facebook', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-facebook' ) . '"></use></svg></a></li>',
 			),
 			'flickr' => array(
 				'label'   => __( 'Flickr URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-flickr"><a href="%s" %s>' . $this->glyphs['flickr'] . '</a></li>',
+				'pattern' => '<li class="ssi-flickr"><a href="%s" %s><svg role="img" class="social-flickr" aria-labelledby="social-flickr"><title id="social-flickr">' . __( 'Flickr', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-flickr' ) . '"></use></svg></a></li>',
 			),
 			'github' => array(
 				'label'   => __( 'GitHub URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-github"><a href="%s" %s>' . $this->glyphs['github'] . '</a></li>',
+				'pattern' => '<li class="ssi-github"><a href="%s" %s><svg role="img" class="social-github" aria-labelledby="social-github"><title id="social-github">' . __( 'Github', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-github' ) . '"></use></svg></a></li>',
 			),
 			'gplus' => array(
 				'label'   => __( 'Google+ URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-gplus"><a href="%s" %s>' . $this->glyphs['gplus'] . '</a></li>',
+				'pattern' => '<li class="ssi-gplus"><a href="%s" %s><svg role="img" class="social-gplus" aria-labelledby="social-gplus"><title id="social-gplus">' . __( 'Google+', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-gplus' ) . '"></use></svg></a></li>',
 			),
 			'instagram' => array(
 				'label'   => __( 'Instagram URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-instagram"><a href="%s" %s>' . $this->glyphs['instagram'] . '</a></li>',
+				'pattern' => '<li class="ssi-instagram"><a href="%s" %s><svg role="img" class="social-instagram" aria-labelledby="social-instagram"><title id="social-instagram">' . __( 'Instagram', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-instagram' ) . '"></use></svg></a></li>',
 			),
 			'linkedin' => array(
 				'label'   => __( 'Linkedin URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-linkedin"><a href="%s" %s>' . $this->glyphs['linkedin'] . '</a></li>',
+				'pattern' => '<li class="ssi-linkedin"><a href="%s" %s><svg role="img" class="social-linkedin" aria-labelledby="social-linkedin"><title id="social-linkedin">' . __( 'Linkedin', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-linkedin' ) . '"></use></svg></a></li>',
+			),
+			'medium' => array(
+				'label'   => __( 'Medium URI', 'simple-social-icons' ),
+				'pattern' => '<li class="ssi-medium"><a href="%s" %s><svg role="img" class="social-medium" aria-labelledby="social-medium"><title id="social-medium">' . __( 'Medium', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-medium' ) . '"></use></svg></a></li>',
+			),
+			'periscope' => array(
+				'label'   => __( 'Periscope URI', 'simple-social-icons' ),
+				'pattern' => '<li class="ssi-periscope"><a href="%s" %s><svg role="img" class="social-periscope" aria-labelledby="social-periscope"><title id="social-periscope">' . __( 'Periscope', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-periscope' ) . '"></use></svg></a></li>',
+			),
+			'phone' => array(
+				'label'   => __( 'Phone URI', 'simple-social-icons' ),
+				'pattern' => '<li class="ssi-phone"><a href="%s" %s><svg role="img" class="social-phone" aria-labelledby="social-phone"><title id="social-phone">' . __( 'Phone', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-phone' ) . '"></use></svg></a></li>',
 			),
 			'pinterest' => array(
 				'label'   => __( 'Pinterest URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-pinterest"><a href="%s" %s>' . $this->glyphs['pinterest'] . '</a></li>',
+				'pattern' => '<li class="ssi-pinterest"><a href="%s" %s><svg role="img" class="social-pinterest" aria-labelledby="social-pinterest"><title id="social-pinterest">' . __( 'Pinterest', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-pinterest' ) . '"></use></svg></a></li>',
 			),
 			'rss' => array(
 				'label'   => __( 'RSS URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-rss"><a href="%s" %s>' . $this->glyphs['rss'] . '</a></li>',
+				'pattern' => '<li class="ssi-rss"><a href="%s" %s><svg role="img" class="social-rss" aria-labelledby="social-rss"><title id="social-rss">' . __( 'RSS', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-rss' ) . '"></use></svg></a></li>',
+			),
+			'snapchat' => array(
+				'label'   => __( 'Snapchat URI', 'simple-social-icons' ),
+				'pattern' => '<li class="ssi-snapchat"><a href="%s" %s><svg role="img" class="social-snapchat" aria-labelledby="social-snapchat"><title id="social-snapchat">' . __( 'Snapchat', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-snapchat' ) . '"></use></svg></a></li>',
 			),
 			'stumbleupon' => array(
 				'label'   => __( 'StumbleUpon URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-stumbleupon"><a href="%s" %s>' . $this->glyphs['stumbleupon'] . '</a></li>',
+				'pattern' => '<li class="ssi-stumbleupon"><a href="%s" %s><svg role="img" class="social-stumbleupon" aria-labelledby="social-stumbleupon"><title id="social-stumbleupon">' . __( 'StumbleUpon', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-stumbleupon' ) . '"></use></svg></a></li>',
 			),
 			'tumblr' => array(
 				'label'   => __( 'Tumblr URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-tumblr"><a href="%s" %s>' . $this->glyphs['tumblr'] . '</a></li>',
+				'pattern' => '<li class="ssi-tumblr"><a href="%s" %s><svg role="img" class="social-tumblr" aria-labelledby="social-tumblr"><title id="social-tumblr">' . __( 'Tumblr', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-tumblr' ) . '"></use></svg></a></li>',
 			),
 			'twitter' => array(
 				'label'   => __( 'Twitter URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-twitter"><a href="%s" %s>' . $this->glyphs['twitter'] . '</a></li>',
+				'pattern' => '<li class="ssi-twitter"><a href="%s" %s><svg role="img" class="social-twitter" aria-labelledby="social-twitter"><title id="social-twitter">' . __( 'Twitter', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-twitter' ) . '"></use></svg></a></li>',
 			),
 			'vimeo' => array(
 				'label'   => __( 'Vimeo URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-vimeo"><a href="%s" %s>' . $this->glyphs['vimeo'] . '</a></li>',
+				'pattern' => '<li class="ssi-vimeo"><a href="%s" %s><svg role="img" class="social-vimeo" aria-labelledby="social-vimeo"><title id="social-vimeo">' . __( 'Vimeo', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-vimeo' ) . '"></use></svg></a></li>',
+			),
+			'xing' => array(
+				'label'   => __( 'Xing URI', 'simple-social-icons' ),
+				'pattern' => '<li class="ssi-xing"><a href="%s" %s><svg role="img" class="social-xing" aria-labelledby="social-xing"><title id="social-xing">' . __( 'Xing', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-xing' ) . '"></use></svg></a></li>',
 			),
 			'youtube' => array(
 				'label'   => __( 'YouTube URI', 'simple-social-icons' ),
-				'pattern' => '<li class="social-youtube"><a href="%s" %s>' . $this->glyphs['youtube'] . '</a></li>',
+				'pattern' => '<li class="ssi-youtube"><a href="%s" %s><svg role="img" class="social-youtube" aria-labelledby="social-youtube"><title id="social-youtube">' . __( 'YouTube', 'simple-social-icons' ) . '</title><use xlink:href="' . esc_url( plugin_dir_url(__FILE__) . 'symbol-defs.svg#social-youtube' ) . '"></use></svg></a></li>',
 			),
 		) );
 
@@ -197,7 +205,7 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 
 		parent::__construct( 'simple-social-icons', __( 'Simple Social Icons', 'simple-social-icons' ), $widget_ops, $control_ops );
 
-		/** Enqueue icon font */
+		/** Enqueue scripts and styles */
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_css' ) );
 
 		/** Load CSS in <head> */
@@ -294,9 +302,9 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 
 		<hr style="background: #ccc; border: 0; height: 1px; margin: 20px 0;" />
 
-		<p><label for="<?php echo $this->get_field_id( 'background_color' ); ?>"><?php _e( 'Icon Font Color:', 'simple-social-icons' ); ?></label><br /> <input id="<?php echo $this->get_field_id( 'icon_color' ); ?>" name="<?php echo $this->get_field_name( 'icon_color' ); ?>" type="text" class="ssiw-color-picker" data-default-color="<?php echo esc_attr( $this->defaults['icon_color'] ); ?>" value="<?php echo esc_attr( $instance['icon_color'] ); ?>" size="6" /></p>
+		<p><label for="<?php echo $this->get_field_id( 'background_color' ); ?>"><?php _e( 'Icon Color:', 'simple-social-icons' ); ?></label><br /> <input id="<?php echo $this->get_field_id( 'icon_color' ); ?>" name="<?php echo $this->get_field_name( 'icon_color' ); ?>" type="text" class="ssiw-color-picker" data-default-color="<?php echo esc_attr( $this->defaults['icon_color'] ); ?>" value="<?php echo esc_attr( $instance['icon_color'] ); ?>" size="6" /></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'background_color_hover' ); ?>"><?php _e( 'Icon Font Hover Color:', 'simple-social-icons' ); ?></label><br /> <input id="<?php echo $this->get_field_id( 'icon_color_hover' ); ?>" name="<?php echo $this->get_field_name( 'icon_color_hover' ); ?>" type="text" class="ssiw-color-picker" data-default-color="<?php echo esc_attr( $this->defaults['icon_color_hover'] ); ?>" value="<?php echo esc_attr( $instance['icon_color_hover'] ); ?>" size="6" /></p>
+		<p><label for="<?php echo $this->get_field_id( 'background_color_hover' ); ?>"><?php _e( 'Icon Hover Color:', 'simple-social-icons' ); ?></label><br /> <input id="<?php echo $this->get_field_id( 'icon_color_hover' ); ?>" name="<?php echo $this->get_field_name( 'icon_color_hover' ); ?>" type="text" class="ssiw-color-picker" data-default-color="<?php echo esc_attr( $this->defaults['icon_color_hover'] ); ?>" value="<?php echo esc_attr( $instance['icon_color_hover'] ); ?>" size="6" /></p>
 
 		<p><label for="<?php echo $this->get_field_id( 'background_color' ); ?>"><?php _e( 'Background Color:', 'simple-social-icons' ); ?></label><br /> <input id="<?php echo $this->get_field_id( 'background_color' ); ?>" name="<?php echo $this->get_field_name( 'background_color' ); ?>" type="text" class="ssiw-color-picker" data-default-color="<?php echo esc_attr( $this->defaults['background_color'] ); ?>" value="<?php echo esc_attr( $instance['background_color'] ); ?>" size="6" /></p>
 
@@ -399,9 +407,11 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 
 	function enqueue_css() {
 
-		$cssfile	= apply_filters( 'simple_social_default_css', plugin_dir_url( __FILE__ ) . 'css/style.css' );
+		$cssfile = apply_filters( 'simple_social_default_stylesheet', plugin_dir_url( __FILE__ ) . 'css/style.css' );
 
-		wp_enqueue_style( 'simple-social-icons-font', esc_url( $cssfile ), array(), '1.0.12', 'all' );
+		wp_enqueue_style( 'simple-social-icons-font', esc_url( $cssfile ), array(), $this->version, 'all' );
+
+		wp_enqueue_script('svg-x-use', plugin_dir_url(__FILE__) . 'svgxuse.js', array(), '1.1.21' );
 	}
 
 	/**
@@ -425,7 +435,8 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 		/** The CSS to output */
 		$css = '
 		.simple-social-icons ul li a,
-		.simple-social-icons ul li a:hover {
+		.simple-social-icons ul li a:hover,
+		.simple-social-icons ul li a:focus {
 			background-color: ' . $instance['background_color'] . ' !important;
 			border-radius: ' . $instance['border_radius'] . 'px;
 			color: ' . $instance['icon_color'] . ' !important;
@@ -434,10 +445,15 @@ class Simple_Social_Icons_Widget extends WP_Widget {
 			padding: ' . $icon_padding . 'px;
 		}
 
-		.simple-social-icons ul li a:hover {
+		.simple-social-icons ul li a:hover,
+		.simple-social-icons ul li a:focus {
 			background-color: ' . $instance['background_color_hover'] . ' !important;
 			border-color: ' . $instance['border_color_hover'] . ' !important;
 			color: ' . $instance['icon_color_hover'] . ' !important;
+		}
+
+		.simple-social-icons ul li a:focus {
+			outline: 1px dotted ' . $instance['background_color_hover'] . ' !important;
 		}';
 
 		/** Minify a bit */
