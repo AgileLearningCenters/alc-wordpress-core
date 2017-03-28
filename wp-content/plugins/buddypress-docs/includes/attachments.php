@@ -20,11 +20,14 @@ class BP_Docs_Attachments {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 20 );
 
 		add_action( 'pre_get_posts', array( $this, 'filter_gallery_posts' ) );
-		add_action( 'pre_get_posts', array( $this, 'filter_directory_posts' ) );
+		add_action( 'pre_get_posts', array( $this, 'filter_directory_posts' ), 48 );
 
 		// Add the tags filter markup
 		add_filter( 'bp_docs_filter_types', array( $this, 'filter_type' ) );
 		add_filter( 'bp_docs_filter_sections', array( $this, 'filter_markup' ) );
+
+		// Determine whether the directory view is filtered by 'has-attachment' status.
+		add_filter( 'bp_docs_is_directory_view_filtered', array( $this, 'is_directory_view_filtered' ), 10, 2 );
 
 		// Icon display
 		add_filter( 'icon_dir', 'BP_Docs_Attachments::icon_dir' );
@@ -58,7 +61,7 @@ class BP_Docs_Attachments {
 	function catch_attachment_request() {
 		if ( ! empty( $_GET['bp-attachment'] ) ) {
 
-			$fn = $_GET['bp-attachment'];
+			$fn = basename( $_GET['bp-attachment'] );
 
 			// Sanity check - don't do anything if this is not a Doc
 			if ( ! bp_docs_is_existing_doc() ) {
@@ -76,9 +79,6 @@ class BP_Docs_Attachments {
 				wp_die( __( 'File not found.', 'bp-docs' ) );
 			}
 
-			error_reporting( 0 );
-			ob_end_clean();
-
 			$headers = $this->generate_headers( $filepath );
 
 			// @todo Support xsendfile?
@@ -88,6 +88,7 @@ class BP_Docs_Attachments {
 				@header("{$name}: {$field_value}");
 			}
 
+			ob_end_clean();
 			readfile( $filepath );
 			exit();
 		}
@@ -249,10 +250,8 @@ class BP_Docs_Attachments {
 	 * @return string
 	 */
 	public function get_htaccess_path() {
-		if ( empty( $this->htaccess_path ) ) {
-			$upload_dir = wp_upload_dir();
-			$this->htaccess_path = $upload_dir['path'] . DIRECTORY_SEPARATOR . '.htaccess';
-		}
+		$upload_dir = wp_upload_dir( null, true, true );
+		$this->htaccess_path = $upload_dir['path'] . DIRECTORY_SEPARATOR . '.htaccess';
 
 		return $this->htaccess_path;
 	}
@@ -430,18 +429,19 @@ class BP_Docs_Attachments {
 			return;
 		}
 
-		remove_action( 'pre_get_posts', array( $this, 'filter_directory_posts' ) );
+		remove_action( 'pre_get_posts', array( $this, 'filter_directory_posts' ), 48 );
 
 		$has_attachment = isset( $_REQUEST['has-attachment'] ) && in_array( $_REQUEST['has-attachment'], array( 'yes', 'no' ) ) ? $_REQUEST['has-attachment'] : '';
 
 		if ( $has_attachment ) {
 			$post__in = $query->get( 'post__in' );
 			$att_posts = $this->get_docs_with_attachments();
+			$att_posts = empty( $att_posts ) ? array( 0 ) : $att_posts;
 			$query_arg = 'yes' === $has_attachment ? 'post__in' : 'post__not_in';
 			$query->set( $query_arg, array_merge( (array) $post__in, (array) $att_posts ) );
 		}
 
-		add_action( 'pre_get_posts', array( $this, 'filter_directory_posts' ) );
+		add_action( 'pre_get_posts', array( $this, 'filter_directory_posts' ), 48 );
 	}
 
 	public function get_docs_with_attachments() {
@@ -591,10 +591,34 @@ class BP_Docs_Attachments {
 					<option value=""<?php selected( $has_attachment, '' ) ?>><?php _e( 'Doesn&#8217;t matter', 'bp-docs' ) ?></option>
 				</select>
 				<input type="submit" value="<?php _e( 'Filter', 'bp-docs' ) ?>" />
+				<?php do_action( 'bp_docs_directory_filter_attachments_form' ) ?>
 			</form>
 		</div>
 
 		<?php
+	}
+
+
+	/**
+	 * Determine whether the directory view is filtered by 'has-attachment' status.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param bool  $is_filtered Is the current directory view filtered?
+	 * @param array $exclude Array of filter types to ignore.
+	 *
+	 * @return bool $is_filtered
+	 */
+	public function is_directory_view_filtered( $is_filtered, $exclude ) {
+		// If this filter is excluded, stop now.
+		if ( in_array( 'has-attachment', $exclude ) ) {
+			return $is_filtered;
+		}
+
+		if ( isset( $_GET['has-attachment'] ) && ( 'yes' == $_GET['has-attachment'] || 'no' == $_GET['has-attachment'] ) ) {
+			$is_filtered = true;
+		}
+	    return $is_filtered;
 	}
 
 	/**

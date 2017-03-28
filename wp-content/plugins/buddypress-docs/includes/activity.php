@@ -9,7 +9,6 @@
 /**
  * Post an activity item when a comment is posted to a doc.
  *
- * @package BuddyPress Docs
  * @since 1.0-beta
  *
  * @param obj $comment_id The id of the comment that's just been saved
@@ -51,7 +50,7 @@ function bp_docs_post_comment_activity( $comment_id ) {
 	}
 
 	// See if we're associated with a group
-	$group_id = bp_docs_get_associated_group_id( $doc_id );
+	$group_id = bp_is_active( 'groups' ) ? bp_docs_get_associated_group_id( $doc_id ) : 0;
 
 	if ( $group_id ) {
 		$component = 'groups';
@@ -111,7 +110,6 @@ add_action( 'comment_post', 'bp_docs_post_comment_activity', 8 );
 /**
  * Post an activity item on doc save.
  *
- * @package BuddyPress Docs
  * @since 1.0-beta
  *
  * @param obj $query The query object created in BP_Docs_Query and passed to the
@@ -153,12 +151,18 @@ function bp_docs_post_activity( $query ) {
 		if ( !empty( $already_activity['activities'] ) ) {
 			$date_recorded 	= $already_activity['activities'][0]->date_recorded;
 			$drunix 	= strtotime( $date_recorded );
-			if ( time() - $drunix <= apply_filters( 'bp_docs_edit_activity_throttle_time', 60*60 ) )
+			if ( time() - $drunix <= apply_filters( 'bp_docs_edit_activity_throttle_time', 60*60 ) ) {
 				return;
+			}
 		}
 	}
 
 	$doc = get_post( $doc_id );
+
+	// Don't create activity if the Doc title or content hasn't changed.
+	if ( ! $query->is_new_doc && ( $query->previous_revision instanceof WP_Post ) && $doc->post_title === $query->previous_revision->post_title && $doc->post_content === $query->previous_revision->post_content ) {
+		return;
+	}
 
 	// Set the action. Filterable so that other integration pieces can alter it
 	$action 	= '';
@@ -285,9 +289,17 @@ add_action( 'bp_register_activity_actions', 'bp_docs_register_activity_actions' 
  * @return string
  */
 function bp_docs_format_activity_action_bp_doc_created( $action, $activity ) {
-	$user_link = bp_core_get_userlink( $activity->user_id );
+	if ( empty( $activity->secondary_item_id ) ) {
+		return $action;
+	}
 
 	$doc = get_post( $activity->secondary_item_id );
+	if ( ! $doc ) {
+		return $action;
+	}
+
+	$user_link = bp_core_get_userlink( $activity->user_id );
+
 	$doc_url = bp_docs_get_doc_link( $activity->secondary_item_id );
 	$doc_link = sprintf( '<a href="%s">%s</a>', $doc_url, $doc->post_title );
 
@@ -306,9 +318,17 @@ function bp_docs_format_activity_action_bp_doc_created( $action, $activity ) {
  * @return string
  */
 function bp_docs_format_activity_action_bp_doc_edited( $action, $activity ) {
-	$user_link = bp_core_get_userlink( $activity->user_id );
+	if ( empty( $activity->secondary_item_id ) ) {
+		return $action;
+	}
 
 	$doc = get_post( $activity->secondary_item_id );
+	if ( ! $doc ) {
+		return $action;
+	}
+
+	$user_link = bp_core_get_userlink( $activity->user_id );
+
 	$doc_url = bp_docs_get_doc_link( $activity->secondary_item_id );
 	$doc_link = sprintf( '<a href="%s">%s</a>', $doc_url, $doc->post_title );
 
@@ -327,10 +347,18 @@ function bp_docs_format_activity_action_bp_doc_edited( $action, $activity ) {
  * @return string
  */
 function bp_docs_format_activity_action_bp_doc_comment( $action, $activity ) {
+	$comment = get_comment( $activity->secondary_item_id );
+	if ( ! $comment || ! $comment->comment_post_ID ) {
+		return $action;
+	}
+
+	$doc = get_post( $comment->comment_post_ID );
+	if ( ! $doc ) {
+		return $action;
+	}
+
 	$user_link = bp_core_get_userlink( $activity->user_id );
 
-	$comment = get_comment( $activity->secondary_item_id );
-	$doc = get_post( $comment->comment_post_ID );
 	$doc_url = bp_docs_get_doc_link( $doc->ID );
 	$comment_url = $doc_url . '#comment-' . $comment->comment_ID;
 	$doc_link = sprintf( '<a href="%s">%s</a>', $comment_url, $doc->post_title );
@@ -391,7 +419,6 @@ add_filter( 'bp_activity_prefetch_object_data', 'bp_docs_prefetch_activity_objec
 /**
  * Adds BP Docs options to activity filter dropdowns
  *
- * @package BuddyPress Docs
  * @since 1.0-beta
  */
 function bp_docs_activity_filter_options() {

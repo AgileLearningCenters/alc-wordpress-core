@@ -24,7 +24,7 @@ jQuery(document).ready(function($){
 		});
 	}
 
-	$('.bp-docs-attachment-clip').on('click', function(e) {
+	$( '.doctable' ).on('click', '.bp-docs-attachment-clip', function(e) {
 		var att_doc_id = $(e.target).closest('.bp-docs-attachment-clip').attr('id').split('-').pop();
 		var att_doc_drawer = $('#bp-docs-attachment-drawer-'+att_doc_id);
 		att_doc_drawer.slideToggle( 400 );
@@ -247,14 +247,13 @@ function bp_docs_load_idle() {
 			jQuery('#doc-edit-submit').click();
 		}
 
-		/* Remove the edit lock when the user clicks away */
-		jQuery( "a" ).click(function( event ){
-			if ( jQuery( event.target ).hasClass( 'toggle-link' ) ) {
-				return true;
-			}
-
+		jQuery( window ).on( 'unload', function( event ){
 			var doc_id = jQuery("#existing-doc-id").val();
-			var data = {action:'remove_edit_lock', doc_id:doc_id};
+			var data = {
+				action: 'remove_edit_lock',
+				doc_id: doc_id,
+				nonce: jQuery( '#_wpnonce' ).val()
+			};
 			jQuery.ajax({
 				url: ajaxurl,
 				type: 'POST',

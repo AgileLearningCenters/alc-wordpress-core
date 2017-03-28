@@ -3,7 +3,7 @@
 /**
  * Dashboard functions for BuddyPress Docs
  *
- * @package BuddyPress Docs
+ * @package BuddyPressDocs
  * @since 1.1.8
  */
 
@@ -11,7 +11,6 @@ class BP_Docs_Admin {
 	/**
 	 * Constructor
 	 *
-	 * @package BuddyPress Docs
 	 * @since 1.1.8
 	 */
 	function __construct() {
@@ -167,6 +166,9 @@ class BP_Docs_Admin {
 	}
 
 	public function group_tab_name_setting_markup() {
+		if ( ! bp_is_active( 'groups' ) ) {
+			return;
+		}
 		$name = bp_docs_get_group_tab_name();
 
 		?>
@@ -231,7 +233,7 @@ class BP_Docs_Admin {
 			return;
 
 		// Set up and add our widget
-		$recent_comments_title = __( 'Recent Comments' );
+		$recent_comments_title = __( 'Recent Comments', 'bp-docs' );
 
 		// Add our widget in the same location
 		wp_add_dashboard_widget( 'dashboard_recent_comments_bp_docs', $recent_comments_title, array( $this, 'wp_dashboard_recent_comments' ), 'wp_dashboard_recent_comments_control' );
@@ -248,7 +250,6 @@ class BP_Docs_Admin {
 	/**
 	 * Replicates WP's native recent comments dashboard widget.
 	 *
-	 * @package BuddyPress Docs
 	 * @since 1.1.8
 	 */
 	function wp_dashboard_recent_comments() {
@@ -306,7 +307,7 @@ class BP_Docs_Admin {
 		else :
 	?>
 
-		<p><?php _e( 'No comments yet.' ); ?></p>
+		<p><?php _e( 'No comments yet.', 'bp-docs' ); ?></p>
 
 	<?php
 		endif; // $comments;
