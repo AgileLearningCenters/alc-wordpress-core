@@ -6,6 +6,7 @@
  * @access public
  * @uses WP_HTTP
  * @since 1.0
+ * @deprecated 4.0
  */
 class MC4WP_API {
 
@@ -240,7 +241,7 @@ class MC4WP_API {
 	 * @param array $emails
 	 * @return array
 	 */
-	public function get_subscriber_info( $list_id, array $emails ) {
+	public function get_subscriber_info( $list_id, $emails ) {
 
 		if( is_string( $emails ) ) {
 			$emails = array( $emails );
@@ -529,10 +530,12 @@ class MC4WP_API {
 	 * @return array
 	 */
 	private function get_headers() {
+        global $wp_version;
 
 		$headers = array(
-			'Accept' => 'application/json'
-		);
+			'Accept' => 'application/json',
+            'User-Agent' => 'mc4wp/' . MC4WP_VERSION . '; WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
+        );
 
 		// Copy Accept-Language from browser headers
 		if( ! empty( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {

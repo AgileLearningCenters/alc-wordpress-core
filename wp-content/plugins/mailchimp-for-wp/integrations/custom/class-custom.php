@@ -76,10 +76,11 @@ class MC4WP_Custom_Integration extends MC4WP_Integration {
 
 		// do nothing if no email was found
 		if( empty( $data['EMAIL'] ) ) {
-			return false;
+            $this->get_log()->warning( sprintf( '%s > Unable to find EMAIL field.', $this->name ) );
+            return false;
 		}
 
-		return $this->subscribe( $data['EMAIL'], $data );
+		return $this->subscribe( $data );
 	}
 
 	/**
@@ -93,6 +94,6 @@ class MC4WP_Custom_Integration extends MC4WP_Integration {
 	 * @return array
 	 */
 	public function get_ui_elements() {
-		return array( 'lists', 'double_optin', 'update_existing', 'send_welcome', 'replace_interests' );
+		return array( 'lists', 'double_optin', 'update_existing', 'replace_interests' );
 	}
 }

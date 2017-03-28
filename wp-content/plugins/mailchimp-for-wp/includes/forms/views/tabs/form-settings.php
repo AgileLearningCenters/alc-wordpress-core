@@ -6,7 +6,10 @@
 
 <table class="form-table" style="table-layout: fixed;">
 
-	<?php do_action( 'mc4wp_admin_form_after_mailchimp_settings_rows', $opts, $form ); ?>
+	<?php
+	/** @ignore */
+	do_action( 'mc4wp_admin_form_after_mailchimp_settings_rows', $opts, $form );
+	?>
 
 	<tr valign="top">
 		<th scope="row" style="width: 250px;"><?php _e( 'Lists this form subscribes to', 'mailchimp-for-wp' ); ?></th>
@@ -14,9 +17,9 @@
 		if( empty( $lists ) ) {
 			?><td colspan="2"><?php printf( __( 'No lists found, <a href="%s">are you connected to MailChimp</a>?', 'mailchimp-for-wp' ), admin_url( 'admin.php?page=mailchimp-for-wp' ) ); ?></td><?php
 		} else { ?>
-			<td>
+			<td >
 
-				<ul id="mc4wp-lists" style="margin-bottom: 20px;">
+				<ul id="mc4wp-lists" style="margin-bottom: 20px; max-height: 300px; overflow-y: auto;">
 					<?php foreach( $lists as $list ) { ?>
 						<li>
 							<label>
@@ -34,29 +37,14 @@
 		<th scope="row"><?php _e( 'Use double opt-in?', 'mailchimp-for-wp' ); ?></th>
 		<td class="nowrap">
 			<label>
-				<input type="radio"  name="mc4wp_form[settings][double_optin]" value="1" <?php checked( $opts['double_optin'], 1 ); ?> />
-				<?php _e( 'Yes', 'mailchimp-for-wp' ); ?>
+				<input type="radio"  name="mc4wp_form[settings][double_optin]" value="1" <?php checked( $opts['double_optin'], 1 ); ?> />&rlm;
+				<?php _e( 'Yes' ); ?>
 			</label> &nbsp;
 			<label>
-				<input type="radio" name="mc4wp_form[settings][double_optin]" value="0" <?php checked( $opts['double_optin'], 0 ); ?> />
-				<?php _e( 'No', 'mailchimp-for-wp' ); ?>
+				<input type="radio" name="mc4wp_form[settings][double_optin]" value="0" <?php checked( $opts['double_optin'], 0 ); ?> onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to disable double opt-in?', 'mailchimp-for-wp' ); ?>');" />&rlm;
+				<?php _e( 'No' ); ?>
 			</label>
-			<p class="help"><?php _e( 'Select "yes" if you want people to confirm their email address before being subscribed (recommended)', 'mailchimp-for-wp' ); ?></p>
-		</td>
-	</tr>
-	<?php $config = array( 'element' => 'mc4wp_form[settings][double_optin]', 'value' => 0 ); ?>
-	<tr valign="top" data-showif="<?php echo esc_attr( json_encode( $config ) ); ?>">
-		<th scope="row"><?php _e( 'Send final welcome email?', 'mailchimp-for-wp' ); ?></th>
-		<td class="nowrap">
-			<label>
-				<input type="radio"  name="mc4wp_form[settings][send_welcome]" value="1" <?php checked( $opts['send_welcome'], 1 ); ?> />
-				<?php _e( 'Yes', 'mailchimp-for-wp' ); ?>
-			</label> &nbsp;
-			<label>
-				<input type="radio" name="mc4wp_form[settings][send_welcome]" value="0" <?php checked( $opts['send_welcome'], 0 ); ?> />
-				<?php _e( 'No', 'mailchimp-for-wp' ); ?>
-			</label>
-			<p class="help"><?php _e( 'Select "yes" if you want to send your lists Welcome Email if a subscribe succeeds (only when double opt-in is disabled).' ,'mailchimp-for-wp' ); ?></p>
+			<p class="help"><?php _e( 'We strongly suggest keeping double opt-in enabled. Disabling double opt-in may result in abuse.', 'mailchimp-for-wp' ); ?></p>
 		</td>
 	</tr>
 
@@ -64,12 +52,12 @@
 		<th scope="row"><?php _e( 'Update existing subscribers?', 'mailchimp-for-wp' ); ?></th>
 		<td class="nowrap">
 			<label>
-				<input type="radio" name="mc4wp_form[settings][update_existing]" value="1" <?php checked( $opts['update_existing'], 1 ); ?> />
-				<?php _e( 'Yes', 'mailchimp-for-wp' ); ?>
+				<input type="radio" name="mc4wp_form[settings][update_existing]" value="1" <?php checked( $opts['update_existing'], 1 ); ?> />&rlm;
+				<?php _e( 'Yes' ); ?>
 			</label> &nbsp;
 			<label>
-				<input type="radio" name="mc4wp_form[settings][update_existing]" value="0" <?php checked( $opts['update_existing'], 0 ); ?> />
-				<?php _e( 'No', 'mailchimp-for-wp' ); ?>
+				<input type="radio" name="mc4wp_form[settings][update_existing]" value="0" <?php checked( $opts['update_existing'], 0 ); ?> />&rlm;
+				<?php _e( 'No' ); ?>
 			</label>
 			<p class="help"><?php _e( 'Select "yes" if you want to update existing subscribers with the data that is sent.', 'mailchimp-for-wp' ); ?></p>
 		</td>
@@ -80,21 +68,24 @@
 		<th scope="row"><?php _e( 'Replace interest groups?', 'mailchimp-for-wp' ); ?></th>
 		<td class="nowrap">
 			<label>
-				<input type="radio" name="mc4wp_form[settings][replace_interests]" value="1" <?php checked( $opts['replace_interests'], 1 ); ?> />
-				<?php _e( 'Yes', 'mailchimp-for-wp' ); ?>
+				<input type="radio" name="mc4wp_form[settings][replace_interests]" value="1" <?php checked( $opts['replace_interests'], 1 ); ?> />&rlm;
+				<?php _e( 'Yes' ); ?>
 			</label> &nbsp;
 			<label>
-				<input type="radio" name="mc4wp_form[settings][replace_interests]" value="0" <?php checked( $opts['replace_interests'], 0 ); ?> />
-				<?php _e( 'No', 'mailchimp-for-wp' ); ?>
+				<input type="radio" name="mc4wp_form[settings][replace_interests]" value="0" <?php checked( $opts['replace_interests'], 0 ); ?> />&rlm;
+				<?php _e( 'No' ); ?>
 			</label>
 			<p class="help">
-				<?php _e( 'Select "no" if you want to add the selected groupings to any previously selected groupings when updating a subscriber.', 'mailchimp-for-wp' ); ?>
-				<?php printf( ' <a href="%s" target="_blank">' . __( 'What does this do?', 'mailchimp-for-wp' ) . '</a>', 'https://mc4wp.com/kb/what-does-replace-groupings-mean/' ); ?>
+				<?php _e( 'Select "no" if you want to add the selected interests to any previously selected interests when updating a subscriber.', 'mailchimp-for-wp' ); ?>
+				<?php printf( ' <a href="%s" target="_blank">' . __( 'What does this do?', 'mailchimp-for-wp' ) . '</a>', 'https://mc4wp.com/kb/what-does-replace-groupings-mean/#utm_source=wp-plugin&utm_medium=mailchimp-for-wp&utm_campaign=settings-page' ); ?>
 			</p>
 		</td>
 	</tr>
 
-	<?php do_action( 'mc4wp_admin_form_after_mailchimp_settings_rows', $opts, $form ); ?>
+	<?php
+	/** @ignore */
+	do_action( 'mc4wp_admin_form_after_mailchimp_settings_rows', $opts, $form );
+	?>
 
 </table>
 
@@ -104,18 +95,21 @@
 
 <table class="form-table" style="table-layout: fixed;">
 
-	<?php do_action( 'mc4wp_admin_form_before_behaviour_settings_rows', $opts, $form ); ?>
+	<?php
+	/** @ignore */
+	do_action( 'mc4wp_admin_form_before_behaviour_settings_rows', $opts, $form );
+	?>
 
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Hide form after a successful sign-up?', 'mailchimp-for-wp' ); ?></th>
 		<td class="nowrap">
 			<label>
-				<input type="radio" name="mc4wp_form[settings][hide_after_success]" value="1" <?php checked( $opts['hide_after_success'], 1 ); ?> />
-				<?php _e( 'Yes', 'mailchimp-for-wp' ); ?>
+				<input type="radio" name="mc4wp_form[settings][hide_after_success]" value="1" <?php checked( $opts['hide_after_success'], 1 ); ?> />&rlm;
+				<?php _e( 'Yes' ); ?>
 			</label> &nbsp;
 			<label>
-				<input type="radio" name="mc4wp_form[settings][hide_after_success]" value="0" <?php checked( $opts['hide_after_success'], 0 ); ?> />
-				<?php _e( 'No', 'mailchimp-for-wp' ); ?>
+				<input type="radio" name="mc4wp_form[settings][hide_after_success]" value="0" <?php checked( $opts['hide_after_success'], 0 ); ?> />&rlm;
+				<?php _e( 'No' ); ?>
 			</label>
 			<p class="help">
 				<?php _e( 'Select "yes" to hide the form fields after a successful sign-up.', 'mailchimp-for-wp' ); ?>
@@ -130,7 +124,10 @@
 		</td>
 	</tr>
 
-	<?php do_action( 'mc4wp_admin_form_after_behaviour_settings_rows', $opts, $form ); ?>
+	<?php
+	/** @ignore */
+	do_action( 'mc4wp_admin_form_after_behaviour_settings_rows', $opts, $form );
+	?>
 
 </table>
 

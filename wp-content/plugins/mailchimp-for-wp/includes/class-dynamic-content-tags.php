@@ -33,36 +33,6 @@ class MC4WP_Dynamic_Content_Tags {
 		$this->tags = $tags;
 	}
 
-//	/**
-//	 * Add a dynamic content tag
-//	 *
-//	 * @param string $tag
-//	 * @param string|array Replacement string or configuration array
-//	 * @return void
-//	 */
-//	public function add( $tag, $config ) {
-//
-//		if( ! is_array( $config ) ) {
-//			$config = array(
-//				'replacement' => $config
-//			);
-//		}
-//
-//		$this->tags[ $tag ] = $config;
-//	}
-//
-//	/**
-//	 * Add multiple dynamic content tags at once.
-//	 *
-//	 * @param array $tags
-//	 * @return void
-//	 */
-//	public function add_many( array $tags ) {
-//		foreach( $tags as $tag => $config ) {
-//			$this->add( $tag, $config );
-//		}
-//	}
-
 	/**
 	 * Return all registered tags
 	 *
@@ -78,6 +48,7 @@ class MC4WP_Dynamic_Content_Tags {
 		 *
 		 * @since 3.0
 		 * @param array $tags
+         * @ignore
 		 */
 		$this->tags = (array) apply_filters( 'mc4wp_dynamic_content_tags', $tags );
 
@@ -88,6 +59,7 @@ class MC4WP_Dynamic_Content_Tags {
 		 *
 		 * @since 3.0
 		 * @param array $tags
+         * @ignore
 		 */
 		$this->tags = (array) apply_filters( 'mc4wp_dynamic_content_tags_' . $context, $tags );
 		return $this->tags;
@@ -134,12 +106,17 @@ class MC4WP_Dynamic_Content_Tags {
 
 	/**
 	 * @param string $string The string containing dynamic content tags.
-	 * @param string $escape_mode Escape mode for the replacement value.
+	 * @param string $escape_mode Escape mode for the replacement value. Leave empty for no escaping.
 	 * @return string
 	 */
 	public function replace( $string, $escape_mode = '' ) {
-		$this->escape_mode = $escape_mode;
-		$string = preg_replace_callback( '/\{(\w+)(\ +(?:[^}\n])+)*\}/', array( $this, 'replace_tag' ), $string );
+        $this->escape_mode = $escape_mode;
+
+        // replace strings like this: {tagname attr="value"}
+        $string = preg_replace_callback( '/\{(\w+)(\ +(?:(?!\{)[^}\n])+)*\}/', array( $this, 'replace_tag' ), $string );
+
+        // call again to take care of nested variables
+        $string = preg_replace_callback( '/\{(\w+)(\ +(?:(?!\{)[^}\n])+)*\}/', array( $this, 'replace_tag' ), $string );
 		return $string;
 	}
 

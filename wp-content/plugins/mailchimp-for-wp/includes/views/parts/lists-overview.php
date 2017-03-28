@@ -1,13 +1,16 @@
 <h3><?php _e( 'Your MailChimp Account' ,'mailchimp-for-wp' ); ?></h3>
 <p><?php _e( 'The table below shows your MailChimp lists and their details. If you just applied changes to your MailChimp lists, please use the following button to renew the cached lists configuration.', 'mailchimp-for-wp' ); ?></p>
 
-<form method="post" action="">
-	<input type="hidden" name="_mc4wp_action" value="empty_lists_cache" />
 
-	<p>
-		<input type="submit" value="<?php _e( 'Renew MailChimp lists', 'mailchimp-for-wp' ); ?>" class="button" />
-	</p>
-</form>
+<div id="mc4wp-list-fetcher">
+	<form method="post" action="">
+		<input type="hidden" name="_mc4wp_action" value="empty_lists_cache" />
+
+		<p>
+			<input type="submit" value="<?php _e( 'Renew MailChimp lists', 'mailchimp-for-wp' ); ?>" class="button" />
+		</p>
+	</form>
+</div>
 
 <div class="mc4wp-lists-overview">
 	<?php if( empty( $lists ) ) { ?>
@@ -45,8 +48,8 @@
 			echo sprintf( '<p class="alignright" style="margin: 20px 0;"><a href="%s" target="_blank"><span class="dashicons dashicons-edit"></span> ' . __( 'Edit this list in MailChimp', 'mailchimp-for-wp' ) . '</a></p>', $list->get_web_url() );
 
 			// Fields
-			if ( ! empty( $list->merge_vars ) ) { ?>
-				<h3>Fields</h3>
+			if ( ! empty( $list->merge_fields ) ) { ?>
+				<h3>Merge Fields</h3>
 				<table class="widefat striped">
 					<thead>
 						<tr>
@@ -55,19 +58,19 @@
 							<th>Type</th>
 						</tr>
 					</thead>
-					<?php foreach ( $list->merge_vars as $merge_var ) { ?>
-						<tr title="<?php printf( __( '%s (%s) with field type %s.', 'mailchimp-for-wp' ), esc_html( $merge_var->name ), esc_html( $merge_var->tag ), esc_html( $merge_var->field_type ) ); ?>">
-							<td><?php echo esc_html( $merge_var->name );
-								if ( $merge_var->required ) {
+					<?php foreach ( $list->merge_fields as $merge_field ) { ?>
+						<tr title="<?php printf( __( '%s (%s) with field type %s.', 'mailchimp-for-wp' ), esc_html( $merge_field->name ), esc_html( $merge_field->tag ), esc_html( $merge_field->field_type ) ); ?>">
+							<td><?php echo esc_html( $merge_field->name );
+								if ( $merge_field->required ) {
 									echo '<span style="color:red;">*</span>';
 								} ?></td>
-							<td><code><?php echo esc_html( $merge_var->tag ); ?></code></td>
+							<td><code><?php echo esc_html( $merge_field->tag ); ?></code></td>
 							<td>
 								<?php
-									echo esc_html( $merge_var->field_type );
+									echo esc_html( $merge_field->field_type );
 
-									if( ! empty( $merge_var->choices ) ) {
-										echo ' (' . join( ', ', $merge_var->choices ) . ')';
+									if( ! empty( $merge_field->choices ) ) {
+										echo ' (' . join( ', ', $merge_field->choices ) . ')';
 									}
 								?>
 
@@ -77,28 +80,38 @@
 				</table>
 			<?php }
 
-			// Groupings
-			if ( ! empty( $list->groupings ) ) { ?>
+			// interest_categories
+			if ( ! empty( $list->interest_categories ) ) { ?>
 
-				<h3>Groupings</h3>
+				<h3>Interest Categories</h3>
 				<table class="widefat striped">
 					<thead>
 						<tr>
 							<th>Name</th>
-							<th>ID</th>
-							<th>Groups</th>
+							<th>Type</th>
+							<th>Interests</th>
 						</tr>
 					</thead>
-					<?php foreach ( $list->groupings as $grouping ) { ?>
-						<tr title="<?php esc_attr( printf( __( '%s (ID: %s) with type %s.', 'mailchimp-for-wp' ), $grouping->name, $grouping->id, $grouping->field_type ) ); ?>">
-							<td><?php echo esc_html( $grouping->name ); ?></td>
-							<td><?php echo esc_html( $grouping->id ); ?></td>
+					<?php foreach ( $list->interest_categories as $interest_category ) { ?>
+						<tr>
+							<td><?php echo esc_html( $interest_category->name ); ?></td>
+							<td><?php echo esc_html( $interest_category->field_type ); ?></td>
 							<td>
-								<ul class="ul-square">
-									<?php foreach ( $grouping->groups as $group ) { ?>
-										<li><?php echo esc_html( $group ); ?></li>
-									<?php } ?>
-								</ul>
+								<div class="row" style="margin-bottom: 4px;">
+									<div class="col col-3"><strong style="display: block; border-bottom: 1px solid #eee;">Name</strong></div>
+									<div class="col col-3"><strong style="display: block; border-bottom: 1px solid #eee;">ID</strong></div>
+								</div>
+								<?php
+								foreach( $interest_category->interests as $id => $interest ) {
+									echo '<div class="row tiny-margin">';
+									echo sprintf( '<div class="col col-3">%s</div><div class="col col-3"><code title="Interest ID">%s</code></div>', $interest, $id );
+									echo '<br style="clear: both;" />';
+									echo '</div>';
+								}
+								?>
+
+
+
 							</td>
 						</tr>
 					<?php } ?>

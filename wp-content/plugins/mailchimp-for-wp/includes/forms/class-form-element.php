@@ -118,15 +118,8 @@ class MC4WP_Form_Element {
 		$form = $this->form;
 
 		if( $this->is_submitted || $force_show ) {
-			if( $form->has_errors() ) {
-
-				// create html string of all errors
-				foreach( $form->errors as $key ) {
-					$html .= $this->get_message_html( $key );
-				}
-
-			} else {
-				$html = $this->get_message_html( $form->get_action() . 'd' );
+			foreach( $this->form->messages as $key ) {
+				$html .= $this->get_message_html( $key );
 			}
 		}
 
@@ -189,6 +182,7 @@ class MC4WP_Form_Element {
 		 *
 		 * @param string $html
 		 * @param MC4WP_Form $form
+         * @ignore
 		 */
 		$html = (string) apply_filters( 'mc4wp_form_before_fields', $html, $form );
 
@@ -214,6 +208,7 @@ class MC4WP_Form_Element {
 		 *
 		 * @param string $html
 		 * @param MC4WP_Form $form
+         * @ignore
 		 */
 		$html = (string) apply_filters( 'mc4wp_form_after_fields', $html, $form );
 
@@ -346,6 +341,11 @@ class MC4WP_Form_Element {
 
 			$classes[] = 'mc4wp-form-' . $form->settings['css'];
 		}
+
+		// add classes from config array
+		if( ! empty( $this->config['element_class'] ) ) {
+		    $classes = array_merge( $classes, explode( ' ', $this->config['element_class'] ) );
+        }
 
 		/**
 		 * Filters `class` attributes for the `<form>` element.

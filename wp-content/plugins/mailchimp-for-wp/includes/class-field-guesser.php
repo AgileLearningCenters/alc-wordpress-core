@@ -49,11 +49,16 @@ class MC4WP_Field_Guesser {
 
 		foreach( $fields as $field => $value ) {
 
-			// is this an email value? assume email field
-			if( empty( $guessed['EMAIL'] ) && is_string( $value ) && is_email( $value ) ) {
-				$guessed['EMAIL'] = $value;
-				continue;
-			}
+            // transform value into array to support 1-level arrays
+            $sub_fields = is_array( $value ) ? $value : array( $value );
+            foreach( $sub_fields as $sub_field_value ) {
+
+                // is this an email value? if so, assume it's the EMAIL field
+                if( empty( $guessed['EMAIL'] ) && is_string( $sub_field_value ) && is_email( $sub_field_value ) ) {
+                    $guessed['EMAIL'] = $sub_field_value;
+                    continue 2;
+                }
+            }
 
 			// remove special characters from field name
 			$simple_key = str_replace( array( '-', '_', ' ' ), '', $field );

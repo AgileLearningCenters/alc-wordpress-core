@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Class MC4WP_MailChimp_Merge_Var
+ * Class MC4WP_MailChimp_Merge_Field
  *
- * Represents a Merge Variable (AKA: field) in MailChimp
+ * Represents a Merge Field in MailChimp
  *
  * @access public
  */
-class MC4WP_MailChimp_Merge_Var {
+class MC4WP_MailChimp_Merge_Field {
 
 	/**
 	 * @var string
@@ -42,7 +42,7 @@ class MC4WP_MailChimp_Merge_Var {
 	/**
 	 * @var string Default value for the field.
 	 */
-	public $default = '';
+	public $default_value = '';
 
 	/**
 	 * @param string $name
@@ -60,20 +60,36 @@ class MC4WP_MailChimp_Merge_Var {
 	}
 
 	/**
+	 * @param string $name
+	 *
+	 * @return string
+	 */
+	public function __get( $name ) {
+
+		// for backwards compatibility with v3.x, channel these properties to their new names
+		if( $name === 'default' ) {
+			return $this->default_value;
+		}
+	}
+
+	/**
 	 * Creates our local object from MailChimp API data.
 	 *
 	 * @param object $data
 	 *
-	 * @return MC4WP_MailChimp_Merge_Var
+	 * @return MC4WP_MailChimp_Merge_Field
 	 */
 	public static function from_data( $data ) {
 
-		$instance = new self( $data->name, $data->field_type, $data->tag, $data->req );
+		$instance = new self( $data->name, $data->type, $data->tag, $data->required );
+
+		if( ! empty( $data->options->choices ) ) {
+			$instance->choices = $data->options->choices;
+		}
 
 		$optional = array(
-			'choices',
 			'public',
-			'default'
+			'default_value'
 		);
 
 		foreach( $optional as $key ) {

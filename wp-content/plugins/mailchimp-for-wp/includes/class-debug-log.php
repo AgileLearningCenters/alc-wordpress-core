@@ -83,9 +83,11 @@ class MC4WP_Debug_Log{
 			return false;
 		}
 
+		// obfuscate email addresses in log message since log might be public.
+        $message = mc4wp_obfuscate_email_addresses( (string) $message );
+
 		// generate line
 		$level_name = self::get_level_name( $level );
-		$message = (string) $message;
 		$datetime = date( 'Y-m-d H:i:s', ( time() - date('Z') ) + ( get_option( 'gmt_offset', 0 ) * 3600 ) );
 		$message = sprintf( '[%s] %s: %s', $datetime, $level_name, $message ) . PHP_EOL;
 
@@ -93,12 +95,23 @@ class MC4WP_Debug_Log{
 		if( ! is_resource( $this->stream ) ) {
 
 			// open stream
-			$this->stream = fopen( $this->file, 'a' );
+			$this->stream = @fopen( $this->file, 'c+' );
 
 			// if this failed, bail..
 			if ( ! is_resource( $this->stream ) ) {
 				return false;
 			}
+
+            // make sure first line of log file is a PHP tag + exit statement (to prevent direct file access)
+            $line = fgets( $this->stream );
+            $php_exit_string = '<?php exit; ?>';
+            if( strpos( $line, $php_exit_string ) !== 0 ) {
+                rewind( $this->stream );
+                fwrite( $this->stream, $php_exit_string . PHP_EOL . $line );
+            }
+
+            // place pointer at end of file
+            fseek( $this->stream, 0, SEEK_END );
 		}
 
 		// lock file while we write, ignore errors (not much we can do)
