@@ -1,7 +1,7 @@
 <?php
 
 /**
- * it is best practice that plugins do nothing before plugins_loaded is fired
+ * It is best practice that plugins do nothing before plugins_loaded is fired
  * so it is what Polylang intends to do
  * but some plugins load their text domain as soon as loaded, thus before plugins_loaded is fired
  * this class differs text domain loading until the language is defined
@@ -10,36 +10,43 @@
  * @since 1.2
  */
 class PLL_OLT_Manager {
-	static protected $instance; // for singleton
+	static protected $instance; // For singleton
 	protected $default_locale;
-	protected $list_textdomains = array(); // all text domains
-	public $labels = array(); // post types and taxonomies labels to translate
+	protected $list_textdomains = array(); // All text domains
+	public $labels = array(); // Post types and taxonomies labels to translate
 
 	/**
-	 * constructor: setups relevant filters
+	 * Constructor: setups relevant filters
 	 *
 	 * @since 1.2
 	 */
 	public function __construct() {
-		// saves the default locale before we start any language manipulation
+		// Allows Polylang to be the first plugin loaded ;-)
+		add_filter( 'pre_update_option_active_plugins', array( $this, 'make_polylang_first' ) );
+		add_filter( 'pre_update_option_active_sitewide_plugins', array( $this, 'make_polylang_first' ) );
+
+		// Overriding load text domain only on front since WP 4.7
+		// FIXME test get_user_locale for backward compatibility with WP < 4.7
+		if ( is_admin() && function_exists( 'get_user_locale' ) ) {
+			return;
+		}
+
+		// Saves the default locale before we start any language manipulation
 		$this->default_locale = get_locale();
 
-		// filters for text domain management
-		add_filter( 'override_load_textdomain', array( &$this, 'mofile' ), 10, 3 );
-		add_filter( 'gettext', array( &$this, 'gettext' ), 10, 3 );
-		add_filter( 'gettext_with_context', array( &$this, 'gettext_with_context' ), 10, 4 );
+		// Filters for text domain management
+		add_filter( 'load_textdomain_mofile', array( $this, 'load_textdomain_mofile' ), 10, 2 );
+		add_filter( 'gettext', array( $this, 'gettext' ), 10, 3 );
+		add_filter( 'gettext_with_context', array( $this, 'gettext_with_context' ), 10, 4 );
 
-		// loads text domains
-		add_action( 'pll_language_defined', array( &$this, 'load_textdomains' ), 2 ); // after PLL_Frontend::pll_language_defined
-		add_action( 'pll_no_language_defined', array( &$this, 'load_textdomains' ) );
+		// Loads text domains
+		add_action( 'pll_language_defined', array( $this, 'load_textdomains' ), 2 ); // After PLL_Frontend::pll_language_defined
+		add_action( 'pll_no_language_defined', array( $this, 'load_textdomains' ) );
 
-		// allows Polylang to be the first plugin loaded ;- )
-		add_filter( 'pre_update_option_active_plugins', array( &$this, 'make_polylang_first' ) );
-		add_filter( 'pre_update_option_active_sitewide_plugins', array( &$this, 'make_polylang_first' ) );
 	}
 
 	/**
-	 * access to the single instance of the class
+	 * Access to the single instance of the class
 	 *
 	 * @since 1.7
 	 *
@@ -54,43 +61,53 @@ class PLL_OLT_Manager {
 	}
 
 	/**
-	 * loads text domains
+	 * Loads text domains
 	 *
 	 * @since 0.1
 	 */
 	public function load_textdomains() {
-		// our override_load_textdomain filter has done its job. let's remove it before calling load_textdomain
-		remove_filter( 'override_load_textdomain', array( &$this, 'mofile' ), 10, 3 );
-		remove_filter( 'gettext', array( &$this, 'gettext' ), 10, 3 );
-		remove_filter( 'gettext_with_context', array( &$this, 'gettext_with_context' ), 10, 4 );
+		// Our load_textdomain_mofile filter has done its job. let's remove it before calling load_textdomain
+		remove_filter( 'load_textdomain_mofile', array( $this, 'load_textdomain_mofile' ), 10, 2 );
+		remove_filter( 'gettext', array( $this, 'gettext' ), 10, 3 );
+		remove_filter( 'gettext_with_context', array( $this, 'gettext_with_context' ), 10, 4 );
 		$new_locale = get_locale();
 
-		// don't try to save time for en_US as some users have theme written in another language
-		// now we can load all overriden text domains with the right language
+
+		// Don't try to save time for en_US as some users have theme written in another language
+		// Now we can load all overriden text domains with the right language
 		if ( ! empty( $this->list_textdomains ) ) {
+
+			// Since WP 4.7 we need to reset the internal cache of _get_path_to_translation when switching from any locale to en_US
+			// See WP_Locale_Switcher::changle_locale()
+			// FIXME test _get_path_to_translation for backward compatibility with WP < 4.7
+			if ( function_exists( '_get_path_to_translation' ) ) {
+				_get_path_to_translation( null, true );
+			}
+
 			foreach ( $this->list_textdomains as $textdomain ) {
+				// Since WP 4.6, plugins translations are first loaded from wp-content/languages
 				if ( ! load_textdomain( $textdomain['domain'], str_replace( "{$this->default_locale}.mo", "$new_locale.mo", $textdomain['mo'] ) ) ) {
-					// since WP 3.5 themes may store languages files in /wp-content/languages/themes
+					// Since WP 3.5 themes may store languages files in /wp-content/languages/themes
 					if ( ! load_textdomain( $textdomain['domain'], WP_LANG_DIR . "/themes/{$textdomain['domain']}-$new_locale.mo" ) ) {
-						// since WP 3.7 plugins may store languages files in /wp-content/languages/plugins
+						// Since WP 3.7 plugins may store languages files in /wp-content/languages/plugins
 						load_textdomain( $textdomain['domain'], WP_LANG_DIR . "/plugins/{$textdomain['domain']}-$new_locale.mo" );
 					}
 				}
 			}
 		}
 
-		// first remove taxonomies and post_types labels that we don't need to translate
+		// First remove taxonomies and post_types labels that we don't need to translate
 		$taxonomies = array( 'language', 'term_language', 'term_translations', 'post_translations' );
 		$post_types = array( 'polylang_mo' );
 
-		// we don't need to translate core taxonomies and post types labels when setting the language from the url
-		// as they will be translated when registered the second time
+		// We don't need to translate core taxonomies and post types labels when setting the language from the url
+		// As they will be translated when registered the second time
 		if ( ! did_action( 'setup_theme' ) ) {
 			$taxonomies = array_merge( array( 'category', 'post_tag', 'nav_menu', 'link_category', 'post_format' ), $taxonomies );
 			$post_types = array_merge( array( 'post', 'page', 'attachment', 'revision', 'nav_menu_item' ), $post_types );
 		}
 
-		// translate labels of post types and taxonomies
+		// Translate labels of post types and taxonomies
 		foreach ( array_diff_key( $GLOBALS['wp_taxonomies'], array_flip( $taxonomies ) ) as $tax ) {
 			$this->translate_labels( $tax );
 		}
@@ -98,9 +115,9 @@ class PLL_OLT_Manager {
 			$this->translate_labels( $pt );
 		}
 
-		// act only if the language has not been set early ( before default textdomain loading and $wp_locale creation )
+		// Act only if the language has not been set early ( before default textdomain loading and $wp_locale creation )
 		if ( did_action( 'after_setup_theme' ) ) {
-			// reinitializes wp_locale for weekdays and months
+			// Reinitializes wp_locale for weekdays and months
 			unset( $GLOBALS['wp_locale'] );
 			$GLOBALS['wp_locale'] = new WP_Locale();
 		}
@@ -115,27 +132,42 @@ class PLL_OLT_Manager {
 		 */
 		do_action_ref_array( 'pll_translate_labels', array( &$this->labels ) );
 
-		// free memory
+		// Free memory
 		unset( $this->default_locale, $this->list_textdomains, $this->labels );
 	}
 
 	/**
-	 * saves all text domains in a table for later usage
+	 * FIXME: Backward compatibility with Polylang for WooCommerce < 0.3.4
+	 * To remove in Polylang 2.1
 	 *
 	 * @since 0.1
 	 *
 	 * @param bool   $bool   not used
 	 * @param string $domain text domain name
 	 * @param string $mofile translation file name
-	 * @return bool always true
+	 * @return bool
 	 */
 	public function mofile( $bool, $domain, $mofile ) {
-		$this->list_textdomains[] = array( 'mo' => $mofile, 'domain' => $domain );
-		return true; // prevents WP loading text domains as we will load them all later
+		return $bool;
 	}
 
 	/**
-	 * saves post types and taxonomies labels for a later usage
+	 * Saves all text domains in a table for later usage
+	 * It replaces the 'override_load_textdomain' filter used since 0.1
+	 *
+	 * @since 2.0.4
+	 *
+	 * @param string $mofile translation file name
+	 * @param string $domain text domain name
+	 * @return bool
+	 */
+	public function load_textdomain_mofile( $mofile, $domain ) {
+		$this->list_textdomains[ $domain ] = array( 'mo' => $mofile, 'domain' => $domain );
+		return ''; // Hack to prevent WP loading text domains as we will load them all later
+	}
+
+	/**
+	 * Saves post types and taxonomies labels for a later usage
 	 *
 	 * @since 0.9
 	 *
@@ -145,14 +177,14 @@ class PLL_OLT_Manager {
 	 * @return string unmodified $translation
 	 */
 	public function gettext( $translation, $text, $domain ) {
-		if ( is_string( $text ) ) { // avoid a warning with some buggy plugins which pass an array
+		if ( is_string( $text ) ) { // Avoid a warning with some buggy plugins which pass an array
 			$this->labels[ $text ] = array( 'domain' => $domain );
 		}
 		return $translation;
 	}
 
 	/**
-	 * saves post types and taxonomies labels for a later usage
+	 * Saves post types and taxonomies labels for a later usage
 	 *
 	 * @since 0.9
 	 *
@@ -168,14 +200,14 @@ class PLL_OLT_Manager {
 	}
 
 	/**
-	 * translates post types and taxonomies labels once the language is known
+	 * Translates post types and taxonomies labels once the language is known
 	 *
 	 * @since 0.9
 	 *
 	 * @param object $type either a post type or a taxonomy
 	 */
 	public function translate_labels( $type ) {
-		// use static array to avoid translating several times the same ( default ) labels
+		// Use static array to avoid translating several times the same ( default ) labels
 		static $translated = array();
 
 		foreach ( $type->labels as $key => $label ) {
@@ -193,7 +225,7 @@ class PLL_OLT_Manager {
 	}
 
 	/**
-	 * allows Polylang to be the first plugin loaded ;- )
+	 * Allows Polylang to be the first plugin loaded ;- )
 	 *
 	 * @since 1.2
 	 *

@@ -23,8 +23,10 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		parent::__construct( $model );
 
 		// filters to prime terms cache
-		add_filter( 'get_terms', array( &$this, '_prime_terms_cache' ), 10, 2 );
-		add_filter( 'wp_get_object_terms', array( &$this, 'wp_get_object_terms' ), 10, 3 );
+		add_filter( 'get_terms', array( $this, '_prime_terms_cache' ), 10, 2 );
+		add_filter( 'wp_get_object_terms', array( $this, 'wp_get_object_terms' ), 10, 3 );
+
+		add_action( 'clean_term_cache', array( $this, 'clean_term_cache' ) );
 	}
 
 	/**
@@ -75,7 +77,7 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 
 		// get_term_by still not cached in WP 3.5.1 but internally, the function is always called by term_id
 		elseif ( is_string( $value ) && $taxonomy ) {
-			$term_id = get_term_by( 'slug', $value , $taxonomy )->term_id;
+			$term_id = wpcom_vip_get_term_by( 'slug', $value , $taxonomy )->term_id;
 		}
 
 		// get the language and make sure it is a PLL_Language object
@@ -136,7 +138,7 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 	 * @return array unmodified $terms
 	 */
 	public function _prime_terms_cache( $terms, $taxonomies ) {
-		if ( $this->model->is_translated_taxonomy( $taxonomies ) ) {
+		if ( is_array( $terms ) && $this->model->is_translated_taxonomy( $taxonomies ) ) {
 			foreach ( $terms as $term ) {
 				$term_ids[] = is_object( $term ) ? $term->term_id : (int) $term;
 			}
@@ -164,5 +166,17 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 			$this->_prime_terms_cache( $terms, $taxonomies );
 		}
 		return $terms;
+	}
+
+	/**
+	 * When the term cache is cleaned, clean the object term cache too
+	 *
+	 * @since 2.0
+	 *
+	 * @param array  $ids      An array of term IDs.
+	 * @param string $taxonomy Taxonomy slug.
+	 */
+	function clean_term_cache( $ids ) {
+		clean_object_term_cache( $ids, 'term' );
 	}
 }

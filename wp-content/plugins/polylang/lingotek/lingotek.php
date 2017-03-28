@@ -1,18 +1,18 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // don't access directly
+	exit; // Don't access directly
 };
 
-/*
- * class to manage Lingotek ads
+/**
+ * Class to manage Lingotek ads
  *
  * @since 1.7.7
  */
 class PLL_Lingotek {
 	const LINGOTEK = 'lingotek-translation/lingotek.php';
 
-	/*
+	/**
 	 * Init
 	 *
 	 * @since 1.7.7
@@ -20,15 +20,15 @@ class PLL_Lingotek {
 	public function init() {
 		$options = get_option( 'polylang' );
 
-		// the Lingotek tab
-		add_filter( 'pll_settings_tabs', array( &$this, 'add_tab' ) );
-		add_action( 'pll_settings_active_tab_lingotek', array( &$this, 'display_tab' ) );
+		// The Lingotek tab
+		add_filter( 'pll_settings_tabs', array( $this, 'add_tab' ) );
+		add_action( 'pll_settings_active_tab_lingotek', array( $this, 'display_tab' ) );
 
-		if ( PLL_SETTINGS && isset( $_GET['tab'] ) && 'lingotek' == $_GET['tab'] ) {
-			add_action( 'admin_print_styles', array( &$this, 'print_css' ) );
+		if ( PLL_SETTINGS && isset( $_GET['page'] ) && 'mlang_lingotek' == $_GET['page'] ) {
+			add_action( 'admin_print_styles', array( $this, 'print_css' ) );
 		}
 
-		// the pointer
+		// The pointer
 		$content = __( 'You’ve just upgraded to the latest version of Polylang! Would you like to automatically translate your website for free?', 'polylang' );
 
 		$buttons = array(
@@ -57,7 +57,7 @@ class PLL_Lingotek {
 				'edge' => 'top',
 				'align' => 'left',
 			),
-			'width' => 380,
+			'width' => 400,
 			'title' => __( 'Congratulations!', 'polylang' ),
 			'content' => $content,
 			'buttons' => $buttons,
@@ -66,8 +66,8 @@ class PLL_Lingotek {
 		new PLL_Pointer( $args );
 	}
 
-	/*
-	 * adds the Lingotek tab in Polylang settings
+	/**
+	 * Adds the Lingotek tab in Polylang settings
 	 *
 	 * @since 1.7.7
 	 *
@@ -79,8 +79,8 @@ class PLL_Lingotek {
 		return $tabs;
 	}
 
-	/*
-	 * displays the content in the Lingotek tab
+	/**
+	 * Displays the content in the Lingotek tab
 	 *
 	 * @since 1.7.7
 	 */
@@ -107,7 +107,7 @@ class PLL_Lingotek {
 			)
 		);
 
-		printf( '<p>%s</p>', __( 'Polylang is now fully integrated with Lingotek, a professional translation management system!', 'polylang' ) );
+		printf( '<p>%s</p>', esc_html__( 'Polylang is now fully integrated with Lingotek, a professional translation management system!', 'polylang' ) );
 
 		$this->box(
 			__( 'Automatically Translate My Site', 'polylang' ),
@@ -161,8 +161,8 @@ class PLL_Lingotek {
 
 	}
 
-	/*
-	 * styles the content of the Lingotek tab
+	/**
+	 * Styles the content of the Lingotek tab
 	 *
 	 * @since 1.7.7
 	 */
@@ -224,16 +224,16 @@ class PLL_Lingotek {
 		</style><?php
 	}
 
-	/*
-	 * outputs the content of each box
+	/**
+	 * Outputs the content of each box
 	 *
 	 * @since 1.7.7
 	 *
 	 * @param string $title
 	 * @param string $desc
-	 * @param array $list
-	 * @param array $links
-	 * @param $img string
+	 * @param array  $list
+	 * @param array  $links
+	 * @param string $img
 	 */
 	protected function box( $title, $desc, $list, $links, $img ) {?>
 		<div class="ltk-feature">
@@ -259,14 +259,14 @@ class PLL_Lingotek {
 						printf( '<li>%s</li>', esc_html( $item ) );
 					} ?>
 				</ul>
-				<a href="http://www.lingotek.com/wordpress" target = "_blank"><?php _e( 'Learn more...', 'polylang' ) ?></a>
+				<a href="http://www.lingotek.com/wordpress" target = "_blank"><?php esc_html_e( 'Learn more...', 'polylang' ) ?></a>
 			</div>
 
 		</div><?php
 	}
 
-	/*
-	 * get a link to install / activate Lingotek
+	/**
+	 * Get a link to install / activate Lingotek
 	 * depending on user rights and if plugin is already installed
 	 *
 	 * @since 1.7.7
@@ -274,6 +274,8 @@ class PLL_Lingotek {
 	 * @return string
 	 */
 	protected function get_activate_link() {
+		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+
 		if ( ! array_key_exists( self::LINGOTEK, get_plugins() ) ) {
 			if ( current_user_can( 'install_plugins' ) ) {
 				$plugin = dirname( self::LINGOTEK );
@@ -291,4 +293,4 @@ class PLL_Lingotek {
 	}
 }
 
-add_action( 'admin_init', array( new PLL_Lingotek(), 'init' ) );
+add_action( 'wp_loaded', array( new PLL_Lingotek(), 'init' ) );

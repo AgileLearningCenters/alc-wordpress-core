@@ -8,7 +8,7 @@
 class PLL_Settings_Url extends PLL_Settings_Module {
 
 	/**
-	 * constructor
+	 * Constructor
 	 *
 	 * @since 1.8
 	 *
@@ -27,7 +27,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	}
 
 	/**
-	 * displays the fieldset to choose how the language is set
+	 * Displays the fieldset to choose how the language is set
 	 *
 	 * @since 1.8
 	 */
@@ -36,33 +36,33 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			printf(
 				'<input name="force_lang" type="radio" value="0" %s /> %s',
 				$this->options['force_lang'] ? '' : 'checked="checked"',
-				__( 'The language is set from content', 'polylang' )
+				esc_html__( 'The language is set from content', 'polylang' )
 			);?>
 		</label>
-		<p class="description"><?php _e( 'Posts, pages, categories and tags urls are not modified.', 'polylang' );?></p>
+		<p class="description"><?php esc_html_e( 'Posts, pages, categories and tags urls are not modified.', 'polylang' );?></p>
 		<label><?php
 			printf(
 				'<input name="force_lang" type="radio" value="1" %s/> %s',
 				1 == $this->options['force_lang'] ? 'checked="checked"' : '',
-				$this->links_model->using_permalinks ? __( 'The language is set from the directory name in pretty permalinks', 'polylang' ) : __( 'The language is set from the code in the URL', 'polylang' )
+				$this->links_model->using_permalinks ? esc_html__( 'The language is set from the directory name in pretty permalinks', 'polylang' ) : esc_html__( 'The language is set from the code in the URL', 'polylang' )
 			);?>
 		</label>
-		<p class="description"><?php echo __( 'Example:', 'polylang' ) . ' <code>' . esc_html( home_url( $this->links_model->using_permalinks ? 'en/my-post/' : '?lang=en&p=1' ) ) . '</code>';?></p>
+		<p class="description"><?php echo esc_html__( 'Example:', 'polylang' ) . ' <code>' . esc_html( home_url( $this->links_model->using_permalinks ? 'en/my-post/' : '?lang=en&p=1' ) ) . '</code>';?></p>
 		<label><?php
 			printf(
 				'<input name="force_lang" type="radio" value="2" %s %s/> %s',
 				$this->links_model->using_permalinks ? '' : 'disabled="disabled"',
 				2 == $this->options['force_lang'] ? 'checked="checked"' : '',
-				__( 'The language is set from the subdomain name in pretty permalinks', 'polylang' )
+				esc_html__( 'The language is set from the subdomain name in pretty permalinks', 'polylang' )
 			);?>
 		</label>
-		<p class="description"><?php echo __( 'Example:', 'polylang' ) . ' <code>' . esc_html( str_replace( array( '://', 'www.' ), array( '://en.', '' ), home_url( 'my-post/' ) ) ) . '</code>';?></p>
+		<p class="description"><?php echo esc_html__( 'Example:', 'polylang' ) . ' <code>' . esc_html( str_replace( array( '://', 'www.' ), array( '://en.', '' ), home_url( 'my-post/' ) ) ) . '</code>';?></p>
 		<label><?php
 			printf(
 				'<input name="force_lang" type="radio" value="3" %s %s/> %s',
 				$this->links_model->using_permalinks ? '' : 'disabled="disabled"',
 				3 == $this->options['force_lang'] ? 'checked="checked"' : '',
-				__( 'The language is set from different domains', 'polylang' )
+				esc_html__( 'The language is set from different domains', 'polylang' )
 			);?>
 		</label>
 		<table id="pll-domains-table" class="form-table" <?php echo 3 == $this->options['force_lang'] ? '' : 'style="display: none;"'; ?>><?php
@@ -78,8 +78,8 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		</table><?php
 	}
 
-	/*
-	 * displays the fieldset to choose to hide the default language information in url
+	/**
+	 * Displays the fieldset to choose to hide the default language information in url
 	 *
 	 * @since 1.8
 	 */
@@ -88,13 +88,13 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			printf(
 				'<input name="hide_default" type="checkbox" value="1" %s /> %s',
 				$this->options['hide_default'] ? 'checked="checked"' :'',
-				__( 'Hide URL language information for default language', 'polylang' )
+				esc_html__( 'Hide URL language information for default language', 'polylang' )
 			);?>
 		</label><?php
 	}
 
 	/**
-	 * displays the fieldset to choose to hide /language/ in url
+	 * Displays the fieldset to choose to hide /language/ in url
 	 *
 	 * @since 1.8
 	 */
@@ -104,23 +104,23 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 				'<input name="rewrite" type="radio" value="1" %s %s/> %s',
 				$this->links_model->using_permalinks ? '' : 'disabled="disabled"',
 				$this->options['rewrite'] ? 'checked="checked"' : '',
-				__( 'Remove /language/ in pretty permalinks', 'polylang' )
+				esc_html__( 'Remove /language/ in pretty permalinks', 'polylang' )
 			);?>
 		</label>
-		<p class="description"><?php echo __( 'Example:', 'polylang' ) . ' <code>' . esc_html( home_url( 'en/' ) ) . '</code>';?></p>
+		<p class="description"><?php echo esc_html__( 'Example:', 'polylang' ) . ' <code>' . esc_html( home_url( 'en/' ) ) . '</code>';?></p>
 		<label><?php
 			printf(
 				'<input name="rewrite" type="radio" value="0" %s %s/> %s',
 				$this->links_model->using_permalinks ? '' : 'disabled="disabled"',
 				$this->options['rewrite'] ? '' : 'checked="checked"',
-				__( 'Keep /language/ in pretty permalinks', 'polylang' )
+				esc_html__( 'Keep /language/ in pretty permalinks', 'polylang' )
 			);?>
 		</label>
-		<p class="description"><?php echo __( 'Example:', 'polylang' ) . ' <code>' . esc_html( home_url( 'language/en/' ) ) . '</code>';?></p><?php
+		<p class="description"><?php echo esc_html__( 'Example:', 'polylang' ) . ' <code>' . esc_html( home_url( 'language/en/' ) ) . '</code>';?></p><?php
 	}
 
 	/**
-	 * displays the fieldset to choose to redirect the home page to language page
+	 * Displays the fieldset to choose to redirect the home page to language page
 	 *
 	 * @since 1.8
 	 */
@@ -129,16 +129,16 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			printf(
 				'<input name="redirect_lang" type="checkbox" value="1" %s/> %s',
 				$this->options['redirect_lang'] ? 'checked="checked"' :'',
-				__( 'The front page url contains the language code instead of the page name or page id', 'polylang' )
+				esc_html__( 'The front page url contains the language code instead of the page name or page id', 'polylang' )
 			);?>
 		</label>
 		<p class="description"><?php
-			// that's nice to display the right home urls but don't forget that the page on front may have no language yet
+			// That's nice to display the right home urls but don't forget that the page on front may have no language yet
 			$lang = $this->model->post->get_language( $this->page_on_front );
 			$lang = $lang ? $lang : $this->model->get_language( $this->options['default_lang'] );
 			printf(
 				/* translators: %s are urls */
-				__( 'Example: %s instead of %s', 'polylang' ),
+				esc_html__( 'Example: %s instead of %s', 'polylang' ),
 				'<code>' . esc_html( $this->links_model->home_url( $lang ) ) . '</code>',
 				'<code>' . esc_html( _get_page_link( $this->page_on_front ) ) . '</code>'
 			); ?>
@@ -146,7 +146,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	}
 
 	/**
-	 * displays the settings
+	 * Displays the settings
 	 *
 	 * @since 1.8
 	 */
@@ -177,7 +177,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	}
 
 	/**
-	 * sanitizes the settings before saving
+	 * Sanitizes the settings before saving
 	 *
 	 * @since 1.8
 	 *
@@ -211,16 +211,16 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			$newoptions['browser'] = $newoptions['hide_default'] = 0;
 		}
 
-		// check if domains exist
+		// Check if domains exist
 		if ( $newoptions['force_lang'] > 1 ) {
 			$this->check_domains( $newoptions );
 		}
 
-		return $newoptions; // take care to return only validated options
+		return $newoptions; // Take care to return only validated options
 	}
 
 	/**
-	 * check if subdomains or domains are accessible
+	 * Check if subdomains or domains are accessible
 	 *
 	 * @since 1.8
 	 *
@@ -231,8 +231,9 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		$model = new PLL_Model( $options );
 		$links_model = $model->get_links_model();
 		foreach ( $this->model->get_languages_list() as $lang ) {
-			$url = $links_model->home_url( $lang );
-			$response = wp_remote_get( add_query_arg( 'deactivate-polylang', 1, $url ) );
+			$url = add_query_arg( 'deactivate-polylang', 1, $links_model->home_url( $lang ) );
+			// Don't redefine vip_safe_wp_remote_get() as it has not the same signature as wp_remote_get()
+			$response = function_exists( 'vip_safe_wp_remote_get' ) ? vip_safe_wp_remote_get( esc_url_raw( $url ) ) : wp_remote_get( esc_url_raw( $url ) );
 			$response_code = wp_remote_retrieve_response_code( $response );
 
 			if ( 200 != $response_code ) {

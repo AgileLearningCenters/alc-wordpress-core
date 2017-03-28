@@ -7,7 +7,7 @@
  *
  * @since 1.2
  */
-class PLL_Links_Domain extends PLL_Links_Permalinks {
+class PLL_Links_Domain extends PLL_Links_Abstract_Domain {
 
 	/**
 	 * Constructor
@@ -19,7 +19,10 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 	public function __construct( &$model ) {
 		parent::__construct( $model );
 
-		add_filter( 'site_url', array( &$this, 'site_url' ) );
+		$this->hosts = $this->get_hosts();
+
+		 // Filrer the site url ( mainly to get the correct login form )
+		 add_filter( 'site_url', array( $this, 'site_url' ) );
 	}
 
 
@@ -34,8 +37,8 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 	 * @return string modified url
 	 */
 	public function add_language_to_link( $url, $lang ) {
-		if ( ! empty( $lang ) && ! empty( $this->options['domains'][ $lang->slug ] ) ) {
-			$url = str_replace( $this->home, $this->options['domains'][ $lang->slug ], $url );
+		if ( ! empty( $lang ) && ! empty( $this->hosts[ $lang->slug ] ) ) {
+			$url = preg_replace( '#:\/\/(' . parse_url( $this->home, PHP_URL_HOST ) . ')($|\/.*)#', '://' . $this->hosts[ $lang->slug ] . "$2", $url );
 		}
 		return $url;
 	}
@@ -50,8 +53,8 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 	 * @return string modified url
 	 */
 	public function remove_language_from_link( $url ) {
-		if ( ! empty( $this->options['domains'] ) ) {
-			$url = str_replace( ( is_ssl() ? 'https://' : 'http://' ) . parse_url( $url, PHP_URL_HOST ) . parse_url( $this->home, PHP_URL_PATH ), $this->home, $url );
+		if ( ! empty( $this->hosts ) ) {
+			$url = preg_replace( '#:\/\/(' . implode( '|', $this->hosts ) . ')($|\/.*)#', '://' . parse_url( $this->home, PHP_URL_HOST ) . "$2", $url );
 		}
 		return $url;
 	}
@@ -61,11 +64,14 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 	 * links_model interface
 	 *
 	 * @since 1.2
+	 * @since 2.0 add $url argument
 	 *
+	 * @param string $url optional, defaults to current url
 	 * @return string language slug
 	 */
-	public function get_language_from_url() {
-		return ( $lang = array_search( ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . parse_url( $this->home, PHP_URL_PATH ), $this->options['domains'] ) ) ? $lang : '';
+	public function get_language_from_url( $url = '' ) {
+		$host = empty( $url ) ? $_SERVER['HTTP_HOST'] : parse_url( $url, PHP_URL_HOST );
+		return ( $lang = array_search( $host , $this->hosts ) ) ? $lang : '';
 	}
 
 	/**
@@ -90,23 +96,9 @@ class PLL_Links_Domain extends PLL_Links_Permalinks {
 	 */
 	public function get_hosts() {
 		$hosts = array();
-		foreach ( $this->options['domains'] as $domain ) {
-			$hosts[] = parse_url( $domain, PHP_URL_HOST );
+		foreach ( $this->options['domains'] as $lang => $domain ) {
+			$hosts[ $lang ] = parse_url( $domain, PHP_URL_HOST );
 		}
 		return $hosts;
-	}
-
-	/**
-	 * Returns the correct site url ( mainly to get the correct login form )
-	 *
-	 * @since 1.8
-	 *
-	 * @param string $url
-	 * @return string
-	 */
-	public function site_url( $url ) {
-		$lang = $this->get_language_from_url();
-		$lang = $this->model->get_language( $lang );
-		return $this->add_language_to_link( $url, $lang );
 	}
 }

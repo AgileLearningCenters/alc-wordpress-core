@@ -19,18 +19,18 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		$this->curlang = &$polylang->curlang;
 
 		// Split the language switcher menu item in several language menu items
-		add_filter( 'wp_get_nav_menu_items', array( &$this, 'wp_get_nav_menu_items' ), 20 ); // after the customizer menus
-		add_filter( 'wp_nav_menu_objects', array( &$this, 'wp_nav_menu_objects' ) );
-		add_filter( 'nav_menu_link_attributes', array( &$this, 'nav_menu_link_attributes' ), 10, 3 );
+		add_filter( 'wp_get_nav_menu_items', array( $this, 'wp_get_nav_menu_items' ), 20 ); // after the customizer menus
+		add_filter( 'wp_nav_menu_objects', array( $this, 'wp_nav_menu_objects' ) );
+		add_filter( 'nav_menu_link_attributes', array( $this, 'nav_menu_link_attributes' ), 10, 3 );
 
 		// Filters menus by language
 		add_filter( 'theme_mod_nav_menu_locations', array( $this, 'nav_menu_locations' ), 20 );
-		add_filter( 'wp_nav_menu_args', array( &$this, 'wp_nav_menu_args' ) );
+		add_filter( 'wp_nav_menu_args', array( $this, 'wp_nav_menu_args' ) );
 
 		// The customizer
 		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
-			add_filter( 'wp_nav_menu_args', array( &$this, 'filter_args_before_customizer' ) );
-			add_filter( 'wp_nav_menu_args', array( &$this, 'filter_args_after_customizer' ), 2000 );
+			add_filter( 'wp_nav_menu_args', array( $this, 'filter_args_before_customizer' ) );
+			add_filter( 'wp_nav_menu_args', array( $this, 'filter_args_after_customizer' ), 2000 );
 		}
 	}
 
@@ -75,6 +75,15 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 				$args = array_merge( array( 'raw' => 1 ), $options );
 				$the_languages = $switcher->the_languages( PLL()->links, $args );
 
+				// parent item for dropdown
+				if ( ! empty( $options['dropdown'] ) ) {
+					$item->title = $options['show_flags'] && $options['show_names'] ? $this->curlang->flag . '&nbsp;' . esc_html( $this->curlang->name ) : ( $options['show_flags'] ? $this->curlang->flag : esc_html( $this->curlang->name ) );
+					$item->url = '';
+					$item->classes = array( 'pll-parent-menu-item' );
+					$new_items[] = $item;
+					$offset++;
+				}
+
 				foreach ( $the_languages as $lang ) {
 					$lang_item = clone $item;
 					$lang_item->ID = $lang_item->ID . '-' . $lang['slug']; // A unique ID
@@ -83,6 +92,10 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 					$lang_item->lang = $lang['locale']; // Save this for use in nav_menu_link_attributes
 					$lang_item->classes = $lang['classes'];
 					$lang_item->menu_order += $offset + $i++;
+					if ( ! empty( $options['dropdown'] ) ) {
+						$lang_item->menu_item_parent = $item->db_id;
+						$lang_item->db_id = 0; // to avoid recursion
+					}
 					$new_items[] = $lang_item;
 				}
 				$offset += $i - 1;
@@ -91,7 +104,6 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 				$new_items[] = $item;
 			}
 		}
-
 		return $new_items;
 	}
 
@@ -156,7 +168,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	 */
 	public function nav_menu_link_attributes( $atts, $item, $args ) {
 		if ( isset( $item->lang ) ) {
-			$atts['hreflang'] = esc_attr( $item->lang );
+			$atts['lang'] = $atts['hreflang'] = esc_attr( $item->lang );
 		}
 		return $atts;
 	}

@@ -1,7 +1,7 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // don't access directly
+	exit; // Don't access directly
 };
 
 /**
@@ -228,6 +228,7 @@ $flags = array(
 	'tf' => __( 'French Southern Territories', 'polylang' ),
 	'tg' => __( 'Togo', 'polylang' ),
 	'th' => __( 'Thailand', 'polylang' ),
+	'tibet' => __( 'Tibet', 'polylang' ),
 	'tj' => __( 'Tajikistan', 'polylang' ),
 	'tk' => __( 'Tokelau', 'polylang' ),
 	'tl' => __( 'Timor-Leste', 'polylang' ),
@@ -262,7 +263,7 @@ $flags = array(
 	'zw' => __( 'Zimbabwe', 'polylang' ),
 );
 
-/*
+/**
  * Filter the list of predefined flags
  *
  * @since 1.8

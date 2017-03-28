@@ -89,6 +89,10 @@ class PLL_Admin_Model extends PLL_Model {
 	public function delete_language( $lang_id ) {
 		$lang = $this->get_language( (int) $lang_id );
 
+		if ( empty( $lang ) ) {
+			return;
+		}
+
 		// Oops ! we are deleting the default language...
 		// Need to do this before loosing the information for default category translations
 		if ( $this->options['default_lang'] == $lang->slug ) {
@@ -131,13 +135,12 @@ class PLL_Admin_Model extends PLL_Model {
 
 		// Delete users options
 		foreach ( get_users( array( 'fields' => 'ID' ) ) as $user_id ) {
-			delete_user_meta( $user_id, 'user_lang', $lang->locale );
 			delete_user_meta( $user_id, 'pll_filter_content', $lang->slug );
 			delete_user_meta( $user_id, 'description_'.$lang->slug );
 		}
 
 		// Delete the string translations
-		$post = get_page_by_title( 'polylang_mo_' . $lang->term_id, OBJECT, 'polylang_mo' );
+		$post = wpcom_vip_get_page_by_title( 'polylang_mo_' . $lang->term_id, OBJECT, 'polylang_mo' );
 		if ( ! empty( $post ) ) {
 			wp_delete_post( $post->ID );
 		}
@@ -482,6 +485,10 @@ class PLL_Admin_Model extends PLL_Model {
 				SET description = ( CASE term_id " . implode( ' ', $ut['case'] ) . " END )
 				WHERE term_id IN ( " . implode( ',', $ut['in'] ) . " )
 			" );
+		}
+
+		foreach ( $terms as $term ) {
+			clean_term_cache( $term->term_id, $term->taxonomy );
 		}
 	}
 

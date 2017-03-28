@@ -2,7 +2,7 @@
 // valid for both tag metabox and quick edit
 (function( $ ){
 	$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
-		if ( -1 !== options.url.indexOf( 'action=ajax-tag-search' ) && ( ( lang = $( '.post_lang_choice' ).val() ) || ( lang = $( ':input[name="inline_lang_choice"]' ).val() ) ) ) {
+		if ( 'string' === typeof options.data && ( -1 !== options.url.indexOf( 'action=ajax-tag-search' ) || -1 !== options.data.indexOf( 'action=ajax-tag-search' ) ) && ( ( lang = $( '.post_lang_choice' ).val() ) || ( lang = $( ':input[name="inline_lang_choice"]' ).val() ) ) ) {
 			options.data = 'lang=' + lang + '&' + options.data;
 		}
 	});
@@ -190,6 +190,12 @@ jQuery( document ).ready(function( $ ) {
 					break;
 					case 'flag': // flag in front of the select dropdown
 						$( '.pll-select-flag' ).html( this.data );
+					break;
+					case 'permalink': // Sample permalink
+						var div = $( '#edit-slug-box' );
+						if ( '-1' != this.data && div.children().length ) {
+							div.html( this.data );
+						}
 					break;
 				}
 			});

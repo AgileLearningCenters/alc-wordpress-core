@@ -1,32 +1,23 @@
 <?php
 
 /**
- * displays the Languages admin panel
+ * Displays the Languages admin panel
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // don't access directly
+	exit; // Don't access directly
 };
+
+require(ABSPATH . 'wp-admin/options-head.php'); // Displays the errors messages as when we were a child of options-general.php
 ?>
 <div class="wrap">
-	<h1><?php _e( 'Languages', 'polylang' ); ?></h1>
-	<h2 class="nav-tab-wrapper"><?php
-	// display tabs
-	foreach ( $tabs as $key => $name ) {
-		printf(
-			'<a href="options-general.php?page=mlang&amp;tab=%1$s" id="nav-tab-%1$s" class="nav-tab %2$s">%3$s</a>',
-			esc_attr( $key ),
-			$key == $this->active_tab ? 'nav-tab-active' : '',
-			esc_html( $name )
-		);
-	}?>
-	</h2><?php
+	<h1><?php echo esc_html( $GLOBALS['title'] ); ?></h1><?php
 
 	switch ( $this->active_tab ) {
 		case 'lang':     // Languages tab
-		case 'strings':  // string translations tab
-		case 'settings': // settings tab
-			include( PLL_SETTINGS_INC.'/view-tab-' . $this->active_tab . '.php' );
+		case 'strings':  // String translations tab
+		case 'settings': // Settings tab
+			include( PLL_SETTINGS_INC . '/view-tab-' . $this->active_tab . '.php' );
 		break;
 
 		default:

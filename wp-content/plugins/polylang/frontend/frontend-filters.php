@@ -18,27 +18,28 @@ class PLL_Frontend_Filters extends PLL_Filters{
 		parent::__construct( $polylang );
 
 		// Filters the WordPress locale
-		add_filter( 'locale', array( &$this, 'get_locale' ) );
+		add_filter( 'locale', array( $this, 'get_locale' ) );
 
 		// Filter sticky posts by current language
-		add_filter( 'option_sticky_posts', array( &$this, 'option_sticky_posts' ) );
+		add_filter( 'option_sticky_posts', array( $this, 'option_sticky_posts' ) );
 
 		// Adds cache domain when querying terms
-		add_filter( 'get_terms_args', array( &$this, 'get_terms_args' ) );
+		add_filter( 'get_terms_args', array( $this, 'get_terms_args' ) );
 
 		// Filters categories and post tags by language
-		add_filter( 'terms_clauses', array( &$this, 'terms_clauses' ), 10, 3 );
+		add_filter( 'terms_clauses', array( $this, 'terms_clauses' ), 10, 3 );
 
 		// Rewrites archives, next and previous post links to filter them by language
-		add_filter( 'getarchives_join', array( &$this, 'getarchives_join' ), 10, 2 );
-		add_filter( 'getarchives_where', array( &$this, 'getarchives_where' ), 10, 2 );
-		add_filter( 'get_previous_post_join', array( &$this, 'posts_join' ), 10, 5 );
-		add_filter( 'get_next_post_join', array( &$this, 'posts_join' ), 10, 5 );
-		add_filter( 'get_previous_post_where', array( &$this, 'posts_where' ), 10, 5 );
-		add_filter( 'get_next_post_where', array( &$this, 'posts_where' ), 10, 5 );
+		add_filter( 'getarchives_join', array( $this, 'getarchives_join' ), 10, 2 );
+		add_filter( 'getarchives_where', array( $this, 'getarchives_where' ), 10, 2 );
+		add_filter( 'get_previous_post_join', array( $this, 'posts_join' ), 10, 5 );
+		add_filter( 'get_next_post_join', array( $this, 'posts_join' ), 10, 5 );
+		add_filter( 'get_previous_post_where', array( $this, 'posts_where' ), 10, 5 );
+		add_filter( 'get_next_post_where', array( $this, 'posts_where' ), 10, 5 );
 
 		// Filters the widgets according to the current language
-		add_filter( 'widget_display_callback', array( &$this, 'widget_display_callback' ), 10, 2 );
+		add_filter( 'widget_display_callback', array( $this, 'widget_display_callback' ), 10, 2 );
+		add_filter( 'sidebars_widgets', array( $this, 'sidebars_widgets' ) );
 
 		// Strings translation ( must be applied before WordPress applies its default formatting filters )
 		foreach ( array( 'widget_text', 'widget_title', 'option_blogname', 'option_blogdescription', 'option_date_format', 'option_time_format' ) as $filter ) {
@@ -46,15 +47,15 @@ class PLL_Frontend_Filters extends PLL_Filters{
 		}
 
 		// Translates biography
-		add_filter( 'get_user_metadata', array( &$this, 'get_user_metadata' ), 10, 4 );
+		add_filter( 'get_user_metadata', array( $this, 'get_user_metadata' ), 10, 4 );
 
 		// Set posts and terms language when created from frontend ( ex with P2 theme )
-		add_action( 'save_post', array( &$this, 'save_post' ), 200, 2 );
-		add_action( 'create_term', array( &$this, 'save_term' ), 10, 3 );
-		add_action( 'edit_term', array( &$this, 'save_term' ), 10, 3 );
+		add_action( 'save_post', array( $this, 'save_post' ), 200, 2 );
+		add_action( 'create_term', array( $this, 'save_term' ), 10, 3 );
+		add_action( 'edit_term', array( $this, 'save_term' ), 10, 3 );
 
 		if ( $this->options['media_support'] ) {
-			add_action( 'add_attachment', array( &$this, 'set_default_language' ) );
+			add_action( 'add_attachment', array( $this, 'set_default_language' ) );
 		}
 
 		// Support theme customizer
@@ -126,7 +127,8 @@ class PLL_Frontend_Filters extends PLL_Filters{
 	 */
 	public function terms_clauses( $clauses, $taxonomies, $args ) {
 		// Does nothing except on taxonomies which are filterable
-		if ( ! $this->model->is_translated_taxonomy( $taxonomies ) ) {
+		// Since WP 4.7, make sure not to filter wp_get_object_terms()
+		if ( ! $this->model->is_translated_taxonomy( $taxonomies ) || ! empty( $args['object_ids'] ) ) {
 			return $clauses;
 		}
 
@@ -173,8 +175,7 @@ class PLL_Frontend_Filters extends PLL_Filters{
 	 * @return string modified JOIN clause
 	 */
 	public function posts_join( $sql, $in_same_term, $excluded_terms, $taxonomy = '', $post = null ) {
-		// FIXME empty( $post ) for backward compatibility with WP < 4.4
-		return empty( $post ) || $this->model->is_translated_post_type( $post->post_type ) ? $sql . $this->model->post->join_clause() : $sql;
+		return $this->model->is_translated_post_type( $post->post_type ) ? $sql . $this->model->post->join_clause( 'p' ) : $sql;
 	}
 
 	/**
@@ -190,15 +191,7 @@ class PLL_Frontend_Filters extends PLL_Filters{
 	 * @return string modified WHERE clause
 	 */
 	public function posts_where( $sql, $in_same_term, $excluded_terms, $taxonomy = '', $post = null ) {
-		// backward compatibility with WP < 4.4
-		if ( version_compare( $GLOBALS['wp_version'], '4.4', '<' ) ) {
-			preg_match( "#post_type = '([^']+)'#", $sql, $matches );	// find the queried post type
-			$post_type = $matches[1];
-		} else {
-			$post_type = $post->post_type;
-		}
-
-		return ! empty( $post_type ) && $this->model->is_translated_post_type( $post_type ) ? $sql . $this->model->post->where_clause( $this->curlang ) : $sql;
+		return $this->model->is_translated_post_type( $post->post_type ) ? $sql . $this->model->post->where_clause( $this->curlang ) : $sql;
 	}
 
 	/**
@@ -213,6 +206,43 @@ class PLL_Frontend_Filters extends PLL_Filters{
 	 */
 	public function widget_display_callback( $instance, $widget ) {
 		return ! empty( $instance['pll_lang'] ) && $instance['pll_lang'] != $this->curlang->slug ? false : $instance;
+	}
+
+	/**
+	 * Remove widgets from sidebars if they are not visible in the current language
+	 * Needed to allow is_active_sidebar() to return false if all widgets are not for the current language. See #54
+	 *
+	 * @since 2.1
+	 *
+	 * @param array $sidebars_widgets An associative array of sidebars and their widgets
+	 * @return array
+	 */
+	public function sidebars_widgets( $sidebars_widgets ) {
+		global $wp_registered_widgets;
+
+		foreach ( $sidebars_widgets as $sidebar => $widgets ) {
+			if ( 'wp_inactive_widgets' == $sidebar || empty( $widgets ) ) {
+				continue;
+			}
+
+			foreach ( $widgets as $key => $widget ) {
+				// Nothing can be done if the widget is created using pre WP2.8 API :(
+				// There is no object, so we can't access it to get the widget options
+				if ( ! isset( $wp_registered_widgets[ $widget ]['callback'][0] ) || ! is_object( $wp_registered_widgets[ $widget ]['callback'][0] ) || ! method_exists( $wp_registered_widgets[ $widget ]['callback'][0], 'get_settings' ) ) {
+					continue;
+				}
+
+				$widget_settings = $wp_registered_widgets[ $widget ]['callback'][0]->get_settings();
+				$number = $wp_registered_widgets[ $widget ]['params'][0]['number'];
+
+				// Remove the widget if not visible in the current language
+				if ( ! empty( $widget_settings[ $number ]['pll_lang'] ) && $widget_settings[ $number ]['pll_lang'] !== $this->curlang->slug ) {
+					unset( $sidebars_widgets[ $sidebar ][ $key ] );
+				}
+			}
+		}
+
+		return $sidebars_widgets;
 	}
 
 	/**

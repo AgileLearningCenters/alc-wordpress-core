@@ -23,11 +23,11 @@ abstract class PLL_Links_Model {
 
 		$this->home = home_url();
 
-		add_filter( 'pll_languages_list', array( &$this, 'pll_languages_list' ), 4 ); // after PLL_Static_Pages
-		add_filter( 'pll_after_languages_cache', array( &$this, 'pll_after_languages_cache' ) );
+		add_filter( 'pll_languages_list', array( $this, 'pll_languages_list' ), 4 ); // after PLL_Static_Pages
+		add_filter( 'pll_after_languages_cache', array( $this, 'pll_after_languages_cache' ) );
 
 		// adds our domains or subdomains to allowed hosts for safe redirection
-		add_filter( 'allowed_redirect_hosts', array( &$this, 'allowed_redirect_hosts' ) );
+		add_filter( 'allowed_redirect_hosts', array( $this, 'allowed_redirect_hosts' ) );
 	}
 
 	/**
@@ -82,7 +82,7 @@ abstract class PLL_Links_Model {
 	}
 
 	/**
-	 * Sets the home urls before it is persistently cached
+	 * Sets the home urls and flags before the languages are persistently cached
 	 *
 	 * @since 1.8
 	 *
@@ -92,6 +92,7 @@ abstract class PLL_Links_Model {
 	public function pll_languages_list( $languages ) {
 		foreach ( $languages as $language ) {
 			$this->set_home_url( $language );
+			$language->set_flag();
 		}
 		return $languages;
 	}
@@ -127,6 +128,6 @@ abstract class PLL_Links_Model {
 	 * @return array
 	 */
 	public function allowed_redirect_hosts( $hosts ) {
-		return array_unique( array_merge( $hosts, $this->get_hosts() ) );
+		return array_unique( array_merge( $hosts, array_values( $this->get_hosts() ) ) );
 	}
 }
