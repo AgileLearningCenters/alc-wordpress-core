@@ -1,10 +1,10 @@
 === WordPress Simple Paypal Shopping Cart ===
-Contributors: Tips and Tricks HQ, Ruhul Amin, wptipsntricks, mbrsolution
+Contributors: Tips and Tricks HQ, Ruhul Amin, wptipsntricks, mbrsolution, mra13
 Donate link: https://www.tipsandtricks-hq.com
 Tags: cart, shopping cart, WordPress shopping cart, Paypal shopping cart, sell, selling, sell products, online shop, shop, e-commerce, wordpress ecommerce, wordpress store, store, PayPal cart widget, sell digital products, sell service, digital downloads, paypal, paypal cart, e-shop, compact cart, coupon, discount
 Requires at least: 3.0
-Tested up to: 4.5
-Stable tag: 4.2.5
+Tested up to: 4.7
+Stable tag: 4.3.2
 License: GPLv2 or later
 
 Very easy to use Simple WordPress Paypal Shopping Cart Plugin. Great for selling products online in one click from your WordPress site.
@@ -86,6 +86,7 @@ The following language translations are already available:
 * Danish
 * Turkish
 * Dutch
+* Brazilian Portuguese
 
 You can translate the plugin using [this documentation](https://www.tipsandtricks-hq.com/ecommerce/translating-the-wp-simple-shopping-cart-plugin-2627).
 
@@ -179,6 +180,34 @@ Visit the plugin site at https://www.tipsandtricks-hq.com/wordpress-simple-paypa
 None
 
 == Changelog ==
+
+= 4.3.2 = 
+- Bugfix for the new custom field change.
+
+= 4.3.1 =
+- Custom field values will now be urlencoded.
+
+= 4.3.0 =
+- Added Brazilian Portuguese Language translation to the plugin. The translation file was submitted by Fabio Goncalves.
+- If the total shipping cost in the cart is 0 then the plugin will send a flag to paypal to not prompt for shipping address during checkout.
+
+= 4.2.9 =
+- Added a new option to export all the orders data to a CSV file. This new option can be found under the Simple Cart Settings -> Tools menu.
+- Added a new filter (wspsc_paypal_ipn_notify_url) to allow overriding of the PayPal IPN notify URL.
+- Added a new compact cart shortcode that uses a different style. Read the following page to find out how it works:
+  https://www.tipsandtricks-hq.com/ecommerce/simple-cart-showing-a-compact-shopping-cart-2925
+
+= 4.2.8 =
+- Fixed an issue with the {payer_email} tag not working in the buyer notification email.
+
+= 4.2.7 =
+- Added a new filter for the cart icon image (wspsc_cart_icon_image_src). It can be used to customize the cart icon image.
+- Added escaping for the cart link parameter.
+
+= 4.2.6 =
+- Added a new email merge tag for phone number (when available). The new email tag is {phone}. Note that the phone number is an optional field on PayPal checkout page. So it may not be present if the customer doesn't enter a phone number during the checkout.
+- Added a new shortcode parameter (thumb_alt) for the product box shortcode. It can be used to specify an alt tag for the product thumbnail image.
+- Added url_decode in the cart link parameter. So the link works even when the URL contains foreign characters.
 
 = 4.2.5 =
 - Minor update for backwards compatibility with an old shortcode using variation.

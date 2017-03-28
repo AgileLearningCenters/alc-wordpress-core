@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: WP Simple Paypal Shopping cart
-Version: 4.2.5
+Version: 4.3.2
 Plugin URI: https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768
-Author: Tips and Tricks HQ, Ruhul Amin
+Author: Tips and Tricks HQ, Ruhul Amin, mra13
 Author URI: https://www.tipsandtricks-hq.com/
 Description: Simple WordPress Shopping Cart Plugin, very easy to use and great for selling products and services from your blog!
 Text Domain: wordpress-simple-paypal-shopping-cart
@@ -26,7 +26,7 @@ if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
     }
 }
 
-define('WP_CART_VERSION', '4.2.5');
+define('WP_CART_VERSION', '4.3.2');
 define('WP_CART_FOLDER', dirname(plugin_basename(__FILE__)));
 define('WP_CART_PATH', plugin_dir_path(__FILE__));
 define('WP_CART_URL', plugins_url('', __FILE__));
@@ -133,7 +133,7 @@ function wpspc_cart_actions_handler() {
         //Sanitize post data
         $post_wspsc_product = isset($_POST['wspsc_product']) ? stripslashes(sanitize_text_field($_POST['wspsc_product'])) : '';
         $post_item_number = isset($_POST['item_number']) ? sanitize_text_field($_POST['item_number']) : '';
-        $post_cart_link = isset($_POST['cartLink']) ? esc_url_raw(sanitize_text_field($_POST['cartLink'])) : '';
+        $post_cart_link = isset($_POST['cartLink']) ? esc_url_raw(sanitize_text_field(urldecode($_POST['cartLink']))) : '';
         $post_stamp_pdf = isset($_POST['stamp_pdf']) ? sanitize_text_field($_POST['stamp_pdf']) : '';
         $post_encoded_file_val = isset($_POST['file_url']) ? sanitize_text_field($_POST['file_url']) : '';
         $post_thumbnail = isset($_POST['thumbnail']) ? esc_url_raw(sanitize_text_field($_POST['thumbnail'])) : '';
@@ -335,6 +335,7 @@ function wp_cart_add_custom_field() {
     }
 
     $custom_field_val = apply_filters('wpspc_cart_custom_field_value', $custom_field_val);
+    $custom_field_val = urlencode($custom_field_val);//URL encode the custom field value so nothing gets lost when it is passed around.
     $output = '<input type="hidden" name="custom" value="' . $custom_field_val . '" />';
     return $output;
 }
@@ -449,7 +450,7 @@ function print_wp_cart_button_new($content) {
         $hash_two = md5($p_key.'|'.$pieces['2']);//Shipping hash
         $replacement .= '<input type="hidden" name="hash_two" value="' . $hash_two . '" />';        
     
-        $replacement .= '<input type="hidden" name="cartLink" value="' . cart_current_page_url() . '" />';
+        $replacement .= '<input type="hidden" name="cartLink" value="' . esc_url(cart_current_page_url()) . '" />';
         $replacement .= '<input type="hidden" name="addcart" value="1" /></form>';
         $replacement .= '</div>';
         $content = str_replace($match, $replacement, $content);
@@ -550,7 +551,11 @@ function print_wp_cart_button_for_product($name, $price, $shipping = 0, $var1 = 
         }
     }
 
-    $replacement .= '<input type="hidden" name="wspsc_product" value="' . $name . '" /><input type="hidden" name="price" value="' . $price . '" /><input type="hidden" name="shipping" value="' . $shipping . '" /><input type="hidden" name="addcart" value="1" /><input type="hidden" name="cartLink" value="' . cart_current_page_url() . '" />';
+    $replacement .= '<input type="hidden" name="wspsc_product" value="' . $name . '" />';
+    $replacement .= '<input type="hidden" name="price" value="' . $price . '" />';
+    $replacement .= '<input type="hidden" name="shipping" value="' . $shipping . '" />';
+    $replacement .= '<input type="hidden" name="addcart" value="1" />';
+    $replacement .= '<input type="hidden" name="cartLink" value="' . esc_url(cart_current_page_url()) . '" />';
     $replacement .= '<input type="hidden" name="product_tmp" value="' . $name . '" />';
     isset($atts['item_number']) ? $item_num = $atts['item_number'] : $item_num = '';
     $replacement .= '<input type="hidden" name="item_number" value="' . $item_num . '" />';
@@ -726,12 +731,6 @@ add_filter('the_content', 'shopping_cart_show');
 if (!is_admin()) {
     add_filter('widget_text', 'do_shortcode');
 }
-
-add_shortcode('show_wp_shopping_cart', 'show_wp_shopping_cart_handler');
-add_shortcode('always_show_wp_shopping_cart', 'always_show_cart_handler');
-add_shortcode('wp_cart_button', 'wp_cart_button_handler');
-add_shortcode('wp_cart_display_product', 'wp_cart_display_product_handler');
-add_shortcode('wp_compact_cart', 'wspsc_compact_cart_handler');
 
 add_action('wp_head', 'wp_cart_add_read_form_javascript');
 add_action('wp_enqueue_scripts', 'wspsc_front_side_enqueue_scripts');

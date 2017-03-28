@@ -100,11 +100,22 @@ function wpspc_order_review_meta_box($wpsc_cart_orders)
         </tr>
         <tr>
             <td><?php _e("Address", "wordpress-simple-paypal-shopping-cart");?></td>
-            <td><textarea name="wpsc_address" cols="83" rows="2"><?php echo esc_attr($address);?></textarea></td>
+            <td>
+                <textarea name="wpsc_address" cols="83" rows="2"><?php echo esc_attr($address);?></textarea>
+                <p class="description">
+                    <?php _e("An address value will only be present if the order has physical item(s) with shipping amount. ", "wordpress-simple-paypal-shopping-cart"); ?>
+                    <?php _e("If you want to collect address for all orders then enable the 'Must Collect Shipping Address on PayPal' option from the plugin settings.", "wordpress-simple-paypal-shopping-cart"); ?>
+                </p>
+            </td>
         </tr>
         <tr>
             <td><?php _e("Phone", "wordpress-simple-paypal-shopping-cart");?></td>
-            <td><input type="text" size="40" name="wpspsc_phone" value="<?php echo esc_attr($phone); ?>" /></td>
+            <td>
+                <input type="text" size="40" name="wpspsc_phone" value="<?php echo esc_attr($phone); ?>" />
+                <p class="description">
+                    <?php _e("A phone number will only be present if the customer entered one during the checkout.", "wordpress-simple-paypal-shopping-cart"); ?>
+                </p>
+            </td>
         </tr>
         <tr>
             <td><?php _e("Buyer Email Sent?", "wordpress-simple-paypal-shopping-cart");?></td>

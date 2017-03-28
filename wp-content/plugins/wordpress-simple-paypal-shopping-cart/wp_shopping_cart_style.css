@@ -123,3 +123,34 @@ width:auto !important;
 height:auto !important;
 }
 /* End of compact cart css */
+/* Compact cart 2 css */
+.wspsc_compact_cart2{
+background-color:#b4d613;
+border:1px solid #92B002;
+max-width: 140px;
+min-width: 140px;
+padding: 2px 2px;
+margin:10px 0;
+}
+.wspsc_compact_cart2_container{
+background: url('images/shopping_cart_icon_2.png') 6px 6px no-repeat;
+padding-left: 40px;
+}
+.wspsc_compact_cart2_inside{
+background: #262626;
+display: block;
+color: #FFFFFF;
+font-size: 14px;
+text-align: center;
+cursor: pointer;
+padding: 3px 0;
+}
+.wspsc_compact_cart2_view_cart_link {
+color: #FFFFFF !important;
+text-decoration: none;
+}
+.wspsc_compact_cart2_view_cart_link:hover {
+color: #FFFFFF !important;
+text-decoration: none;
+}
+/* End of compact cart 2 css */

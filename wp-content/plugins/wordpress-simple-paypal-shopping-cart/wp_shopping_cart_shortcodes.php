@@ -1,5 +1,12 @@
 <?php
 
+add_shortcode('show_wp_shopping_cart', 'show_wp_shopping_cart_handler');
+add_shortcode('always_show_wp_shopping_cart', 'always_show_cart_handler');
+add_shortcode('wp_cart_button', 'wp_cart_button_handler');
+add_shortcode('wp_cart_display_product', 'wp_cart_display_product_handler');
+add_shortcode('wp_compact_cart', 'wspsc_compact_cart_handler');
+add_shortcode('wp_compact_cart2', 'wspsc_compact_cart2_handler');
+
 function wp_cart_button_handler($atts){
 	extract(shortcode_atts(array(
 		'name' => '',
@@ -39,6 +46,7 @@ function wp_cart_display_product_handler($atts)
         'var3' => '',    
         'thumbnail' => '',
         'thumb_target' => '',
+        'thumb_alt' => '',
         'description' => '',
         'button_image' => '',
         'file_url' => '',
@@ -54,11 +62,16 @@ function wp_cart_display_product_handler($atts)
     if(empty($thumbnail)){
         return '<div style="color:red;">'.(__("Error! You must specify a thumbnail image for your product in the shortcode.", "wordpress-simple-paypal-shopping-cart")).'</div>';
     }
+    if(empty($thumb_alt)){
+        //Use the product name as alt if the thumb_alt is not defined.
+        $thumb_alt = $name;
+    }
+    
     $price = wspsc_strip_char_from_price_amount($price);
     $shipping = wspsc_strip_char_from_price_amount($shipping);
-    $thumbnail_code = '<img src="'.$thumbnail.'">';
+    $thumbnail_code = '<img src="'.$thumbnail.'" alt="'.$thumb_alt.'">';
     if(!empty($thumb_target) && preg_match("/http/", $thumb_target)){
-        $thumbnail_code = '<a href="'.$thumb_target.'"><img src="'.$thumbnail.'"></a>';
+        $thumbnail_code = '<a href="'.$thumb_target.'"><img src="'.$thumbnail.'" alt="'.$thumb_alt.'"></a>';
     }
     $thumbnail_code = apply_filters('wspsc_product_box_thumbnail_code', $thumbnail_code, $atts);
     $currency_symbol = WP_CART_CURRENCY_SYMBOL;
@@ -113,6 +126,32 @@ function wspsc_compact_cart_handler($args)
             $output .= '<span class="wpsps_compact_cart_price"> '. print_payment_currency($cart_total,$curSymbol).'</span>';
     }
     $output .= '</div>';
+    $output .= '</div>';
+    return $output;
+}
+
+function wspsc_compact_cart2_handler($args)
+{
+    $num_items = wpspc_get_total_cart_qty();
+    $checkout_url = get_option('cart_checkout_page_url');
+    //$curSymbol = WP_CART_CURRENCY_SYMBOL;
+    //$cart_total = wpspc_get_total_cart_sub_total();
+    
+    $output = "";
+    $output .= '<div class="wspsc_compact_cart2 wpsps-cart-wrapper">';
+    $output .= '<div class="wspsc_compact_cart2_container">';
+    
+    $output .= '<div class="wspsc_compact_cart2_inside">';    
+    $item_message = ($num_items == 1)? "Item" : "Items";
+    
+    if(!empty($checkout_url)){
+        $output .= '<a class="wspsc_compact_cart2_view_cart_link" href="'.$checkout_url.'">'.$num_items . " " . $item_message . '</a>';
+    }else{
+        $output .= $num_items . " " . $item_message;
+    }
+    $output .= '</div>';//end of .wspsc_compact_cart2_inside    
+
+    $output .= '</div>';//end of .wspsc_compact_cart2_container
     $output .= '</div>';
     return $output;
 }

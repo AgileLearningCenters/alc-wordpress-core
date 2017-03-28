@@ -53,6 +53,7 @@ function print_wp_shopping_cart($args = array()) {
     }
 
     $notify = WP_CART_SITE_URL . '/?simple_cart_ipn=1';
+    $notify = apply_filters('wspsc_paypal_ipn_notify_url', $notify);
     $urls .= '<input type="hidden" name="notify_url" value="' . $notify . '" />';
 
     $title = get_option('wp_cart_title');
@@ -61,7 +62,9 @@ function print_wp_shopping_cart($args = array()) {
     global $plugin_dir_name;
     $output .= '<div class="shopping_cart">';
     if (!get_option('wp_shopping_cart_image_hide')) {
-        $output .= "<img src='" . WP_CART_URL . "/images/shopping_cart_icon.png' class='wspsc_cart_header_image' value='" . (__("Cart", "wordpress-simple-paypal-shopping-cart")) . "' alt='" . (__("Cart", "wordpress-simple-paypal-shopping-cart")) . "' />";
+        $cart_icon_img_src = WP_CART_URL . "/images/shopping_cart_icon.png";
+        $cart_icon_img_src = apply_filters('wspsc_cart_icon_image_src', $cart_icon_img_src);
+        $output .= "<img src='" . $cart_icon_img_src . "' class='wspsc_cart_header_image' value='" . (__("Cart", "wordpress-simple-paypal-shopping-cart")) . "' alt='" . (__("Cart", "wordpress-simple-paypal-shopping-cart")) . "' />";
     }
     if (!empty($title)) {
         $output .= '<h2>';
@@ -130,11 +133,20 @@ function print_wp_shopping_cart($args = array()) {
             $count++;
         }
         if (!get_option('wp_shopping_cart_use_profile_shipping')) {
+            //Not using profile based shipping
             $postage_cost = wpspsc_number_format_price($postage_cost);
             $form .= "<input type=\"hidden\" name=\"shipping_1\" value='" . esc_attr($postage_cost) . "' />"; //You can also use "handling_cart" variable to use shipping and handling here 
         }
+        
+        //Tackle the "no_shipping" parameter
         if (get_option('wp_shopping_cart_collect_address')) {//force address collection
-            $form .= "<input type=\"hidden\" name=\"no_shipping\" value=\"2\" />";
+            $form .= '<input type="hidden" name="no_shipping" value="2" />';
+        } else {
+            //Not using the force address collection feature
+            if($postage_cost == 0){
+                //No shipping amount present in the cart. Set flag for "no shipping address collection".
+                $form .= '<input type="hidden" name="no_shipping" value="1" />';
+            }
         }
     }
 

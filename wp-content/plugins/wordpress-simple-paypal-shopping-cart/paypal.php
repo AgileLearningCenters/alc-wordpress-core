@@ -24,15 +24,19 @@ class paypal_ipn_handler {
 
     function validate_and_dispatch_product()
     {
-        //Check Product Name, Price, Currency, Receivers email
+        //Check Product Name, Price, Currency, Receiver email
+        
+        //Decode the custom field before sanitizing.
+        $custom_field_value = urldecode($this->ipn_data['custom']);//urldecode is harmless
+        $this->ipn_data['custom'] = $custom_field_value;
+        
+        //Sanitize and read data.
         $array_temp = $this->ipn_data;
         $this->ipn_data = array_map('sanitize_text_field', $array_temp);
         $txn_id = $this->ipn_data['txn_id'];
         $transaction_type = $this->ipn_data['txn_type'];
         $payment_status = $this->ipn_data['payment_status'];
-        $transaction_subject = $this->ipn_data['transaction_subject'];
-        $custom_value_str = $this->ipn_data['custom'];
-        //$this->debug_log('custom values from paypal: '.$custom_value_str,true);
+        $transaction_subject = $this->ipn_data['transaction_subject'];               
         $first_name = $this->ipn_data['first_name'];
         $last_name = $this->ipn_data['last_name'];
         $buyer_email = $this->ipn_data['payer_email'];
@@ -42,8 +46,19 @@ class paypal_ipn_handler {
         $zip = $this->ipn_data['address_zip'];
         $country = $this->ipn_data['address_country'];
         $phone = $this->ipn_data['contact_phone'];
-        $address = $street_address.", ".$city.", ".$state.", ".$zip.", ".$country;        
+        
+        if(empty($street_address) && empty($city)){
+            //No address value present
+            $address = "";
+        } else {
+            //An address value is present
+            $address = $street_address.", ".$city.", ".$state.", ".$zip.", ".$country;            
+        }
+        
+        $custom_value_str = $this->ipn_data['custom'];
+        $this->debug_log('Custom field value in the IPN: '.$custom_value_str, true);
         $custom_values = wp_cart_get_custom_var_array($custom_value_str);
+        
         $this->debug_log('Payment Status: '.$payment_status,true);
         if($payment_status == "Completed" || $payment_status == "Processed" ){
             //We will process this notification
@@ -235,12 +250,15 @@ class paypal_ipn_handler {
             $shipping = wpspsc_number_format_price($shipping);
         }
         update_post_meta( $post_id, 'wpsc_shipping_amount', $shipping);
+        update_post_meta( $post_id, 'wpspsc_items_ordered', $product_details);
+        
         $args = array();
         $args['product_details'] = $product_details;
         $args['order_id'] = $post_id;
         $args['coupon_code'] = $applied_coupon_code; 
         $args['address'] = $address;
-        update_post_meta($post_id, 'wpspsc_items_ordered', $product_details);
+        $args['payer_email'] = $buyer_email;
+        
         $from_email = get_option('wpspc_buyer_from_email');
         $subject = get_option('wpspc_buyer_email_subj');
         $body = get_option('wpspc_buyer_email_body');
@@ -252,7 +270,6 @@ class paypal_ipn_handler {
 
         $headers = 'From: '.$from_email . "\r\n";
         if(!empty($buyer_email)){
-            $args['payer_email'] = $buyer_email;
             if(get_option('wpspc_send_buyer_email'))
             {
                 wp_mail($buyer_email, $subject, $body, $headers);

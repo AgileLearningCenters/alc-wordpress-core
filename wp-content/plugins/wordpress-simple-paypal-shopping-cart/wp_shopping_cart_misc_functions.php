@@ -147,8 +147,8 @@ function wpspc_apply_dynamic_tags_on_email_body($ipn_data, $args)
     $order_id = $args['order_id'];
     $purchase_amount = get_post_meta( $order_id, 'wpsc_total_amount', true );
     $purchase_date = date("Y-m-d");
-    $tags = array("{first_name}","{last_name}","{product_details}","{payer_email}","{transaction_id}","{purchase_amt}","{purchase_date}","{coupon_code}","{address}");
-    $vals = array($ipn_data['first_name'], $ipn_data['last_name'], $args['product_details'], $args['payer_email'], $ipn_data['txn_id'], $purchase_amount, $purchase_date, $args['coupon_code'], $args['address']);
+    $tags = array("{first_name}","{last_name}","{product_details}","{payer_email}","{transaction_id}","{purchase_amt}","{purchase_date}","{coupon_code}","{address}","{phone}");
+    $vals = array($ipn_data['first_name'], $ipn_data['last_name'], $args['product_details'], $args['payer_email'], $ipn_data['txn_id'], $purchase_amount, $purchase_date, $args['coupon_code'], $args['address'], $ipn_data['contact_phone']);
 
     $body = stripslashes(str_replace($tags, $vals, $args['email_body']));
     return $body;
