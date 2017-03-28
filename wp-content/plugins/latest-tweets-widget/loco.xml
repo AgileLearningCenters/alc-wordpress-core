@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bundle name="Latest Tweets Widget">
+  <domain name="twitter-api">
+    <project name="Latest Tweets Widget" slug="twitter-api">
+      <source>
+        <directory>.</directory>
+        <exclude>
+          <directory>api/lang</directory>
+        </exclude>
+      </source>
+      <target>
+        <directory>api/lang</directory>
+        <exclude>
+          <directory>api/lang/extra</directory>
+        </exclude>
+      </target>
+      <template locked="true">
+        <file>api/lang/twitter-api.pot</file>
+      </template>
+    </project>
+  </domain>
+  <domain name="twitter-errors">
+    <project name="Twitter errors" slug="twitter-errors">
+      <source>
+        <file>api/lang/extra/twitter-errors.php</file>
+      </source>
+      <target>
+        <directory>api/lang/extra</directory>
+      </target>
+      <template locked="true">
+        <file>api/lang/extra/twitter-errors.pot</file>
+      </template>
+    </project>
+  </domain>
+  <exclude>
+    <directory>api/test</directory>
+  </exclude>
+</bundle>
