@@ -61,6 +61,31 @@ class WPMDB_Utils {
 			}
 		}
 	}
+	
+	/**
+	 * Return unserialized object or array
+	 *
+	 * @param string    $serialized_string  Serialized string.
+	 * @param string    $method             The name of the caller method.
+	 *
+	 * @return mixed, false on failure
+	 */
+	public static function unserialize( $serialized_string, $method = '' ) {
+		if ( ! is_serialized( $serialized_string ) ) {
+			return false;
+		}
+
+		$serialized_string   = trim( $serialized_string );
+		$unserialized_string = @unserialize( $serialized_string );
+
+		if ( false === $unserialized_string && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+			$scope = $method ? sprintf( __( 'Scope: %s().', 'wp-migrate-db' ), $method ) : false;
+			$error = sprintf( __( 'WPMDB Error: Data cannot be unserialized. %s', 'wp-migrate-db' ), $scope );
+			error_log( $error );
+		}
+
+		return $unserialized_string;
+	}
 
 	/**
 	 * Use wp_unslash if available, otherwise fall back to stripslashes_deep
