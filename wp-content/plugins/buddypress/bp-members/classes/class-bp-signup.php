@@ -2,20 +2,22 @@
 /**
  * Signups Management class.
  *
- * @since 2.0.0
- *
  * @package BuddyPress
  * @subpackage coreClasses
+ * @since 2.0.0
  */
 
 /**
  * Class used to handle Signups.
+ *
+ * @since 2.0.0
  */
 class BP_Signup {
 
 	/**
 	 * ID of the signup which the object relates to.
 	 *
+	 * @since 2.0.0
 	 * @var integer
 	 */
 	public $id;
@@ -23,6 +25,7 @@ class BP_Signup {
 	/**
 	 * The URL to the full size of the avatar for the user.
 	 *
+	 * @since 2.0.0
 	 * @var string
 	 */
 	public $avatar;
@@ -30,6 +33,7 @@ class BP_Signup {
 	/**
 	 * The username for the user.
 	 *
+	 * @since 2.0.0
 	 * @var string
 	 */
 	public $user_login;
@@ -37,6 +41,7 @@ class BP_Signup {
 	/**
 	 * The email for the user.
 	 *
+	 * @since 2.0.0
 	 * @var string
 	 */
 	public $user_email;
@@ -44,6 +49,7 @@ class BP_Signup {
 	/**
 	 * The full name of the user.
 	 *
+	 * @since 2.0.0
 	 * @var string
 	 */
 	public $user_name;
@@ -51,6 +57,7 @@ class BP_Signup {
 	/**
 	 * Metadata associated with the signup.
 	 *
+	 * @since 2.0.0
 	 * @var array
 	 */
 	public $meta;
@@ -58,6 +65,7 @@ class BP_Signup {
 	/**
 	 * The registered date for the user.
 	 *
+	 * @since 2.0.0
 	 * @var string
 	 */
 	public $registered;
@@ -65,6 +73,7 @@ class BP_Signup {
 	/**
 	 * The activation key for the user.
 	 *
+	 * @since 2.0.0
 	 * @var string
 	 */
 	public $activation_key;
@@ -113,7 +122,17 @@ class BP_Signup {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $args the argument to retrieve desired signups.
+	 * @param array $args {
+	 *     The argument to retrieve desired signups.
+	 *     @type int         $offset         Offset amount. Default 0.
+	 *     @type int         $number         How many to fetch. Default 1.
+	 *     @type bool|string $usersearch     Whether or not to search for a username. Default false.
+	 *     @type string      $orderby        Order By parameter. Default 'signup_id'.
+	 *     @type string      $order          Order direction. Default 'DESC'.
+	 *     @type bool        $include        Whether or not to include more specific query params.
+	 *     @type string      $activation_key Activation key to search for.
+	 *     @type string      $user_login     Specific user login to return.
+	 * }
 	 * @return array {
 	 *     @type array $signups Located signups.
 	 *     @type int   $total   Total number of signups matching params.
@@ -252,6 +271,7 @@ class BP_Signup {
 		$total_signups = $wpdb->get_var( apply_filters( 'bp_members_signups_count_query', join( ' ', $sql ), $sql, $args, $r ) );
 
 		return array( 'signups' => $paged_signups, 'total' => $total_signups );
+
 	}
 
 	/**
@@ -259,9 +279,18 @@ class BP_Signup {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $args Array of arguments for signup addition.
-	 * @return int|bool ID of newly created signup on success, false on
-	 *                  failure.
+	 * @param array $args {
+	 *     Array of arguments for signup addition.
+	 *     @type string     $domain         New user's domain.
+	 *     @type string     $path           New user's path.
+	 *     @type string     $title          New user's title.
+	 *     @type string     $user_login     New user's user_login.
+	 *     @type string     $user_email     New user's email address.
+	 *     @type int|string $registered     Time the user registered.
+	 *     @type string     $activation_key New user's activation key.
+	 *     @type string     $meta           New user's user meta.
+	 * }
+	 * @return int|bool ID of newly created signup on success, false on failure.
 	 */
 	public static function add( $args = array() ) {
 		global $wpdb;
@@ -480,7 +509,11 @@ class BP_Signup {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array $args Array of arguments for the signup update.
+	 * @param array $args {
+	 *     Array of arguments for the signup update.
+	 *     @type int $signup_id User signup ID.
+	 *     @type array $meta Meta to update.
+	 * }
 	 * @return int The signup id.
 	 */
 	public static function update( $args = array() ) {
@@ -587,7 +620,7 @@ class BP_Signup {
 
 				// Send the validation email.
 				} else {
-					bp_core_signup_send_validation_email( false, $signup->user_email, $signup->activation_key );
+					bp_core_signup_send_validation_email( false, $signup->user_email, $signup->activation_key, $signup->user_login );
 				}
 			}
 
@@ -737,7 +770,7 @@ class BP_Signup {
 		foreach ( $signups as $signup ) {
 			$user_id = username_exists( $signup->user_login );
 
-			if ( ! empty( $user_id ) && $signup->activation_key == wp_hash( $user_id ) ) {
+			if ( ! empty( $user_id ) && $signup->activation_key === bp_get_user_meta( $user_id, 'activation_key', true ) ) {
 
 				if ( 2 != self::check_user_status( $user_id ) ) {
 

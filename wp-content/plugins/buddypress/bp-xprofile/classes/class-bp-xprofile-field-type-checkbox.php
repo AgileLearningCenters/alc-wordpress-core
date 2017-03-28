@@ -4,6 +4,7 @@
  *
  * @package BuddyPress
  * @subpackage XProfileClasses
+ * @since 2.0.0
  */
 
 // Exit if accessed directly.
@@ -66,11 +67,11 @@ class BP_XProfile_Field_Type_Checkbox extends BP_XProfile_Field_Type {
 			$user_id = bp_displayed_user_id();
 		} ?>
 
-		<div class="checkbox">
-			<label for="<?php bp_the_profile_field_input_name(); ?>">
+		<fieldset class="checkbox">
+			<legend>
 				<?php bp_the_profile_field_name(); ?>
 				<?php bp_the_profile_field_required_label(); ?>
-			</label>
+			</legend>
 
 			<?php
 
@@ -81,7 +82,7 @@ class BP_XProfile_Field_Type_Checkbox extends BP_XProfile_Field_Type {
 				'user_id' => $user_id
 			) ); ?>
 
-		</div>
+		</fieldset>
 
 		<?php
 	}
@@ -104,6 +105,21 @@ class BP_XProfile_Field_Type_Checkbox extends BP_XProfile_Field_Type {
 	public function edit_field_options_html( array $args = array() ) {
 		$options       = $this->field_obj->get_children();
 		$option_values = maybe_unserialize( BP_XProfile_ProfileData::get_value_byid( $this->field_obj->id, $args['user_id'] ) );
+
+		/*
+		 * Determine whether to pre-select the default option.
+		 *
+		 * If there's no saved value, take the following into account:
+		 * If the user has never saved a value for this field,
+		 * $option_values will be an empty string, and we should pre-select the default option.
+		 * If the user has specifically chosen none of the options,
+		 * $option_values will be an empty array, and we should respect that value.
+		 */
+		$select_default_option = false;
+		if ( empty( $option_values ) && ! is_array( $option_values ) ) {
+			$select_default_option = true;
+		}
+
 		$option_values = ( $option_values ) ? (array) $option_values : array();
 
 		$html = '';
@@ -134,13 +150,13 @@ class BP_XProfile_Field_Type_Checkbox extends BP_XProfile_Field_Type {
 
 			// If the user has not yet supplied a value for this field, check to
 			// see whether there is a default value available.
-			if ( empty( $option_values ) && empty( $selected ) && ! empty( $options[$k]->is_default_option ) ) {
+			if ( empty( $selected ) && $select_default_option && ! empty( $options[$k]->is_default_option ) ) {
 				$selected = ' checked="checked"';
 			}
 
-			$new_html = sprintf( '<label for="%3$s"><input %1$s type="checkbox" name="%2$s" id="%3$s" value="%4$s">%5$s</label>',
+			$new_html = sprintf( '<label for="%3$s" class="option-label"><input %1$s type="checkbox" name="%2$s" id="%3$s" value="%4$s">%5$s</label>',
 				$selected,
-				esc_attr( "field_{$this->field_obj->id}[]" ),
+				esc_attr( bp_get_the_profile_field_input_name() . '[]' ),
 				esc_attr( "field_{$options[$k]->id}_{$k}" ),
 				esc_attr( stripslashes( $options[$k]->name ) ),
 				esc_html( stripslashes( $options[$k]->name ) )
@@ -160,7 +176,10 @@ class BP_XProfile_Field_Type_Checkbox extends BP_XProfile_Field_Type {
 			$html .= apply_filters( 'bp_get_the_profile_field_options_checkbox', $new_html, $options[$k], $this->field_obj->id, $selected, $k );
 		}
 
-		echo $html;
+		printf( '<div id="%1$s" class="input-options checkbox-options">%2$s</div>',
+			esc_attr( 'field_' . $this->field_obj->id ),
+			$html
+		);
 	}
 
 	/**

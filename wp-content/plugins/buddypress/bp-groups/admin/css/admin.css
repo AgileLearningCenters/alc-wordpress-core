@@ -21,22 +21,26 @@ body.toplevel_page_bp-groups table.groups th#last_active {
 	margin-bottom: 6px;
 }
 #bp-groups-edit-form input#bp-groups-new-members {
+	border: 1px solid #e5e5e5;
+	margin-top: 6px;
 	width: 100%;
-	max-width: 90%;
-	border: 0;
 }
 #bp-groups-new-members-list {
 	margin: 0;
 }
-#bp_group_settings legend {
-	margin: 10px 0;
-	font-weight: bold;
-}
-#bp_group_settings ul {
-	margin: 0;
-}
 .bp-groups-settings-section {
 	margin-top: 10px;
+	line-height: 2em;
+}
+.bp-groups-settings-section legend {
+	margin-top: 10px;
+	font-weight: bold;
+}
+.bp-groups-settings-section label {
+	clear: left;
+	display: block;
+	float: left;
+	vertical-align: middle;
 }
 #bp-groups-permalink-box {
 	line-height: 24px;
@@ -52,6 +56,9 @@ ul.bp-group-delete-list {
 	list-style-type: disc;
 	margin: 4px 26px;
 }
+/*
+ * Members Pagination
+ */
 .bp-group-admin-pagination {
 	position: absolute;
 	text-align: right;
@@ -72,7 +79,30 @@ ul.bp-group-delete-list {
 	white-space: nowrap;
 	padding-left: 15px;
 }
+.bp-group-admin-pagination-links .page-numbers {
+	display: inline-block;
+	min-width: 12px;
+	border: 1px solid #ccc;
+	padding: 2px 4px 4px;
+	background: #e5e5e5;
+	line-height: 1;
+	font-weight: 400;
+	text-align: center;
+	text-decoration: none;
+}
+.bp-group-admin-pagination-links a.page-numbers:hover {
+	text-decoration: underline;
+}
+.bp-group-admin-pagination-links .page-numbers.current,
+.bp-group-admin-pagination-links .page-numbers.dots {
+	border-color: #ddd;
+	background: #f7f7f7;
+	color: #a0a5aa;
+}
 
+/*
+ * Members List
+ */
 table.bp-group-members .uid-column {
 	padding-left: 20px;
 	padding-right: 20px;
@@ -83,4 +113,10 @@ table.bp-group-members .uname-column {
 table.bp-group-members .urole-column {
 	padding-left: 20px;
 	padding-right: 20px;
+}
+
+@media screen and (max-width: 782px) {
+	.bp-groups-settings-section label {
+		margin: 0.25em 0;
+	}
 }

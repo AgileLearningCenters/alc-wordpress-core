@@ -7,6 +7,7 @@
  *
  * @package BuddyPress
  * @subpackage XProfileActivity
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -17,7 +18,6 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.0.0
  *
- * @uses bp_activity_set_action() To setup the individual actions.
  */
 function xprofile_register_activity_actions() {
 
@@ -56,7 +56,6 @@ add_action( 'bp_register_activity_actions', 'xprofile_register_activity_actions'
  *
  * @param string $action   Static activity action.
  * @param object $activity Activity object.
- *
  * @return string
  */
 function bp_xprofile_format_activity_action_new_avatar( $action, $activity ) {
@@ -86,7 +85,6 @@ function bp_xprofile_format_activity_action_new_avatar( $action, $activity ) {
  *
  * @param string $action   Static activity action.
  * @param object $activity Activity object.
- *
  * @return string
  */
 function bp_xprofile_format_activity_action_updated_profile( $action, $activity ) {
@@ -115,10 +113,7 @@ function bp_xprofile_format_activity_action_updated_profile( $action, $activity 
  *
  * @since 1.0.0
  *
- * @uses bp_activity_add() Adds an entry to the activity component tables for a specific activity.
- *
  * @param array|string $args String containing all variables used after bp_parse_args() call.
- *
  * @return array
  */
 function xprofile_record_activity( $args = '' ) {
@@ -151,11 +146,9 @@ function xprofile_record_activity( $args = '' ) {
  *
  * @since 1.0.0
  *
- * @uses bp_activity_delete() Deletes an entry to the activity component tables
  *                            for a specific activity.
  *
  * @param array|string $args Containing all variables used after bp_parse_args() call.
- *
  * @return bool
  */
 function xprofile_delete_activity( $args = '' ) {
@@ -181,7 +174,6 @@ function xprofile_delete_activity( $args = '' ) {
  *
  * @param string $key Key.
  * @param string $value Value.
- *
  * @return bool True if success, false on failure.
  */
 function xprofile_register_activity_action( $key, $value ) {
@@ -209,11 +201,9 @@ function xprofile_register_activity_action( $key, $value ) {
  * @since 1.0.0
  * @since 2.3.4 Add new parameter to get the user id the avatar was set for.
  *
- * @uses bp_activity_add() Adds an entry to the activity component tables for a
  *                         specific activity
  *
  * @param int $user_id The user id the avatar was set for.
- *
  * @return bool
  */
 function bp_xprofile_new_avatar_activity( $user_id = 0 ) {
@@ -255,7 +245,6 @@ add_action( 'xprofile_avatar_uploaded', 'bp_xprofile_new_avatar_activity' );
  * @param bool  $errors     True if validation or saving errors occurred, otherwise false.
  * @param array $old_values Pre-save xprofile field values and visibility levels.
  * @param array $new_values Post-save xprofile field values and visibility levels.
- *
  * @return bool True on success, false on failure.
  */
 function bp_xprofile_updated_profile_activity( $user_id, $field_ids = array(), $errors = false, $old_values = array(), $new_values = array() ) {
@@ -318,7 +307,7 @@ function bp_xprofile_updated_profile_activity( $user_id, $field_ids = array(), $
 		 */
 		$throttle_period = apply_filters( 'bp_xprofile_updated_profile_activity_throttle_time', HOUR_IN_SECONDS * 2 );
 		$then            = strtotime( $existing['activities'][0]->date_recorded );
-		$now             = strtotime( bp_core_current_time() );
+		$now             = bp_core_current_time( true, 'timestamp' );
 
 		// Bail if throttled.
 		if ( ( $now - $then ) < $throttle_period ) {

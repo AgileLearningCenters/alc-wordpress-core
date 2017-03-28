@@ -4,302 +4,11 @@
  *
  * @package BuddyPress
  * @subpackage XProfileTemplate
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
-
-/**
- * The main profile template loop class.
- *
- * This is responsible for loading profile field, group, and data and displaying it.
- *
- * @since 1.0.0
- */
-class BP_XProfile_Data_Template {
-
-	/**
-	 * The loop iterator.
-	 *
-	 * @since 1.5.0
-	 * @var int
-	 */
-	public $current_group = -1;
-
-	/**
-	 * The number of groups returned by the paged query.
-	 *
-	 * @since 1.5.0
-	 * @var int
-	 */
-	public $group_count;
-
-	/**
-	 * Array of groups located by the query.
-	 *
-	 * @since 1.5.0
-	 * @var array
-	 */
-	public $groups;
-
-	/**
-	 * The group object currently being iterated on.
-	 *
-	 * @since 1.5.0
-	 * @var object
-	 */
-	public $group;
-
-	/**
-	 * The current field.
-	 *
-	 * @since 1.5.0
-	 * @var int
-	 */
-	public $current_field = -1;
-
-	/**
-	 * The field count.
-	 *
-	 * @since 1.5.0
-	 * @var int
-	 */
-	public $field_count;
-
-	/**
-	 * Field has data.
-	 *
-	 * @since 1.5.0
-	 * @var bool
-	 */
-	public $field_has_data;
-
-	/**
-	 * The field.
-	 *
-	 * @since 1.5.0
-	 * @var int
-	 */
-	public $field;
-
-	/**
-	 * A flag for whether the loop is currently being iterated.
-	 *
-	 * @since 1.5.0
-	 * @var bool
-	 */
-	public $in_the_loop;
-
-	/**
-	 * The user ID.
-	 *
-	 * @since 1.5.0
-	 * @var int
-	 */
-	public $user_id;
-
-	/**
-	 * Get activity items, as specified by parameters.
-	 *
-	 * @see BP_XProfile_Group::get() for more details about parameters.
-	 *
-	 * @since 2.4.0 Introduced `$member_type` argument.
-	 *
-	 * @param array|string $args {
-	 *     An array of arguments. All items are optional.
-	 *
-	 *     @type int          $user_id                 Fetch field data for this user ID.
-	 *     @type string|array $member_type             Limit results to those matching member type(s).
-	 *     @type int          $profile_group_id        Field group to fetch fields & data for.
-	 *     @type int|bool     $hide_empty_groups       Should empty field groups be skipped.
-	 *     @type int|bool     $fetch_fields            Fetch fields for field group.
-	 *     @type int|bool     $fetch_field_data        Fetch field data for fields in group.
-	 *     @type array        $exclude_groups          Exclude these field groups.
-	 *     @type array        $exclude_fields          Exclude these fields.
-	 *     @type int|bool     $hide_empty_fields       Should empty fields be skipped.
-	 *     @type int|bool     $fetch_visibility_level  Fetch visibility levels.
-	 *     @type int|bool     $update_meta_cache       Should metadata cache be updated.
-	 * }
-	 */
-	public function __construct( $args = '' ) {
-
-		// Backward compatibility with old method of passing arguments.
-		if ( ! is_array( $args ) || func_num_args() > 1 ) {
-			_deprecated_argument( __METHOD__, '2.3.0', sprintf( __( 'Arguments passed to %1$s should be in an associative array. See the inline documentation at %2$s for more details.', 'buddypress' ), __METHOD__, __FILE__ ) );
-
-			$old_args_keys = array(
-				0 => 'user_id',
-				1 => 'profile_group_id',
-				2 => 'hide_empty_groups',
-				3 => 'fetch_fields',
-				4 => 'fetch_field_data',
-				5 => 'exclude_groups',
-				6 => 'exclude_fields',
-				7 => 'hide_empty_fields',
-				8 => 'fetch_visibility_level',
-				9 => 'update_meta_cache'
-			);
-
-			$func_args = func_get_args();
-			$args      = bp_core_parse_args_array( $old_args_keys, $func_args );
-		}
-
-		$r = wp_parse_args( $args, array(
-			'profile_group_id'       => false,
-			'user_id'                => false,
-			'member_type'            => 'any',
-			'hide_empty_groups'      => false,
-			'hide_empty_fields'      => false,
-			'fetch_fields'           => false,
-			'fetch_field_data'       => false,
-			'fetch_visibility_level' => false,
-			'exclude_groups'         => false,
-			'exclude_fields'         => false,
-			'update_meta_cache'      => true
-		) );
-
-		$this->groups      = bp_xprofile_get_groups( $r );
-		$this->group_count = count( $this->groups );
-		$this->user_id     = $r['user_id'];
-	}
-
-	public function has_groups() {
-		if ( ! empty( $this->group_count ) ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public function next_group() {
-		$this->current_group++;
-
-		$this->group       = $this->groups[ $this->current_group ];
-		$this->field_count = 0;
-
-		if ( ! empty( $this->group->fields ) ) {
-
-			/**
-			 * Filters the group fields for the next_group method.
-			 *
-			 * @since 1.1.0
-			 *
-			 * @param array $fields Array of fields for the group.
-			 * @param int   $id     ID of the field group.
-			 */
-			$this->group->fields = apply_filters( 'xprofile_group_fields', $this->group->fields, $this->group->id );
-			$this->field_count   = count( $this->group->fields );
-		}
-
-		return $this->group;
-	}
-
-	public function rewind_groups() {
-		$this->current_group = -1;
-		if ( $this->group_count > 0 ) {
-			$this->group = $this->groups[0];
-		}
-	}
-
-	public function profile_groups() {
-		if ( $this->current_group + 1 < $this->group_count ) {
-			return true;
-		} elseif ( $this->current_group + 1 == $this->group_count ) {
-
-			/**
-			 * Fires right before the rewinding of profile groups.
-			 *
-			 * @since 1.1.0
-			 */
-			do_action( 'xprofile_template_loop_end' );
-
-			// Do some cleaning up after the loop.
-			$this->rewind_groups();
-		}
-
-		$this->in_the_loop = false;
-		return false;
-	}
-
-	public function the_profile_group() {
-		global $group;
-
-		$this->in_the_loop = true;
-		$group = $this->next_group();
-
-		// Loop has just started.
-		if ( 0 === $this->current_group ) {
-
-			/**
-			 * Fires if the current group is the first in the loop.
-			 *
-			 * @since 1.1.0
-			 */
-			do_action( 'xprofile_template_loop_start' );
-		}
-	}
-
-	/** Fields ****************************************************************/
-
-	public function next_field() {
-		$this->current_field++;
-
-		$this->field = $this->group->fields[ $this->current_field ];
-
-		return $this->field;
-	}
-
-	public function rewind_fields() {
-		$this->current_field = -1;
-		if ( $this->field_count > 0 ) {
-			$this->field = $this->group->fields[0];
-		}
-	}
-
-	public function has_fields() {
-		$has_data = false;
-
-		for ( $i = 0, $count = count( $this->group->fields ); $i < $count; ++$i ) {
-			$field = &$this->group->fields[ $i ];
-
-			if ( ! empty( $field->data ) && ( $field->data->value != null ) ) {
-				$has_data = true;
-			}
-		}
-
-		return $has_data;
-	}
-
-	public function profile_fields() {
-		if ( $this->current_field + 1 < $this->field_count ) {
-			return true;
-		} elseif ( $this->current_field + 1 == $this->field_count ) {
-			// Do some cleaning up after the loop.
-			$this->rewind_fields();
-		}
-
-		return false;
-	}
-
-	public function the_profile_field() {
-		global $field;
-
-		$field = $this->next_field();
-
-		// Valid field values of 0 or '0' get caught by empty(), so we have an extra check for these. See #BP5731.
-		if ( ! empty( $field->data ) && ( ! empty( $field->data->value ) || ( '0' === $field->data->value ) ) ) {
-			$value = maybe_unserialize( $field->data->value );
-		} else {
-			$value = false;
-		}
-
-		if ( ! empty( $value ) || ( '0' === $value ) ) {
-			$this->field_has_data = true;
-		} else {
-			$this->field_has_data = false;
-		}
-	}
-}
 
 /**
  * Query for XProfile groups and fields.
@@ -360,38 +69,82 @@ function bp_has_profile( $args = '' ) {
 	 * Filters whether or not a group has a profile to display.
 	 *
 	 * @since 1.1.0
+	 * @since 2.6.0 Added the `$r` parameter.
 	 *
 	 * @param bool   $has_groups       Whether or not there are group profiles to display.
 	 * @param string $profile_template Current profile template being used.
+	 * @param array  $r                Array of arguments passed into the BP_XProfile_Data_Template class.
 	 */
-	return apply_filters( 'bp_has_profile', $profile_template->has_groups(), $profile_template );
+	return apply_filters( 'bp_has_profile', $profile_template->has_groups(), $profile_template, $r );
 }
 
+/**
+ * Start off the profile groups.
+ *
+ * @since 1.0.0
+ *
+ * @return mixed
+ */
 function bp_profile_groups() {
 	global $profile_template;
 	return $profile_template->profile_groups();
 }
 
+/**
+ * Set up the profile groups.
+ *
+ * @since 1.0.0
+ *
+ * @return mixed
+ */
 function bp_the_profile_group() {
 	global $profile_template;
 	return $profile_template->the_profile_group();
 }
 
+/**
+ * Whether or not the group has fields to display.
+ *
+ * @since 1.0.0
+ *
+ * @return mixed
+ */
 function bp_profile_group_has_fields() {
 	global $profile_template;
 	return $profile_template->has_fields();
 }
 
+/**
+ * Output the class attribute for a field.
+ *
+ * @since 1.0.0
+ *
+ * @param mixed $class Extra classes to append to class attribute.
+ *                     Pass mutiple class names as an array or
+ *                     space-delimited string.
+ */
 function bp_field_css_class( $class = false ) {
 	echo bp_get_field_css_class( $class );
 }
+
+	/**
+	 * Return the class attribute for a field.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string|bool $class Extra classes to append to class attribute.
+	 * @return string
+	 */
 	function bp_get_field_css_class( $class = false ) {
 		global $profile_template;
 
 		$css_classes = array();
 
 		if ( ! empty( $class ) ) {
-			$css_classes[] = sanitize_title( esc_attr( $class ) );
+			if ( ! is_array( $class ) ) {
+				$class = preg_split( '#\s+#', $class );
+			}
+			$css_classes = array_map( 'sanitize_html_class', $class );
 		}
 
 		// Set a class with the field ID.
@@ -435,45 +188,106 @@ function bp_field_css_class( $class = false ) {
 		return apply_filters( 'bp_get_field_css_class', ' class="' . implode( ' ', $css_classes ) . '"' );
 	}
 
+/**
+ * Whether or not the XProfile field has data to display.
+ *
+ * @since 1.0.0
+ *
+ * @global object $profile_template
+ *
+ * @return mixed
+ */
 function bp_field_has_data() {
 	global $profile_template;
-	return $profile_template->field_has_data;
+
+	/**
+	 * Filters whether or not the XProfile field has data to display.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param bool   $value            Whether or not there is data to display.
+	 * @param object $profile_template Profile template object.
+	 * @param string $value            Profile field being displayed.
+	 * @param string $value            Profile field ID being displayed.
+	 */
+	return apply_filters( 'bp_field_has_data', $profile_template->field_has_data, $profile_template, $profile_template->field, $profile_template->field->id );
 }
 
+/**
+ * Whether or not the XProfile field has public data to display.
+ *
+ * @since 1.0.0
+ *
+ * @global object $profile_template
+ *
+ * @return bool
+ */
 function bp_field_has_public_data() {
 	global $profile_template;
 
-	if ( ! empty( $profile_template->field_has_data ) ) {
-		return true;
-	}
-
-	return false;
+	/**
+	 * Filters whether or not the XProfile field has public data to display.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param bool   $value            Whether or not there is public data to display.
+	 * @param object $profile_template Profile template object.
+	 * @param string $value            Profile field being displayed.
+	 * @param string $value            Profile field ID being displayed.
+	 */
+	return apply_filters( 'bp_field_has_public_data', ( ! empty( $profile_template->field_has_data ) ), $profile_template, $profile_template->field, $profile_template->field->id );
 }
 
+/**
+ * Output the XProfile group ID.
+ *
+ * @since 1.0.0
+ */
 function bp_the_profile_group_id() {
 	echo bp_get_the_profile_group_id();
 }
+
+	/**
+	 * Return the XProfile group ID.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return int
+	 */
 	function bp_get_the_profile_group_id() {
 		global $group;
 
 		/**
-		 * Filters the profile group ID.
+		 * Filters the XProfile group ID.
 		 *
 		 * @since 1.1.0
 		 *
 		 * @param int $id ID for the profile group.
 		 */
-		return apply_filters( 'bp_get_the_profile_group_id', $group->id );
+		return (int) apply_filters( 'bp_get_the_profile_group_id', $group->id );
 	}
 
+/**
+ * Output the XProfile group name.
+ *
+ * @since 1.0.0
+ */
 function bp_the_profile_group_name() {
 	echo bp_get_the_profile_group_name();
 }
+
+	/**
+	 * Return the XProfile group name.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_group_name() {
 		global $group;
 
 		/**
-		 * Filters the profile group name.
+		 * Filters the XProfile group name.
 		 *
 		 * @since 1.0.0
 		 *
@@ -482,14 +296,27 @@ function bp_the_profile_group_name() {
 		return apply_filters( 'bp_get_the_profile_group_name', $group->name );
 	}
 
+/**
+ * Output the XProfile group slug.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_group_slug() {
 	echo bp_get_the_profile_group_slug();
 }
+
+	/**
+	 * Return the XProfile group slug.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_group_slug() {
 		global $group;
 
 		/**
-		 * Filters the profile group slug.
+		 * Filters the XProfile group slug.
 		 *
 		 * @since 1.1.0
 		 *
@@ -498,14 +325,27 @@ function bp_the_profile_group_slug() {
 		return apply_filters( 'bp_get_the_profile_group_slug', sanitize_title( $group->name ) );
 	}
 
+/**
+ * Output the XProfile group description.
+ *
+ * @since 1.0.0
+ */
 function bp_the_profile_group_description() {
 	echo bp_get_the_profile_group_description();
 }
+
+	/**
+	 * Return the XProfile group description.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_group_description() {
 		global $group;
 
 		/**
-		 * Filters the profile group description.
+		 * Filters the XProfile group description.
 		 *
 		 * @since 1.0.0
 		 *
@@ -514,9 +354,22 @@ function bp_the_profile_group_description() {
 		return apply_filters( 'bp_get_the_profile_group_description', $group->description );
 	}
 
+/**
+ * Output the XProfile group edit form action.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_group_edit_form_action() {
 	echo bp_get_the_profile_group_edit_form_action();
 }
+
+	/**
+	 * Return the XProfile group edit form action.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_group_edit_form_action() {
 		global $group;
 
@@ -524,7 +377,7 @@ function bp_the_profile_group_edit_form_action() {
 		$form_action = trailingslashit( bp_displayed_user_domain() . bp_get_profile_slug() . '/edit/group/' . $group->id );
 
 		/**
-		 * Filters the action for the profile group edit form.
+		 * Filters the action for the XProfile group edit form.
 		 *
 		 * @since 1.1.0
 		 *
@@ -534,9 +387,22 @@ function bp_the_profile_group_edit_form_action() {
 		return apply_filters( 'bp_get_the_profile_group_edit_form_action', $form_action );
 	}
 
+/**
+ * Output the XProfile group field IDs.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_group_field_ids() {
 	echo bp_get_the_profile_group_field_ids();
 }
+
+	/**
+	 * Return the XProfile group field IDs.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_group_field_ids() {
 		global $group;
 
@@ -588,40 +454,80 @@ function bp_the_profile_field_ids() {
 		return apply_filters( 'bp_get_the_profile_field_ids', $field_ids );
 	}
 
+/**
+ * Return the XProfile fields.
+ *
+ * @since 1.0.0
+ *
+ * @return mixed
+ */
 function bp_profile_fields() {
 	global $profile_template;
 	return $profile_template->profile_fields();
 }
 
+/**
+ * Sets up the XProfile field.
+ *
+ * @since 1.0.0
+ *
+ * @return mixed
+ */
 function bp_the_profile_field() {
 	global $profile_template;
 	return $profile_template->the_profile_field();
 }
 
+/**
+ * Output the XProfile field ID.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_field_id() {
 	echo bp_get_the_profile_field_id();
 }
+
+	/**
+	 * Return the XProfile field ID.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return int
+	 */
 	function bp_get_the_profile_field_id() {
 		global $field;
 
 		/**
-		 * Filters the profile field ID.
+		 * Filters the XProfile field ID.
 		 *
 		 * @since 1.1.0
 		 *
 		 * @param int $id ID for the profile field.
 		 */
-		return apply_filters( 'bp_get_the_profile_field_id', $field->id );
+		return (int) apply_filters( 'bp_get_the_profile_field_id', $field->id );
 	}
 
+/**
+ * Outputs the XProfile field name.
+ *
+ * @since 1.0.0
+ */
 function bp_the_profile_field_name() {
 	echo bp_get_the_profile_field_name();
 }
+
+	/**
+	 * Returns the XProfile field name.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_field_name() {
 		global $field;
 
 		/**
-		 * Filters the profile field name.
+		 * Filters the XProfile field name.
 		 *
 		 * @since 1.0.0
 		 *
@@ -630,16 +536,29 @@ function bp_the_profile_field_name() {
 		return apply_filters( 'bp_get_the_profile_field_name', $field->name );
 	}
 
+/**
+ * Outputs the XProfile field value.
+ *
+ * @since 1.0.0
+ */
 function bp_the_profile_field_value() {
 	echo bp_get_the_profile_field_value();
 }
+
+	/**
+	 * Returns the XProfile field value.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_field_value() {
 		global $field;
 
 		$field->data->value = bp_unserialize_profile_field( $field->data->value );
 
 		/**
-		 * Filters the profile field value.
+		 * Filters the XProfile field value.
 		 *
 		 * @since 1.0.0
 		 *
@@ -650,9 +569,22 @@ function bp_the_profile_field_value() {
 		return apply_filters( 'bp_get_the_profile_field_value', $field->data->value, $field->type, $field->id );
 	}
 
+/**
+ * Outputs the XProfile field edit value.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_field_edit_value() {
 	echo bp_get_the_profile_field_edit_value();
 }
+
+	/**
+	 * Returns the XProfile field edit value.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_field_edit_value() {
 		global $field;
 
@@ -679,7 +611,7 @@ function bp_the_profile_field_edit_value() {
 		$field_value = isset( $field->data->value ) ? bp_unserialize_profile_field( $field->data->value ) : '';
 
 		/**
-		 * Filters the profile field edit value.
+		 * Filters the XProfile field edit value.
 		 *
 		 * @since 1.1.0
 		 *
@@ -690,14 +622,27 @@ function bp_the_profile_field_edit_value() {
 		return apply_filters( 'bp_get_the_profile_field_edit_value', $field_value, $field->type, $field->id );
 	}
 
+/**
+ * Outputs the XProfile field type.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_field_type() {
 	echo bp_get_the_profile_field_type();
 }
+
+	/**
+	 * Returns the XProfile field type.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_field_type() {
 		global $field;
 
 		/**
-		 * Filters the profile field type.
+		 * Filters the XProfile field type.
 		 *
 		 * @since 1.1.0
 		 *
@@ -706,14 +651,27 @@ function bp_the_profile_field_type() {
 		return apply_filters( 'bp_the_profile_field_type', $field->type );
 	}
 
+/**
+ * Outputs the XProfile field description.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_field_description() {
 	echo bp_get_the_profile_field_description();
 }
+
+	/**
+	 * Returns the XProfile field description.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_field_description() {
 		global $field;
 
 		/**
-		 * Filters the profile field description.
+		 * Filters the XProfile field description.
 		 *
 		 * @since 1.1.0
 		 *
@@ -722,9 +680,22 @@ function bp_the_profile_field_description() {
 		return apply_filters( 'bp_get_the_profile_field_description', $field->description );
 	}
 
+/**
+ * Outputs the XProfile field input name.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_field_input_name() {
 	echo bp_get_the_profile_field_input_name();
 }
+
+	/**
+	 * Retursn the XProfile field input name.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_the_profile_field_input_name() {
 		global $field;
 
@@ -762,8 +733,6 @@ function bp_get_the_profile_field_errors_action() {
  *
  * @since 1.1.0
  *
- * @uses bp_get_the_profile_field_options()
- *
  * @param array $args Specify type for datebox. Allowed 'day', 'month', 'year'.
  */
 function bp_the_profile_field_options( $args = array() ) {
@@ -774,8 +743,6 @@ function bp_the_profile_field_options( $args = array() ) {
 	 *
 	 * @since 1.1.0
 	 *
-	 * @uses BP_XProfile_Field::get_children()
-	 * @uses BP_XProfile_ProfileData::get_value_byid()
 	 *
 	 * @param array $args {
 	 *     Array of optional arguments.
@@ -819,9 +786,22 @@ function bp_the_profile_field_options( $args = array() ) {
 		return $html;
 	}
 
+/**
+ * Render whether or not a profile field is required.
+ *
+ * @since 1.1.0
+ */
 function bp_the_profile_field_is_required() {
 	echo bp_get_the_profile_field_is_required();
 }
+
+	/**
+	 * Return whether or not a profile field is required.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return bool
+	 */
 	function bp_get_the_profile_field_is_required() {
 		global $field;
 
@@ -835,20 +815,29 @@ function bp_the_profile_field_is_required() {
 		 * Filters whether or not a profile field is required.
 		 *
 		 * @since 1.1.0
+		 * @since 2.8.0 Added field ID.
 		 *
-		 * @param bool $retval Whether or not the field is required.
+		 * @param bool   $retval Whether or not the field is required.
+		 * @param string $value  Field ID that may be required.
 		 */
-		return apply_filters( 'bp_get_the_profile_field_is_required', (bool) $retval );
+		return (bool) apply_filters( 'bp_get_the_profile_field_is_required', $retval, $field->id );
 	}
 
 /**
- * Echo the visibility level of this field.
+ * Output the visibility level of this field.
+ *
+ * @since 1.6.0
  */
 function bp_the_profile_field_visibility_level() {
 	echo bp_get_the_profile_field_visibility_level();
 }
+
 	/**
 	 * Return the visibility level of this field.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return string
 	 */
 	function bp_get_the_profile_field_visibility_level() {
 		global $field;
@@ -874,12 +863,19 @@ function bp_the_profile_field_visibility_level() {
 
 /**
  * Echo the visibility level label of this field.
+ *
+ * @since 1.6.0
  */
 function bp_the_profile_field_visibility_level_label() {
 	echo bp_get_the_profile_field_visibility_level_label();
 }
+
 	/**
 	 * Return the visibility level label of this field.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return string
 	 */
 	function bp_get_the_profile_field_visibility_level_label() {
 		global $field;
@@ -899,13 +895,22 @@ function bp_the_profile_field_visibility_level_label() {
 		 * Filters the profile field visibility level label.
 		 *
 		 * @since 1.6.0
+		 * @since 2.6.0 Added the `$level` parameter.
 		 *
 		 * @param string $retval Field visibility level label.
+		 * @param string $level  Field visibility level.
 		 */
-		return apply_filters( 'bp_get_the_profile_field_visibility_level_label', $fields[ $level ]['label'] );
+		return apply_filters( 'bp_get_the_profile_field_visibility_level_label', $fields[ $level ]['label'], $level );
 	}
 
-
+/**
+ * Return unserialized profile field data.
+ *
+ * @since 1.0.0
+ *
+ * @param string $value Content to maybe unserialize.
+ * @return mixed|string
+ */
 function bp_unserialize_profile_field( $value ) {
 	if ( is_serialized($value) ) {
 		$field_value = maybe_unserialize($value);
@@ -916,9 +921,30 @@ function bp_unserialize_profile_field( $value ) {
 	return $value;
 }
 
+/**
+ * Output XProfile field data.
+ *
+ * @since 1.2.0
+ *
+ * @param string|array $args Array of arguments for field data. See {@link bp_get_profile_field_data}
+ */
 function bp_profile_field_data( $args = '' ) {
 	echo bp_get_profile_field_data( $args );
 }
+
+	/**
+	 * Return XProfile field data.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param string|array $args {
+	 *    Array of arguments for field data.
+	 *
+	 *    @type string|int|bool $field   Field identifier.
+	 *    @type int             $user_id ID of the user to get field data for.
+	 * }
+	 * @return mixed
+	 */
 	function bp_get_profile_field_data( $args = '' ) {
 
 		$r = wp_parse_args( $args, array(
@@ -930,10 +956,12 @@ function bp_profile_field_data( $args = '' ) {
 		 * Filters the profile field data.
 		 *
 		 * @since 1.2.0
+		 * @since 2.6.0 Added the `$r` parameter.
 		 *
 		 * @param mixed $value Profile data for a specific field for the user.
+		 * @param array $r     Array of parsed arguments.
 		 */
-		return apply_filters( 'bp_get_profile_field_data', xprofile_get_field_data( $r['field'], $r['user_id'] ) );
+		return apply_filters( 'bp_get_profile_field_data', xprofile_get_field_data( $r['field'], $r['user_id'] ), $r );
 	}
 
 /**
@@ -948,7 +976,7 @@ function bp_profile_get_field_groups() {
 	$groups = wp_cache_get( 'all', 'bp_xprofile_groups' );
 	if ( false === $groups ) {
 		$groups = bp_xprofile_get_groups( array( 'fetch_fields' => true ) );
-		wp_cache_set( 'all', $groups, 'bp_xprofile' );
+		wp_cache_set( 'all', $groups, 'bp_xprofile_groups' );
 	}
 
 	/**
@@ -1052,13 +1080,30 @@ function bp_get_profile_group_tabs() {
 	return join( '', $tabs );
 }
 
+/**
+ * Output the XProfile group name.
+ *
+ * @since 1.0.0
+ *
+ * @param bool $deprecated Deprecated boolean parameter.
+ *
+ * @return string|mixed
+ */
 function bp_profile_group_name( $deprecated = true ) {
-	if ( !$deprecated ) {
+	if ( ! $deprecated ) {
 		return bp_get_profile_group_name();
 	} else {
 		echo bp_get_profile_group_name();
 	}
 }
+
+	/**
+	 * Return the XProfile group name.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
 	function bp_get_profile_group_name() {
 
 		// Check action variable.
@@ -1074,12 +1119,19 @@ function bp_profile_group_name( $deprecated = true ) {
 		 * Filters the profile group name.
 		 *
 		 * @since 1.0.0
+		 * @since 2.6.0 Added the `$group_id` parameter
 		 *
-		 * @param string $name Name of the profile group.
+		 * @param string $name     Name of the profile group.
+		 * @param int    $group_id ID of the profile group.
 		 */
-		return apply_filters( 'bp_get_profile_group_name', $group->name );
+		return apply_filters( 'bp_get_profile_group_name', $group->name, $group_id );
 	}
 
+/**
+ * Render a formatted string displaying when a profile was last updated.
+ *
+ * @since 1.0.0
+ */
 function bp_profile_last_updated() {
 
 	$last_updated = bp_get_profile_last_updated();
@@ -1090,6 +1142,14 @@ function bp_profile_last_updated() {
 		echo $last_updated;
 	}
 }
+
+	/**
+	 * Return a formatted string displaying when a profile was last updated.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool|string
+	 */
 	function bp_get_profile_last_updated() {
 
 		$last_updated = bp_get_user_meta( bp_displayed_user_id(), 'profile_last_updated', true );
@@ -1109,9 +1169,22 @@ function bp_profile_last_updated() {
 		return false;
 	}
 
+/**
+ * Display the current profile group ID.
+ *
+ * @since 1.1.0
+ */
 function bp_current_profile_group_id() {
 	echo bp_get_current_profile_group_id();
 }
+
+	/**
+	 * Return the current profile group ID.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return int
+	 */
 	function bp_get_current_profile_group_id() {
 		$profile_group_id = bp_action_variable( 1 );
 		if ( empty( $profile_group_id ) ) {
@@ -1125,14 +1198,27 @@ function bp_current_profile_group_id() {
 		 *
 		 * @since 1.1.0
 		 *
-		 * @param string $profile_group_id Current profile group ID.
+		 * @param int $profile_group_id Current profile group ID.
 		 */
-		return apply_filters( 'bp_get_current_profile_group_id', $profile_group_id );
+		return (int) apply_filters( 'bp_get_current_profile_group_id', $profile_group_id );
 	}
 
+/**
+ * Render an avatar delete link.
+ *
+ * @since 1.1.0
+ */
 function bp_avatar_delete_link() {
 	echo bp_get_avatar_delete_link();
 }
+
+	/**
+	 * Return an avatar delete link.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return string
+	 */
 	function bp_get_avatar_delete_link() {
 
 		/**
@@ -1145,6 +1231,11 @@ function bp_avatar_delete_link() {
 		return apply_filters( 'bp_get_avatar_delete_link', wp_nonce_url( bp_displayed_user_domain() . bp_get_profile_slug() . '/change-avatar/delete-avatar/', 'bp_delete_avatar_link' ) );
 	}
 
+/**
+ * Render an edit profile button.
+ *
+ * @since 1.0.0
+ */
 function bp_edit_profile_button() {
 	bp_button( array(
 		'id'                => 'edit_profile',
@@ -1154,7 +1245,6 @@ function bp_edit_profile_button() {
 		'link_href'         => trailingslashit( bp_displayed_user_domain() . bp_get_profile_slug() . '/edit' ),
 		'link_class'        => 'edit',
 		'link_text'         => __( 'Edit Profile', 'buddypress' ),
-		'link_title'        => __( 'Edit Profile', 'buddypress' ),
 	) );
 }
 
@@ -1163,7 +1253,9 @@ function bp_edit_profile_button() {
 /**
  * Echo the field visibility radio buttons.
  *
- * @param array|string $args Args for the radio buttons.
+ * @since 1.6.0
+ *
+ * @param array|string $args Args for the radio buttons. See {@link bp_profile_get_visibility_radio_buttons}
  */
 function bp_profile_visibility_radio_buttons( $args = '' ) {
 	echo bp_profile_get_visibility_radio_buttons( $args );
@@ -1171,8 +1263,18 @@ function bp_profile_visibility_radio_buttons( $args = '' ) {
 	/**
 	 * Return the field visibility radio buttons.
 	 *
-	 * @param array|string $args Args for the radio buttons.
+	 * @since 1.6.0
 	 *
+	 * @param array|string $args {
+	 *    Args for the radio buttons.
+	 *
+	 *    @type int    $field_id     ID of the field to render.
+	 *    @type string $before       Markup to render before the field.
+	 *    @type string $after        Markup to render after the field.
+	 *    @type string $before_radio Markup to render before the radio button.
+	 *    @type string $after_radio  Markup to render after the radio button.
+	 *    @type string $class        Class to apply to the field markup.
+	 * }
 	 * @return string $retval
 	 */
 	function bp_profile_get_visibility_radio_buttons( $args = '' ) {
@@ -1240,7 +1342,7 @@ function bp_profile_visibility_radio_buttons( $args = '' ) {
  *
  * @since 2.0.0
  *
- * @param array|string $args Args for the select list.
+ * @param array|string $args Args for the select list. See {@link bp_profile_get_settings_visibility_select}
  */
 function bp_profile_settings_visibility_select( $args = '' ) {
 	echo bp_profile_get_settings_visibility_select( $args );
@@ -1250,18 +1352,34 @@ function bp_profile_settings_visibility_select( $args = '' ) {
 	 *
 	 * @since 2.0.0
 	 *
-	 * @param array|string $args Args for the select list.
+	 * @param array|string $args {
+	 *    Args for the select list.
 	 *
+	 *    @type int    $field_id ID of the field to render.
+	 *    @type string $before   Markup to render before the field.
+	 *    @type string $before_controls  markup before form controls.
+	 *    @type string $after    Markup to render after the field.
+	 *    @type string $after_controls Markup after the form controls.
+	 *    @type string $class    Class to apply to the field markup.
+	 *    @type string $label_class Class to apply for the label element.
+	 *    @type string $notoggle_tag Markup element to use for notoggle tag.
+	 *    @type string $notoggle_class Class to apply to the notoggle element.
+	 * }
 	 * @return string $retval
 	 */
 	function bp_profile_get_settings_visibility_select( $args = '' ) {
 
 		// Parse optional arguments.
 		$r = bp_parse_args( $args, array(
-			'field_id' => bp_get_the_profile_field_id(),
-			'before'   => '',
-			'after'    => '',
-			'class'    => 'bp-xprofile-visibility'
+			'field_id'         => bp_get_the_profile_field_id(),
+			'before'           => '',
+			'before_controls'  => '',
+			'after'            => '',
+			'after_controls'   => '',
+			'class'            => 'bp-xprofile-visibility',
+			'label_class'      => 'bp-screen-reader-text',
+			'notoggle_tag'     => 'span',
+			'notoggle_class'   => 'field-visibility-settings-notoggle',
 		), 'xprofile_settings_visibility_select' );
 
 		// Empty return value, filled in below if a valid field ID is found.
@@ -1278,7 +1396,12 @@ function bp_profile_settings_visibility_select( $args = '' ) {
 
 			<?php if ( bp_current_user_can( 'bp_xprofile_change_field_visibility' ) ) : ?>
 
-				<label for="<?php echo esc_attr( 'field_' . $r['field_id'] ) ; ?>_visibility" class="bp-screen-reader-text"><?php _e( 'Select visibility', 'buddypress' ); ?></label>
+			<?php echo $r['before_controls']; ?>
+
+				<label for="<?php echo esc_attr( 'field_' . $r['field_id'] ) ; ?>_visibility" class="<?php echo esc_attr( $r['label_class'] ); ?>"><?php
+					/* translators: accessibility text */
+					_e( 'Select visibility', 'buddypress' );
+				?></label>
 				<select class="<?php echo esc_attr( $r['class'] ); ?>" name="<?php echo esc_attr( 'field_' . $r['field_id'] ) ; ?>_visibility" id="<?php echo esc_attr( 'field_' . $r['field_id'] ) ; ?>_visibility">
 
 					<?php foreach ( bp_xprofile_get_visibility_levels() as $level ) : ?>
@@ -1289,9 +1412,11 @@ function bp_profile_settings_visibility_select( $args = '' ) {
 
 				</select>
 
+			<?php echo $r['after_controls']; ?>
+
 			<?php else : ?>
 
-				<span class="field-visibility-settings-notoggle" title="<?php esc_attr_e( "This field's visibility cannot be changed.", 'buddypress' ); ?>"><?php bp_the_profile_field_visibility_level_label(); ?></span>
+				<<?php echo esc_html( $r['notoggle_tag'] ); ?> class="<?php echo esc_attr( $r['notoggle_class'] ); ?>"><?php bp_the_profile_field_visibility_level_label(); ?></<?php echo esc_html( $r['notoggle_tag'] ); ?>>
 
 			<?php endif;
 
@@ -1318,8 +1443,6 @@ function bp_profile_settings_visibility_select( $args = '' ) {
  * Output the 'required' markup in extended profile field labels.
  *
  * @since 2.4.0
- *
- * @return string HTML for the required label.
  */
 function bp_the_profile_field_required_label() {
 	echo bp_get_the_profile_field_required_label();

@@ -142,10 +142,21 @@ div.bp-avatar-nav {
 
 .drag-drop .drag-drop-inside p.drag-drop-buttons {
 	margin: auto;
-	text-align: auto;
+	text-align: inherit;
+}
+
+.moxie-shim.moxie-shim-html5 {
+	top: 108px !important;
+	right: 40.1% !important;
+	width: 12em;
+}
+
+.moxie-shim.moxie-shim-html5 input {
+	cursor: pointer;
 }
 
 .drag-drop #drag-drop-area {
+	box-sizing: border-box;
 	display: table;
 	height: 100%;
 	width: 100%;
@@ -163,14 +174,26 @@ div.bp-avatar-nav {
 	display: block;
 }
 
+p.drag-drop-buttons input#bp-browse-button {
+	width: 12em;
+}
+
 .drag-drop .drag-drop-inside p {
-	color: #aaa;
+	color: #767676;
 	font-size: 110%;
 	margin: 5px 0;
 	text-align: center;
 }
 
-.drag-drop-inside p.drag-drop-info {margin-top: 0;}
+.drag-drop-inside p.drag-drop-info {
+	margin-top: 0;
+}
+
+@supports (-ms-accelerator:true) {
+	.drag-drop-inside p.drag-drop-info {
+		display: block;
+	}
+}
 
 #avatar-to-crop {
 	margin: 0 auto 20px ;

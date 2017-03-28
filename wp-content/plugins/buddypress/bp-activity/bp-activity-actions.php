@@ -6,6 +6,7 @@
  *
  * @package BuddyPress
  * @subpackage ActivityActions
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -16,7 +17,6 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.2.0
  *
- * @uses do_action() To call 'bp_register_activity_actions' hook.
  */
 function bp_register_activity_actions() {
 
@@ -33,18 +33,6 @@ add_action( 'bp_init', 'bp_register_activity_actions', 8 );
  * Catch and route requests for single activity item permalinks.
  *
  * @since 1.2.0
- *
- * @uses bp_is_activity_component()
- * @uses bp_is_current_action()
- * @uses bp_action_variable()
- * @uses bp_activity_get_specific()
- * @uses bp_is_active()
- * @uses bp_core_get_user_domain()
- * @uses groups_get_group()
- * @uses bp_get_group_permalink()
- * @uses apply_filters_ref_array() To call the 'bp_activity_permalink_redirect_url' hook.
- * @uses bp_core_redirect()
- * @uses bp_get_root_domain()
  *
  * @return bool False on failure.
  */
@@ -83,7 +71,7 @@ function bp_activity_action_permalink_router() {
 		} else {
 
 			// Set redirect to group activity stream.
-			if ( $group = groups_get_group( array( 'group_id' => $activity->item_id ) ) ) {
+			if ( $group = groups_get_group( $activity->item_id ) ) {
 				$redirect = bp_get_group_permalink( $group ) . bp_get_activity_slug() . '/' . $activity->id . '/';
 			}
 		}
@@ -105,7 +93,7 @@ function bp_activity_action_permalink_router() {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @param array Array with url to redirect to and activity related to the redirect.
+	 * @param array $value Array with url to redirect to and activity related to the redirect.
 	 */
 	if ( ! $redirect = apply_filters_ref_array( 'bp_activity_permalink_redirect_url', array( $redirect, &$activity ) ) ) {
 		bp_core_redirect( bp_get_root_domain() );
@@ -120,17 +108,6 @@ add_action( 'bp_actions', 'bp_activity_action_permalink_router' );
  * Delete specific activity item and redirect to previous page.
  *
  * @since 1.1.0
- *
- * @uses bp_is_activity_component()
- * @uses bp_is_current_action()
- * @uses bp_action_variable()
- * @uses check_admin_referer()
- * @uses bp_activity_user_can_delete()
- * @uses do_action() Calls 'bp_activity_before_action_delete_activity' hook to allow actions to be taken before the activity is deleted.
- * @uses bp_activity_delete()
- * @uses bp_core_add_message()
- * @uses do_action() Calls 'bp_activity_action_delete_activity' hook to allow actions to be taken after the activity is deleted.
- * @uses bp_core_redirect()
  *
  * @param int $activity_id Activity id to be deleted. Defaults to 0.
  * @return bool False on failure.
@@ -185,7 +162,7 @@ function bp_activity_action_delete_activity( $activity_id = 0 ) {
 	do_action( 'bp_activity_action_delete_activity', $activity_id, $activity->user_id );
 
 	// Check for the redirect query arg, otherwise let WP handle things.
- 	if ( !empty( $_GET['redirect_to'] ) )
+	if ( !empty( $_GET['redirect_to'] ) )
 		bp_core_redirect( esc_url( $_GET['redirect_to'] ) );
 	else
 		bp_core_redirect( wp_get_referer() );
@@ -254,7 +231,7 @@ function bp_activity_action_spam_activity( $activity_id = 0 ) {
 	do_action( 'bp_activity_action_spam_activity', $activity_id, $activity->user_id );
 
 	// Check for the redirect query arg, otherwise let WP handle things.
- 	if ( !empty( $_GET['redirect_to'] ) )
+	if ( !empty( $_GET['redirect_to'] ) )
 		bp_core_redirect( esc_url( $_GET['redirect_to'] ) );
 	else
 		bp_core_redirect( wp_get_referer() );
@@ -265,20 +242,6 @@ add_action( 'bp_actions', 'bp_activity_action_spam_activity' );
  * Post user/group activity update.
  *
  * @since 1.2.0
- *
- * @uses is_user_logged_in()
- * @uses bp_is_activity_component()
- * @uses bp_is_current_action()
- * @uses check_admin_referer()
- * @uses apply_filters() To call 'bp_activity_post_update_content' hook.
- * @uses apply_filters() To call 'bp_activity_post_update_object' hook.
- * @uses apply_filters() To call 'bp_activity_post_update_item_id' hook.
- * @uses bp_core_add_message()
- * @uses bp_core_redirect()
- * @uses bp_activity_post_update()
- * @uses groups_post_update()
- * @uses bp_core_redirect()
- * @uses apply_filters() To call 'bp_activity_custom_update' hook.
  *
  * @return bool False on failure.
  */
@@ -370,17 +333,6 @@ add_action( 'bp_actions', 'bp_activity_action_post_update' );
  *
  * @since 1.2.0
  *
- * @uses is_user_logged_in()
- * @uses bp_is_activity_component()
- * @uses bp_is_current_action()
- * @uses check_admin_referer()
- * @uses apply_filters() To call 'bp_activity_post_comment_activity_id' hook.
- * @uses apply_filters() To call 'bp_activity_post_comment_content' hook.
- * @uses bp_core_add_message()
- * @uses bp_core_redirect()
- * @uses bp_activity_new_comment()
- * @uses wp_get_referer()
- *
  * @return bool False on failure.
  */
 function bp_activity_action_post_comment() {
@@ -434,16 +386,6 @@ add_action( 'bp_actions', 'bp_activity_action_post_comment' );
  *
  * @since 1.2.0
  *
- * @uses is_user_logged_in()
- * @uses bp_is_activity_component()
- * @uses bp_is_current_action()
- * @uses check_admin_referer()
- * @uses bp_activity_add_user_favorite()
- * @uses bp_action_variable()
- * @uses bp_core_add_message()
- * @uses bp_core_redirect()
- * @uses wp_get_referer()
- *
  * @return bool False on failure.
  */
 function bp_activity_action_mark_favorite() {
@@ -468,16 +410,6 @@ add_action( 'bp_actions', 'bp_activity_action_mark_favorite' );
  *
  * @since 1.2.0
  *
- * @uses is_user_logged_in()
- * @uses bp_is_activity_component()
- * @uses bp_is_current_action()
- * @uses check_admin_referer()
- * @uses bp_activity_remove_user_favorite()
- * @uses bp_action_variable()
- * @uses bp_core_add_message()
- * @uses bp_core_redirect()
- * @uses wp_get_referer()
- *
  * @return bool False on failure.
  */
 function bp_activity_action_remove_favorite() {
@@ -501,11 +433,6 @@ add_action( 'bp_actions', 'bp_activity_action_remove_favorite' );
  * Load the sitewide activity feed.
  *
  * @since 1.0.0
- *
- * @uses bp_is_activity_component()
- * @uses bp_is_current_action()
- * @uses bp_is_user()
- * @uses status_header()
  *
  * @return bool False on failure.
  */
@@ -534,10 +461,6 @@ add_action( 'bp_actions', 'bp_activity_action_sitewide_feed' );
  *
  * @since 1.0.0
  *
- * @uses bp_is_user_activity()
- * @uses bp_is_current_action()
- * @uses status_header()
- *
  * @return bool False on failure.
  */
 function bp_activity_action_personal_feed() {
@@ -564,13 +487,6 @@ add_action( 'bp_actions', 'bp_activity_action_personal_feed' );
  *
  * @since 1.0.0
  *
- * @uses bp_is_active()
- * @uses bp_is_user_activity()
- * @uses bp_is_current_action()
- * @uses bp_get_friends_slug()
- * @uses bp_is_action_variable()
- * @uses status_header()
- *
  * @return bool False on failure.
  */
 function bp_activity_action_friends_feed() {
@@ -596,13 +512,6 @@ add_action( 'bp_actions', 'bp_activity_action_friends_feed' );
  * Load the activity feed for a user's groups.
  *
  * @since 1.2.0
- *
- * @uses bp_is_active()
- * @uses bp_is_user_activity()
- * @uses bp_is_current_action()
- * @uses bp_get_groups_slug()
- * @uses bp_is_action_variable()
- * @uses status_header()
  *
  * @return bool False on failure.
  */
@@ -638,11 +547,6 @@ add_action( 'bp_actions', 'bp_activity_action_my_groups_feed' );
  *
  * @since 1.2.0
  *
- * @uses bp_is_user_activity()
- * @uses bp_is_current_action()
- * @uses bp_is_action_variable()
- * @uses status_header()
- *
  * @return bool False on failure.
  */
 function bp_activity_action_mentions_feed() {
@@ -675,11 +579,6 @@ add_action( 'bp_actions', 'bp_activity_action_mentions_feed' );
  *
  * @since 1.2.0
  *
- * @uses bp_is_user_activity()
- * @uses bp_is_current_action()
- * @uses bp_is_action_variable()
- * @uses status_header()
- *
  * @return bool False on failure.
  */
 function bp_activity_action_favorites_feed() {
@@ -704,45 +603,6 @@ function bp_activity_action_favorites_feed() {
 	) );
 }
 add_action( 'bp_actions', 'bp_activity_action_favorites_feed' );
-
-/**
- * Loads Akismet filtering for activity.
- *
- * @since 1.6.0
- * @since 2.3.0 We only support Akismet 3+.
- */
-function bp_activity_setup_akismet() {
-	$bp = buddypress();
-
-	// Bail if Akismet is not active.
-	if ( ! defined( 'AKISMET_VERSION' ) ) {
-		return;
-	}
-
-	// Bail if older version of Akismet.
-	if ( ! class_exists( 'Akismet' ) ) {
-		return;
-	}
-
-	// Bail if no Akismet key is set.
-	if ( ! bp_get_option( 'wordpress_api_key' ) && ! defined( 'WPCOM_API_KEY' ) ) {
-		return;
-	}
-
-	/**
-	 * Filters if BuddyPress Activity Akismet support has been disabled by another plugin.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param bool $value Return value of bp_is_akismet_active boolean function.
-	 */
-	if ( ! apply_filters( 'bp_activity_use_akismet', bp_is_akismet_active() ) ) {
-		return;
-	}
-
-	// Instantiate Akismet for BuddyPress.
-	$bp->activity->akismet = new BP_Akismet();
-}
 
 /**
  * AJAX endpoint for Suggestions API lookups.
@@ -796,7 +656,28 @@ function bp_activity_catch_transition_post_type_status( $new_status, $old_status
 	if ( $new_status === $old_status ) {
 		// An edit of an existing post should update the existing activity item.
 		if ( $new_status == 'publish' ) {
-			bp_activity_post_type_update( $post );
+			$edit = bp_activity_post_type_update( $post );
+
+			// Post was never recorded into activity stream, so record it now!
+			if ( null === $edit ) {
+				bp_activity_post_type_publish( $post->ID, $post );
+			}
+
+		// Allow plugins to eventually deal with other post statuses.
+		} else {
+			/**
+			 * Fires when editing the post and the new status is not 'publish'.
+			 *
+			 * This is a variable filter that is dependent on the post type
+			 * being untrashed.
+			 *
+			 * @since 2.5.0
+			 *
+			 * @param WP_Post $post Post data.
+			 * @param string $new_status New status for the post.
+			 * @param string $old_status Old status for the post.
+			 */
+			do_action( 'bp_activity_post_type_edit_' . $post->post_type, $post, $new_status, $old_status );
 		}
 
 		return;
@@ -827,6 +708,147 @@ function bp_activity_catch_transition_post_type_status( $new_status, $old_status
 	} elseif ( 'publish' === $old_status ) {
 		// Some form of pending status - only remove the activity entry.
 		bp_activity_post_type_unpublish( $post->ID, $post );
+
+	// For any other cases, allow plugins to eventually deal with it.
+	} else {
+		/**
+		 * Fires when the old and the new post status are not 'publish'.
+		 *
+		 * This is a variable filter that is dependent on the post type
+		 * being untrashed.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param WP_Post $post Post data.
+		 * @param string $new_status New status for the post.
+		 * @param string $old_status Old status for the post.
+		 */
+		do_action( 'bp_activity_post_type_transition_status_' . $post->post_type, $post, $new_status, $old_status );
 	}
 }
 add_action( 'transition_post_status', 'bp_activity_catch_transition_post_type_status', 10, 3 );
+
+/**
+ * When a post type comment status transition occurs, update the relevant activity's status.
+ *
+ * @since 2.5.0
+ *
+ * @param string     $new_status New comment status.
+ * @param string     $old_status Previous comment status.
+ * @param WP_Comment $comment Comment data.
+ */
+function bp_activity_transition_post_type_comment_status( $new_status, $old_status, $comment ) {
+	$post_type = get_post_type( $comment->comment_post_ID );
+	if ( ! $post_type ) {
+		return;
+	}
+
+	// Get the post type tracking args.
+	$activity_post_object = bp_activity_get_post_type_tracking_args( $post_type );
+
+	// Bail if the activity type does not exist
+	if ( empty( $activity_post_object->comments_tracking->action_id ) ) {
+		return false;
+
+	// Set the $activity_comment_object
+	} else {
+		$activity_comment_object = $activity_post_object->comments_tracking;
+	}
+
+	// Init an empty activity ID
+	$activity_id = 0;
+
+	/**
+	 * Activity currently doesn't have any concept of a trash, or an unapproved/approved state.
+	 *
+	 * If a blog comment transitions to a "delete" or "hold" status, delete the activity item.
+	 * If a blog comment transitions to trashed, or spammed, mark the activity as spam.
+	 * If a blog comment transitions to approved (and the activity exists), mark the activity as ham.
+	 * If a blog comment transitions to unapproved (and the activity exists), mark the activity as spam.
+	 * Otherwise, record the comment into the activity stream.
+	 */
+
+	// This clause handles delete/hold.
+	if ( in_array( $new_status, array( 'delete', 'hold' ) ) ) {
+		return bp_activity_post_type_remove_comment( $comment->comment_ID, $activity_post_object );
+
+	// These clauses handle trash, spam, and un-spams.
+	} elseif ( in_array( $new_status, array( 'trash', 'spam', 'unapproved' ) ) ) {
+		$action = 'spam_activity';
+	} elseif ( 'approved' == $new_status ) {
+		$action = 'ham_activity';
+	}
+
+	// Get the activity
+	if ( bp_disable_blogforum_comments() ) {
+		$activity_id = bp_activity_get_activity_id( array(
+			'component'         => $activity_comment_object->component_id,
+			'item_id'           => get_current_blog_id(),
+			'secondary_item_id' => $comment->comment_ID,
+			'type'              => $activity_comment_object->action_id,
+		) );
+	} else {
+		$activity_id = get_comment_meta( $comment->comment_ID, 'bp_activity_comment_id', true );
+	}
+
+	/**
+	 * Leave a chance to plugins to manage activity comments differently.
+	 *
+	 * @since  2.5.0
+	 *
+	 * @param bool        $value       True to override BuddyPress management.
+	 * @param string      $post_type   The post type name.
+	 * @param int         $activity_id The post type activity (0 if not found).
+	 * @param string      $new_status  The new status of the post type comment.
+	 * @param string      $old_status  The old status of the post type comment.
+	 * @param WP_Comment  $comment Comment data.
+	 */
+	if ( true === apply_filters( 'bp_activity_pre_transition_post_type_comment_status', false, $post_type, $activity_id, $new_status, $old_status, $comment ) ) {
+		return false;
+	}
+
+	// Check activity item exists
+	if ( empty( $activity_id ) ) {
+		// If no activity exists, but the comment has been approved, record it into the activity table.
+		if ( 'approved' == $new_status ) {
+			return bp_activity_post_type_comment( $comment->comment_ID, true, $activity_post_object );
+		}
+
+		return;
+	}
+
+	// Create an activity object
+	$activity = new BP_Activity_Activity( $activity_id );
+	if ( empty( $activity->component ) ) {
+		return;
+	}
+
+	// Spam/ham the activity if it's not already in that state
+	if ( 'spam_activity' === $action && ! $activity->is_spam ) {
+		bp_activity_mark_as_spam( $activity );
+	} elseif ( 'ham_activity' == $action) {
+		bp_activity_mark_as_ham( $activity );
+	}
+
+	// Add "new_post_type_comment" to the whitelisted activity types, so that the activity's Akismet history is generated
+	$post_type_comment_action = $activity_comment_object->action_id;
+	$comment_akismet_history = function ( $activity_types ) use ( $post_type_comment_action ) {
+		$activity_types[] = $post_type_comment_action;
+
+		return $activity_types;
+	};
+	add_filter( 'bp_akismet_get_activity_types', $comment_akismet_history );
+
+	// Make sure the activity change won't edit the comment if sync is on
+	remove_action( 'bp_activity_before_save', 'bp_blogs_sync_activity_edit_to_post_comment', 20 );
+
+	// Save the updated activity
+	$activity->save();
+
+	// Restore the action
+	add_action( 'bp_activity_before_save', 'bp_blogs_sync_activity_edit_to_post_comment', 20 );
+
+	// Remove the "new_blog_comment" activity type whitelist so we don't break anything
+	remove_filter( 'bp_akismet_get_activity_types', $comment_akismet_history );
+}
+add_action( 'transition_comment_status', 'bp_activity_transition_post_type_comment_status', 10, 3 );

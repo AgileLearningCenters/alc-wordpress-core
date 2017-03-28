@@ -4,6 +4,7 @@
  *
  * @package BuddyPress
  * @subpackage MessagesClasses
+ * @since 1.0.0
  */
 
 // Exit if accessed directly.
@@ -253,6 +254,11 @@ class BP_Messages_Thread {
 			wp_cache_set( 'thread_recipients_' . $thread_id, $recipients, 'bp_messages' );
 		}
 
+		// Cast all items from the messages DB table as integers.
+		foreach ( (array) $recipients as $key => $data ) {
+			$recipients[ $key ] = (object) array_map( 'intval', (array) $data );
+		}
+
 		/**
 		 * Filters the recipients of a message thread.
 		 *
@@ -290,6 +296,13 @@ class BP_Messages_Thread {
 			wp_cache_set( $thread_id, (array) $messages, 'bp_messages_threads' );
 		}
 
+		// Integer casting.
+		foreach ( $messages as $key => $data ) {
+			$messages[ $key ]->id        = (int) $messages[ $key ]->id;
+			$messages[ $key ]->thread_id = (int) $messages[ $key ]->thread_id;
+			$messages[ $key ]->sender_id = (int) $messages[ $key ]->sender_id;
+		}
+
 		return $messages;
 	}
 
@@ -313,31 +326,40 @@ class BP_Messages_Thread {
 	 * has marked the thread as deleted.
 	 *
 	 * @since 1.0.0
+	 * @since 2.7.0 The $user_id parameter was added. Previously the current user
+	 *              was always assumed.
 	 *
 	 * @param int $thread_id The message thread ID.
+	 * @param int $user_id The ID of the user in the thread to mark messages as
+	 *                     deleted for. Defaults to the current logged-in user.
+	 *
 	 * @return bool
 	 */
-	public static function delete( $thread_id = 0 ) {
+	public static function delete( $thread_id = 0, $user_id = 0 ) {
 		global $wpdb;
 
 		$thread_id = (int) $thread_id;
+		$user_id = (int) $user_id;
+
+		if ( empty( $user_id ) ) {
+			$user_id = bp_loggedin_user_id();
+		}
 
 		/**
 		 * Fires before a message thread is marked as deleted.
 		 *
 		 * @since 2.2.0
+		 * @since 2.7.0 The $user_id parameter was added.
 		 *
 		 * @param int $thread_id ID of the thread being deleted.
+		 * @param int $user_id   ID of the user that the thread is being deleted for.
 		 */
-		do_action( 'bp_messages_thread_before_mark_delete', $thread_id );
+		do_action( 'bp_messages_thread_before_mark_delete', $thread_id, $user_id );
 
 		$bp = buddypress();
 
 		// Mark messages as deleted
-		//
-		// @todo the reliance on bp_loggedin_user_id() sucks for plugins
-		// refactor this method to accept a $user_id parameter.
-		$wpdb->query( $wpdb->prepare( "UPDATE {$bp->messages->table_name_recipients} SET is_deleted = 1 WHERE thread_id = %d AND user_id = %d", $thread_id, bp_loggedin_user_id() ) );
+		$wpdb->query( $wpdb->prepare( "UPDATE {$bp->messages->table_name_recipients} SET is_deleted = 1 WHERE thread_id = %d AND user_id = %d", $thread_id, $user_id ) );
 
 		// Get the message ids in order to pass to the action.
 		$message_ids = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$bp->messages->table_name_messages} WHERE thread_id = %d", $thread_id ) );
@@ -385,11 +407,13 @@ class BP_Messages_Thread {
 		 * Fires after a message thread is either marked as deleted or deleted.
 		 *
 		 * @since 2.2.0
+		 * @since 2.7.0 The $user_id parameter was added.
 		 *
 		 * @param int   $thread_id   ID of the thread being deleted.
 		 * @param array $message_ids IDs of messages being deleted.
+		 * @param int   $user_id     ID of the user the threads were deleted for.
 		 */
-		do_action( 'bp_messages_thread_after_delete', $thread_id, $message_ids );
+		do_action( 'bp_messages_thread_after_delete', $thread_id, $message_ids, $user_id );
 
 		return true;
 	}
@@ -429,8 +453,7 @@ class BP_Messages_Thread {
 				5 => 'search_terms',
 			);
 
-			$func_args = func_get_args();
-			$args      = bp_core_parse_args_array( $old_args_keys, $func_args );
+			$args = bp_core_parse_args_array( $old_args_keys, func_get_args() );
 		}
 
 		$r = bp_parse_args( $args, array(
@@ -584,16 +607,28 @@ class BP_Messages_Thread {
 	 * @since 1.0.0
 	 *
 	 * @param int $thread_id The message thread ID.
+	 *
+	 * @return false|int Number of threads marked as read or false on error.
 	 */
 	public static function mark_as_read( $thread_id = 0 ) {
 		global $wpdb;
 
-		$bp  = buddypress();
-		$sql = $wpdb->prepare( "UPDATE {$bp->messages->table_name_recipients} SET unread_count = 0 WHERE user_id = %d AND thread_id = %d", bp_loggedin_user_id(), $thread_id );
-		$wpdb->query( $sql );
+		$bp     = buddypress();
+		$retval = $wpdb->query( $wpdb->prepare( "UPDATE {$bp->messages->table_name_recipients} SET unread_count = 0 WHERE user_id = %d AND thread_id = %d", bp_loggedin_user_id(), $thread_id ) );
 
 		wp_cache_delete( 'thread_recipients_' . $thread_id, 'bp_messages' );
 		wp_cache_delete( bp_loggedin_user_id(), 'bp_messages_unread_count' );
+
+		/**
+		 * Fires when messages thread was marked as read.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param int $thread_id The message thread ID.
+		 */
+		do_action( 'messages_thread_mark_as_read', $thread_id );
+
+		return $retval;
 	}
 
 	/**
@@ -602,16 +637,28 @@ class BP_Messages_Thread {
 	 * @since 1.0.0
 	 *
 	 * @param int $thread_id The message thread ID.
+	 *
+	 * @return false|int Number of threads marked as unread or false on error.
 	 */
 	public static function mark_as_unread( $thread_id = 0 ) {
 		global $wpdb;
 
-		$bp  = buddypress();
-		$sql = $wpdb->prepare( "UPDATE {$bp->messages->table_name_recipients} SET unread_count = 1 WHERE user_id = %d AND thread_id = %d", bp_loggedin_user_id(), $thread_id );
-		$wpdb->query( $sql );
+		$bp     = buddypress();
+		$retval = $wpdb->query( $wpdb->prepare( "UPDATE {$bp->messages->table_name_recipients} SET unread_count = 1 WHERE user_id = %d AND thread_id = %d", bp_loggedin_user_id(), $thread_id ) );
 
 		wp_cache_delete( 'thread_recipients_' . $thread_id, 'bp_messages' );
 		wp_cache_delete( bp_loggedin_user_id(), 'bp_messages_unread_count' );
+
+		/**
+		 * Fires when messages thread was marked as unread.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param int $thread_id The message thread ID.
+		 */
+		do_action( 'messages_thread_mark_as_unread', $thread_id );
+
+		return $retval;
 	}
 
 	/**

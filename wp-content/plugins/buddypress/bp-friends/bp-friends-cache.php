@@ -7,6 +7,7 @@
  *
  * @package BuddyPress
  * @subpackage FriendsCaching
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -14,6 +15,8 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Clear friends-related cache for members of a specific friendship.
+ *
+ * @since 1.0.0
  *
  * @param int $friendship_id ID of the friendship whose two members should
  *                           have their friends cache busted.
@@ -30,6 +33,47 @@ function friends_clear_friend_object_cache( $friendship_id ) {
 // List actions to clear object caches on.
 add_action( 'friends_friendship_accepted', 'friends_clear_friend_object_cache' );
 add_action( 'friends_friendship_deleted',  'friends_clear_friend_object_cache' );
+
+/**
+ * Clear friendship caches on friendship changes.
+ *
+ * @since 2.7.0
+ *
+ * @param int $friendship_id     ID of the friendship that has changed.
+ * @param int $initiator_user_id ID of the first user.
+ * @param int $friend_user_id    ID of the second user.
+ * @return bool
+ */
+function bp_friends_clear_bp_friends_friendships_cache( $friendship_id, $initiator_user_id, $friend_user_id ) {
+	// Clear friendship ID cache for each user.
+	wp_cache_delete( $initiator_user_id, 'bp_friends_friendships_for_user' );
+	wp_cache_delete( $friend_user_id,    'bp_friends_friendships_for_user' );
+
+	// Clear the friendship object cache.
+	wp_cache_delete( $friendship_id, 'bp_friends_friendships' );
+}
+add_action( 'friends_friendship_requested', 'bp_friends_clear_bp_friends_friendships_cache', 10, 3 );
+add_action( 'friends_friendship_accepted',  'bp_friends_clear_bp_friends_friendships_cache', 10, 3 );
+add_action( 'friends_friendship_deleted',   'bp_friends_clear_bp_friends_friendships_cache', 10, 3 );
+
+/**
+ * Clear friendship caches on friendship changes.
+ *
+ * @since 2.7.0
+ *
+ * @param int                   $friendship_id The friendship ID.
+ * @param BP_Friends_Friendship $friendship Friendship object.
+ */
+function bp_friends_clear_bp_friends_friendships_cache_remove( $friendship_id, BP_Friends_Friendship $friendship ) {
+	// Clear friendship ID cache for each user.
+	wp_cache_delete( $friendship->initiator_user_id, 'bp_friends_friendships_for_user' );
+	wp_cache_delete( $friendship->friend_user_id,    'bp_friends_friendships_for_user' );
+
+	// Clear the friendship object cache.
+	wp_cache_delete( $friendship_id, 'bp_friends_friendships' );
+}
+add_action( 'friends_friendship_withdrawn', 'bp_friends_clear_bp_friends_friendships_cache_remove', 10, 2 );
+add_action( 'friends_friendship_rejected',  'bp_friends_clear_bp_friends_friendships_cache_remove', 10, 2 );
 
 /**
  * Clear the friend request cache for the user not initiating the friendship.

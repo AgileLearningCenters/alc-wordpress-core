@@ -8,6 +8,7 @@
  *
  * @package BuddyPress
  * @subpackage XProfileActions
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -19,8 +20,8 @@ defined( 'ABSPATH' ) || exit;
  *
  * The function will delete the active avatar for a user.
  *
- * @uses bp_core_delete_avatar() Deletes the active avatar for the logged in user.
- * @uses add_action() Runs a specific function for an action when it fires.
+ * @since 1.0.0
+ *
  */
 function xprofile_action_delete_avatar() {
 
@@ -83,7 +84,7 @@ function bp_xprofile_action_settings() {
 	 */
 	do_action( 'bp_xprofile_settings_before_save' );
 
-	/** Save ******************************************************************/
+	/* Save ******************************************************************/
 
 	// Only save if there are field ID's being posted.
 	if ( ! empty( $_POST['field_ids'] ) ) {
@@ -115,7 +116,7 @@ function bp_xprofile_action_settings() {
 		}
 	}
 
-	/** Other *****************************************************************/
+	/* Other *****************************************************************/
 
 	/**
 	 * Fires after saving xprofile field visibilities.

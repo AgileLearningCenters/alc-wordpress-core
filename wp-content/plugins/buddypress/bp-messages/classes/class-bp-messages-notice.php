@@ -4,6 +4,7 @@
  *
  * @package BuddyPress
  * @subpackage MessagesClasses
+ * @since 1.0.0
  */
 
 // Exit if accessed directly.
@@ -57,11 +58,11 @@ class BP_Messages_Notice {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int $id Optional. The ID of the current notice.
+	 * @param int|null $id Optional. The ID of the current notice.
 	 */
 	public function __construct( $id = null ) {
 		if ( $id ) {
-			$this->id = $id;
+			$this->id = (int) $id;
 			$this->populate();
 		}
 	}
@@ -84,7 +85,7 @@ class BP_Messages_Notice {
 			$this->subject   = $notice->subject;
 			$this->message   = $notice->message;
 			$this->date_sent = $notice->date_sent;
-			$this->is_active = $notice->is_active;
+			$this->is_active = (int) $notice->is_active;
 		}
 	}
 
@@ -195,6 +196,15 @@ class BP_Messages_Notice {
 			return false;
 		}
 
+		/**
+		 * Fires after the current message item has been deleted.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param BP_Messages_Notice $this Current instance of the message notice item being deleted.
+		 */
+		do_action( 'messages_notice_after_delete', $this );
+
 		return true;
 	}
 
@@ -231,7 +241,20 @@ class BP_Messages_Notice {
 
 		$notices = $wpdb->get_results( "SELECT * FROM {$bp->messages->table_name_notices} ORDER BY date_sent DESC {$limit_sql}" );
 
-		return $notices;
+		// Integer casting.
+		foreach ( (array) $notices as $key => $data ) {
+			$notices[ $key ]->id        = (int) $notices[ $key ]->id;
+			$notices[ $key ]->is_active = (int) $notices[ $key ]->is_active;
+		}
+
+		/**
+		 * Filters the array of notices, sorted by date and paginated.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $r Array of parameters.
+		 */
+		return apply_filters( 'messages_notice_get_notices', $notices, $r );
 	}
 
 	/**
@@ -248,11 +271,16 @@ class BP_Messages_Notice {
 
 		$notice_count = $wpdb->get_var( "SELECT COUNT(id) FROM {$bp->messages->table_name_notices}" );
 
-		return $notice_count;
+		/**
+		 * Filters the total number of notices.
+		 *
+		 * @since 2.8.0
+		 */
+		return (int) apply_filters( 'messages_notice_get_total_notice_count', $notice_count );
 	}
 
 	/**
-	 * Returns the active notice that should be displayed on the frontend.
+	 * Returns the active notice that should be displayed on the front end.
 	 *
 	 * @since 1.0.0
 	 *
@@ -272,6 +300,11 @@ class BP_Messages_Notice {
 			wp_cache_set( 'active_notice', $notice, 'bp_messages' );
 		}
 
-		return $notice;
+		/**
+		 * Gives ability to filter the active notice that should be displayed on the front end.
+		 *
+		 * @since 2.8.0
+		 */
+		return apply_filters( 'messages_notice_get_active', $notice );
 	}
 }

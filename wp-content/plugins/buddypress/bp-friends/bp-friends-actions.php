@@ -8,6 +8,7 @@
  *
  * @package BuddyPress
  * @subpackage FriendsActions
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -15,6 +16,8 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Catch and process friendship requests.
+ *
+ * @since 1.0.1
  */
 function friends_action_add_friend() {
 	if ( !bp_is_friends_component() || !bp_is_current_action( 'add-friend' ) )
@@ -49,10 +52,12 @@ function friends_action_add_friend() {
 
 	return false;
 }
-add_action( 'bp_init', 'friends_action_add_friend' );
+add_action( 'bp_actions', 'friends_action_add_friend' );
 
 /**
  * Catch and process Remove Friendship requests.
+ *
+ * @since 1.0.1
  */
 function friends_action_remove_friend() {
 	if ( !bp_is_friends_component() || !bp_is_current_action( 'remove-friend' ) )
@@ -87,4 +92,4 @@ function friends_action_remove_friend() {
 
 	return false;
 }
-add_action( 'bp_init', 'friends_action_remove_friend' );
+add_action( 'bp_actions', 'friends_action_remove_friend' );

@@ -4,6 +4,7 @@
  *
  * @package BuddyPress
  * @subpackage XProfileClasses
+ * @since 2.0.0
  */
 
 // Exit if accessed directly.
@@ -18,6 +19,7 @@ abstract class BP_XProfile_Field_Type {
 
 	/**
 	 * Validation regex rules for field type.
+	 *
 	 * @since 2.0.0
 	 * @var array Field type validation regexes.
 	 */
@@ -80,6 +82,14 @@ abstract class BP_XProfile_Field_Type {
 	public $supports_richtext = false;
 
 	/**
+	 * If the field type has a type-specific settings section on the Edit Field panel.
+	 *
+	 * @since 2.7.0
+	 * @var bool|null Boolean if set explicitly by the type object, otherwise null.
+	 */
+	protected $do_settings_section = null;
+
+	/**
 	 * If object is created by an BP_XProfile_Field object.
 	 *
 	 * @since 2.0.0
@@ -117,7 +127,6 @@ abstract class BP_XProfile_Field_Type {
 	 * @param string $format         Regex string.
 	 * @param string $replace_format Optional; if 'replace', replaces the format instead of adding to it.
 	 *                               Defaults to 'add'.
-	 *
 	 * @return BP_XProfile_Field_Type
 	 */
 	public function set_format( $format, $replace_format = 'add' ) {
@@ -152,7 +161,6 @@ abstract class BP_XProfile_Field_Type {
 	 * @since 2.0.0
 	 *
 	 * @param string|array $values Whitelisted values.
-	 *
 	 * @return BP_XProfile_Field_Type
 	 */
 	public function set_whitelist_values( $values ) {
@@ -181,7 +189,6 @@ abstract class BP_XProfile_Field_Type {
 	 * @since 2.0.0
 	 *
 	 * @param string|array $values Value to check against the registered formats.
-	 *
 	 * @return bool True if the value validates
 	 */
 	public function is_valid( $values ) {
@@ -207,10 +214,13 @@ abstract class BP_XProfile_Field_Type {
 			$validated = true;
 		}
 
-		// If there's a whitelist set, also check the $value.
+		// If there's a whitelist set, make sure that each value is a whitelisted value.
 		if ( ( true === $validated ) && ! empty( $values ) && ! empty( $this->validation_whitelist ) ) {
 			foreach ( (array) $values as $value ) {
-				$validated = in_array( $value, $this->validation_whitelist, true );
+				if ( ! in_array( $value, $this->validation_whitelist, true ) ) {
+					$validated = false;
+					break;
+				}
 			}
 		}
 
@@ -227,6 +237,23 @@ abstract class BP_XProfile_Field_Type {
 	}
 
 	/**
+	 * Check whether the current field type should have a settings ("options") section on the Edit Field panel.
+	 *
+	 * Falls back on `supports_options` if no value is set by the field type.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @return bool
+	 */
+	public function do_settings_section() {
+		if ( null === $this->do_settings_section ) {
+			$this->do_settings_section = $this->supports_options;
+		}
+
+		return (bool) $this->do_settings_section;
+	}
+
+	/**
 	 * Output the edit field HTML for this field type.
 	 *
 	 * Must be used inside the {@link bp_profile_fields()} template loop.
@@ -234,6 +261,7 @@ abstract class BP_XProfile_Field_Type {
 	 * @since 2.0.0
 	 *
 	 * @param array $raw_properties Optional key/value array of permitted attributes that you want to add.
+	 * @return void
 	 */
 	abstract public function edit_field_html( array $raw_properties = array() );
 
@@ -242,8 +270,10 @@ abstract class BP_XProfile_Field_Type {
 	 *
 	 * Must be used inside the {@link bp_profile_fields()} template loop.
 	 *
-	 * @param array $raw_properties Optional key/value array of permitted attributes that you want to add.
 	 * @since 2.0.0
+	 *
+	 * @param array $raw_properties Optional key/value array of permitted attributes that you want to add.
+	 * @return void
 	 */
 	abstract public function admin_field_html( array $raw_properties = array() );
 
@@ -292,7 +322,7 @@ abstract class BP_XProfile_Field_Type {
 
 		<div id="<?php echo esc_attr( $type ); ?>" class="postbox bp-options-box" style="<?php echo esc_attr( $class ); ?> margin-top: 15px;">
 			<h3><?php esc_html_e( 'Please enter options for this Field:', 'buddypress' ); ?></h3>
-			<div class="inside">
+			<div class="inside" aria-live="polite" aria-atomic="true" aria-relevant="all">
 				<p>
 					<label for="sort_order_<?php echo esc_attr( $type ); ?>"><?php esc_html_e( 'Sort Order:', 'buddypress' ); ?></label>
 					<select name="sort_order_<?php echo esc_attr( $type ); ?>" id="sort_order_<?php echo esc_attr( $type ); ?>" >
@@ -360,7 +390,10 @@ abstract class BP_XProfile_Field_Type {
 
 						<div id="<?php echo esc_attr( "{$type}_div{$j}" ); ?>" class="bp-option sortable">
 							<span class="bp-option-icon grabber"></span>
-							<label for="<?php echo esc_attr( "{$type}_option{$j}" ); ?>" class="screen-reader-text"><?php esc_html_e( 'Add an option', 'buddypress' ); ?></label>
+							<label for="<?php echo esc_attr( "{$type}_option{$j}" ); ?>" class="screen-reader-text"><?php
+								/* translators: accessibility text */
+								esc_html_e( 'Add an option', 'buddypress' );
+							?></label>
 							<input type="text" name="<?php echo esc_attr( "{$type}_option[{$j}]" ); ?>" id="<?php echo esc_attr( "{$type}_option{$j}" ); ?>" value="<?php echo esc_attr( stripslashes( $options[$i]->name ) ); ?>" />
 							<label for="<?php echo esc_attr( "{$type}_option{$default_name}" ); ?>">
 								<input type="<?php echo esc_attr( $control_type ); ?>" id="<?php echo esc_attr( "{$type}_option{$default_name}" ); ?>" name="<?php echo esc_attr( "isDefault_{$type}_option{$default_name}" ); ?>" <?php checked( $options[$i]->is_default_option, true ); ?> value="<?php echo esc_attr( $j ); ?>" />
@@ -417,9 +450,8 @@ abstract class BP_XProfile_Field_Type {
 	 * @since 2.1.0
 	 * @since 2.4.0 Added the `$field_id` parameter.
 	 *
-	 * @param mixed $field_value Submitted field value.
-	 * @param int   $field_id    Optional. ID of the field.
-	 *
+	 * @param mixed      $field_value Submitted field value.
+	 * @param string|int $field_id    Optional. ID of the field.
 	 * @return mixed
 	 */
 	public static function pre_validate_filter( $field_value, $field_id = '' ) {
@@ -436,14 +468,25 @@ abstract class BP_XProfile_Field_Type {
 	 * @since 2.1.0
 	 * @since 2.4.0 Added `$field_id` parameter.
 	 *
-	 * @param mixed $field_value Field value.
-	 * @param int   $field_id    ID of the field.
-	 *
+	 * @param mixed      $field_value Field value.
+	 * @param string|int $field_id    ID of the field.
 	 * @return mixed
 	 */
 	public static function display_filter( $field_value, $field_id = '' ) {
 		return $field_value;
 	}
+
+	/**
+	 * Save miscellaneous settings related to this field type.
+	 *
+	 * Override in a specific field type if it requires an admin save routine.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param int   $field_id Field ID.
+	 * @param array $settings Array of settings.
+	 */
+	public function admin_save_settings( $field_id, $settings ) {}
 
 	/** Protected *************************************************************/
 
@@ -456,7 +499,6 @@ abstract class BP_XProfile_Field_Type {
 	 * @since 2.0.0
 	 *
 	 * @param array $properties Optional key/value array of attributes for this edit field.
-	 *
 	 * @return string
 	 */
 	protected function get_edit_field_html_elements( array $properties = array() ) {

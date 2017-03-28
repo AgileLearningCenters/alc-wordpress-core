@@ -4,6 +4,7 @@
  *
  * @package BuddyPress
  * @subpackage Activity
+ * @since 1.0.0
  */
 
 // Exit if accessed directly.
@@ -11,7 +12,6 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Database interaction class for the BuddyPress activity component.
- *
  * Instance methods are available for creating/editing an activity,
  * static methods for querying activities.
  *
@@ -24,6 +24,7 @@ class BP_Activity_Activity {
 	/**
 	 * ID of the activity item.
 	 *
+	 * @since 1.0.0
 	 * @var int
 	 */
 	var $id;
@@ -31,6 +32,7 @@ class BP_Activity_Activity {
 	/**
 	 * ID of the associated item.
 	 *
+	 * @since 1.0.0
 	 * @var int
 	 */
 	var $item_id;
@@ -38,6 +40,7 @@ class BP_Activity_Activity {
 	/**
 	 * ID of the associated secondary item.
 	 *
+	 * @since 1.0.0
 	 * @var int
 	 */
 	var $secondary_item_id;
@@ -45,6 +48,7 @@ class BP_Activity_Activity {
 	/**
 	 * ID of user associated with the activity item.
 	 *
+	 * @since 1.0.0
 	 * @var int
 	 */
 	var $user_id;
@@ -52,6 +56,7 @@ class BP_Activity_Activity {
 	/**
 	 * The primary URL for the activity in RSS feeds.
 	 *
+	 * @since 1.0.0
 	 * @var string
 	 */
 	var $primary_link;
@@ -59,6 +64,7 @@ class BP_Activity_Activity {
 	/**
 	 * BuddyPress component the activity item relates to.
 	 *
+	 * @since 1.2.0
 	 * @var string
 	 */
 	var $component;
@@ -66,6 +72,7 @@ class BP_Activity_Activity {
 	/**
 	 * Activity type, eg 'new_blog_post'.
 	 *
+	 * @since 1.2.0
 	 * @var string
 	 */
 	var $type;
@@ -73,6 +80,7 @@ class BP_Activity_Activity {
 	/**
 	 * Description of the activity, eg 'Alex updated his profile.'.
 	 *
+	 * @since 1.2.0
 	 * @var string
 	 */
 	var $action;
@@ -80,6 +88,7 @@ class BP_Activity_Activity {
 	/**
 	 * The content of the activity item.
 	 *
+	 * @since 1.2.0
 	 * @var string
 	 */
 	var $content;
@@ -87,6 +96,7 @@ class BP_Activity_Activity {
 	/**
 	 * The date the activity item was recorded, in 'Y-m-d h:i:s' format.
 	 *
+	 * @since 1.0.0
 	 * @var string
 	 */
 	var $date_recorded;
@@ -94,13 +104,15 @@ class BP_Activity_Activity {
 	/**
 	 * Whether the item should be hidden in sitewide streams.
 	 *
+	 * @since 1.1.0
 	 * @var int
 	 */
-	var $hide_sitewide = false;
+	var $hide_sitewide = 0;
 
 	/**
 	 * Node boundary start for activity or activity comment.
 	 *
+	 * @since 1.5.0
 	 * @var int
 	 */
 	var $mptt_left;
@@ -108,6 +120,7 @@ class BP_Activity_Activity {
 	/**
 	 * Node boundary end for activity or activity comment.
 	 *
+	 * @since 1.5.0
 	 * @var int
 	 */
 	var $mptt_right;
@@ -115,24 +128,50 @@ class BP_Activity_Activity {
 	/**
 	 * Whether this item is marked as spam.
 	 *
+	 * @since 1.6.0
 	 * @var int
 	 */
 	var $is_spam;
 
 	/**
+	 * Error holder.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var WP_Error
+	 */
+	public $errors;
+
+	/**
+	 * Error type to return. Either 'bool' or 'wp_error'.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @var string
+	 */
+	public $error_type = 'bool';
+
+	/**
 	 * Constructor method.
+	 *
+	 * @since 1.5.0
 	 *
 	 * @param int|bool $id Optional. The ID of a specific activity item.
 	 */
 	public function __construct( $id = false ) {
+		// Instantiate errors object.
+		$this->errors = new WP_Error;
+
 		if ( !empty( $id ) ) {
-			$this->id = $id;
+			$this->id = (int) $id;
 			$this->populate();
 		}
 	}
 
 	/**
 	 * Populate the object with data about the specific activity item.
+	 *
+	 * @since 1.0.0
 	 */
 	public function populate() {
 		global $wpdb;
@@ -146,34 +185,37 @@ class BP_Activity_Activity {
 			wp_cache_set( $this->id, $row, 'bp_activity' );
 		}
 
-		if ( ! empty( $row ) ) {
-			$this->id                = (int) $row->id;
-			$this->item_id           = (int) $row->item_id;
-			$this->secondary_item_id = (int) $row->secondary_item_id;
-			$this->user_id           = (int) $row->user_id;
-			$this->primary_link      = $row->primary_link;
-			$this->component         = $row->component;
-			$this->type              = $row->type;
-			$this->action            = $row->action;
-			$this->content           = $row->content;
-			$this->date_recorded     = $row->date_recorded;
-			$this->hide_sitewide     = $row->hide_sitewide;
-			$this->mptt_left         = (int) $row->mptt_left;
-			$this->mptt_right        = (int) $row->mptt_right;
-			$this->is_spam           = $row->is_spam;
+		if ( empty( $row ) ) {
+			$this->id = 0;
+			return;
 		}
+
+		$this->id                = (int) $row->id;
+		$this->item_id           = (int) $row->item_id;
+		$this->secondary_item_id = (int) $row->secondary_item_id;
+		$this->user_id           = (int) $row->user_id;
+		$this->primary_link      = $row->primary_link;
+		$this->component         = $row->component;
+		$this->type              = $row->type;
+		$this->action            = $row->action;
+		$this->content           = $row->content;
+		$this->date_recorded     = $row->date_recorded;
+		$this->hide_sitewide     = (int) $row->hide_sitewide;
+		$this->mptt_left         = (int) $row->mptt_left;
+		$this->mptt_right        = (int) $row->mptt_right;
+		$this->is_spam           = (int) $row->is_spam;
 
 		// Generate dynamic 'action' when possible.
 		$action = bp_activity_generate_action_string( $this );
 		if ( false !== $action ) {
 			$this->action = $action;
 
-		// If no callback is available, use the literal string from
-		// the database row.
+			// If no callback is available, use the literal string from
+			// the database row.
 		} elseif ( ! empty( $row->action ) ) {
 			$this->action = $row->action;
 
-		// Provide a fallback to avoid PHP notices.
+			// Provide a fallback to avoid PHP notices.
 		} else {
 			$this->action = '';
 		}
@@ -181,6 +223,8 @@ class BP_Activity_Activity {
 
 	/**
 	 * Save the activity item to the database.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @return bool True on success.
 	 */
@@ -215,8 +259,22 @@ class BP_Activity_Activity {
 		 */
 		do_action_ref_array( 'bp_activity_before_save', array( &$this ) );
 
+		if ( 'wp_error' === $this->error_type && $this->errors->get_error_code() ) {
+			return $this->errors;
+		}
+
 		if ( empty( $this->component ) || empty( $this->type ) ) {
-			return false;
+			if ( 'bool' === $this->error_type ) {
+				return false;
+			} else {
+				if ( empty( $this->component ) ) {
+					$this->errors->add( 'bp_activity_missing_component' );
+				} else {
+					$this->errors->add( 'bp_activity_missing_type' );
+				}
+
+				return $this->errors;
+			}
 		}
 
 		if ( empty( $this->primary_link ) ) {
@@ -238,7 +296,7 @@ class BP_Activity_Activity {
 		if ( empty( $this->id ) ) {
 			$this->id = $wpdb->insert_id;
 
-		// If an existing activity item, prevent any changes to the content generating new @mention notifications.
+			// If an existing activity item, prevent any changes to the content generating new @mention notifications.
 		} else {
 			add_filter( 'bp_activity_at_name_do_notifications', '__return_false' );
 		}
@@ -260,7 +318,7 @@ class BP_Activity_Activity {
 	/**
 	 * Get activity items, as specified by parameters.
 	 *
-	 * @since 1.0.0
+	 * @since 1.2.0
 	 * @since 2.4.0 Introduced the `$fields` parameter.
 	 *
 	 * @see BP_Activity_Activity::get_filter_sql() for a description of the
@@ -318,8 +376,7 @@ class BP_Activity_Activity {
 				10 => 'spam'
 			);
 
-			$func_args = func_get_args();
-			$args      = bp_core_parse_args_array( $old_args_keys, $func_args );
+			$args = bp_core_parse_args_array( $old_args_keys, func_get_args() );
 		}
 
 		$bp = buddypress();
@@ -368,10 +425,10 @@ class BP_Activity_Activity {
 
 			// Override some arguments if needed.
 			if ( ! empty( $scope_query['override'] ) ) {
-				$r = self::array_replace_recursive( $r, $scope_query['override'] );
+				$r = array_replace_recursive( $r, $scope_query['override'] );
 			}
 
-		// Advanced filtering.
+			// Advanced filtering.
 		} elseif ( ! empty( $r['filter_query'] ) ) {
 			$filter_query = new BP_Activity_Query( $r['filter_query'] );
 			$sql          = $filter_query->get_sql();
@@ -475,11 +532,24 @@ class BP_Activity_Activity {
 		$where_sql = 'WHERE ' . join( ' AND ', $where_conditions );
 
 		/**
+		 * Filter the MySQL JOIN clause for the main activity query.
+		 *
+		 * @since 2.5.0
+		 *
+		 * @param string $join_sql   JOIN clause.
+		 * @param array  $r          Method parameters.
+		 * @param string $select_sql Current SELECT MySQL statement.
+		 * @param string $from_sql   Current FROM MySQL statement.
+		 * @param string $where_sql  Current WHERE MySQL statement.
+		 */
+		$join_sql = apply_filters( 'bp_activity_get_join_sql', $join_sql, $r, $select_sql, $from_sql, $where_sql );
+
+		/**
 		 * Filters the preferred order of indexes for activity item.
 		 *
 		 * @since 1.6.0
 		 *
-		 * @param array Array of indexes in preferred order.
+		 * @param array $value Array of indexes in preferred order.
 		 */
 		$indexes = apply_filters( 'bp_activity_preferred_index_order', array( 'user_id', 'item_id', 'secondary_item_id', 'date_recorded', 'component', 'type', 'hide_sitewide', 'is_spam' ) );
 
@@ -527,7 +597,7 @@ class BP_Activity_Activity {
 				$pag_sql    = $wpdb->prepare( "LIMIT %d, %d", absint( ( $page - 1 ) * $per_page ), $per_page );
 
 				/** This filter is documented in bp-activity/bp-activity-classes.php */
-				$activities = $wpdb->get_results( apply_filters( 'bp_activity_get_user_join_filter', "{$select_sql} {$from_sql} {$join_sql} {$where_sql} ORDER BY a.date_recorded {$sort} {$pag_sql}", $select_sql, $from_sql, $where_sql, $sort, $pag_sql ) );
+				$activities = $wpdb->get_results( apply_filters( 'bp_activity_get_user_join_filter', "{$select_sql} {$from_sql} {$join_sql} {$where_sql} ORDER BY a.date_recorded {$sort}, a.id {$sort} {$pag_sql}", $select_sql, $from_sql, $where_sql, $sort, $pag_sql ) );
 			} else {
 				$pag_sql    = '';
 
@@ -542,12 +612,24 @@ class BP_Activity_Activity {
 				 * @param string $where_sql  Final WHERE MySQL statement portion for legacy query.
 				 * @param string $sort       Final sort direction for legacy query.
 				 */
-				$activities = $wpdb->get_results( apply_filters( 'bp_activity_get_user_join_filter', "{$select_sql} {$from_sql} {$join_sql} {$where_sql} ORDER BY a.date_recorded {$sort}", $select_sql, $from_sql, $where_sql, $sort, $pag_sql ) );
+				$activities = $wpdb->get_results( apply_filters( 'bp_activity_get_user_join_filter', "{$select_sql} {$from_sql} {$join_sql} {$where_sql} ORDER BY a.date_recorded {$sort}, a.id {$sort}", $select_sql, $from_sql, $where_sql, $sort, $pag_sql ) );
+			}
+
+			// Integer casting for legacy activity query.
+			foreach ( (array) $activities as $i => $ac ) {
+				$activities[ $i ]->id                = (int) $ac->id;
+				$activities[ $i ]->item_id           = (int) $ac->item_id;
+				$activities[ $i ]->secondary_item_id = (int) $ac->secondary_item_id;
+				$activities[ $i ]->user_id           = (int) $ac->user_id;
+				$activities[ $i ]->hide_sitewide     = (int) $ac->hide_sitewide;
+				$activities[ $i ]->mptt_left         = (int) $ac->mptt_left;
+				$activities[ $i ]->mptt_right        = (int) $ac->mptt_right;
+				$activities[ $i ]->is_spam           = (int) $ac->is_spam;
 			}
 
 		} else {
 			// Query first for activity IDs.
-			$activity_ids_sql = "{$select_sql} {$from_sql} {$join_sql} {$where_sql} ORDER BY a.date_recorded {$sort}";
+			$activity_ids_sql = "{$select_sql} {$from_sql} {$join_sql} {$where_sql} ORDER BY a.date_recorded {$sort}, a.id {$sort}";
 
 			if ( ! empty( $per_page ) && ! empty( $page ) ) {
 				// We query for $per_page + 1 items in order to
@@ -565,7 +647,23 @@ class BP_Activity_Activity {
 			 */
 			$activity_ids_sql = apply_filters( 'bp_activity_paged_activities_sql', $activity_ids_sql, $r );
 
-			$activity_ids = $wpdb->get_col( $activity_ids_sql );
+			/*
+			 * Queries that include 'last_activity' are cached separately,
+			 * since they are generally much less long-lived.
+			 */
+			if ( preg_match( '/a\.type NOT IN \([^\)]*\'last_activity\'[^\)]*\)/', $activity_ids_sql ) ) {
+				$cache_group = 'bp_activity';
+			} else {
+				$cache_group = 'bp_activity_with_last_activity';
+			}
+
+			$cached = bp_core_get_incremented_cache( $activity_ids_sql, $cache_group );
+			if ( false === $cached ) {
+				$activity_ids = $wpdb->get_col( $activity_ids_sql );
+				bp_core_set_incremented_cache( $activity_ids_sql, $cache_group, $activity_ids );
+			} else {
+				$activity_ids = $cached;
+			}
 
 			$retval['has_more_items'] = ! empty( $per_page ) && count( $activity_ids ) > $per_page;
 
@@ -622,7 +720,13 @@ class BP_Activity_Activity {
 			 * @param string $sort      Sort direction for query.
 			 */
 			$total_activities_sql = apply_filters( 'bp_activity_total_activities_sql', "SELECT count(DISTINCT a.id) FROM {$bp->activity->table_name} a {$join_sql} {$where_sql}", $where_sql, $sort );
-			$total_activities     = $wpdb->get_var( $total_activities_sql );
+			$cached = bp_core_get_incremented_cache( $total_activities_sql, $cache_group );
+			if ( false === $cached ) {
+				$total_activities = $wpdb->get_var( $total_activities_sql );
+				bp_core_set_incremented_cache( $total_activities_sql, $cache_group, $total_activities );
+			} else {
+				$total_activities = $cached;
+			}
 
 			if ( !empty( $r['max'] ) ) {
 				if ( (int) $total_activities > (int) $r['max'] ) {
@@ -675,7 +779,20 @@ class BP_Activity_Activity {
 
 		// Now fetch data from the cache.
 		foreach ( $activity_ids as $activity_id ) {
-			$activities[] = wp_cache_get( $activity_id, 'bp_activity' );
+			// Integer casting.
+			$activity = wp_cache_get( $activity_id, 'bp_activity' );
+			if ( ! empty( $activity ) ) {
+				$activity->id                = (int) $activity->id;
+				$activity->user_id           = (int) $activity->user_id;
+				$activity->item_id           = (int) $activity->item_id;
+				$activity->secondary_item_id = (int) $activity->secondary_item_id;
+				$activity->hide_sitewide     = (int) $activity->hide_sitewide;
+				$activity->mptt_left         = (int) $activity->mptt_left;
+				$activity->mptt_right        = (int) $activity->mptt_right;
+				$activity->is_spam           = (int) $activity->is_spam;
+			}
+
+			$activities[] = $activity;
 		}
 
 		// Then fetch user data.
@@ -879,7 +996,7 @@ class BP_Activity_Activity {
 		if ( is_array( $scope ) ) {
 			$scopes = $scope;
 
-		// Explode a comma separated string of scopes.
+			// Explode a comma separated string of scopes.
 		} elseif ( is_string( $scope ) ) {
 			$scopes = explode( ',', $scope );
 		}
@@ -911,13 +1028,14 @@ class BP_Activity_Activity {
 			 *
 			 * @since 2.2.0
 			 *
-			 *  @param array {
+			 * @param array {
 			 *     Activity query clauses.
 			 *     @type array {
 			 *         Activity arguments for your custom scope.
 			 *         See {@link BP_Activity_Query::_construct()} for more details.
 			 *     }
-			 *     @type array $override Optional. Override existing activity arguments passed by $r.
+			 *     @type array  $override Optional. Override existing activity arguments passed by $r.
+			 *     }
 			 * }
 			 * @param array $r Current activity arguments passed in BP_Activity_Activity::get().
 			 */
@@ -982,6 +1100,8 @@ class BP_Activity_Activity {
 	/**
 	 * Get the first activity ID that matches a set of criteria.
 	 *
+	 * @since 1.2.0
+	 *
 	 * @todo Should parameters be optional?
 	 *
 	 * @param int    $user_id           User ID to filter by.
@@ -1035,7 +1155,9 @@ class BP_Activity_Activity {
 
 		if ( ! empty( $where_args ) ) {
 			$where_sql = 'WHERE ' . join( ' AND ', $where_args );
-			return $wpdb->get_var( "SELECT id FROM {$bp->activity->table_name} {$where_sql}" );
+			$result = $wpdb->get_var( "SELECT id FROM {$bp->activity->table_name} {$where_sql}" );
+
+			return is_numeric( $result ) ? (int) $result : false;
 		}
 
 		return false;
@@ -1222,11 +1344,11 @@ class BP_Activity_Activity {
 	 * use it going forward, and use BP_Activity_Activity::delete() instead.
 	 *
 	 * @since 1.2.0
+	 *
 	 * @deprecated 2.3.0
 	 *
 	 * @param array $activity_ids Activity IDs whose comments should be deleted.
 	 * @param bool  $delete_meta  Should we delete the activity meta items for these comments.
-	 *
 	 * @return bool True on success.
 	 */
 	public static function delete_activity_item_comments( $activity_ids = array(), $delete_meta = true ) {
@@ -1325,7 +1447,7 @@ class BP_Activity_Activity {
 		if ( 'none' === $comments ) {
 			$comments = false;
 
-		// A true cache miss.
+			// A true cache miss.
 		} elseif ( empty( $comments ) ) {
 
 			$bp = buddypress();
@@ -1336,7 +1458,7 @@ class BP_Activity_Activity {
 				$fullname_from = ", {$bp->profile->table_name_data} pd ";
 				$fullname_where = "AND pd.user_id = a.user_id AND pd.field_id = 1";
 
-			// Prevent debug errors.
+				// Prevent debug errors.
 			} else {
 				$fullname_select = $fullname_from = $fullname_where = '';
 			}
@@ -1351,7 +1473,6 @@ class BP_Activity_Activity {
 			}
 
 			// Legacy query - not recommended.
-			$func_args = func_get_args();
 
 			/**
 			 * Filters if BuddyPress should use the legacy activity query.
@@ -1362,7 +1483,7 @@ class BP_Activity_Activity {
 			 * @param BP_Activity_Activity $value     Magic method referring to currently called method.
 			 * @param array                $func_args Array of the method's argument list.
 			 */
-			if ( apply_filters( 'bp_use_legacy_activity_query', false, __METHOD__, $func_args ) ) {
+			if ( apply_filters( 'bp_use_legacy_activity_query', false, __METHOD__, func_get_args() ) ) {
 
 				/**
 				 * Filters the MySQL prepared statement for the legacy activity query.
@@ -1379,8 +1500,8 @@ class BP_Activity_Activity {
 
 				$descendants = $wpdb->get_results( $sql );
 
-			// We use the mptt BETWEEN clause to limit returned
-			// descendants to the correct part of the tree.
+				// We use the mptt BETWEEN clause to limit returned
+				// descendants to the correct part of the tree.
 			} else {
 				$sql = $wpdb->prepare( "SELECT id FROM {$bp->activity->table_name} a WHERE a.type = 'activity_comment' {$spam_sql} AND a.item_id = %d and a.mptt_left > %d AND a.mptt_left < %d ORDER BY a.date_recorded ASC", $top_level_parent_id, $left, $right );
 
@@ -1400,7 +1521,7 @@ class BP_Activity_Activity {
 					$ref[ $d->secondary_item_id ]->children[ $d->id ] = $d;
 					$ref[ $d->id ] =& $ref[ $d->secondary_item_id ]->children[ $d->id ];
 
-				// If we don't have a reference on the parent, put in the root level.
+					// If we don't have a reference on the parent, put in the root level.
 				} else {
 					$comments[ $d->id ] = $d;
 					$ref[ $d->id ] =& $comments[ $d->id ];
@@ -1463,9 +1584,9 @@ class BP_Activity_Activity {
 	 *
 	 * @global wpdb $wpdb WordPress database object.
 	 *
-	 * @param  int $parent_id ID of an activity or activity comment.
-	 * @param  int $left      Node boundary start for activity or activity comment.
-	 * @return int Right      Node boundary of activity or activity comment.
+	 * @param int $parent_id ID of an activity or activity comment.
+	 * @param int $left      Node boundary start for activity or activity comment.
+	 * @return int Right Node boundary of activity or activity comment.
 	 */
 	public static function rebuild_activity_comment_tree( $parent_id, $left = 1 ) {
 		global $wpdb;
@@ -1517,6 +1638,8 @@ class BP_Activity_Activity {
 	/**
 	 * Get a list of components that have recorded activity associated with them.
 	 *
+	 * @since 1.2.0
+	 *
 	 * @param bool $skip_last_activity If true, components will not be
 	 *                                 included if the only activity type associated with them is
 	 *                                 'last_activity'. (Since 2.0.0, 'last_activity' is stored in
@@ -1540,6 +1663,8 @@ class BP_Activity_Activity {
 
 	/**
 	 * Get sitewide activity items for use in an RSS feed.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param int $limit Optional. Number of items to fetch. Default: 35.
 	 * @return array $activity_feed List of activity items, with RSS data added.
@@ -1604,7 +1729,7 @@ class BP_Activity_Activity {
 	 * @param array $filter_array {
 	 *     Fields and values to filter by.
 	 *
-	 *     @type array|string|int $user_id User ID(s).
+	 *     @type array|string|int $user_id      User ID(s).
 	 *     @type array|string     $object       Corresponds to the 'component'
 	 *                                          column in the database.
 	 *     @type array|string     $action       Corresponds to the 'type' column
@@ -1713,6 +1838,8 @@ class BP_Activity_Activity {
 	/**
 	 * Check whether an activity item exists with a given string content.
 	 *
+	 * @since 1.1.0
+	 *
 	 * @param string $content The content to filter by.
 	 * @return int|bool The ID of the first matching item if found, otherwise false.
 	 */
@@ -1721,11 +1848,15 @@ class BP_Activity_Activity {
 
 		$bp = buddypress();
 
-		return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$bp->activity->table_name} WHERE content = %s", $content ) );
+		$result = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$bp->activity->table_name} WHERE content = %s", $content ) );
+
+		return is_numeric( $result ) ? (int) $result : false;
 	}
 
 	/**
 	 * Hide all activity for a given user.
+	 *
+	 * @since 1.2.0
 	 *
 	 * @param int $user_id The ID of the user whose activity you want to mark hidden.
 	 * @return mixed
@@ -1736,58 +1867,5 @@ class BP_Activity_Activity {
 		$bp = buddypress();
 
 		return $wpdb->get_var( $wpdb->prepare( "UPDATE {$bp->activity->table_name} SET hide_sitewide = 1 WHERE user_id = %d", $user_id ) );
-	}
-
-	/**
-	 * PHP-agnostic version of {@link array_replace_recursive()}.
-	 *
-	 * The array_replace_recursive() function is a PHP 5.3 function.  BuddyPress (and
-	 * WordPress) currently supports down to PHP 5.2, so this method is a workaround
-	 * for PHP 5.2.
-	 *
-	 * Note: array_replace_recursive() supports infinite arguments, but for our use-
-	 * case, we only need to support two arguments.
-	 *
-	 * Subject to removal once WordPress makes PHP 5.3.0 the minimum requirement.
-	 *
-	 * @since 2.2.0
-	 *
-	 * @see http://php.net/manual/en/function.array-replace-recursive.php#109390
-	 *
-	 * @param  array $base         Array with keys needing to be replaced.
-	 * @param  array $replacements Array with the replaced keys.
-	 * @return array
-	 */
-	protected static function array_replace_recursive( $base = array(), $replacements = array() ) {
-		if ( function_exists( 'array_replace_recursive' ) ) {
-			return array_replace_recursive( $base, $replacements );
-		}
-
-		// PHP 5.2-compatible version
-		// http://php.net/manual/en/function.array-replace-recursive.php#109390.
-		foreach ( array_slice( func_get_args(), 1 ) as $replacements ) {
-			$bref_stack = array( &$base );
-			$head_stack = array( $replacements );
-
-			do {
-				end( $bref_stack );
-
-				$bref = &$bref_stack[ key( $bref_stack ) ];
-				$head = array_pop( $head_stack );
-
-				unset( $bref_stack[ key($bref_stack) ] );
-
-				foreach ( array_keys( $head ) as $key ) {
-					if ( isset( $key, $bref ) && is_array( $bref[$key] ) && is_array( $head[$key] ) ) {
-						$bref_stack[] = &$bref[ $key ];
-						$head_stack[] = $head[ $key ];
-					} else {
-						$bref[ $key ] = $head[ $key ];
-					}
-				}
-			} while( count( $head_stack ) );
-		}
-
-		return $base;
 	}
 }

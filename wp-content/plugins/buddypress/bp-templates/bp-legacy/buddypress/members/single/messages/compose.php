@@ -7,6 +7,11 @@
  */
 
 ?>
+<h2 class="bp-screen-reader-text"><?php
+	/* translators: accessibility text */
+	_e( 'Compose Message', 'buddypress' );
+?></h2>
+
 <form action="<?php bp_messages_form_action('compose' ); ?>" method="post" id="send_message_form" class="standard-form" enctype="multipart/form-data">
 
 	<?php
@@ -27,7 +32,7 @@
 	</ul>
 
 	<?php if ( bp_current_user_can( 'bp_moderate' ) ) : ?>
-		<p><label for="send-notice"><input type="checkbox" id="send-notice" name="send-notice" value="1" /> <?php _e( "This is a notice to all users.", "buddypress" ); ?></label></p>
+		<p><label for="send-notice"><input type="checkbox" id="send-notice" name="send-notice" value="1" /> <?php _e( "This is a notice to all users.", 'buddypress' ); ?></label></p>
 	<?php endif; ?>
 
 	<label for="subject"><?php _e( 'Subject', 'buddypress' ); ?></label>

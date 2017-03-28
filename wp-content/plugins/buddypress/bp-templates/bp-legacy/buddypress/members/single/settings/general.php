@@ -9,6 +9,11 @@
 /** This action is documented in bp-templates/bp-legacy/buddypress/members/single/settings/profile.php */
 do_action( 'bp_before_member_settings_template' ); ?>
 
+<h2 class="bp-screen-reader-text"><?php
+	/* translators: accessibility text */
+	_e( 'Account settings', 'buddypress' );
+?></h2>
+
 <form action="<?php echo bp_displayed_user_domain() . bp_get_settings_slug() . '/general'; ?>" method="post" class="standard-form" id="settings-form">
 
 	<?php if ( !is_super_admin() ) : ?>
@@ -24,7 +29,10 @@ do_action( 'bp_before_member_settings_template' ); ?>
 	<label for="pass1"><?php _e( 'Change Password <span>(leave blank for no change)</span>', 'buddypress' ); ?></label>
 	<input type="password" name="pass1" id="pass1" size="16" value="" class="settings-input small password-entry" <?php bp_form_field_attributes( 'password' ); ?>/> &nbsp;<?php _e( 'New Password', 'buddypress' ); ?><br />
 	<div id="pass-strength-result"></div>
-	<label for="pass2" class="bp-screen-reader-text"><?php _e( 'Repeat New Password', 'buddypress' ); ?></label>
+	<label for="pass2" class="bp-screen-reader-text"><?php
+		/* translators: accessibility text */
+		_e( 'Repeat New Password', 'buddypress' );
+	?></label>
 	<input type="password" name="pass2" id="pass2" size="16" value="" class="settings-input small password-entry-confirm" <?php bp_form_field_attributes( 'password' ); ?>/> &nbsp;<?php _e( 'Repeat New Password', 'buddypress' ); ?>
 
 	<?php

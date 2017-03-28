@@ -8,6 +8,7 @@
  *
  * @package BuddyPress
  * @subpackage MembersActions
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -21,6 +22,8 @@ defined( 'ABSPATH' ) || exit;
  * Must be a site admin for this function to run.
  *
  * Note: no longer used in the current state. See the Settings component.
+ *
+ * @since 1.1.0
  *
  * @param int $user_id Optional. User ID to mark as spam. Defaults to displayed user.
  */
@@ -72,6 +75,8 @@ function bp_core_action_set_spammer_status( $user_id = 0 ) {
  * Process user deletion requests.
  *
  * Note: No longer called here. See the Settings component.
+ *
+ * @since 1.1.0
  */
 function bp_core_action_delete_user() {
 

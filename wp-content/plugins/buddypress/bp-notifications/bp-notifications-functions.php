@@ -6,6 +6,7 @@
  *
  * @package BuddyPress
  * @subpackage NotificationsFunctions
+ * @since 1.9.0
  */
 
 // Exit if accessed directly.
@@ -42,7 +43,7 @@ function bp_notifications_add_notification( $args = array() ) {
 		'date_notified'     => bp_core_current_time(),
 		'is_new'            => 1,
 		'allow_duplicate'   => false,
-	), 'notifications_add_notification' );;
+	), 'notifications_add_notification' );
 
 	// Check for existing duplicate notifications.
 	if ( ! $r['allow_duplicate'] ) {
@@ -97,7 +98,7 @@ function bp_notifications_get_notification( $id ) {
  * @return bool True on success, false on failure.
  */
 function bp_notifications_delete_notification( $id ) {
-	if ( ! bp_notifications_check_notification_access( bp_loggedin_user_id(), $id ) ) {
+	if ( ! bp_notifications_check_notification_access( bp_displayed_user_id(), $id ) ) {
 		return false;
 	}
 
@@ -116,7 +117,7 @@ function bp_notifications_delete_notification( $id ) {
  * @return bool True on success, false on failure.
  */
 function bp_notifications_mark_notification( $id, $is_new = false ) {
-	if ( ! bp_notifications_check_notification_access( bp_loggedin_user_id(), $id ) ) {
+	if ( ! bp_notifications_check_notification_access( bp_displayed_user_id(), $id ) ) {
 		return false;
 	}
 
@@ -232,7 +233,8 @@ function bp_notifications_get_notifications_for_user( $user_id, $format = 'strin
 						$component_action_items[0]->item_id,
 						$component_action_items[0]->secondary_item_id,
 						$action_item_count,
-						'array'
+						'array',
+						$component_action_items[0]->id
 					);
 
 					// Create the object to be returned.
@@ -252,7 +254,7 @@ function bp_notifications_get_notifications_for_user( $user_id, $format = 'strin
 
 				// Return an array of content strings.
 				} else {
-					$content      = call_user_func( $bp->{$component_name}->notification_callback, $component_action_name, $component_action_items[0]->item_id, $component_action_items[0]->secondary_item_id, $action_item_count );
+					$content      = call_user_func( $bp->{$component_name}->notification_callback, $component_action_name, $component_action_items[0]->item_id, $component_action_items[0]->secondary_item_id, $action_item_count, 'string', $component_action_items[0]->id );
 					$renderable[] = $content;
 				}
 
@@ -269,18 +271,38 @@ function bp_notifications_get_notifications_for_user( $user_id, $format = 'strin
 					$component_action_items[0]->item_id,
 					$component_action_items[0]->secondary_item_id,
 					$action_item_count,
-					$format
+					$format,
+					$component_action_name, // Duplicated so plugins can check the canonical action name.
+					$component_name,
+					$component_action_items[0]->id
 				);
 
 				// Function should return an object.
 				if ( 'object' === $format ) {
 
 					/**
-					 * Filters the notifications for a user.
+					 * Filters the notification content for notifications created by plugins.
+					 *
+					 * If your plugin extends the {@link BP_Component} class, you should use the
+					 * 'notification_callback' parameter in your extended
+					 * {@link BP_Component::setup_globals()} method instead.
 					 *
 					 * @since 1.9.0
+					 * @since 2.6.0 Added $component_action_name, $component_name, $id as parameters.
 					 *
-					 * @param array $ref_array Array of properties for the current notification being rendered.
+					 * @param string $content               Component action. Deprecated. Do not do checks against this! Use
+					 *                                      the 6th parameter instead - $component_action_name.
+					 * @param int    $item_id               Notification item ID.
+					 * @param int    $secondary_item_id     Notification secondary item ID.
+					 * @param int    $action_item_count     Number of notifications with the same action.
+					 * @param string $format                Format of return. Either 'string' or 'object'.
+					 * @param string $component_action_name Canonical notification action.
+					 * @param string $component_name        Notification component ID.
+					 * @param int    $id                    Notification ID.
+					 *
+					 * @return string|array If $format is 'string', return a string of the notification content.
+					 *                      If $format is 'object', return an array formatted like:
+					 *                      array( 'text' => 'CONTENT', 'link' => 'LINK' )
 					 */
 					$content = apply_filters_ref_array( 'bp_notifications_get_notifications_for_user', $ref_array );
 
@@ -419,6 +441,26 @@ function bp_notifications_delete_notifications_from_user( $user_id, $component_n
 		'component_action'  => $component_action,
 	) );
 }
+
+/**
+ * Delete a user's notifications when the user is deleted.
+ *
+ * @since 2.5.0
+ *
+ * @param int $user_id ID of the user who is about to be deleted.
+ * @return int|bool The number of rows deleted, or false on error.
+ */
+function bp_notifications_delete_notifications_on_user_delete( $user_id ) {
+	return BP_Notifications_Notification::delete( array(
+		'user_id'           => $user_id,
+		'item_id'           => false,
+		'secondary_item_id' => false,
+		'component_action'  => false,
+		'component_name'    => false,
+	) );
+}
+add_action( 'wpmu_delete_user', 'bp_notifications_delete_notifications_on_user_delete' );
+add_action( 'delete_user', 'bp_notifications_delete_notifications_on_user_delete' );
 
 /** Mark **********************************************************************/
 
@@ -572,10 +614,12 @@ function bp_notifications_get_unread_notification_count( $user_id = 0 ) {
 	 * Filters the count of unread notification items for a user.
 	 *
 	 * @since 1.9.0
+	 * @since 2.7.0 Added user ID parameter.
 	 *
-	 * @param int $count Count of unread notification items for a user.
+	 * @param int $count   Count of unread notification items for a user.
+	 * @param int $user_id User ID for notifications count.
 	 */
-	return apply_filters( 'bp_notifications_get_total_notification_count', (int) $count );
+	return apply_filters( 'bp_notifications_get_total_notification_count', (int) $count, $user_id );
 }
 
 /**
@@ -662,7 +706,7 @@ function bp_notifications_delete_meta( $notification_id, $meta_key = '', $meta_v
 
 	add_filter( 'query', 'bp_filter_metaid_column_name' );
 	foreach ( $keys as $key ) {
-		$retval = delete_metadata( 'notifications', $notification_id, $key, $meta_value, $delete_all );
+		$retval = delete_metadata( 'notification', $notification_id, $key, $meta_value, $delete_all );
 	}
 	remove_filter( 'query', 'bp_filter_metaid_column_name' );
 
@@ -673,8 +717,6 @@ function bp_notifications_delete_meta( $notification_id, $meta_key = '', $meta_v
  * Get metadata for a given notification item.
  *
  * @since 2.3.0
- *
- * @uses apply_filters() To call the 'bp_notifications_get_meta' hook.
  *
  * @param int    $notification_id ID of the notification item whose metadata is being requested.
  * @param string $meta_key        Optional. If present, only the metadata matching
@@ -687,7 +729,7 @@ function bp_notifications_delete_meta( $notification_id, $meta_key = '', $meta_v
  */
 function bp_notifications_get_meta( $notification_id = 0, $meta_key = '', $single = true ) {
 	add_filter( 'query', 'bp_filter_metaid_column_name' );
-	$retval = get_metadata( 'notifications', $notification_id, $meta_key, $single );
+	$retval = get_metadata( 'notification', $notification_id, $meta_key, $single );
 	remove_filter( 'query', 'bp_filter_metaid_column_name' );
 
 	/**
@@ -722,7 +764,7 @@ function bp_notifications_get_meta( $notification_id = 0, $meta_key = '', $singl
  */
 function bp_notifications_update_meta( $notification_id, $meta_key, $meta_value, $prev_value = '' ) {
 	add_filter( 'query', 'bp_filter_metaid_column_name' );
-	$retval = update_metadata( 'notifications', $notification_id, $meta_key, $meta_value, $prev_value );
+	$retval = update_metadata( 'notification', $notification_id, $meta_key, $meta_value, $prev_value );
 	remove_filter( 'query', 'bp_filter_metaid_column_name' );
 
 	return $retval;
@@ -743,7 +785,7 @@ function bp_notifications_update_meta( $notification_id, $meta_key, $meta_value,
  */
 function bp_notifications_add_meta( $notification_id, $meta_key, $meta_value, $unique = false ) {
 	add_filter( 'query', 'bp_filter_metaid_column_name' );
-	$retval = add_metadata( 'notifications', $notification_id, $meta_key, $meta_value, $unique );
+	$retval = add_metadata( 'notification', $notification_id, $meta_key, $meta_value, $unique );
 	remove_filter( 'query', 'bp_filter_metaid_column_name' );
 
 	return $retval;

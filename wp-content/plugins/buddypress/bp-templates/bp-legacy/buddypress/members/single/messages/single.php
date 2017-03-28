@@ -20,7 +20,7 @@
 
 	<?php if ( bp_thread_has_messages() ) : ?>
 
-		<h3 id="message-subject"><?php bp_the_thread_subject(); ?></h3>
+		<h2 id="message-subject"><?php bp_the_thread_subject(); ?></h2>
 
 		<p id="message-recipients">
 			<span class="highlight">
@@ -41,7 +41,16 @@
 
 			</span>
 
-			<a class="button confirm" href="<?php bp_the_thread_delete_link(); ?>" title="<?php esc_attr_e( "Delete Conversation", "buddypress" ); ?>"><?php _e( 'Delete', 'buddypress' ); ?></a>
+			<a class="button confirm" href="<?php bp_the_thread_delete_link(); ?>" title="<?php esc_attr_e( "Delete Conversation", 'buddypress' ); ?>"><?php _e( 'Delete', 'buddypress' ); ?></a>
+
+			<?php
+
+			/**
+			 * Fires after the action links in the header of a single message thread.
+			 *
+			 * @since 2.5.0
+			 */
+			do_action( 'bp_after_message_thread_recipients' ); ?>
 		</p>
 
 		<?php
@@ -110,7 +119,10 @@
 					 */
 					do_action( 'bp_before_message_reply_box' ); ?>
 
-					<label for="message_content" class="bp-screen-reader-text"><?php _e( 'Reply to Message', 'buddypress' ); ?></label>
+					<label for="message_content" class="bp-screen-reader-text"><?php
+						/* translators: accessibility text */
+						_e( 'Reply to Message', 'buddypress' );
+					?></label>
 					<textarea name="content" id="message_content" rows="15" cols="40"></textarea>
 
 					<?php

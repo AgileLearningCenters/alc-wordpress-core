@@ -6,6 +6,7 @@
  *
  * @package BuddyPress
  * @subpackage MembersFilters
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -109,8 +110,8 @@ function bp_members_edit_profile_url( $url, $user_id, $scheme = 'admin' ) {
 	if ( ! is_admin() && bp_is_active( 'xprofile' ) ) {
 		$profile_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_profile_slug() . '/edit' );
 
-	// Default to $url.
 	} else {
+		// Default to $url.
 		$profile_link = $url;
 	}
 

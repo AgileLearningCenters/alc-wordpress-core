@@ -6,6 +6,7 @@
  *
  * @package BuddyPress
  * @subpackage MembersScreens
+ * @since 1.5.0
  */
 
 // Exit if accessed directly.
@@ -13,6 +14,8 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Handle the display of the profile page by loading the correct template file.
+ *
+ * @since 1.5.0
  */
 function bp_members_screen_display_profile() {
 
@@ -35,6 +38,8 @@ function bp_members_screen_display_profile() {
 
 /**
  * Handle the display of the members directory index.
+ *
+ * @since 1.5.0
  */
 function bp_members_screen_index() {
 	if ( bp_is_members_directory() ) {
@@ -61,6 +66,8 @@ add_action( 'bp_screens', 'bp_members_screen_index' );
 
 /**
  * Handle the loading of the signup screen.
+ *
+ * @since 1.1.0
  */
 function bp_core_screen_signup() {
 	$bp = buddypress();
@@ -92,13 +99,13 @@ function bp_core_screen_signup() {
 
 	$bp->signup->step = 'request-details';
 
- 	if ( !bp_get_signup_allowed() ) {
+	if ( !bp_get_signup_allowed() ) {
 		$bp->signup->step = 'registration-disabled';
 
-	// If the signup page is submitted, validate and save.
+		// If the signup page is submitted, validate and save.
 	} elseif ( isset( $_POST['signup_submit'] ) && bp_verify_nonce_request( 'bp_new_signup' ) ) {
 
-	    /**
+		/**
 		 * Fires before the validation of a new signup.
 		 *
 		 * @since 2.0.0
@@ -137,17 +144,14 @@ function bp_core_screen_signup() {
 
 				// Loop through the posted fields formatting any datebox values then validate the field.
 				foreach ( (array) $profile_field_ids as $field_id ) {
-					if ( !isset( $_POST['field_' . $field_id] ) ) {
-						if ( !empty( $_POST['field_' . $field_id . '_day'] ) && !empty( $_POST['field_' . $field_id . '_month'] ) && !empty( $_POST['field_' . $field_id . '_year'] ) )
-							$_POST['field_' . $field_id] = date( 'Y-m-d H:i:s', strtotime( $_POST['field_' . $field_id . '_day'] . $_POST['field_' . $field_id . '_month'] . $_POST['field_' . $field_id . '_year'] ) );
-					}
+					bp_xprofile_maybe_format_datebox_post_data( $field_id );
 
 					// Create errors for required fields without values.
 					if ( xprofile_check_is_required_field( $field_id ) && empty( $_POST[ 'field_' . $field_id ] ) && ! bp_current_user_can( 'bp_moderate' ) )
 						$bp->signup->errors['field_' . $field_id] = __( 'This is a required field', 'buddypress' );
 				}
 
-			// This situation doesn't naturally occur so bounce to website root.
+				// This situation doesn't naturally occur so bounce to website root.
 			} else {
 				bp_core_redirect( bp_get_root_domain() );
 			}
@@ -169,7 +173,7 @@ function bp_core_screen_signup() {
 			}
 		}
 
-	    /**
+		/**
 		 * Fires after the validation of a new signup.
 		 *
 		 * @since 1.1.0
@@ -206,18 +210,12 @@ function bp_core_screen_signup() {
 					// Let's compact any profile field info into usermeta.
 					$profile_field_ids = explode( ',', $_POST['signup_profile_field_ids'] );
 
-					// Loop through the posted fields formatting any datebox values then add to usermeta - @todo This logic should be shared with the same in xprofile_screen_edit_profile().
+					/*
+					 * Loop through the posted fields, formatting any
+					 * datebox values, then add to usermeta.
+					 */
 					foreach ( (array) $profile_field_ids as $field_id ) {
-						if ( ! isset( $_POST['field_' . $field_id] ) ) {
-
-							if ( ! empty( $_POST['field_' . $field_id . '_day'] ) && ! empty( $_POST['field_' . $field_id . '_month'] ) && ! empty( $_POST['field_' . $field_id . '_year'] ) ) {
-								// Concatenate the values.
-								$date_value = $_POST['field_' . $field_id . '_day'] . ' ' . $_POST['field_' . $field_id . '_month'] . ' ' . $_POST['field_' . $field_id . '_year'];
-
-								// Turn the concatenated value into a timestamp.
-								$_POST['field_' . $field_id] = date( 'Y-m-d H:i:s', strtotime( $date_value ) );
-							}
-						}
+						bp_xprofile_maybe_format_datebox_post_data( $field_id );
 
 						if ( !empty( $_POST['field_' . $field_id] ) )
 							$usermeta['field_' . $field_id] = $_POST['field_' . $field_id];
@@ -291,6 +289,8 @@ add_action( 'bp_screens', 'bp_core_screen_signup' );
 /**
  * Handle the loading of the Activate screen.
  *
+ * @since 1.1.0
+ *
  * @todo Move the actual activation process into an action in bp-members-actions.php
  */
 function bp_core_screen_activation() {
@@ -355,14 +355,6 @@ function bp_core_screen_activation() {
 			bp_core_redirect( trailingslashit( bp_get_root_domain() . '/' . $bp->pages->activate->slug ) );
 		}
 
-		$hashed_key = wp_hash( $key );
-
-		// Check if the signup avatar folder exists. If it does, move the folder to
-		// the BP user avatars directory.
-		if ( file_exists( bp_core_avatar_upload_path() . '/avatars/signups/' . $hashed_key ) ) {
-			@rename( bp_core_avatar_upload_path() . '/avatars/signups/' . $hashed_key, bp_core_avatar_upload_path() . '/avatars/' . $user );
-		}
-
 		bp_core_add_message( __( 'Your account is now active!', 'buddypress' ) );
 		$bp->activation_complete = true;
 	}
@@ -380,335 +372,5 @@ add_action( 'bp_screens', 'bp_core_screen_activation' );
 
 /** Theme Compatibility *******************************************************/
 
-/**
- * The main theme compat class for BuddyPress Members.
- *
- * This class sets up the necessary theme compatibility actions to safely output
- * member template parts to the_title and the_content areas of a theme.
- *
- * @since 1.7.0
- */
-class BP_Members_Theme_Compat {
-
-	/**
-	 * Set up the members component theme compatibility.
-	 *
-	 * @since 1.7.0
-	 */
-	public function __construct() {
-		add_action( 'bp_setup_theme_compat', array( $this, 'is_members' ) );
-	}
-
-	/**
-	 * Are we looking at something that needs members theme compatibility?
-	 *
-	 * @since 1.7.0
-	 */
-	public function is_members() {
-
-		// Bail if not looking at the members component or a user's page.
-		if ( ! bp_is_members_component() && ! bp_is_user() ) {
-			return;
-		}
-
-		// Members Directory.
-		if ( ! bp_current_action() && ! bp_current_item() ) {
-			bp_update_is_directory( true, 'members' );
-
-			/**
-			 * Fires if looking at Members directory when needing theme compat.
-			 *
-			 * @since 1.5.0
-			 */
-			do_action( 'bp_members_screen_index' );
-
-			add_filter( 'bp_get_buddypress_template',                array( $this, 'directory_template_hierarchy' ) );
-			add_action( 'bp_template_include_reset_dummy_post_data', array( $this, 'directory_dummy_post' ) );
-			add_filter( 'bp_replace_the_content',                    array( $this, 'directory_content'    ) );
-
-		// User page.
-		} elseif ( bp_is_user() ) {
-
-			// If we're on a single activity permalink page, we shouldn't use the members
-			// template, so stop here!
-			if ( bp_is_active( 'activity' ) && bp_is_single_activity() ) {
-				return;
-			}
-
-			/**
-			 * Fires if looking at Members user page when needing theme compat.
-			 *
-			 * @since 1.5.0
-			 */
-			do_action( 'bp_members_screen_display_profile' );
-
-			add_filter( 'bp_get_buddypress_template',                array( $this, 'single_template_hierarchy' ) );
-			add_action( 'bp_template_include_reset_dummy_post_data', array( $this, 'single_dummy_post'    ) );
-			add_filter( 'bp_replace_the_content',                    array( $this, 'single_dummy_content' ) );
-
-		}
-	}
-
-	/** Directory *************************************************************/
-
-	/**
-	 * Add template hierarchy to theme compat for the members directory page.
-	 *
-	 * This is to mirror how WordPress has
-	 * {@link https://codex.wordpress.org/Template_Hierarchy template hierarchy}.
-	 *
-	 * @since 1.8.0
-	 *
-	 * @param array $templates The templates from bp_get_theme_compat_templates().
-	 * @return array $templates Array of custom templates to look for.
-	 */
-	public function directory_template_hierarchy( $templates = array() ) {
-
-		// Set up the template hierarchy.
-		$new_templates = array();
-		if ( '' !== bp_get_current_member_type() ) {
-			$new_templates[] = 'members/index-directory-type-' . sanitize_file_name( bp_get_current_member_type() ) . '.php';
-		}
-		$new_templates[] = 'members/index-directory.php';
-
-		/**
-		 * Filters the template hierarchy for theme compat and members directory page.
-		 *
-		 * @since 1.8.0
-		 *
-		 * @param array $value Array of template paths to add to hierarchy.
-		 */
-		$new_templates = apply_filters( 'bp_template_hierarchy_members_directory', $new_templates );
-
-		// Merge new templates with existing stack
-		// @see bp_get_theme_compat_templates().
-		$templates = array_merge( (array) $new_templates, $templates );
-
-		return $templates;
-	}
-
-	/**
-	 * Update the global $post with directory data.
-	 *
-	 * @since 1.7.0
-	 */
-	public function directory_dummy_post() {
-		bp_theme_compat_reset_post( array(
-			'ID'             => 0,
-			'post_title'     => bp_get_directory_title( 'members' ),
-			'post_author'    => 0,
-			'post_date'      => 0,
-			'post_content'   => '',
-			'post_type'      => 'page',
-			'post_status'    => 'publish',
-			'is_page'        => true,
-			'comment_status' => 'closed'
-		) );
-	}
-
-	/**
-	 * Filter the_content with the members index template part.
-	 *
-	 * @since 1.7.0
-	 */
-	public function directory_content() {
-		return bp_buffer_template_part( 'members/index', null, false );
-	}
-
-	/** Single ****************************************************************/
-
-	/**
-	 * Add custom template hierarchy to theme compat for member pages.
-	 *
-	 * This is to mirror how WordPress has
-	 * {@link https://codex.wordpress.org/Template_Hierarchy template hierarchy}.
-	 *
-	 * @since 1.8.0
-	 *
-	 * @param string $templates The templates from
-	 *                          bp_get_theme_compat_templates().
-	 * @return array $templates Array of custom templates to look for.
-	 */
-	public function single_template_hierarchy( $templates ) {
-		// Setup some variables we're going to reference in our custom templates.
-		$user_nicename = buddypress()->displayed_user->userdata->user_nicename;
-
-		/**
-		 * Filters the template hierarchy for theme compat and member pages.
-		 *
-		 * @since 1.8.0
-		 *
-		 * @param array $value Array of template paths to add to hierarchy.
-		 */
-		$new_templates = apply_filters( 'bp_template_hierarchy_members_single_item', array(
-			'members/single/index-id-'        . sanitize_file_name( bp_displayed_user_id() ) . '.php',
-			'members/single/index-nicename-'  . sanitize_file_name( $user_nicename )         . '.php',
-			'members/single/index-action-'    . sanitize_file_name( bp_current_action() )    . '.php',
-			'members/single/index-component-' . sanitize_file_name( bp_current_component() ) . '.php',
-			'members/single/index.php'
-		) );
-
-		// Merge new templates with existing stack
-		// @see bp_get_theme_compat_templates().
-		$templates = array_merge( (array) $new_templates, $templates );
-
-		return $templates;
-	}
-
-	/**
-	 * Update the global $post with the displayed user's data.
-	 *
-	 * @since 1.7.0
-	 */
-	public function single_dummy_post() {
-		bp_theme_compat_reset_post( array(
-			'ID'             => 0,
-			'post_title'     => bp_get_displayed_user_fullname(),
-			'post_author'    => 0,
-			'post_date'      => 0,
-			'post_content'   => '',
-			'post_type'      => 'page',
-			'post_status'    => 'publish',
-			'is_page'        => true,
-			'comment_status' => 'closed'
-		) );
-	}
-
-	/**
-	 * Filter the_content with the members' single home template part.
-	 *
-	 * @since 1.7.0
-	 */
-	public function single_dummy_content() {
-		return bp_buffer_template_part( 'members/single/home', null, false );
-	}
-}
 new BP_Members_Theme_Compat();
-
-/**
- * The main theme compat class for BuddyPress Registration.
- *
- * This class sets up the necessary theme compatibility actions to safely output
- * registration template parts to the_title and the_content areas of a theme.
- *
- * @since 1.7.0
- */
-class BP_Registration_Theme_Compat {
-
-	/**
-	 * Setup the groups component theme compatibility.
-	 *
-	 * @since 1.7.0
-	 */
-	public function __construct() {
-		add_action( 'bp_setup_theme_compat', array( $this, 'is_registration' ) );
-	}
-
-	/**
-	 * Are we looking at either the registration or activation pages?
-	 *
-	 * @since 1.7.0
-	 */
-	public function is_registration() {
-
-		// Bail if not looking at the registration or activation page.
-		if ( ! bp_is_register_page() && ! bp_is_activation_page() ) {
-			return;
-		}
-
-		// Not a directory.
-		bp_update_is_directory( false, 'register' );
-
-		// Setup actions.
-		add_filter( 'bp_get_buddypress_template',                array( $this, 'template_hierarchy' ) );
-		add_action( 'bp_template_include_reset_dummy_post_data', array( $this, 'dummy_post'    ) );
-		add_filter( 'bp_replace_the_content',                    array( $this, 'dummy_content' ) );
-	}
-
-	/** Template ***********************************************************/
-
-	/**
-	 * Add template hierarchy to theme compat for registration/activation pages.
-	 *
-	 * This is to mirror how WordPress has
-	 * {@link https://codex.wordpress.org/Template_Hierarchy template hierarchy}.
-	 *
-	 * @since 1.8.0
-	 *
-	 * @param string $templates The templates from bp_get_theme_compat_templates().
-	 * @return array $templates Array of custom templates to look for.
-	 */
-	public function template_hierarchy( $templates ) {
-		$component = sanitize_file_name( bp_current_component() );
-
-		/**
-		 * Filters the template hierarchy for theme compat and registration/activation pages.
-		 *
-		 * This filter is a variable filter that depends on the current component
-		 * being used.
-		 *
-		 * @since 1.8.0
-		 *
-		 * @param array $value Array of template paths to add to hierarchy.
-		 */
-		$new_templates = apply_filters( "bp_template_hierarchy_{$component}", array(
-			"members/index-{$component}.php"
-		) );
-
-		// Merge new templates with existing stack
-		// @see bp_get_theme_compat_templates().
-		$templates = array_merge( (array) $new_templates, $templates );
-
-		return $templates;
-	}
-
-	/**
-	 * Update the global $post with dummy data.
-	 *
-	 * @since 1.7.0
-	 */
-	public function dummy_post() {
-		// Registration page.
-		if ( bp_is_register_page() ) {
-			$title = __( 'Create an Account', 'buddypress' );
-
-			if ( 'completed-confirmation' == bp_get_current_signup_step() ) {
-				$title = __( 'Check Your Email To Activate Your Account!', 'buddypress' );
-			}
-
-		// Activation page.
-		} else {
-			$title = __( 'Activate Your Account', 'buddypress' );
-
-			if ( bp_account_was_activated() ) {
-				$title = __( 'Account Activated', 'buddypress' );
-			}
-		}
-
-		bp_theme_compat_reset_post( array(
-			'ID'             => 0,
-			'post_title'     => $title,
-			'post_author'    => 0,
-			'post_date'      => 0,
-			'post_content'   => '',
-			'post_type'      => 'page',
-			'post_status'    => 'publish',
-			'is_page'        => true,
-			'comment_status' => 'closed'
-		) );
-	}
-
-	/**
-	 * Filter the_content with either the register or activate templates.
-	 *
-	 * @since 1.7.0
-	 */
-	public function dummy_content() {
-		if ( bp_is_register_page() ) {
-			return bp_buffer_template_part( 'members/register', null, false );
-		} else {
-			return bp_buffer_template_part( 'members/activate', null, false );
-		}
-	}
-}
 new BP_Registration_Theme_Compat();
