@@ -30,7 +30,7 @@ $bavotasan_theme_options = bavotasan_theme_options();
 				<?php $class = ( is_active_sidebar( 'extended-footer' ) ) ? ' active' : ''; ?>
 				<span class="line<?php echo $class; ?>"></span>
 				<span class="pull-left"><?php printf( __( 'Copyright &copy; %s %s. All Rights Reserved.', 'ward' ), date( 'Y' ), ' <a href="' . home_url() . '">' . get_bloginfo( 'name' ) .'</a>' ); ?></span>
-				<span class="credit-link pull-right"><i class="icon-leaf"></i><?php printf( __( 'Designed by %s.', 'ward' ), '<a href="https://themes.bavotasan.com/2013/ward/">bavotasan.com</a>' ); ?></span>
+				<span class="credit-link pull-right"><?php printf( __( 'The %s Theme by %s.', 'ward' ), BAVOTASAN_THEME_NAME, '<a href="https://themes.bavotasan.com/themes/farben-wordpress-theme/">bavotasan.com</a>' ); ?></span>
 			</div><!-- .col-lg-12 -->
 		</div><!-- .row -->
 	</div><!-- #footer-content.container -->

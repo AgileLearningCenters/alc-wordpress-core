@@ -6,40 +6,30 @@
  */
 function bavotasan_theme_options() {
 	//delete_option( 'ward_theme_options' );
-	$default_theme_options = array(
-		'width' => '1200',
-		'layout' => '2',
-		'primary' => 'col-md-8',
-		'display_author' => 'on',
-		'display_date' => 'on',
-		'display_comment_count' => 'on',
-		'display_categories' => '',
-		'excerpt_content' => 'excerpt',
-		'jumbo_headline_title' => 'Jumbo Headline!',
-		'jumbo_headline_text' => 'Got something important to say? Then make it stand out by using the jumbo headline option and get your visitor\'s attention right away.',
-	);
+	if ( ! $options = get_option( 'ward_theme_options' ) ) {
+		$options = array(
+			'width' => '1200',
+			'layout' => '2',
+			'primary' => 'col-md-8',
+			'display_author' => 'on',
+			'display_date' => 'on',
+			'display_comment_count' => 'on',
+			'display_categories' => '',
+			'excerpt_content' => 'excerpt',
+			'jumbo_headline_title' => 'Jumbo Headline!',
+			'jumbo_headline_text' => 'Got something important to say? Then make it stand out by using the jumbo headline option and get your visitor&rsquo;s attention right away.',
 
-	return get_option( 'ward_theme_options', $default_theme_options );
+		);
+		add_option( 'ward_theme_options', $options );
+	}
+
+	return $options;
 }
 
 class Bavotasan_Customizer {
 	public function __construct() {
-		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 1000 );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
-	}
-
-	/**
-	 * Add a 'customize' menu item to the admin bar
-	 *
-	 * This function is attached to the 'admin_bar_menu' action hook.
-	 *
-	 * @since 1.0.0
-	 */
-	public function admin_bar_menu( $wp_admin_bar ) {
-	    if ( current_user_can( 'edit_theme_options' ) && is_admin_bar_showing() ) {
-	    	$wp_admin_bar->add_node( array( 'parent' => 'bavotasan_toolbar', 'id' => 'customize_theme', 'title' => __( 'Theme Options', 'ward' ), 'href' => admin_url( 'customize.php' ) ) );
-   			$wp_admin_bar->add_node( array( 'parent' => 'bavotasan_toolbar', 'id' => 'documentation_faqs', 'title' => __( 'Documentation & FAQs', 'ward' ), 'href' => 'https://themes.bavotasan.com/documentation', 'meta' => array( 'target' => '_blank' ) ) );
-   		}
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'customize_controls_enqueue_scripts' ) );
 	}
 
 	/**
@@ -63,7 +53,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[width]', array(
 			'default' => $bavotasan_theme_options['width'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => 'esc_attr',
 		) );
 
 		$wp_customize->add_control( 'bavotasan_width', array(
@@ -81,7 +71,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[layout]', array(
 			'default' => $bavotasan_theme_options['layout'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => 'esc_attr',
 		) );
 
 		$wp_customize->add_control( 'bavotasan_site_layout', array(
@@ -113,7 +103,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[primary]', array(
 			'default' => $bavotasan_theme_options['primary'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => 'esc_attr',
 		) );
 
 		$wp_customize->add_control( 'bavotasan_primary_column', array(
@@ -128,7 +118,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[excerpt_content]', array(
 			'default' => $bavotasan_theme_options['excerpt_content'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => 'esc_attr',
 		) );
 
 		$wp_customize->add_control( 'bavotasan_excerpt_content', array(
@@ -152,7 +142,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[jumbo_headline_title]', array(
 			'default' => $bavotasan_theme_options['jumbo_headline_title'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => array( $this, 'sanitize_text' ),
 		) );
 
 		$wp_customize->add_control( 'bavotasan_jumbo_headline_title', array(
@@ -166,7 +156,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[jumbo_headline_text]', array(
 			'default' => $bavotasan_theme_options['jumbo_headline_text'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => array( $this, 'sanitize_text' ),
 		) );
 
 		$wp_customize->add_control( 'bavotasan_jumbo_headline_text', array(
@@ -186,7 +176,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[display_categories]', array(
 			'default' => $bavotasan_theme_options['display_categories'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => array( $this, 'sanitize_checkbox' ),
 		) );
 
 		$wp_customize->add_control( 'bavotasan_display_categories', array(
@@ -199,7 +189,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[display_author]', array(
 			'default' => $bavotasan_theme_options['display_author'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => array( $this, 'sanitize_checkbox' ),
 		) );
 
 		$wp_customize->add_control( 'bavotasan_display_author', array(
@@ -212,7 +202,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[display_date]', array(
 			'default' => $bavotasan_theme_options['display_date'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => array( $this, 'sanitize_checkbox' ),
 		) );
 
 		$wp_customize->add_control( 'bavotasan_display_date', array(
@@ -225,7 +215,7 @@ class Bavotasan_Customizer {
 		$wp_customize->add_setting( 'ward_theme_options[display_comment_count]', array(
 			'default' => $bavotasan_theme_options['display_comment_count'],
 			'type' => 'option',
-			'capability' => 'edit_theme_options',
+            'sanitize_callback' => array( $this, 'sanitize_checkbox' ),
 		) );
 
 		$wp_customize->add_control( 'bavotasan_display_comment_count', array(
@@ -234,6 +224,36 @@ class Bavotasan_Customizer {
 			'settings' => 'ward_theme_options[display_comment_count]',
 			'type' => 'checkbox',
 		) );
+	}
+
+	/**
+	 * Sanitize text options
+	 *
+	 * @since 1.0.2
+	 */
+	public function sanitize_text( $input ) {
+		return wp_kses_post( force_balance_tags( $input ) );
+	}
+
+	/**
+	 * Sanitize checkbox options
+	 *
+	 * @since 1.0.2
+	 */
+    public function sanitize_checkbox( $value ) {
+        if ( 'on' != $value )
+            $value = false;
+
+        return $value;
+    }
+
+	public function customize_controls_enqueue_scripts() {
+		wp_enqueue_script( 'bavotasan-customizer', BAVOTASAN_THEME_URL . '/library/js/admin/customizer.js', array( 'jquery' ), '', true );
+        wp_localize_script( 'bavotasan-customizer', 'Bavotasan_Customizer', array(
+            'upgradeAd' => __( 'Upgrade to premium version', 'ward' ),
+        ));
+
+		wp_enqueue_style( 'bavotasan-customizer-styles', BAVOTASAN_THEME_URL . '/library/css/admin/customizer.css' );
 	}
 }
 $bavotasan_customizer = new Bavotasan_Customizer;

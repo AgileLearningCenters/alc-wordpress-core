@@ -4,9 +4,10 @@
  *
  * @since 1.0.0
  */
-$bavotasan_theme_data = wp_get_theme();
+$bavotasan_theme_data = wp_get_theme( 'ward' );
 define( 'BAVOTASAN_THEME_URL', get_template_directory_uri() );
 define( 'BAVOTASAN_THEME_TEMPLATE', get_template_directory() );
+define( 'BAVOTASAN_THEME_VERSION', trim( $bavotasan_theme_data->Version ) );
 define( 'BAVOTASAN_THEME_NAME', $bavotasan_theme_data->Name );
 
 /**
@@ -14,7 +15,8 @@ define( 'BAVOTASAN_THEME_NAME', $bavotasan_theme_data->Name );
  *
  * @since 1.0.0
  */
-require( BAVOTASAN_THEME_TEMPLATE . '/library/theme-options.php' ); // Functions for theme options page
+require( BAVOTASAN_THEME_TEMPLATE . '/library/customizer.php' ); // Functions for theme options page
+require( BAVOTASAN_THEME_TEMPLATE . '/library/about.php' ); // Functions for about page
 require( BAVOTASAN_THEME_TEMPLATE . '/library/preview-pro.php' ); // Functions for preview pro page
 require( BAVOTASAN_THEME_TEMPLATE . '/library/custom-metaboxes.php' ); // Functions for home page alignment
 
@@ -25,7 +27,7 @@ require( BAVOTASAN_THEME_TEMPLATE . '/library/custom-metaboxes.php' ); // Functi
  */
 $bavotasan_theme_options = bavotasan_theme_options();
 if ( ! isset( $content_width ) )
-	$content_width = $bavotasan_theme_options['width'] - 30;
+	$content_width = absint( $bavotasan_theme_options['width'] ) - 30;
 
 add_action( 'after_setup_theme', 'bavotasan_setup' );
 if ( ! function_exists( 'bavotasan_setup' ) ) :
@@ -69,6 +71,12 @@ function bavotasan_setup() {
 
 	// Add HTML5 elements
 	add_theme_support( 'html5', array( 'comment-list', 'search-form', 'comment-form', ) );
+
+	// Add title tag support
+	add_theme_support( 'title-tag' );
+
+	// Remove default gallery styles
+	add_filter( 'use_default_gallery_style', '__return_false' );
 }
 endif; // bavotasan_setup
 
@@ -84,24 +92,9 @@ function bavotasan_styles() {
 	$bavotasan_theme_options = bavotasan_theme_options();
 	?>
 <style>
-.container { max-width: <?php echo $bavotasan_theme_options['width']; ?>px; }
+.container { max-width: <?php echo esc_attr( $bavotasan_theme_options['width'] ); ?>px; }
 </style>
 	<?php
-}
-
-add_action( 'admin_bar_menu', 'bavotasan_admin_bar_menu', 999 );
-/**
- * Add menu item to toolbar
- *
- * This function is attached to the 'admin_bar_menu' action hook.
- *
- * @param	array $wp_admin_bar
- *
- * @since 2.0.4
- */
-function bavotasan_admin_bar_menu( $wp_admin_bar ) {
-    if ( current_user_can( 'edit_theme_options' ) && is_admin_bar_showing() )
-    	$wp_admin_bar->add_node( array( 'id' => 'bavotasan_toolbar', 'title' => BAVOTASAN_THEME_NAME, 'href' => admin_url( 'customize.php' ) ) );
 }
 
 add_action( 'wp_enqueue_scripts', 'bavotasan_add_js' );
@@ -127,7 +120,7 @@ function bavotasan_add_js() {
 	wp_enqueue_script( 'theme_js', BAVOTASAN_THEME_URL .'/library/js/theme.js', array( 'bootstrap' ), '', true );
 
 	wp_enqueue_style( 'theme_stylesheet', get_stylesheet_uri() );
-	wp_enqueue_style( 'google_fonts', 'http://fonts.googleapis.com/css?family=Lato:300', false, null, 'all' );
+	wp_enqueue_style( 'google_fonts', '//fonts.googleapis.com/css?family=Lato:300', false, null, 'all' );
 }
 endif; // bavotasan_add_js
 
@@ -187,7 +180,7 @@ function bavotasan_pagination() {
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="screen-reader-text"><?php _e( 'Posts navigation', 'ward' ); ?></h1>
+					<div class="screen-reader-text"><?php _e( 'Posts navigation', 'ward' ); ?></div>
 					<?php if ( get_next_posts_link() ) : ?>
 					<div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'ward' ) ); ?></div>
 					<?php endif; ?>
@@ -202,39 +195,6 @@ function bavotasan_pagination() {
 	<?php
 }
 endif; // bavotasan_pagination
-
-add_filter( 'wp_title', 'bavotasan_filter_wp_title', 10, 2 );
-if ( !function_exists( 'bavotasan_filter_wp_title' ) ) :
-/**
- * Filters the page title appropriately depending on the current page
- *
- * @uses	get_bloginfo()
- * @uses	is_home()
- * @uses	is_front_page()
- *
- * @since 1.0.0
- */
-function bavotasan_filter_wp_title( $title, $sep ) {
-	global $paged, $page;
-
-	if ( is_feed() )
-		return $title;
-
-	// Add the site name.
-	$title .= get_bloginfo( 'name' );
-
-	// Add the site description for the home/front page.
-	$site_description = get_bloginfo( 'description', 'display' );
-	if ( $site_description && ( is_home() || is_front_page() ) )
-		$title = "$title $sep $site_description";
-
-	// Add a page number if necessary.
-	if ( $paged >= 2 || $page >= 2 )
-		$title = "$title $sep " . sprintf( __( 'Page %s', 'ward' ), max( $paged, $page ) );
-
-	return $title;
-}
-endif; // bavotasan_filter_wp_title
 
 if ( ! function_exists( 'bavotasan_comment' ) ) :
 /**
@@ -376,11 +336,6 @@ function bavotasan_excerpt_length( $length ) {
 }
 endif; // bavotasan_excerpt_length
 
-/*
- * Remove default gallery styles
- */
-add_filter( 'use_default_gallery_style', '__return_false' );
-
 /**
  * Create the required attributes for the #primary container
  *
@@ -486,7 +441,7 @@ class Bavotasan_Page_Navigation_Walker extends Walker_Nav_Menu {
 
 		if ( $item->is_dropdown && ( $depth === 0 ) ) {
 			$item_html = str_replace( '<a', '<a class="dropdown-toggle" data-toggle="dropdown" data-target="#"', $item_html );
-			$item_html = str_replace( '</a>', ' <b class="caret"></b></a>', $item_html );
+			$item_html = str_replace( '</a>', ' <span class="caret"></span></a>', $item_html );
 		} elseif ( stristr( $item_html, 'li class="divider' ) ) {
 			$item_html = preg_replace( '/<a[^>]*>.*?<\/a>/iU', '', $item_html );
 		} elseif ( stristr( $item_html, 'li class="nav-header' ) ) {
@@ -522,7 +477,7 @@ add_filter( 'wp_nav_menu_args', 'bavotasan_nav_menu_args' );
  * @since 1.0.0
  */
 function bavotasan_nav_menu_args( $args ) {
-    if ( 1 !== $args[ 'depth' ] && has_nav_menu( 'primary' ) )
+    if ( 1 !== $args[ 'depth' ] && has_nav_menu( 'primary' ) && 'primary' == $args[ 'theme_location' ] )
         $args[ 'walker' ] = new Bavotasan_Page_Navigation_Walker;
 
     return $args;
@@ -541,11 +496,9 @@ function bavotasan_jumbotron() {
 		<div class="container">
 			<div class="row">
 				<div class="home-jumbotron jumbotron col-lg-10 col-lg-offset-1 col-sm-12">
-					<h1><?php echo $bavotasan_theme_options['jumbo_headline_title']; ?></h1>
-					<p class="lead"><?php echo $bavotasan_theme_options['jumbo_headline_text']; ?></p>
-					<?php if ( ! empty( $bavotasan_theme_options['jumbo_headline_button_text'] ) ) { ?>
-					<a class="btn btn-lg btn-primary" href="<?php echo $bavotasan_theme_options['jumbo_headline_button_link']; ?>"><?php echo $bavotasan_theme_options['jumbo_headline_button_text']; ?></a>
-					<?php } ?>
+					<h2><?php echo wp_kses_post ( $bavotasan_theme_options['jumbo_headline_title'] ); ?></h2>
+					<p class="lead"><?php echo wp_kses_post( $bavotasan_theme_options['jumbo_headline_text'] ); ?></p>
+
 					<i class="middle-circle icon-off"></i>
 				</div>
 			</div>

@@ -5,7 +5,7 @@
 
 == ABOUT WARD ==
 
-Create a truly unique design with Ward, a lightweight and fully responsive HTML5 theme based on the Gridiculous boilerplate. Use the new Theme Options customizer to add your own background, page layout, site width and more. Distinguish each post with one of the eight supported post formats, such as: Video, Image, Aside, Status, Audio, Quote, Link and Gallery. Install JetPack to display each of your galleries through a tiled view and jQuery carousel. Compatible with bbPress & BuddyPress. Built using SASS, Compass and Twitter Bootstrap. Ward uses Google Fonts for improved typeface readability and works perfectly in desktop browsers, tablets and handheld devices. For a live demo go to http://demos.bavotasan.com/ward/.
+Create a truly unique design with Ward, a lightweight and fully responsive HTML5 theme based on the Gridiculous boilerplate. Use the new Theme Options customizer to add your own background, page layout, site width and more. Distinguish each post with one of the eight supported post formats, such as: Video, Image, Aside, Status, Audio, Quote, Link and Gallery. Install JetPack to display each of your galleries through a tiled view and jQuery carousel. Compatible with bbPress & BuddyPress. Built using SASS, Compass and Twitter Bootstrap. Ward uses Google Fonts for improved typeface readability and works perfectly in desktop browsers, tablets and handheld devices.
 
 == NOTES ==
 
@@ -33,7 +33,24 @@ Copyright: Dave Gandy, https://twitter.com/davegandy
 Google Fonts - http://www.google.com/fonts/
 License: [[http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL|SIL Open Font License]]
 
+Stock Images - http://unsplash.com/
+Licensed under the terms of CC0
+
 == CHANGELOG ==
+
+03/17/2014 v1.0.7
+* Fixed primary menu code
+* Fixed H1 tag issue
+* Renamed customizer file
+* Added image license
+* Added data validation
+* Added title-tag support
+* Added about page
+* Added prev/next links to pages
+* Added HTML5 shiv
+* Updated editor styles
+* Updated preview pro page
+* Updated language file
 
 06/10/2014 v1.0.6
 * Removed accessibility tag

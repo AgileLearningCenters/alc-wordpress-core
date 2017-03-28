@@ -12,7 +12,6 @@
 get_header();
 
 global $paged;
-$bavotasan_theme_options = bavotasan_theme_options();
 
 if ( 2 > $paged ) {
 	// Display home page top widgetized area
@@ -49,7 +48,7 @@ if ( 'page' == get_option('show_on_front') ) {
 				// Show a different message to a logged-in user who can add posts.
 				?>
 				<article id="post-0" class="post no-results not-found">
-					<h1 class="entry-title"><?php _e( 'Nothing Found', 'ward' ); ?></h1>
+					<div class="entry-title"><?php _e( 'Nothing Found', 'ward' ); ?></div>
 
 					<div class="entry-content description clearfix">
 						<p><?php printf( __( 'Ready to publish your first post? <a href="%s">Get started here</a>.', 'ward' ), admin_url( 'post-new.php' ) ); ?></p>

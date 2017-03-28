@@ -8,11 +8,13 @@
 	all_videos.each( function() {
 		var video = $(this);
 
-		if ( video.parents( 'object' ).length )
+		if ( video.parents( 'object' ).length ) {
 			return;
+		}
 
-		if ( ! video.prop( 'id' ) )
+		if ( ! video.prop( 'id' ) ) {
 			video.attr( 'id', 'rvw' + Math.floor( Math.random() * 999999 ) );
+		}
 
 		video
 			.wrap( '<div class="responsive-video-wrapper" style="padding-top: ' + ( video.attr( 'height' ) / video.attr( 'width' ) * 100 ) + '%" />' )
