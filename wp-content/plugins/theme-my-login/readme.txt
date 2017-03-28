@@ -3,8 +3,8 @@ Contributors: jfarthing84
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=EZLVANPT4A9SW
 Tags: widget, login, registration, theme, custom, log in, register, sidebar, gravatar, redirection, e-mail
 Requires at least: 4.5
-Tested up to: 4.5.2
-Stable tag: 6.4.5
+Tested up to: 4.7.2
+Stable tag: 6.4.9
 
 Themes the WordPress login pages according to your theme.
 
@@ -52,10 +52,31 @@ As of version 6.3, Theme My Login no longer ships with translation files. Transl
 
 = How do I obtain additional assistance? =
 
-Please visit http://www.jfarthing.com/development/theme-my-login.
+Please visit https://wordpress.org/support/plugin/theme-my-login.
 
 
 == Changelog ==
+
+= 6.4.9 =
+* Fix fatal error from typo in previous release
+
+= 6.4.8 =
+* Fix errors and messages not displaying anywhere except default pages
+* Don't exclude TML pages from search in admin area or if not the main query
+
+= 6.4.7 =
+* Don't allow locked users to log in using their email address
+
+= 6.4.6 =
+* Fix errors and messages not displaying
+* Don't add reCAPTCHA errors when adding a user via wp-admin or WP-CLI
+* Improve PHP 7 compatibility
+* Introduce `tml_page_id` filter
+* Improve deliverability of HTML emails
+* Fix disabling of User Denial email notification
+* Pass locale to reCAPTCHA script allowing reCAPTCHA to be localized
+* Don't allow pending users to log in using their email address
+* Fix email content types from being reset
 
 = 6.4.5 =
 * Don't clear username input on login form when autofocusing

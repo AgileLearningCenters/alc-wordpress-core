@@ -83,7 +83,9 @@ class Theme_My_Login_Recaptcha extends Theme_My_Login_Abstract {
 	 * @since 6.3
 	 */
 	function wp_enqueue_scripts() {
-		wp_enqueue_script( 'recaptcha', 'https://www.google.com/recaptcha/api.js' );
+		wp_enqueue_script( 'recaptcha', add_query_arg( array(
+			'hl' => str_replace( '_', '-', get_locale() )
+		), 'https://www.google.com/recaptcha/api.js' ) );
 	}
 
 	/**
@@ -129,6 +131,11 @@ class Theme_My_Login_Recaptcha extends Theme_My_Login_Abstract {
 	 * @return array Signup parameters
 	 */
 	public function wpmu_validate_signup( $result ) {
+		// Don't add errors if adding a user from wp-admin or WP-CLI
+		if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			return $result;
+		}
+
 		$result['errors'] = $this->registration_errors( $result['errors'] );
 		return $result;
 	}

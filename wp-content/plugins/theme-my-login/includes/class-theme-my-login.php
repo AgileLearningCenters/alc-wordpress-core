@@ -21,7 +21,7 @@ class Theme_My_Login extends Theme_My_Login_Abstract {
 	 * @since 6.3.2
 	 * @const string
 	 */
-	const VERSION = '6.4.5';
+	const VERSION = '6.4.9';
 
 	/**
 	 * Holds options key
@@ -66,7 +66,7 @@ class Theme_My_Login extends Theme_My_Login_Abstract {
 	 * @access public
 	 * @var int
 	 */
-	public $request_instance;
+	public $request_instance = 0;
 
 	/**
 	 * Holds loaded instances
@@ -129,6 +129,9 @@ class Theme_My_Login extends Theme_My_Login_Abstract {
 	 * @access public
 	 */
 	protected function load() {
+
+		$this->request_action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : '';
+		$this->request_instance = isset( $_REQUEST['instance'] ) ? (int) $_REQUEST['instance'] : 0;
 
 		$this->load_instance();
 
@@ -251,7 +254,15 @@ class Theme_My_Login extends Theme_My_Login_Abstract {
 	 * @since 6.1.13
 	 * @access public
 	 */
-	public function pre_get_posts( &$query ) {
+	public function pre_get_posts( $query ) {
+
+		// Bail if in admin area
+		if ( is_admin() )
+			return;
+
+		// Bail if not the main query
+		if ( ! $query->is_main_query() )
+			return;
 
 		// Bail if not a search
 		if ( ! $query->is_search )
@@ -294,10 +305,8 @@ class Theme_My_Login extends Theme_My_Login_Abstract {
 	 * @access public
 	 */
 	public function template_redirect() {
-		$this->request_action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : '';
 		if ( ! $this->request_action && self::is_tml_page() )
 			$this->request_action = self::get_page_action( get_the_id() );
-		$this->request_instance = isset( $_REQUEST['instance'] ) ? sanitize_key( $_REQUEST['instance'] ) : 0;
 
 		do_action_ref_array( 'tml_request', array( &$this ) );
 
@@ -988,7 +997,7 @@ if(typeof wpOnload=='function')wpOnload()
 				return null;
 			wp_cache_add( $action, $page_id, 'tml_page_ids' );
 		}
-		return $page_id;
+		return apply_filters( 'tml_page_id', $page_id, $action );
 	}
 
 	/**
@@ -1077,11 +1086,11 @@ if(typeof wpOnload=='function')wpOnload()
 	 * @return object Instance object
 	 */
 	public function load_instance( $args = '' ) {
-		$args['instance'] = count( $this->loaded_instances );
 
 		$instance = new Theme_My_Login_Template( $args );
+		$instance->set_option( 'instance', count( $this->loaded_instances ) );
 
-		if ( $args['instance'] == $this->request_instance ) {
+		if ( $instance->get_option( 'instance' ) === $this->request_instance ) {
 			$instance->set_active();
 			$instance->set_option( 'default_action', $this->request_action );
 		}
@@ -1190,4 +1199,3 @@ if(typeof wpOnload=='function')wpOnload()
 	}
 }
 endif; // Class exists
-
