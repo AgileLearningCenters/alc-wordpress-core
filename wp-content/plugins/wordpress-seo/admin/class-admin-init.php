@@ -42,7 +42,6 @@ class WPSEO_Admin_Init {
 		$this->asset_manager = new WPSEO_Admin_Asset_Manager();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_dismissible' ) );
-		add_action( 'admin_init', array( $this, 'after_update_notice' ), 15 );
 		add_action( 'admin_init', array( $this, 'tagline_notice' ), 15 );
 		add_action( 'admin_init', array( $this, 'blog_public_notice' ), 15 );
 		add_action( 'admin_init', array( $this, 'permalink_notice' ), 15 );
@@ -50,8 +49,6 @@ class WPSEO_Admin_Init {
 		add_action( 'admin_init', array( $this, 'ga_compatibility_notice' ), 15 );
 		add_action( 'admin_init', array( $this, 'yoast_plugin_compatibility_notification' ), 15 );
 		add_action( 'admin_init', array( $this, 'recalculate_notice' ), 15 );
-		add_action( 'admin_init', array( $this, 'ignore_tour' ) );
-		add_action( 'admin_init', array( $this, 'load_tour' ) );
 		add_action( 'admin_init', array( $this->asset_manager, 'register_assets' ) );
 		add_action( 'admin_init', array( $this, 'show_hook_deprecation_warnings' ) );
 		add_action( 'admin_init', array( 'WPSEO_Plugin_Conflict', 'hook_check_for_plugin_conflicts' ) );
@@ -68,46 +65,6 @@ class WPSEO_Admin_Init {
 	 */
 	public function enqueue_dismissible() {
 		$this->asset_manager->enqueue_style( 'dismissible' );
-	}
-
-	/**
-	 * Redirect first time or just upgraded users to the about screen.
-	 */
-	public function after_update_notice() {
-
-		$notification        = $this->get_update_notification();
-		$notification_center = Yoast_Notification_Center::get();
-
-		if ( $this->has_ignored_tour() && ! $this->seen_about() ) {
-			$notification_center->add_notification( $notification );
-		}
-		else {
-			$notification_center->remove_notification( $notification );
-		}
-	}
-
-	/**
-	 * Build the update notification
-	 *
-	 * @return Yoast_Notification
-	 */
-	private function get_update_notification() {
-		/* translators: %1$s expands to Yoast SEO, $2%s to the version number, %3$s and %4$s to anchor tags with link to intro page */
-		$info_message = sprintf(
-			__( '%1$s has been updated to version %2$s. %3$sFind out what\'s new!%4$s', 'wordpress-seo' ),
-			'Yoast SEO',
-			WPSEO_VERSION,
-			'<a href="' . admin_url( 'admin.php?page=' . WPSEO_Admin::PAGE_IDENTIFIER . '&intro=1' ) . '">',
-			'</a>'
-		);
-
-		$notification_options = array(
-			'type'         => Yoast_Notification::UPDATED,
-			'id'           => 'wpseo-dismiss-about',
-			'capabilities' => 'manage_options',
-		);
-
-		return new Yoast_Notification( $info_message, $notification_options );
 	}
 
 	/**
@@ -134,6 +91,7 @@ class WPSEO_Admin_Init {
 		), wp_customize_url() );
 
 		$info_message = sprintf(
+			/* translators: 1: link open tag; 2: link close tag. */
 			__( 'You still have the default WordPress tagline, even an empty one is probably better. %1$sYou can fix this in the customizer%2$s.', 'wordpress-seo' ),
 			'<a href="' . esc_attr( $customize_url ) . '">',
 			'</a>'
@@ -195,8 +153,8 @@ class WPSEO_Admin_Init {
 		$info_message = __( 'Paging comments is enabled, this is not needed in 999 out of 1000 cases, we recommend to disable it.', 'wordpress-seo' );
 		$info_message .= '<br/>';
 
-		/* translators: %1$s resolves to the opening tag of the link to the comment setting page, %2$s resolves to the closing tag of the link */
 		$info_message .= sprintf(
+			/* translators: %1$s resolves to the opening tag of the link to the comment setting page, %2$s resolves to the closing tag of the link */
 			__( 'Simply uncheck the box before "Break comments into pages..." on the %1$sComment settings page%2$s.', 'wordpress-seo' ),
 			'<a href="' . esc_url( admin_url( 'options-discussion.php' ) ) . '">',
 			'</a>'
@@ -226,8 +184,9 @@ class WPSEO_Admin_Init {
 	 */
 	public function has_default_tagline() {
 		$blog_description = get_bloginfo( 'description' );
-		$default_blog_description = 'Just another WordPress site';
-		return __( $default_blog_description ) === $blog_description || $default_blog_description === $blog_description;
+		$default_blog_description    = 'Just another WordPress site';
+		$translated_blog_description = __( 'Just another WordPress site' );
+		return $translated_blog_description === $blog_description || $default_blog_description === $blog_description;
 	}
 
 	/**
@@ -344,7 +303,7 @@ class WPSEO_Admin_Init {
 	 */
 	private function get_yoast_seo_compatibility_notification( $name, $plugin, $level = Yoast_Notification::WARNING ) {
 		$info_message = sprintf(
-		/* translators: %1$s expands to Yoast SEO, %2$s expands to the plugin version, %3$s expands to the plugin name */
+			/* translators: %1$s expands to Yoast SEO, %2$s expands to the plugin version, %3$s expands to the plugin name */
 			__( '%1$s detected you are using version %2$s of %3$s, please update to the latest version to prevent compatibility issues.', 'wordpress-seo' ),
 			'Yoast SEO',
 			$plugin['version'],
@@ -376,8 +335,8 @@ class WPSEO_Admin_Init {
 		if ( $can_access && ! $this->is_site_notice_dismissed( 'wpseo_dismiss_recalculate' ) ) {
 			Yoast_Notification_Center::get()->add_notification(
 				new Yoast_Notification(
-					/* translators: 1: is a link to 'admin_url / admin.php?page=wpseo_tools&recalculate=1' 2: closing link tag */
 					sprintf(
+						/* translators: 1: is a link to 'admin_url / admin.php?page=wpseo_tools&recalculate=1' 2: closing link tag */
 						__( 'We\'ve updated our SEO score algorithm. %1$sRecalculate the SEO scores%2$s for all posts and pages.', 'wordpress-seo' ),
 						'<a href="' . admin_url( 'admin.php?page=wpseo_tools&recalculate=1' ) . '">',
 						'</a>'
@@ -417,7 +376,7 @@ class WPSEO_Admin_Init {
 	 */
 	private function load_meta_boxes() {
 
-		$is_editor      = in_array( $this->pagenow, array( 'edit.php', 'post.php', 'post-new.php' ) );
+		$is_editor      = WPSEO_Metabox::is_post_overview( $this->pagenow ) || WPSEO_Metabox::is_post_edit( $this->pagenow );
 		$is_inline_save = filter_input( INPUT_POST, 'action' ) === 'inline-save';
 
 		/**
@@ -427,11 +386,7 @@ class WPSEO_Admin_Init {
 		 *
 		 * @api bool Whether to always register the metaboxes or not. Defaults to false.
 		 */
-		if ( $is_editor || $is_inline_save || in_array( $this->pagenow, array(
-				'edit.php',
-				'post.php',
-				'post-new.php',
-			) ) || apply_filters( 'wpseo_always_register_metaboxes_on_admin', false )
+		if ( $is_editor || $is_inline_save || apply_filters( 'wpseo_always_register_metaboxes_on_admin', false )
 		) {
 			$GLOBALS['wpseo_metabox']      = new WPSEO_Metabox;
 			$GLOBALS['wpseo_meta_columns'] = new WPSEO_Meta_Columns();
@@ -485,32 +440,14 @@ class WPSEO_Admin_Init {
 	 * @link https://github.com/Yoast/i18n-module
 	 */
 	private function register_i18n_promo_class() {
-		new yoast_i18n(
+		// BC, because an older version of the i18n-module didn't have this class.
+		new Yoast_I18n_WordPressOrg_v2(
 			array(
-				'textdomain'     => 'wordpress-seo',
-				'project_slug'   => 'wordpress-seo',
-				'plugin_name'    => 'Yoast SEO',
-				'hook'           => 'wpseo_admin_promo_footer',
-				'glotpress_url'  => 'http://translate.yoast.com/gp/',
-				'glotpress_name' => 'Yoast Translate',
-				'glotpress_logo' => 'https://translate.yoast.com/gp-templates/images/Yoast_Translate.svg',
-				'register_url'   => 'https://translate.yoast.com/gp/projects#utm_source=plugin&utm_medium=promo-box&utm_campaign=wpseo-i18n-promo',
+				'textdomain'  => 'wordpress-seo',
+				'plugin_name' => 'Yoast SEO',
+				'hook'        => 'wpseo_admin_promo_footer',
 			)
 		);
-	}
-
-	/**
-	 * See if we should start our tour.
-	 */
-	public function load_tour() {
-		$restart_tour = filter_input( INPUT_GET, 'wpseo_restart_tour' );
-		if ( $restart_tour ) {
-			delete_user_meta( get_current_user_id(), 'wpseo_ignore_tour' );
-		}
-
-		if ( ! $this->has_ignored_tour() ) {
-			add_action( 'admin_enqueue_scripts', array( 'WPSEO_Pointers', 'get_instance' ) );
-		}
 	}
 
 	/**
@@ -519,26 +456,6 @@ class WPSEO_Admin_Init {
 	private function load_xml_sitemaps_admin() {
 		if ( $this->options['enablexmlsitemap'] === true ) {
 			new WPSEO_Sitemaps_Admin;
-		}
-	}
-
-	/**
-	 * Returns the value of the ignore tour.
-	 *
-	 * @return bool
-	 */
-	private function has_ignored_tour() {
-		$user_meta = get_user_meta( get_current_user_id(), 'wpseo_ignore_tour' );
-
-		return ! empty( $user_meta );
-	}
-
-	/**
-	 * Listener for the ignore tour GET value. If this one is set, just set the user meta to true.
-	 */
-	public function ignore_tour() {
-		if ( filter_input( INPUT_GET, 'wpseo_ignore_tour' ) && wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ), 'wpseo-ignore-tour' ) ) {
-			update_user_meta( get_current_user_id(), 'wpseo_ignore_tour', true );
 		}
 	}
 
@@ -578,7 +495,7 @@ class WPSEO_Admin_Init {
 
 		foreach ( $deprecated_notices as $deprecated_filter ) {
 			_deprecated_function(
-				/* %s expands to the actual filter/action that has been used. */
+				/* translators: %s expands to the actual filter/action that has been used. */
 				sprintf( __( '%s filter/action', 'wordpress-seo' ), $deprecated_filter ),
 				'WPSEO 3.0',
 				'javascript'
@@ -598,22 +515,36 @@ class WPSEO_Admin_Init {
 	}
 
 	/**
-	 * Returns whether or not the user has seen the tagline notice
-	 *
-	 * @deprecated 3.3
-	 *
-	 * @return bool
-	 */
-	public function seen_tagline_notice() {
-		return false;
-	}
-
-	/**
 	 * Check if the permalink uses %postname%
 	 *
 	 * @return bool
 	 */
 	private function has_postname_in_permalink() {
 		return ( false !== strpos( get_option( 'permalink_structure' ), '%postname%' ) );
+	}
+
+	/********************** DEPRECATED METHODS **********************/
+
+	/**
+	 * Returns whether or not the user has seen the tagline notice
+	 *
+	 * @deprecated 3.3
+	 * @codeCoverageIgnore
+	 *
+	 * @return bool
+	 */
+	public function seen_tagline_notice() {
+		_deprecated_function( __METHOD__, 'WPSEO 3.3.0' );
+		return false;
+	}
+
+	/**
+	 * Redirect first time or just upgraded users to the about screen.
+	 *
+	 * @deprecated 3.5
+	 * @codeCoverageIgnore
+	 */
+	public function after_update_notice() {
+		_deprecated_function( __METHOD__, 'WPSEO 3.5' );
 	}
 }

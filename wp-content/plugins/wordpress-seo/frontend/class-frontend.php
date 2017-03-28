@@ -84,7 +84,7 @@ class WPSEO_Frontend {
 		add_action( 'wp_head', array( $this, 'head' ), 1 );
 
 		// The head function here calls action wpseo_head, to which we hook all our functionality.
-		add_action( 'wpseo_head', array( $this, 'debug_marker' ), 2 );
+		add_action( 'wpseo_head', array( $this, 'debug_mark' ), 2 );
 		add_action( 'wpseo_head', array( $this, 'metadesc' ), 6 );
 		add_action( 'wpseo_head', array( $this, 'robots' ), 10 );
 		add_action( 'wpseo_head', array( $this, 'metakeywords' ), 11 );
@@ -607,7 +607,7 @@ class WPSEO_Frontend {
 	 *
 	 * @return string
 	 */
-	public function debug_marker( $echo = true ) {
+	public function debug_mark( $echo = true ) {
 		$marker = sprintf(
 			'<!-- This site is optimized with the ' . $this->head_product_name() . '%1$s - https://yoast.com/wordpress/plugins/seo/ -->',
 			/**
@@ -906,7 +906,8 @@ class WPSEO_Frontend {
 			if ( is_search() ) {
 				$search_query = get_search_query();
 
-				if ( ! empty( $search_query ) ) {
+				// Regex catches case when /search/page/N without search term is itself mistaken for search term. R.
+				if ( ! empty( $search_query ) && ! preg_match( '|^page/\d+$|', $search_query ) ) {
 					$canonical = get_search_link();
 				}
 			}
@@ -914,7 +915,13 @@ class WPSEO_Frontend {
 				$canonical = WPSEO_Utils::home_url();
 			}
 			elseif ( $this->is_posts_page() ) {
-				$canonical = get_permalink( get_option( 'page_for_posts' ) );
+
+				$posts_page_id = get_option( 'page_for_posts' );
+				$canonical     = WPSEO_Meta::get_value( 'canonical', $posts_page_id );
+
+				if ( empty( $canonical ) ) {
+					$canonical = get_permalink( $posts_page_id );
+				}
 			}
 			elseif ( is_tax() || is_tag() || is_category() ) {
 
@@ -1004,7 +1011,7 @@ class WPSEO_Frontend {
 	private function base_url( $path = null ) {
 		$url = get_option( 'home' );
 
-		$parts = parse_url( $url );
+		$parts = wp_parse_url( $url );
 
 		$base_url = trailingslashit( $parts['scheme'] . '://' . $parts['host'] );
 
@@ -1516,7 +1523,7 @@ class WPSEO_Frontend {
 	 * @return boolean
 	 */
 	public function clean_permalink() {
-		if ( is_robots() || get_query_var( 'sitemap' ) ) {
+		if ( is_robots() || get_query_var( 'sitemap' ) || empty( $_GET ) ) {
 			return false;
 		}
 
@@ -1798,7 +1805,7 @@ class WPSEO_Frontend {
 
 		// Find all titles, strip them out and add the new one in within the debug marker, so it's easily identified whether a site uses force rewrite.
 		$content = preg_replace( '/<title.*?\/title>/i', '', $content );
-		$content = str_replace( $this->debug_marker( false ), $this->debug_marker( false ) . "\n" . '<title>' . $title . '</title>', $content );
+		$content = str_replace( $this->debug_mark( false ), $this->debug_mark( false ) . "\n" . '<title>' . $title . '</title>', $content );
 
 		$GLOBALS['wp_query'] = $old_wp_query;
 
@@ -1929,4 +1936,20 @@ class WPSEO_Frontend {
 
 		return count( $queried_terms[ $term->taxonomy ]['terms'] ) > 1;
 	}
+
+	/** Deprecated functions */
+	// @codeCoverageIgnoreStart
+	/**
+	 * Outputs or returns the debug marker, which is also used for title replacement when force rewrite is active.
+	 *
+	 * @deprecated 4.4
+	 *
+	 * @param bool $echo Whether or not to echo the debug marker.
+	 * @return string
+	 */
+	public function debug_marker( $echo = false ) {
+		return $this->debug_mark( $echo );
+	}
+
+	// @codeCoverageIgnoreEnd
 }

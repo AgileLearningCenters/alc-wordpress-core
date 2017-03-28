@@ -82,6 +82,7 @@ class WPSEO_JSON_LD {
 		$this->data = array(
 			'@context' => 'http://schema.org',
 			'@type'    => 'WebSite',
+			'@id'      => '#website',
 			'url'      => $this->get_home_url(),
 			'name'     => $this->get_website_name(),
 		);
@@ -125,6 +126,7 @@ class WPSEO_JSON_LD {
 	private function organization() {
 		if ( '' !== $this->options['company_name'] ) {
 			$this->data['@type'] = 'Organization';
+			$this->data['@id']   = '#organization';
 			$this->data['name']  = $this->options['company_name'];
 			$this->data['logo']  = $this->options['company_logo'];
 			return;
@@ -138,6 +140,7 @@ class WPSEO_JSON_LD {
 	private function person() {
 		if ( '' !== $this->options['person_name'] ) {
 			$this->data['@type'] = 'Person';
+			$this->data['@id']   = '#person';
 			$this->data['name']  = $this->options['person_name'];
 			return;
 		}
@@ -256,6 +259,8 @@ class WPSEO_JSON_LD {
 	 *
 	 * @deprecated 2.1
 	 * @deprecated use WPSEO_JSON_LD::website()
+
+	 * @codeCoverageIgnore
 	 */
 	public function internal_search() {
 		_deprecated_function( __METHOD__, 'WPSEO 2.1', 'WPSEO_JSON_LD::website()' );
