@@ -3,7 +3,7 @@
 Plugin Name: Donation Thermometer
 Plugin URI: http://henrypatton.org/donation-thermometer
 Description: Displays custom thermometers charting the amount of donations raised using the shortcode <code>[thermometer raised=?? target=??]</code>. Shortcodes for raised and target text values are also available for posts/pages/text widgets: <code>[therm_r]</code> and <code>[therm_t]</code>.
-Version: 1.3.13
+Version: 1.3.14
 Author: Henry Patton
 Author URI: http://henrypatton.org
 License: GPL3
@@ -291,9 +291,14 @@ if( isset($_GET['settings-updated']) ) {
 
 /////////////////////// Where the magic happens ;)...
 
-function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing){
+function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing,$fill){
     $options = get_option('thermometer_options');
-    $colour_input = $options['colour_picker1'];
+    if($fill == ''){
+	$colour_input = $options['colour_picker1'];
+    }
+    else{
+	$colour_input = $fill;
+    }
     $text_input = $options['colour_picker2'];
     $text2_input = $options['colour_picker3'];
     if ($options['colour_picker4'] == ''){
@@ -489,7 +494,8 @@ function thermometer_graphic($atts){
 			'alt' =>'',
 			'currency' =>'',
 			'sep' =>'',
-			'trailing' =>''
+			'trailing' =>'',
+			'fill' =>''
 		), $atts));
 	$options = get_option('thermometer_options');
 	
@@ -529,7 +535,7 @@ function thermometer_graphic($atts){
 	//target value
 	if ($atts['target'] == '' && $options['target_string'] == ''){
 	    echo '<p style="color:red;">Your target is missing. Set a value on the settings page or in the shortcode.</p>';
-		$target = 0;
+	    $target = 0;
 	}
 	elseif ($atts['target'] == '' && $options['target_string'] != ''){
 	    $target = $options['target_string'];
@@ -541,7 +547,7 @@ function thermometer_graphic($atts){
 	//raised value
 	if ($atts['raised'] == '' && $options['raised_string'] == ''){
 	    echo '<p style="color:red;">The amount raised is missing. Set a value on the settings page or in the shortcode.</p>';
-		$raised = 0;
+	    $raised = 0;
 	}
 	elseif ($atts['raised'] == '' && $options['raised_string'] != ''){
 	    $raised = $options['raised_string'];
@@ -584,6 +590,12 @@ function thermometer_graphic($atts){
 			$sep = substr($options['thousands'],0,1);
 		}
 	}
+	if($atts['fill'] == ''){
+	    $fill = $options['colour_picker1'];
+	}
+	else{
+	    $fill = $atts['fill'];
+	}
 	
 	// currency before or after number
 	if(strtolower($atts['trailing']) == 'true'){
@@ -608,20 +620,20 @@ function thermometer_graphic($atts){
 	    }
 	else{
 	    if ($trailing == 'false'){
-			$title = 'Raised '.$currency.number_format($raised,0,'.',$sep).' towards the '.$currency.number_format($target,0,'.',$sep).' target.';
+			$title = $fill.' Raised '.$currency.number_format($raised,0,'.',$sep).' towards the '.$currency.number_format($target,0,'.',$sep).' target.';
 	    }
 	    else{
-			$title = 'Raised '.number_format($raised,0,'.',$sep).' '.$currency.' towards the '.number_format($target,0,'.',$sep).' '.$currency.' target.';
+			$title = $fill.' Raised '.number_format($raised,0,'.',$sep).' '.$currency.' towards the '.number_format($target,0,'.',$sep).' '.$currency.' target.';
 	    }  
 	}	
 	
 	global $post;
 	$postID = $post->ID; // get post/page ID
 	if ($trailing == 'false'){
-	    $custom_thermname = 'therm_'.$postID.'_'.$sep.ord($currency).'_'.$raised.'_'.$target; //filename is related to post
+	    $custom_thermname = 'therm_'.$postID.'_'.$sep.ord($currency).'_'.$raised.'_'.$target.'_'.str_replace('#','',$fill); //filename is related to post
 	}
 	else{
-	    $custom_thermname = 'therm_'.$postID.'_'.$raised.'_'.$target.'_'.$sep.ord($currency); //filename is related to post
+	    $custom_thermname = 'therm_'.$postID.'_'.$raised.'_'.$target.'_'.str_replace('#','',$fill).'_'.$sep.ord($currency); //filename is related to post
 	}
 	$urlpath = plugins_url('donation-thermometer/'.$custom_thermname.'.png');
 	$cache_life = '6048000'; // seconds in 1 week
@@ -638,7 +650,7 @@ function thermometer_graphic($atts){
 		return thermhtml($width,$height,$raised,$target,$align,$currency,$title,$urlpath,$custom_thermname);
 	}
     else{
-		createtherm($raised,$target,htmlspecialchars_decode($currency),$custom_thermname,$sep,$trailing); // use shortcode attributes to create thermometer
+		createtherm($raised,$target,htmlspecialchars_decode($currency),$custom_thermname,$sep,$trailing,htmlspecialchars_decode($fill)); // use shortcode attributes to create thermometer
 		return thermhtml($width,$height,$raised,$target,$align,$currency,$title,$urlpath,$custom_thermname);
 	}
 }
