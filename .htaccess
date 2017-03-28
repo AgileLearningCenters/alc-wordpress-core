@@ -23,3 +23,10 @@ RewriteRule . index.php [L]
 order allow,deny
 deny from all
 </files>
+
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>
+
+deny from 84.19.27.53
