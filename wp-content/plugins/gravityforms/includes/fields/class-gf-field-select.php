@@ -64,16 +64,44 @@ class GF_Field_Select extends GF_Field {
 	}
 
 	public function get_value_entry_list( $value, $entry, $field_id, $columns, $form ) {
-		return GFCommon::selection_display( $value, $this, $entry['currency'] );
+		$return = esc_html( $value );
+		return GFCommon::selection_display( $return, $this, $entry['currency'] );
 	}
 
+
+	/**
+	 * Gets merge tag values.
+	 *
+	 * @since  Unknown
+	 * @access public
+	 *
+	 * @uses GFCommon::to_money()
+	 * @uses GFCommon::format_post_category()
+	 * @uses GFFormsModel::is_field_hidden()
+	 * @uses GFFormsModel::get_choice_text()
+	 * @uses GFCommon::format_variable_value()
+	 * @uses GFCommon::implode_non_blank()
+	 *
+	 * @param array|string $value      The value of the input.
+	 * @param string       $input_id   The input ID to use.
+	 * @param array        $entry      The Entry Object.
+	 * @param array        $form       The Form Object
+	 * @param string       $modifier   The modifier passed.
+	 * @param array|string $raw_value  The raw value of the input.
+	 * @param bool         $url_encode If the result should be URL encoded.
+	 * @param bool         $esc_html   If the HTML should be escaped.
+	 * @param string       $format     The format that the value should be.
+	 * @param bool         $nl2br      If the nl2br function should be used.
+	 *
+	 * @return string The processed merge tag.
+	 */
 	public function get_value_merge_tag( $value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format, $nl2br ) {
 		$use_value       = $modifier == 'value';
 		$use_price       = in_array( $modifier, array( 'price', 'currency' ) );
 		$format_currency = $modifier == 'currency';
 
 		if ( is_array( $raw_value ) && (string) intval( $input_id ) != $input_id ) {
-			$items = array( $input_id => $value ); //float input Ids. (i.e. 4.1 ). Used when targeting specific checkbox items
+			$items = array( $input_id => $value ); // Float input Ids. (i.e. 4.1 ). Used when targeting specific checkbox items.
 		} elseif ( is_array( $raw_value ) ) {
 			$items = $raw_value;
 		} else {
@@ -118,6 +146,21 @@ class GF_Field_Select extends GF_Field {
 		$value = rgar( $entry, $input_id );
 
 		return $is_csv ? $value : GFCommon::selection_display( $value, $this, rgar( $entry, 'currency' ), $use_text );
+	}
+
+	/**
+	 * Strips all tags from the input value.
+	 *
+	 * @param string $value The field value to be processed.
+	 * @param int $form_id The ID of the form currently being processed.
+	 *
+	 * @return string
+	 */
+	public function sanitize_entry_value( $value, $form_id ) {
+
+		$value = wp_strip_all_tags( $value );
+
+		return $value;
 	}
 }
 

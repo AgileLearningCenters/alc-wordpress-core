@@ -4,22 +4,18 @@ if ( ! class_exists( 'GFForms' ) ) {
 	die();
 }
 
-//Prints required tooltip scripts
-add_action( 'admin_print_scripts', 'print_tooltip_scripts' );
 /**
- * Prints scripts required by the tooltips
+ * Enqueue the styles and scripts required for the tooltips.
  */
-function print_tooltip_scripts() {
+function enqueue_tooltip_scripts() {
 
-	$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+	wp_enqueue_style( 'gform_tooltip' );
+	wp_enqueue_style( 'gform_font_awesome' );
 
-	wp_enqueue_style( 'gform_tooltip', GFCommon::get_base_url() . "/css/tooltip{$min}.css", null, GFCommon::$version );
-	wp_enqueue_style( 'gform_font_awesome', GFCommon::get_base_url() . "/css/font-awesome{$min}.css", null, GFCommon::$version );
-
-	wp_print_scripts( 'gform_tooltip_init' );
-	wp_print_styles( 'gform_tooltip', 'gform_font_awesome' );
+	wp_enqueue_script( 'gform_tooltip_init' );
 
 }
+add_action( 'admin_enqueue_scripts', 'enqueue_tooltip_scripts' );
 
 global $__gf_tooltips;
 $__gf_tooltips = array(
@@ -37,7 +33,7 @@ $__gf_tooltips = array(
 	'form_animation'                              => '<h6>' . __( 'Enable Animation', 'gravityforms' ) . '</h6>' . __( 'Check this option to enable a sliding animation when displaying/hiding conditional logic fields.', 'gravityforms' ),
 	'form_title'                                  => '<h6>' . __( 'Form Title', 'gravityforms' ) . '</h6>' . __( 'Enter the title of your form.', 'gravityforms' ),
 	'form_description'                            => '<h6>' . __( 'Form Description', 'gravityforms' ) . '</h6>' . __( 'Enter a description for your form. This may be used for user instructions.', 'gravityforms' ),
-	'form_label_placement'                        => '<h6>' . __( 'Form Label Placement', 'gravityforms' ) . '</h6>' . __( 'Select the default label placement.  Labels can be top aligned above a field, left aligned to the left of a field, or right aligned to the right of a field. This setting can be overridden in the appearance settings for each field.', 'gravityforms' ),
+	'form_label_placement'                        => '<h6>' . __( 'Form Label Placement', 'gravityforms' ) . '</h6>' . __( 'Select the default label placement.  Labels can be top aligned above a field, left aligned to the left of a field, or right aligned to the right of a field. This is a global label placement setting', 'gravityforms' ),
 	'form_description_placement'                  => '<h6>' . __( 'Description Placement', 'gravityforms' ) . '</h6>' . __( 'Select the default description placement.  Descriptions can be placed above the field inputs or below the field inputs. This setting can be overridden in the appearance settings for each field.', 'gravityforms' ),
 	'form_sub_label_placement'                    => '<h6>' . __( 'Sub-Label Placement', 'gravityforms' ) . '</h6>' . __( 'Select the default sub-label placement.  Sub-labels can be placed above the field inputs or below the field inputs. This setting can be overridden in the appearance settings for each field.', 'gravityforms' ),
 	'form_button_text'                            => '<h6>' . __( 'Form Button Text', 'gravityforms' ) . '</h6>' . __( 'Enter the text you would like to appear on the form submit button.', 'gravityforms' ),
@@ -92,7 +88,7 @@ $__gf_tooltips = array(
 	'form_field_label_placement'                  => '<h6>' . __( 'Label Visibility', 'gravityforms' ) . '</h6>' . __( 'Select the label visibility for this field.  Labels can either inherit the form setting or be hidden.', 'gravityforms' ),
 	'form_field_description_placement'            => '<h6>' . __( 'Description Placement', 'gravityforms' ) . '</h6>' . __( 'Select the description placement.  Descriptions can be placed above the field inputs or below the field inputs.', 'gravityforms' ),
 	'form_field_sub_label_placement'              => '<h6>' . __( 'Sub-Label Placement', 'gravityforms' ) . '</h6>' . __( 'Select the sub-label placement.  Sub-labels can be placed above the field inputs or below the field inputs.', 'gravityforms' ),
-	'form_field_size'                             => '<h6>' . __( 'Field Size', 'gravityforms' ) . '</h6>' . __( 'Select a form field size from the available options. This will set the width of the field.', 'gravityforms' ),
+	'form_field_size'                             => '<h6>' . __( 'Field Size', 'gravityforms' ) . '</h6>' . __( 'Select a form field size from the available options. This will set the width of the field. Please note: if using a paragraph field, the size applies only to the height of the field.', 'gravityforms' ),
 	'form_field_name_fields'                      => '<h6>' . __( 'Name Fields', 'gravityforms' ) . '</h6>' . __( "Select the fields you'd like to use in this Name field and customize the Sub-Labels by entering new ones.", 'gravityforms' ),
 	'form_field_name_prefix_choices'              => '<h6>' . __( 'Name Prefix Choices', 'gravityforms' ) . '</h6>' . __( 'Add Choices to this field. You can mark a choice as selected by default by using the radio buttons on the left.', 'gravityforms' ),
 	'form_field_address_fields'                   => '<h6>' . __( 'Address Fields', 'gravityforms' ) . '</h6>' . __( "Select the fields you'd like to use in this Address Field and customize the Sub-Labels by entering new ones.", 'gravityforms' ),
@@ -107,7 +103,7 @@ $__gf_tooltips = array(
 	'form_field_validation_message'               => '<h6>' . __( 'Validation Message', 'gravityforms' ) . '</h6>' . __( 'If you would like to override the default error validation for a field, enter it here.  This message will be displayed if there is an error with this field when the user submits the form.', 'gravityforms' ),
 	'form_field_recaptcha_language'               => '<h6>' . __( 'reCAPTCHA Language', 'gravityforms' ) . '</h6>' . __( 'Select the language you would like to use for the reCAPTCHA display from the available options.', 'gravityforms' ),
 	'form_field_css_class'                        => '<h6>' . __( 'CSS Class Name', 'gravityforms' ) . '</h6>' . __( 'Enter the CSS class name you would like to use in order to override the default styles for this field.', 'gravityforms' ),
-	'form_field_visibility'                       => '<h6>' . __( 'Visibility', 'gravityforms' ) . '</h6>' . __( 'Select the visibility for this field. Field visibility set to Everyone will be visible by the user submitting the form. Form field visibility set to Admin Only will only be visible within the Gravity Forms administration tool.<br /><br />Setting a field to Admin Only is useful for creating fields that can be used to set a status or priority level on submitted entries.', 'gravityforms' ),
+	'form_field_visibility'                       => GFCommon::get_visibility_tooltip(),
 	'form_field_choices'                          => '<h6>' . __( 'Field Choices', 'gravityforms' ) . '</h6>' . __( 'Add Choices to this field. You can mark each choice as checked by default by using the radio/checkbox fields on the left.', 'gravityforms' ),
 	'form_field_choice_values'                    => '<h6>' . __( 'Enable Choice Values', 'gravityforms' ) . '</h6>' . __( 'Check this option to specify a value for each choice. Choice values are not displayed to the user viewing the form, but are accessible to administrators when viewing the entry.', 'gravityforms' ),
 	'form_field_conditional_logic'                => '<h6>' . __( 'Conditional Logic', 'gravityforms' ) . '</h6>' . __( 'Create rules to dynamically display or hide this field based on values from another field.', 'gravityforms' ),
