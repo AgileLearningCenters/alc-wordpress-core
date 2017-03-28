@@ -47,10 +47,14 @@ class Jetpack_Testimonial {
 		// Check on theme switch if theme supports CPT and setting is disabled
 		add_action( 'after_switch_theme', array( $this, 'activation_post_type_support' ) );
 
-		$setting = get_option( self::OPTION_NAME, '0' );
+		$setting = Jetpack_Options::get_option_and_ensure_autoload( self::OPTION_NAME, '0' );
 
 		// Bail early if Testimonial option is not set and the theme doesn't declare support
 		if ( empty( $setting ) && ! $this->site_supports_custom_post_type() ) {
+			return;
+		}
+
+		if ( ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) && ! Jetpack::is_module_active( 'custom-content-types' ) ) {
 			return;
 		}
 
@@ -160,6 +164,7 @@ class Jetpack_Testimonial {
 		if ( $this->site_supports_custom_post_type() ) :
 			printf( '<p><label for="%1$s">%2$s</label></p>',
 				esc_attr( self::OPTION_READING_SETTING ),
+				/* translators: %1$s is replaced with an input field for numbers */
 				sprintf( __( 'Testimonial pages display at most %1$s testimonials', 'jetpack' ),
 					sprintf( '<input name="%1$s" id="%1$s" type="number" step="1" min="1" value="%2$s" class="small-text" />',
 						esc_attr( self::OPTION_READING_SETTING ),

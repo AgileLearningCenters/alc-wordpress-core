@@ -326,7 +326,7 @@ jQuery( function($) {
 		wpasTitle = $('#wpas-title').keyup( function() {
 		var length = wpasTitle.val().length;
 		wpasTitleCounter.text( length );
-		if ( wpasTwitterCheckbox && length > 140 ) {
+		if ( wpasTwitterCheckbox && length > 116 ) {
 			wpasTitleCounter.addClass( 'wpas-twitter-length-limit' );
 		} else {
 			wpasTitleCounter.removeClass( 'wpas-twitter-length-limit' );
@@ -712,7 +712,9 @@ jQuery( function($) {
 					<input type="hidden" name="wpas[0]" value="1" />
 
 				</div>
-				<div id="pub-connection-tests"></div>
+				<?php if ( ! $all_done ) : ?>
+					<div id="pub-connection-tests"></div>
+				<?php endif; ?>
 				<?php // #publicize-form
 
 				$publicize_form = ob_get_clean();

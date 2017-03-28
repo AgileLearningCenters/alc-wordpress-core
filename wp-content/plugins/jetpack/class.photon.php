@@ -45,9 +45,6 @@ class Jetpack_Photon {
 	 * @return null
 	 */
 	private function setup() {
-		// Display warning if site is private
-		add_action( 'jetpack_activate_module_photon', array( $this, 'action_jetpack_activate_module_photon' ) );
-
 		if ( ! function_exists( 'jetpack_photon_url' ) )
 			return;
 
@@ -64,17 +61,6 @@ class Jetpack_Photon {
 
 		// Helpers for maniuplated images
 		add_action( 'wp_enqueue_scripts', array( $this, 'action_wp_enqueue_scripts' ), 9 );
-	}
-
-	/**
-	 * Check if site is private and warn user if it is
-	 *
-	 * @uses Jetpack::check_privacy
-	 * @action jetpack_activate_module_photon
-	 * @return null
-	 */
-	public function action_jetpack_activate_module_photon() {
-		Jetpack::check_privacy( __FILE__ );
 	}
 
 	/**
@@ -140,7 +126,7 @@ class Jetpack_Photon {
 			$content_width = Jetpack::get_content_width();
 
 			$image_sizes = self::image_sizes();
-			$upload_dir = wp_upload_dir();
+			$upload_dir = wp_get_upload_dir();
 
 			foreach ( $images[0] as $index => $tag ) {
 				// Default to resize, though fit may be used in certain cases where a dimension cannot be ascertained
@@ -248,13 +234,13 @@ class Jetpack_Photon {
 
 									// Prevent image distortion if a detected dimension exceeds the image's natural dimensions
 									if ( ( false !== $width && $width > $src_per_wp[1] ) || ( false !== $height && $height > $src_per_wp[2] ) ) {
-										$width = false == $width ? false : min( $width, $src_per_wp[1] );
-										$height = false == $height ? false : min( $height, $src_per_wp[2] );
+										$width = false === $width ? false : min( $width, $src_per_wp[1] );
+										$height = false === $height ? false : min( $height, $src_per_wp[2] );
 									}
 
 									// If no width and height are found, max out at source image's natural dimensions
 									// Otherwise, respect registered image sizes' cropping setting
-									if ( false == $width && false == $height ) {
+									if ( false === $width && false === $height ) {
 										$width = $src_per_wp[1];
 										$height = $src_per_wp[2];
 										$transform = 'fit';
@@ -619,10 +605,15 @@ class Jetpack_Photon {
 	 * @return array An array of Photon image urls and widths.
 	 */
 	public function filter_srcset_array( $sources, $size_array, $image_src, $image_meta ) {
-		$upload_dir = wp_upload_dir();
+		$upload_dir = wp_get_upload_dir();
 
 		foreach ( $sources as $i => $source ) {
 			if ( ! self::validate_image_url( $source['url'] ) ) {
+				continue;
+			}
+
+			/** This filter is already documented in class.photon.php */
+			if ( apply_filters( 'jetpack_photon_skip_image', false, $source['url'], $source ) ) {
 				continue;
 			}
 
@@ -666,13 +657,19 @@ class Jetpack_Photon {
 		 * @param array|bool $multipliers Array of multipliers to use or false to bypass.
 		 */
 		$multipliers = apply_filters( 'jetpack_photon_srcset_multipliers', array( 2, 3 ) );
+		$url         = trailingslashit( $upload_dir['baseurl'] ) . $image_meta['file'];
 
-		if ( is_array( $multipliers ) // Short-circuit via jetpack_photon_srcset_multipliers filter.
-			&& isset( $image_meta['width'] ) && isset( $image_meta['height'] ) && isset( $image_meta['file'] ) // Verify basic meta is intact.
-			&& isset( $size_array[0] ) && isset( $size_array[1] ) // Verify we have the requested width/height.
+		if (
+			/** Short-circuit via jetpack_photon_srcset_multipliers filter. */
+			is_array( $multipliers )
+			/** This filter is already documented in class.photon.php */
+			&& ! apply_filters( 'jetpack_photon_skip_image', false, $url, null )
+			/** Verify basic meta is intact. */
+			&& isset( $image_meta['width'] ) && isset( $image_meta['height'] ) && isset( $image_meta['file'] )
+			/** Verify we have the requested width/height. */
+			&& isset( $size_array[0] ) && isset( $size_array[1] )
 			) {
 
-			$url = trailingslashit( $upload_dir['baseurl'] ) . $image_meta['file'];
 			$fullwidth  = $image_meta['width'];
 			$fullheight = $image_meta['height'];
 			$reqwidth   = $size_array[0];
@@ -684,8 +681,7 @@ class Jetpack_Photon {
 			if ( abs( $constrained_size[0] - $expected_size[0] ) <= 1 && abs( $constrained_size[1] - $expected_size[1] ) <= 1 ) {
 				$crop = 'soft';
 				$base = Jetpack::get_content_width() ? Jetpack::get_content_width() : 1000; // Provide a default width if none set by the theme.
-			}
-			else {
+			} else {
 				$crop = 'hard';
 				$base = $reqwidth;
 			}
@@ -695,6 +691,7 @@ class Jetpack_Photon {
 			$newsources = null;
 
 			foreach ( $multipliers as $multiplier ) {
+
 				$newwidth = $base * $multiplier;
 				foreach ( $currentwidths as $currentwidth ){
 					// If a new width would be within 100 pixes of an existing one or larger than the full size image, skip.
@@ -707,8 +704,7 @@ class Jetpack_Photon {
 					$args = array(
 						'w' => $newwidth,
 					);
-				}
-				else { // hard crop, e.g. add_image_size( 'example', 200, 200, true );
+				} else { // hard crop, e.g. add_image_size( 'example', 200, 200, true );
 					$args = array(
 						'zoom'   => $multiplier,
 						'resize' => $reqwidth . ',' . $reqheight,
@@ -722,7 +718,11 @@ class Jetpack_Photon {
 					);
 			} // foreach ( $multipliers as $multiplier )
 			if ( is_array( $newsources ) ) {
-				$sources = array_merge( $sources, $newsources );
+				if ( function_exists( 'array_replace' ) ) { // PHP 5.3+, preferred
+					$sources = array_replace( $sources, $newsources );
+				} else { // For PHP 5.2 using WP shim function
+					$sources = array_replace_recursive( $sources, $newsources );
+				}
 			}
 		} // if ( isset( $image_meta['width'] ) && isset( $image_meta['file'] ) )
 
@@ -843,7 +843,7 @@ class Jetpack_Photon {
 		// Build URL, first removing WP's resized string so we pass the original image to Photon
 		if ( preg_match( '#(-\d+x\d+)\.(' . implode('|', self::$extensions ) . '){1}$#i', $src, $src_parts ) ) {
 			$stripped_src = str_replace( $src_parts[1], '', $src );
-			$upload_dir = wp_upload_dir();
+			$upload_dir = wp_get_upload_dir();
 
 			// Extracts the file path to the image minus the base url
 			$file_path = substr( $stripped_src, strlen ( $upload_dir['baseurl'] ) );

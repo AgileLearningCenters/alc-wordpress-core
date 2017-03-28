@@ -85,6 +85,12 @@ require_once( $json_endpoints_dir . 'class.wpcom-json-api-update-customcss.php' 
 // v1.2
 // **********
 require_once( $json_endpoints_dir . 'class.wpcom-json-api-update-post-v1-2-endpoint.php' );
+require_once( $json_endpoints_dir . 'class.wpcom-json-api-site-settings-v1-2-endpoint.php' );
+require_once( $json_endpoints_dir . 'class.wpcom-json-api-get-site-v1-2-endpoint.php' );
+
+// Media
+require_once( $json_endpoints_dir . 'class.wpcom-json-api-get-media-v1-2-endpoint.php' );
+require_once( $json_endpoints_dir . 'class.wpcom-json-api-edit-media-v1-2-endpoint.php' );
 
 // Jetpack Only Endpoints
 $json_jetpack_endpoints_dir = dirname( __FILE__ ) . '/json-endpoints/jetpack/';
@@ -114,6 +120,27 @@ new WPCOM_JSON_API_GET_Site_Endpoint( array(
 	'response_format' => WPCOM_JSON_API_GET_Site_Endpoint::$site_format,
 
 	'example_request' => 'https://public-api.wordpress.com/rest/v1/sites/en.blog.wordpress.com/',
+) );
+
+new WPCOM_JSON_API_GET_Site_V1_2_Endpoint( array(
+	'description' => 'Get information about a site.',
+	'group'	      => 'sites',
+	'stat'        => 'sites:X',
+	'allowed_if_flagged' => true,
+	'method'      => 'GET',
+	'min_version' => '1.2',
+	'path'        => '/sites/%s',
+	'path_labels' => array(
+		'$site' => '(int|string) Site ID or domain',
+	),
+
+	'query_parameters' => array(
+		'context' => false,
+	),
+
+	'response_format' => WPCOM_JSON_API_GET_Site_V1_2_Endpoint::$site_format,
+
+	'example_request' => 'https://public-api.wordpress.com/rest/v1.2/sites/en.blog.wordpress.com/',
 ) );
 
 new WPCOM_JSON_API_GET_Post_Counts_V1_1_Endpoint( array(
@@ -1186,7 +1213,8 @@ new WPCOM_JSON_API_List_Media_v1_1_Endpoint( array(
 
 	'response_format' => array(
 		'media' => '(array) Array of media objects',
-		'found' => '(int) The number of total results found'
+		'found' => '(int) The number of total results found',
+		'meta'  => '(object) Meta data',
 	),
 
 	'example_request'      => 'https://public-api.wordpress.com/rest/v1.1/sites/82974409/media',
@@ -1265,6 +1293,52 @@ new WPCOM_JSON_API_Get_Media_v1_1_Endpoint( array(
 	),
 
 	'example_request'      => 'https://public-api.wordpress.com/rest/v1.1/sites/82974409/media/934',
+	'example_request_data' =>  array(
+		'headers' => array(
+			'authorization' => 'Bearer YOUR_API_TOKEN'
+		)
+	)
+) );
+
+new WPCOM_JSON_API_Get_Media_v1_2_Endpoint( array(
+	'description' => 'Get a single media item (by ID).',
+	'group'       => 'media',
+	'stat'        => 'media:1',
+	'min_version' => '1.2',
+	'max_version' => '1.2',
+	'method'      => 'GET',
+	'path'        => '/sites/%s/media/%d',
+	'path_labels' => array(
+		'$site'    => '(int|string) Site ID or domain',
+		'$media_ID' => '(int) The ID of the media item',
+	),
+	'response_format' => array(
+		'ID'               => '(int) The ID of the media item',
+		'date'             => '(ISO 8601 datetime) The date the media was uploaded',
+		'post_ID'          => '(int) ID of the post this media is attached to',
+		'author_ID'        => '(int) ID of the user who uploaded the media',
+		'URL'              => '(string) URL to the file',
+		'guid'             => '(string) Unique identifier',
+		'file'             => '(string) Filename',
+		'extension'        => '(string) File extension',
+		'mime_type'        => '(string) File MIME type',
+		'title'            => '(string) Filename',
+		'caption'          => '(string) User-provided caption of the file',
+		'description'      => '(string) Description of the file',
+		'alt'              => '(string)  Alternative text for image files.',
+		'thumbnails'       => '(object) Media item thumbnail URL options',
+		'height'           => '(int) (Image & video only) Height of the media item',
+		'width'            => '(int) (Image & video only) Width of the media item',
+		'length'           => '(int) (Video & audio only) Duration of the media item, in seconds',
+		'exif'             => '(array) (Image & audio only) Exif (meta) information about the media item',
+		'videopress_guid'  => '(string) (Video only) VideoPress GUID of the video when uploaded on a blog with VideoPress',
+		'videopress_processing_done'  => '(bool) (Video only) If the video is uploaded on a blog with VideoPress, this will return the status of processing on the video.',
+		'revision_history' => '(array) An array of snapshots of the previous images of this Media.' .
+                                'Each item has useful data such as `URL`, `date, `extension`, `width` and `height`,' .
+		                        '`mime_type` and the `thumbnails` array.'
+	),
+
+	'example_request'      => 'https://public-api.wordpress.com/rest/v1.2/sites/82974409/media/934',
 	'example_request_data' =>  array(
 		'headers' => array(
 			'authorization' => 'Bearer YOUR_API_TOKEN'
@@ -1440,6 +1514,77 @@ new WPCOM_JSON_API_Update_Media_v1_1_Endpoint( array(
 	)
 ) );
 
+new WPCOM_JSON_API_Edit_Media_v1_2_Endpoint( array(
+	'description' => 'Edit a media item.',
+	'group'       => 'media',
+	'stat'        => 'media:1:POST',
+	'min_version' => '1',
+	'max_version' => '1.2',
+	'method'      => 'POST',
+	'path'        => '/sites/%s/media/%d/edit',
+	'path_labels' => array(
+		'$site'    => '(int|string) Site ID or domain',
+		'$media_ID' => '(int) The ID of the media item',
+	),
+
+	'request_format' => array(
+		'parent_id'   => '(int) ID of the post this media is attached to',
+		'title'       => '(string) The file name.',
+		'caption'     => '(string) File caption.',
+		'description' => '(HTML) Description of the file.',
+		'alt'         => "(string) Alternative text for image files.",
+		'artist'      => "(string) Audio Only. Artist metadata for the audio track.",
+		'album'       => "(string) Audio Only. Album metadata for the audio track.",
+		'media'       => "(object) An object file to attach to the post. To upload media, " .
+		                   "the entire request should be multipart/form-data encoded. " .
+		                   "Multiple media items will be displayed in a gallery. Accepts " .
+		                   "jpg, jpeg, png, gif, pdf, doc, ppt, odt, pptx, docx, pps, ppsx, xls, xlsx, key. " .
+		                   "Audio and Video may also be available. See <code>allowed_file_types</code> " .
+		                   "in the options response of the site endpoint. " .
+		                   "<br /><br /><strong>Example</strong>:<br />" .
+		 				   "<code>curl \<br />--form 'title=Image' \<br />--form 'media=@/path/to/file.jpg' \<br />-H 'Authorization: BEARER your-token' \<br />'https://public-api.wordpress.com/rest/v1/sites/123/posts/new'</code>",
+		'attrs'       => "(object) An Object of attributes (`title`, `description` and `caption`) " .
+		                   "are supported to assign to the media uploaded via the `media` or `media_url`",
+		'media_url'   => "(string) An URL of the image to attach to a post.",
+	),
+
+	'response_format' => array(
+		'ID'               => '(int) The ID of the media item',
+		'date'             => '(ISO 8601 datetime) The date the media was uploaded',
+		'post_ID'          => '(int) ID of the post this media is attached to',
+		'author_ID'        => '(int) ID of the user who uploaded the media',
+		'URL'              => '(string) URL to the file',
+		'guid'             => '(string) Unique identifier',
+		'file'             => '(string) File name',
+		'extension'        => '(string) File extension',
+		'mime_type'        => '(string) File mime type',
+		'title'            => '(string) File name',
+		'caption'          => '(string) User provided caption of the file',
+		'description'      => '(string) Description of the file',
+		'alt'              => '(string)  Alternative text for image files.',
+		'thumbnails'       => '(object) Media item thumbnail URL options',
+		'height'           => '(int) (Image & video only) Height of the media item',
+		'width'            => '(int) (Image & video only) Width of the media item',
+		'length'           => '(int) (Video & audio only) Duration of the media item, in seconds',
+		'exif'             => '(array) (Image & audio only) Exif (meta) information about the media item',
+		'videopress_guid'  => '(string) (Video only) VideoPress GUID of the video when uploaded on a blog with VideoPress',
+		'videopress_processing_done'  => '(bool) (Video only) If the video is uploaded on a blog with VideoPress, this will return the status of processing on the video.',
+		'revision_history' => '(object) An object with `items` and `original` keys. ' .
+		                        '`original` is an object with data about the original image. ' .
+		                        '`items` is an array of snapshots of the previous images of this Media. ' .
+		                        'Each item has the `URL`, `file, `extension`, `date`, and `mime_type` fields.'
+	),
+
+	'example_request'      => 'https://public-api.wordpress.com/rest/v1.2/sites/82974409/media/446',
+	'example_request_data' =>  array(
+		'headers' => array(
+			'authorization' => 'Bearer YOUR_API_TOKEN'
+		),
+		'body' => array(
+			'title' => 'Updated Title'
+		)
+	)
+) );
 
 new WPCOM_JSON_API_Delete_Media_Endpoint( array(
 	'description' => 'Delete a piece of media.',
@@ -2006,6 +2151,7 @@ new WPCOM_JSON_API_Update_Term_Endpoint( array(
 	'request_format' => array(
 		'name'        => '(string) Name of the term',
 		'description' => '(string) A description of the term',
+		'parent'      => '(int) The parent ID for the term, if hierarchical',
 	),
 	'example_request'      => 'https://public-api.wordpress.com/rest/v1/sites/82974409/taxonomies/post_tag/terms/new',
 	'example_request_data' => array(
@@ -2032,6 +2178,7 @@ new WPCOM_JSON_API_Update_Term_Endpoint( array(
 	'request_format' => array(
 		'name'        => '(string) Name of the term',
 		'description' => '(string) A description of the term',
+		'parent'      => '(int) The parent ID for the term, if hierarchical',
 	),
 	'example_request'      => 'https://public-api.wordpress.com/rest/v1/sites/82974409/taxonomies/post_tag/terms/slug:testing-term',
 	'example_request_data' => array(
@@ -2146,7 +2293,7 @@ new WPCOM_JSON_API_List_Users_Endpoint( array(
 				"nice_name": "apiexamples",
 				"URL": "http://apiexamples.wordpress.com",
 				"avatar_URL": "https://1.gravatar.com/avatar/a2afb7b6c0e23e5d363d8612fb1bd5ad?s=96&d=identicon&r=G",
-				"profile_URL": "http://en.gravatar.com/apiexamples",
+				"profile_URL": "https://en.gravatar.com/apiexamples",
 				"site_ID": 82974409,
 				"roles": [
 					"administrator"
@@ -2385,11 +2532,114 @@ new WPCOM_JSON_API_Site_Settings_Endpoint( array(
 	'example_request' => 'https://public-api.wordpress.com/rest/v1/sites/en.blog.wordpress.com/settings?pretty=1',
 ) );
 
+new WPCOM_JSON_API_Site_Settings_V1_2_Endpoint( array(
+	'description' => 'Get detailed settings information about a site.',
+	'group'	      => '__do_not_document',
+	'stat'        => 'sites:X',
+	'min_version'   => '1.2',
+	'method'      => 'GET',
+	'path'        => '/sites/%s/settings',
+	'path_labels' => array(
+		'$site' => '(int|string) Site ID or domain',
+	),
+
+	'query_parameters' => array(
+		'context' => false,
+	),
+
+	'response_format' => WPCOM_JSON_API_Site_Settings_Endpoint::$site_format,
+
+	'example_request' => 'https://public-api.wordpress.com/rest/v1.2/sites/en.blog.wordpress.com/settings?pretty=1',
+) );
+
 new WPCOM_JSON_API_Site_Settings_Endpoint( array(
 	'description' => 'Update settings for a site.',
 	'group'       => '__do_not_document',
 	'stat'        => 'sites:X',
 
+	'method'      => 'POST',
+	'path'        => '/sites/%s/settings',
+	'path_labels' => array(
+		'$site' => '(int|string) Site ID or domain',
+	),
+
+	'request_format'  => array(
+		'blogname'                             => '(string) Blog name',
+		'blogdescription'                      => '(string) Blog description',
+		'default_pingback_flag'                => '(bool) Notify blogs linked from article?',
+		'default_ping_status'                  => '(bool) Allow link notifications from other blogs?',
+		'default_comment_status'               => '(bool) Allow comments on new articles?',
+		'blog_public'                          => '(string) Site visibility; -1: private, 0: discourage search engines, 1: allow search engines',
+		'jetpack_sync_non_public_post_stati'   => '(bool) allow sync of post and pages with non-public posts stati',
+		'jetpack_relatedposts_enabled'         => '(bool) Enable related posts?',
+		'jetpack_relatedposts_show_headline'   => '(bool) Show headline in related posts?',
+		'jetpack_relatedposts_show_thumbnails' => '(bool) Show thumbnails in related posts?',
+		'jetpack_protect_whitelist'            => '(array) List of IP addresses to whitelist',
+		'infinite_scroll'                      => '(bool) Support infinite scroll of posts?',
+		'default_category'                     => '(int) Default post category',
+		'default_post_format'                  => '(string) Default post format',
+		'require_name_email'                   => '(bool) Require comment authors to fill out name and email?',
+		'comment_registration'                 => '(bool) Require users to be registered and logged in to comment?',
+		'close_comments_for_old_posts'         => '(bool) Automatically close comments on old posts?',
+		'close_comments_days_old'              => '(int) Age at which to close comments',
+		'thread_comments'                      => '(bool) Enable threaded comments?',
+		'thread_comments_depth'                => '(int) Depth to thread comments',
+		'page_comments'                        => '(bool) Break comments into pages?',
+		'comments_per_page'                    => '(int) Number of comments to display per page',
+		'default_comments_page'                => '(string) newest|oldest Which page of comments to display first',
+		'comment_order'                        => '(string) asc|desc Order to display comments within page',
+		'comments_notify'                      => '(bool) Email me when someone comments?',
+		'moderation_notify'                    => '(bool) Email me when a comment is helf for moderation?',
+		'social_notifications_like'            => '(bool) Email me when someone likes my post?',
+		'social_notifications_reblog'          => '(bool) Email me when someone reblogs my post?',
+		'social_notifications_subscribe'       => '(bool) Email me when someone follows my blog?',
+		'comment_moderation'                   => '(bool) Moderate comments for manual approval?',
+		'comment_whitelist'                    => '(bool) Moderate comments unless author has a previously-approved comment?',
+		'comment_max_links'                    => '(int) Moderate comments that contain X or more links',
+		'moderation_keys'                      => '(string) Words or phrases that trigger comment moderation, one per line',
+		'blacklist_keys'                       => '(string) Words or phrases that mark comment spam, one per line',
+		'lang_id'                              => '(int) ID for language blog is written in',
+		'wga'                                  => '(array) Google Analytics Settings',
+		'disabled_likes'                       => '(bool) Are likes globally disabled (they can still be turned on per post)?',
+		'disabled_reblogs'                     => '(bool) Are reblogs disabled on posts?',
+		'jetpack_comment_likes_enabled'        => '(bool) Are comment likes enabled for all comments?',
+		'sharing_button_style'                 => '(string) Style to use for sharing buttons (icon-text, icon, text, or official)',
+		'sharing_label'                        => '(string) Label to use for sharing buttons, e.g. "Share this:"',
+		'sharing_show'                         => '(string|array:string) Post type or array of types where sharing buttons are to be displayed',
+		'sharing_open_links'                   => '(string) Link target for sharing buttons (same or new)',
+		'twitter_via'                          => '(string) Twitter username to include in tweets when people share using the Twitter button',
+		'jetpack-twitter-cards-site-tag'       => '(string) The Twitter username of the owner of the site\'s domain.',
+		'eventbrite_api_token'                 => '(int) The Keyring token ID for an Eventbrite token to associate with the site',
+		'holidaysnow'                          => '(bool) Enable snowfall on front end of site?',
+		'timezone_string'                      => '(string) PHP-compatible timezone string like \'UTC-5\'',
+		'gmt_offset'                           => '(int) Site offset from UTC in hours',
+		'date_format'                          => '(string) PHP Date-compatible date format',
+		'time_format'                          => '(string) PHP Date-compatible time format',
+		'start_of_week'                        => '(int) Starting day of week (0 = Sunday, 6 = Saturday)',
+		'jetpack_testimonial'                  => '(bool) Whether testimonial custom post type is enabled for the site',
+		'jetpack_testimonial_posts_per_page'   => '(int) Number of testimonials to show per page',
+		'jetpack_portfolio'                    => '(bool) Whether portfolio custom post type is enabled for the site',
+		'jetpack_portfolio_posts_per_page'     => '(int) Number of portfolio projects to show per page',
+		'site_icon'                            => '(int) Media attachment ID to use as site icon. Set to zero or an otherwise empty value to clear',
+		'verification_services_codes'          => '(array) Website verification codes. Allowed keys: google, pinterest, bing, yandex',
+		Jetpack_SEO_Utils::FRONT_PAGE_META_OPTION => '(string) The SEO meta description for the site.',
+		Jetpack_SEO_Titles::TITLE_FORMATS_OPTION  => '(array) SEO meta title formats. Allowed keys: front_page, posts, pages, groups, archives',
+		'api_cache'                            => '(bool) Turn on/off the Jetpack JSON API cache'
+
+	),
+
+	'response_format' => array(
+		'updated' => '(array)'
+	),
+
+	'example_request' => 'https://public-api.wordpress.com/rest/v1/sites/en.blog.wordpress.com/settings?pretty=1',
+) );
+
+new WPCOM_JSON_API_Site_Settings_V1_2_Endpoint( array(
+	'description' => 'Update settings for a site.',
+	'group'       => '__do_not_document',
+	'stat'        => 'sites:X',
+	'min_version'   => '1.2',
 	'method'      => 'POST',
 	'path'        => '/sites/%s/settings',
 	'path_labels' => array(
@@ -2432,6 +2682,7 @@ new WPCOM_JSON_API_Site_Settings_Endpoint( array(
 		'moderation_keys'              => '(string) Words or phrases that trigger comment moderation, one per line',
 		'blacklist_keys'               => '(string) Words or phrases that mark comment spam, one per line',
 		'lang_id'                      => '(int) ID for language blog is written in',
+		'locale'                       => '(string) locale code for language blog is written in',
 		'wga'                          => '(array) Google Analytics Settings',
 		'disabled_likes'               => '(bool) Are likes globally disabled (they can still be turned on per post)?',
 		'disabled_reblogs'             => '(bool) Are reblogs disabled on posts?',
@@ -2443,14 +2694,23 @@ new WPCOM_JSON_API_Site_Settings_Endpoint( array(
 		'twitter_via'                  => '(string) Twitter username to include in tweets when people share using the Twitter button',
 		'jetpack-twitter-cards-site-tag' => '(string) The Twitter username of the owner of the site\'s domain.',
 		'eventbrite_api_token'         => '(int) The Keyring token ID for an Eventbrite token to associate with the site',
-		'holidaysnow'                  => '(bool) Enable snowfall on frontend of site?'
+		'holidaysnow'                  => '(bool) Enable snowfall on front end of site?',
+		'timezone_string'              => '(string) PHP-compatible timezone string like \'UTC-5\'',
+		'gmt_offset'                   => '(int) Site offset from UTC in hours',
+		'date_format'                  => '(string) PHP Date-compatible date format',
+		'time_format'                  => '(string) PHP Date-compatible time format',
+		'start_of_week'                => '(int) Starting day of week (0 = Sunday, 6 = Saturday)',
+		'verification_services_codes'  => '(array) Website verification codes. Allowed keys: google, pinterest, bing, yandex',
+		Jetpack_SEO_Utils::FRONT_PAGE_META_OPTION => '(string) The SEO meta description for the site.',
+		Jetpack_SEO_Titles::TITLE_FORMATS_OPTION  => '(array) SEO meta title formats. Allowed keys: front_page, posts, pages, groups, archives',
+		'api_cache'                    => '(bool) Turn on/off the Jetpack JSON API cache'
 	),
 
 	'response_format' => array(
 		'updated' => '(array)'
 	),
 
-	'example_request' => 'https://public-api.wordpress.com/rest/v1/sites/en.blog.wordpress.com/settings?pretty=1',
+	'example_request' => 'https://public-api.wordpress.com/rest/v1.2/sites/en.blog.wordpress.com/settings?pretty=1',
 ) );
 
 /**
@@ -2587,7 +2847,7 @@ new WPCOM_JSON_API_Update_Sharing_Button_Endpoint( array(
 	),
 	'request_format' => array(
 		'name'       => '(string) The name for your custom sharing button, used as a label on the button itself',
-		'URL'        => '(string) The URL to use for share links, including optional placeholders (%post_title%, %post_url%, %post_full_url%, %post_excerpt%, %post_tags%)',
+		'URL'        => '(string) The URL to use for share links, including optional placeholders (%post_id%, %post_title%, %post_slug%, %post_url%, %post_full_url%, %post_excerpt%, %post_tags%, %home_url%)',
 		'icon'       => '(string) The full URL to a 16x16 icon to display on the sharing button',
 		'enabled'    => '(bool) Is the button currently enabled for the site?',
 		'visibility' => '(string) If enabled, the visibility of the sharing button, either "visible" (default) or "hidden"',

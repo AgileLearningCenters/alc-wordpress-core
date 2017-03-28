@@ -522,7 +522,7 @@ class Jetpack_Custom_CSS {
 						return (bool) ( $custom_css_add === 'no' );
 				}
 
-				return (bool) ( get_option( 'safecss_add' ) == 'no' );
+				return (bool) ( Jetpack_Options::get_option_and_ensure_autoload( 'safecss_add', '' ) == 'no' );
 			}
 		}
 	}
@@ -721,7 +721,7 @@ class Jetpack_Custom_CSS {
 		$option = Jetpack_Custom_CSS::is_preview() ? 'safecss_preview' : 'safecss';
 
 		if ( 'safecss' == $option ) {
-			if ( get_option( 'safecss_revision_migrated' ) ) {
+			if ( Jetpack_Options::get_option_and_ensure_autoload( 'safecss_revision_migrated', '0' ) ) {
 				$safecss_post = Jetpack_Custom_CSS::get_post();
 
 				if ( ! empty( $safecss_post['post_content'] ) ) {
@@ -737,7 +737,7 @@ class Jetpack_Custom_CSS {
 
 			// Fix for un-migrated Custom CSS
 			if ( empty( $safecss_post ) ) {
-				$_css = get_option( 'safecss' );
+				$_css = Jetpack_Options::get_option_and_ensure_autoload( 'safecss', '' );
 				if ( !empty( $_css ) ) {
 					$css = $_css;
 				}
@@ -997,7 +997,7 @@ class Jetpack_Custom_CSS {
 						 * @param string $str Intro text appearing above the Custom CSS editor.
 						 */
 						echo apply_filters( 'safecss_intro_text', __( 'New to CSS? Start with a <a href="http://www.htmldog.com/guides/cssbeginner/" target="_blank">beginner tutorial</a>. Questions?
-		Ask in the <a href="http://wordpress.org/support/forum/themes-and-templates" target="_blank">Themes and Templates forum</a>.', 'jetpack' ) );
+		Ask in the <a href="https://wordpress.org/support/forum/themes-and-templates" target="_blank">Themes and Templates forum</a>.', 'jetpack' ) );
 					?></p>
 					<p class="css-support"><?php echo __( 'Note: Custom CSS will be reset when changing themes.', 'jetpack' ); ?></p>
 
@@ -1044,7 +1044,7 @@ class Jetpack_Custom_CSS {
 				<p>
 					<?php
 
-					printf(
+					printf( /* translators: %1$s is replaced with an input field for numbers. */
 						__( 'Limit width to %1$s pixels for full size images. (<a href="%2$s" target="_blank">More info</a>.)', 'jetpack' ),
 						'<input type="text" id="custom_content_width_visible" value="' . esc_attr( $custom_content_width ) . '" size="4" />',
 						/**
@@ -1070,7 +1070,7 @@ class Jetpack_Custom_CSS {
 						$current_theme = get_current_theme();
 
 					?>
-					<p><?php printf( __( 'The default content width for the %s theme is %d pixels.', 'jetpack' ), $current_theme, intval( $GLOBALS['content_width'] ) ); ?></p>
+					<p><?php printf( _n( 'The default content width for the %s theme is %d pixel.', 'The default content width for the %s theme is %d pixels.', intval( $GLOBALS['content_width'] ), 'jetpack' ), $current_theme, intval( $GLOBALS['content_width'] ) ); ?></p>
 					<?php
 				}
 
@@ -1804,6 +1804,7 @@ function custom_css_restore_revision( $_post_id, $_revision_id ) {
 	return Jetpack_Custom_CSS::restore_revision( $_post_id, $_revision_id );
 }
 
+if ( ! function_exists( 'safecss_class' ) ) :
 function safecss_class() {
 	// Wrapped so we don't need the parent class just to load the plugin
 	if ( class_exists('safecss') )
@@ -1812,9 +1813,6 @@ function safecss_class() {
 	require_once( dirname( __FILE__ ) . '/csstidy/class.csstidy.php' );
 
 	class safecss extends csstidy_optimise {
-		function __construct( &$css ) {
-			return $this->csstidy_optimise( $css );
-		}
 
 		function postparse() {
 
@@ -1849,6 +1847,7 @@ function safecss_class() {
 		}
 	}
 }
+endif;
 
 if ( ! function_exists( 'safecss_filter_attr' ) ) {
 	function safecss_filter_attr( $css, $element = 'div' ) {
@@ -1856,6 +1855,4 @@ if ( ! function_exists( 'safecss_filter_attr' ) ) {
 	}
 }
 
-add_action( 'init', array( 'Jetpack_Custom_CSS', 'init' ) );
-
-include dirname( __FILE__ ) . '/custom-css/preprocessors.php';
+include_once dirname( __FILE__ ) . '/custom-css/preprocessors.php';
