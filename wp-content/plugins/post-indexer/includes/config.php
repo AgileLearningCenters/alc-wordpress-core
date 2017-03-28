@@ -15,7 +15,7 @@ if(!defined('PI_CRON_SITE_PROCESS_FIRSTPASS')) define('PI_CRON_SITE_PROCESS_FIRS
 if(!defined('PI_CRON_SITE_PROCESS_SECONDPASS')) define('PI_CRON_SITE_PROCESS_SECONDPASS', 5);
 
 // The number of posts to process for every site on the CRON second pass
-if(!defined('PI_CRON_POST_PROCESS_SECONDPASS')) define('PI_CRON_POST_PROCESS_SECONDPASS', 5);
+if(!defined('PI_CRON_POST_PROCESS_SECONDPASS')) define('PI_CRON_POST_PROCESS_SECONDPASS', 5);	  								   	 		 
 
 // The number of posts to delete at a time whilst tidying up via the CRON
 if(!defined('PI_CRON_TIDY_DELETE_LIMIT')) define('PI_CRON_TIDY_DELETE_LIMIT', 50);

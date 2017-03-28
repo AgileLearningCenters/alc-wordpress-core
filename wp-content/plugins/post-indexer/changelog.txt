@@ -1,3 +1,16 @@
+3.0.6.4
+------------------
+- Fix: Custom post type doesn't get indexed properly
+
+3.0.6.3
+------------------
+- Fixed SQL error when cleaning old posts
+
+3.0.6.2
+------------------
+- Fixed table _network_terms doesn't create
+- Fixed: SQL injection possibility when cleaning old post from WP Cron
+
 3.0.6.1 2015/04/28
 ------------------
 - Fixed XSS issue
@@ -48,4 +61,4 @@
 
 
 
-327416-1438811779-ai
+327416-1490728268-au
