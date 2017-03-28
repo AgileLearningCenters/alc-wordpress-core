@@ -1,5 +1,7 @@
 var wptDate = (function ($) {
-    var _tempConditions, _tempField;
+    var _tempConditions,
+		_tempField,
+		is_datepicker_style_loaded = false;
     function init(parent) {
         if ($.isFunction($.fn.datepicker)) {
             $('input.js-wpt-date', $(parent)).each(function (index) {
@@ -58,6 +60,7 @@ var wptDate = (function ($) {
                 old_id = el.attr('id');
         el.attr('id', old_id + '-' + rand_number);
         // Walk along, nothing to see here...
+		wptDate.maybeLoadDatepickerStyle();
         return el.datepicker({
             onSelect: function (dateText, inst) {
                 //	The el_aux element depends on the scenario: backend or frontend
@@ -137,6 +140,30 @@ var wptDate = (function ($) {
         if ($(this).val().length >= wptDateData.dateFormatPhp.length)
             func();
     }
+	function maybeLoadDatepickerStyle() {
+		// @note the handle for this used to be wptoolset-field-datepicker
+		if ( ! is_datepicker_style_loaded ) {
+			if ( document.getElementById( 'js-toolset-datepicker-style' ) ) {
+				
+				is_datepicker_style_loaded = true;
+				
+			} else {
+				
+				var head	= document.getElementsByTagName( 'head' )[0],
+					link	= document.createElement( 'link' );
+				
+				link.id 	= 'js-toolset-datepicker-style';
+				link.rel	= 'stylesheet';
+				link.type	= 'text/css';
+				link.href	= wptDateData.datepicker_style_url;
+				link.media	= 'all';
+				head.appendChild( link );
+				
+				is_datepicker_style_loaded = true;
+				
+			}
+		}
+	}
     return {
         init: init,
         add: add,
@@ -144,14 +171,13 @@ var wptDate = (function ($) {
         ajaxCheck: ajaxCheck,
         ignoreConditional: ignoreConditional,
         bindConditionalChange: bindConditionalChange,
-        triggerAjax: triggerAjax
+        triggerAjax: triggerAjax,
+		maybeLoadDatepickerStyle: maybeLoadDatepickerStyle
     };
 })(jQuery);
 
 jQuery(document).ready(function () {
     wptDate.init('body');
-    //fixing unknown Srdjan error
-    jQuery('.ui-datepicker-inline').hide();
 });
 
 if ('undefined' != typeof (wptCallbacks)) {

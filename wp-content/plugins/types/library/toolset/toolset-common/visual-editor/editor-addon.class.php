@@ -1,5 +1,5 @@
 <?php
-if ( file_exists( dirname(__FILE__) . '/editor-addon-generic.class.php') && !class_exists( 'Editor_addon' )  ) {
+if ( file_exists( dirname(__FILE__) . '/editor-addon-generic.class.php') && !class_exists( 'Editor_addon', false )  ) {
 
     require_once( dirname(__FILE__) . '/editor-addon-generic.class.php' );
 

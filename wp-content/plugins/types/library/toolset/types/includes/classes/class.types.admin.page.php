@@ -262,13 +262,13 @@ abstract class Types_Admin_Page
                     );
 
                     if( isset( $_GET['group_id'] ) ) {
-                        $args['group_id'] = $_GET['group_id'];
-                        $args['wpcf_ajax_update'] = 'wpcf_list_ajax_response_'.$_GET['group_id'];
-                        $delete_id_addition = $_GET['group_id'];
+                        $args['group_id'] = sanitize_text_field( $_GET['group_id'] );
+                        $args['wpcf_ajax_update'] = 'wpcf_list_ajax_response_'.sanitize_text_field( $_GET['group_id'] );
+                        $delete_id_addition = sanitize_text_field( $_GET['group_id'] );
                     } else if( isset( $_GET['wpcf-tax'] ) ) {
-                        $args['wpcf-tax'] = $_GET['wpcf-tax'];
-                        $args['wpcf_ajax_update'] = 'wpcf_list_ajax_response_'.$_GET['wpcf-tax'];
-                        $delete_id_addition = $_GET['wpcf-tax'];
+                        $args['wpcf-tax'] = sanitize_text_field( $_GET['wpcf-tax'] );
+                        $args['wpcf_ajax_update'] = 'wpcf_list_ajax_response_'.sanitize_text_field( $_GET['wpcf-tax'] );
+                        $delete_id_addition = sanitize_text_field( $_GET['wpcf-tax'] );
                     }
 
                     $args['wpcf_ref'] = isset( $_GET['ref'] )
@@ -480,7 +480,7 @@ abstract class Types_Admin_Page
                 '#attributes' => array(
                     'class' => 'js-wpcf-filter-button-edit wpcf-filter-button-edit',
                     'data-wpcf-type' => esc_attr($type),
-	                'data-wpcf-page' => wpcf_getget( 'page' ),
+	                'data-wpcf-page' => esc_attr( wpcf_getget( 'page' ) ),
                     'data-wpcf-nonce' => wp_create_nonce($type),
                 ),
                 '#inline' => true,
@@ -676,7 +676,7 @@ abstract class Types_Admin_Page
         if (isset($_REQUEST[$request_name]) ) {
             $post_types = get_option(WPCF_OPTION_NAME_CUSTOM_TYPES, array());
             if ( array_key_exists($_REQUEST[$request_name], $post_types) ) {
-                $post_type = $_REQUEST[$request_name];
+                $post_type = sanitize_text_field( $_REQUEST[$request_name] );
             }
         }
         return $post_type;

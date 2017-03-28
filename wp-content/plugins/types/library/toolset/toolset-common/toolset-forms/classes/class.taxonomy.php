@@ -9,27 +9,49 @@ class WPToolset_Field_Taxonomy extends WPToolset_Field_Textfield {
 
     public $values = "";
     public $objValues;
-
+    
+    /**
+     * @var static string $script_localization  Should contain array of script localization for each taxonomy on form.
+     */
     public function init() {
+        static $script_localization;
+        $static_localization_script = &$script_localization;
+        unset($script_localization);
+        
         $this->objValues = array();
 
-        $terms = apply_filters('toolset_filter_taxonomy_terms', wp_get_post_terms(CredForm::$current_postid, $this->getName(), array("fields" => "all")));
+        // Compatibility with CRED 1.8.4 and above
+        if( class_exists( 'CRED_Form_Rendering' ) ) {
+            $current_post_id = CRED_Form_Rendering::$current_postid;
+        } else {
+            // CRED <= 1.8.3
+            $current_post_id = CredForm::$current_postid;
+        }
+
+        $terms = apply_filters('toolset_filter_taxonomy_terms', wp_get_post_terms( $current_post_id, $this->getName(), array("fields" => "all")));
         $i = 0;
         foreach ($terms as $n => $term) {
-            $this->values .= ($i == 0) ? $term->slug : "," . $term->slug;
+            $this->values .= ($i == 0) ? $term->name : "," . $term->name;
             $this->objValues[$term->slug] = $term;
             $i++;
         }
+        
+        if($static_localization_script === null)
+            $static_localization_script = array('ajaxurl' => admin_url('admin-ajax.php', null), 'instances' => array());
 
-        wp_register_script('wptoolset-taxonomy-field', WPTOOLSET_FORMS_RELPATH . '/js/taxonomy.js', array('wptoolset-forms'), WPTOOLSET_FORMS_VERSION, true);
 
-        wp_localize_script('wptoolset-taxonomy-field', 'wptoolset_taxonomy_settings', array(
-            'ajaxurl' => admin_url('admin-ajax.php', null),
+       $static_localization_script['instances'][] = array(
             'values' => $this->values,
             'name' => $this->getName(),
             'form' => WPTOOLSET_FORMS_RELPATH,
             'field' => $this->_nameField,
-        ));
+        );
+        
+        $script_localization = &$static_localization_script;
+
+        wp_register_script('wptoolset-taxonomy-field', WPTOOLSET_FORMS_RELPATH . '/js/taxonomy.js', array('wptoolset-forms'), WPTOOLSET_FORMS_VERSION, true);
+
+        wp_localize_script('wptoolset-taxonomy-field', 'wptoolset_taxonomy_settings', $script_localization);
 
         wp_enqueue_script('wptoolset-taxonomy-field');
 
@@ -38,12 +60,16 @@ class WPToolset_Field_Taxonomy extends WPToolset_Field_Textfield {
 
     /**
      * function used when ajax is on in order to init taxonomies
+     * @var static string $taxonomies_init_calls  Should contain initTaxonomies function calls for each taxonomy on form
      * @return type
      */
     public function initTaxonomyFunction() {
+        static $taxonomies_init_calls;
+        $taxonomies_init_calls .= 'initTaxonomies("' . $this->values . '", "' . $this->getName() . '", "' . WPTOOLSET_FORMS_RELPATH . '", "' . $this->_nameField . '");';
+        
         return '<script type="text/javascript">
                     function initCurrentTaxonomy() {
-                            initTaxonomies("' . $this->values . '", "' . $this->getName() . '", "' . WPTOOLSET_FORMS_RELPATH . '", "' . $this->_nameField . '");
+                            '.$taxonomies_init_calls.'
                     }
             </script>';
     }

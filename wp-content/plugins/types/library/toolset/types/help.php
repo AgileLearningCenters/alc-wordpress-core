@@ -131,7 +131,7 @@ function wpcf_admin_help($page, $contextual_help = '')
 		case 'wpcf-ctt':
         case 'custom_taxonomies_list':
             $help .= ''
-                . __('This is the your Taxonomies list. It provides you with an overview of your data.', 'wpcf')
+                . __('This is the Taxonomies list. It provides you with an overview of your data.', 'wpcf')
                 .PHP_EOL
                 .PHP_EOL
                 .sprintf(
@@ -358,7 +358,7 @@ function wpcf_admin_help_add_tabs_load_hook() {
 	
 	$current_page = '';
 	if ( isset( $_GET['page'] ) ) {
-	    $current_page = $_GET['page'];
+	    $current_page = sanitize_text_field( $_GET['page'] );
 	} else {
 		return;
 	}

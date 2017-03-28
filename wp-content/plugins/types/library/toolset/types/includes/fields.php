@@ -246,6 +246,8 @@ function wpcf_admin_fields_save_group( $group, $post_type = TYPES_CUSTOM_FIELD_G
     }
 
     $update = false;
+    $slug_pre_save = false;
+
     if ( isset( $group['id'] ) && !empty($group['id']) ) {
         $update = true;
         $post_to_update = get_post( $group['id'] );
@@ -253,6 +255,7 @@ function wpcf_admin_fields_save_group( $group, $post_type = TYPES_CUSTOM_FIELD_G
             return false;
         }
         $post['ID'] = $post_to_update->ID;
+        $slug_pre_save = $post_to_update->post_name;
         $post['post_status'] = $post_to_update->post_status;
     }
 
@@ -281,10 +284,21 @@ function wpcf_admin_fields_save_group( $group, $post_type = TYPES_CUSTOM_FIELD_G
 
     // WPML register strings
     if ( function_exists( 'icl_register_string' ) ) {
-        wpcf_translate_register_string( 'plugin Types',
-                'group ' . $group_id . ' name', $group['name'] );
-        wpcf_translate_register_string( 'plugin Types',
-                'group ' . $group_id . ' description', $group['description'] );
+
+	    try {
+		    // Legacy function gives us only the underlying post type of the field group.
+		    $group_factory = Types_Field_Utils::get_group_factory_by_post_type( $post_type );
+		    $field_group = $group_factory->load_field_group( sanitize_title( $group['name'] ) );
+
+		    // Skip registering if the group does not exist.
+		    if( null != $field_group ) {
+			    $group_wpml = new Types_Wpml_Field_Group( $field_group );
+			    $group_wpml->register( $slug_pre_save );
+		    }
+
+	    } catch( InvalidArgumentException $e ) {
+		    // Something is seriously wrong - there's no field group factory for given post type, bail.
+	    }
     }
 
     // admin message

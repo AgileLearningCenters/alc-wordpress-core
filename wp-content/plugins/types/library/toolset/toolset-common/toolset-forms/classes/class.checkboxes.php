@@ -40,6 +40,7 @@ class WPToolset_Field_Checkboxes extends FieldFactory
                     '#title' => $option['title'],
                     '#type' => 'checkbox',
                     '#default_value' => $checked,
+					'#checked' => $checked,
                     '#name' => $option['name']."[]",
                     //'#inline' => true,
                 );

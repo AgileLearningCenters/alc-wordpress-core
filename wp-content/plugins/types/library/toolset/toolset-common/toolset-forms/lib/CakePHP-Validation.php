@@ -55,7 +55,8 @@ class WPToolset_Cake_Validation {
      * @access private
      */
     var $__pattern = array(
-        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})'
+        'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',
+	    'hostname_without_tld' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})(?:\.(?:(?:[a-z]{2}\.)?[a-z]{2,}))?'
     );
 
     /**
@@ -95,9 +96,7 @@ class WPToolset_Cake_Validation {
     /**
      * Gets a reference to the Validation object instance
      *
-     * @return object Validation instance
-     * @access public
-     * @static
+     * @return WPToolset_Cake_Validation Validation instance
      */
     function &getInstance() {
         static $instance = array();
@@ -943,21 +942,86 @@ class WPToolset_Cake_Validation {
      *
      * @param string $check Value to check
      * @param boolean $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
-     * @return boolean Success
-     * @access public
+     * @param bool $require_tld Require the hostname to contain TLD. True by default.
+     *
+     * @return bool Success
      */
-    function url($check, $strict = false) {
+    function url($check, $strict = false, $require_tld = true) {
         $_this = &WPToolset_Cake_Validation::getInstance();
         $_this->__populateIp();
         $_this->check = $check;
         $validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~[]') . '\/0-9\p{L}\p{N}]|(%[0-9a-f]{2}))';
+
+        $hostname_pattern = $_this->__pattern[ ( $require_tld ? 'hostname' : 'hostname_without_tld' ) ];
+
         $_this->regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
-            '(?:' . $_this->__pattern['IPv4'] . '|\[' . $_this->__pattern['IPv6'] . '\]|' . $_this->__pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
+            '(?:' . $_this->__pattern['IPv4'] . '|\[' . $_this->__pattern['IPv6'] . '\]|' . $hostname_pattern . ')(?::[1-9][0-9]{0,4})?' .
             '(?:\/?|\/' . $validChars . '*)?' .
             '(?:\?' . $validChars . '*)?' .
             '(?:#' . $validChars . '*)?$/iu';
         return $_this->_check();
     }
+
+
+	/**
+	 * Alternative URL validation that (more or less) corresponds to the url2 validation method in jQuery UI.
+	 *
+	 * It is less strict than the standard 'url' because it doesn't require the TLD to be present in the hostname.
+	 * Parameters are directly passed to self::url().
+	 *
+	 * Since WordPress allows for non-latin characters to be part of files uploaded via Media Upload,
+	 * we go especially easy on URLs resulting from that. If an URL is identified as one of an attachment,
+	 * no further validation is done (but the goal is achieved, now we know that the user entered a value
+	 * that is correct).
+	 *
+	 * This method isn't bulletproof, though, and if it doesn't work in some special scenario,
+	 * it is possible to make use of the toolset_validate_file_url filter to override the validation result.
+	 *
+	 *@param string $value_to_check Value to check.
+	 * @param bool $strict
+	 *
+	 * @return bool Validation result.
+	 * @since 2.2.6
+	 */
+	function url2( $value_to_check, $strict = false ) {
+    	if( $this->is_attachment_url( $value_to_check ) ) {
+			$is_valid_url = true;
+		} else {
+			$is_valid_url = $this->url( $value_to_check, $strict, false );}
+
+		/**
+		 * toolset_validate_file_url
+		 *
+		 * Allow for overriding the url2 validation result used for file fields.
+		 *
+		 * @param bool $validation_result
+		 * @param string $value_to_check
+		 * @since 2.2.9
+		 */
+		return (bool) apply_filters( 'toolset_validate_file_url', $is_valid_url, $value_to_check );
+	}
+
+
+	/**
+	 * Determine if a provided URL belongs to an attachment from the media library.
+	 *
+	 * @param string $url
+	 * @return bool
+	 * @since 2.2.9
+	 */
+	private function is_attachment_url( $url ) {
+
+		$url_parts = parse_url( $url );
+		if( false === $url_parts ) {
+			// Seriously malformed URL here.
+			return false;
+		}
+
+		$attachment_id = Toolset_Utils::get_attachment_id_by_url( $url );
+
+		return ( null != $attachment_id && 0 != $attachment_id );
+	}
+
 
     /**
      * Checks if a value is in a given list.

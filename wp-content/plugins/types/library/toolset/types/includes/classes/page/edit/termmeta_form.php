@@ -64,7 +64,7 @@ final class WPCF_Page_Edit_Termmeta_Form extends Types_Admin_Edit_Fields {
 	public function get_page_purpose() {
 
 		$role_type = 'term-field';
-		$group_id =  wpcf_getget( 'group_id' );
+		$group_id = (int) wpcf_getget( 'group_id' );
 		$is_group_specified = ( 0 !=  $group_id );
 
 		if( $is_group_specified ) {
@@ -457,7 +457,7 @@ final class WPCF_Page_Edit_Termmeta_Form extends Types_Admin_Edit_Fields {
 			$this->verification_failed_and_die( 2 );
 		}
 
-		// save group data to the database
+		// save group data to the database (sanitizing there)
 		$group_id = wpcf_admin_fields_save_group( wpcf_getarr( $wpcf_data, 'group', array() ), Types_Field_Group_Term::POST_TYPE, 'term' );
 		$field_group = $this->load_field_group( $group_id );
 
@@ -468,11 +468,14 @@ final class WPCF_Page_Edit_Termmeta_Form extends Types_Admin_Edit_Fields {
 		// Why are we doing this?!
 		$_REQUEST[ $this->get_id ] = $group_id;
 
-		// save taxonomies
+		// save taxonomies; sanitized on a lower level before saving to the database
 		$taxonomies_post = wpcf_getnest( $wpcf_data, array( 'group', 'taxonomies' ), array() );
 		$field_group->update_associated_taxonomies( $taxonomies_post );
 
 		$this->save_filter_fields($group_id, wpcf_getarr( $wpcf_data, 'fields', array() ));
+
+		do_action( 'types_fields_group_saved', $group_id );
+		do_action( 'types_fields_group_term_saved', $group_id );
 
 		// Redirect to edit page so we stay on it even if user reloads it
 		// and to present admin notices
@@ -533,7 +536,7 @@ final class WPCF_Page_Edit_Termmeta_Form extends Types_Admin_Edit_Fields {
 				}
 			}
 
-			$field['submit-key'] = $field_key;
+			$field['submit-key'] = sanitize_text_field( $field_key );
 
 			// Field ID and slug are same thing
 			$field_slug = wpcf_admin_fields_save_field(

@@ -24,7 +24,15 @@ class Types_Helper_Twig {
 		$this->twig->addFunction( '__', new Twig_SimpleFunction( '__', array( $this, 'translate' ) ) );
 	}
 
-	public function translate( $text, $domain = 'types' ) {
+	/**
+	 * This allows to use __( 'Text to translate', 'wpcf' ) in twig templates
+	 *
+	 * @param $text
+	 * @param string $domain
+	 *
+	 * @return mixed
+	 */
+	public function translate( $text, $domain = 'wpcf' ) {
 		return __( $text, $domain );
 	}
 	

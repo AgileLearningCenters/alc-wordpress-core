@@ -81,17 +81,9 @@ abstract class FieldFactory extends FieldAbstract
     {
         global $post;
         $value = $this->_value;
-        /**
-         * default value
-         */
-        if ( 
-			empty( $value ) 
-			&& ! is_numeric( $value )
-			&& array_key_exists('user_default_value', $this->_data)
-			&& ! empty( $this->_data['user_default_value'] )
-		) {
-            $value = stripcslashes( $this->_data['user_default_value'] );
-        }
+
+	    $value = $this->maybe_apply_default_value( $value );
+
         $value = apply_filters( 'wpcf_fields_value_get', $value, $post );
         if ( array_key_exists('slug', $this->_data ) ) {
             $value = apply_filters( 'wpcf_fields_slug_' . $this->_data['slug'] . '_value_get', $value, $post );
@@ -99,6 +91,35 @@ abstract class FieldFactory extends FieldAbstract
         $value = apply_filters( 'wpcf_fields_type_' . $this->_data['type'] . '_value_get', $value, $post );
         return $value;
     }
+
+
+	/**
+	 * Determine whether the actual field value needs to be replaced by a default one.
+	 *
+	 * @param mixed $actual_value
+	 * @return string|mixed The actual value or the default one if the actual one is empty.
+	 * @since 2.2.3
+	 */
+    private function maybe_apply_default_value( $actual_value ) {
+
+    	// empty( "0" ) == true but we don't want that
+    	$is_default_value_needed = ( empty( $actual_value ) && ! is_numeric( $actual_value ) );
+
+	    if( $is_default_value_needed ) {
+
+		    $default_value = toolset_getarr( $this->_data, 'user_default_value', null );
+
+		    // Again, handle "0".
+		    $is_default_value_defined = ( ( ! empty( $default_value ) ) || is_numeric( $default_value ) );
+
+		    if( $is_default_value_defined ) {
+		    	return stripcslashes( $default_value );
+		    }
+	    }
+
+	    return $actual_value;
+    }
+
 
     public function getTitle($_title = false)
     {

@@ -8,6 +8,8 @@
 * plugin loader and then call the toolset_common_initialize function.
 * The toolset_common_initialize should be passed the file path to the directory
 * where this file is located and also the url to this directory.
+* Note that both the path and URL will be normalized with untrailingslashit
+* so they do not pack any trailing slash.
 *
 * 
 *
@@ -18,18 +20,17 @@
 * The version number will then be used to work out which plugin has the latest
 * version of the code.
 *
-* The version number will have a format of XXYYYY
-* where XX is the future target Toolset Common version number, built upon the stable released one stated in changelog.txt plus 1
-* and YYYY is incremented by 1 on each change to the Toolset Common repo
-* so we allow up to 10000 changes per dev cycle.
+* The version number will have a format of XXXYYY
+* where XXX is the future target Toolset Common version number, built upon the stable released one stated in changelog.txt plus 1
+* and YYY is incremented by 1 on each change to the Toolset Common repo
+* so we allow up to 1000 changes per dev cycle.
 * 
 */
 /**
  * Now that we have a unique version for all plugins
  * we define the version here
  */
-
-$toolset_common_version = 200093;
+$toolset_common_version = 230034;
 
 
 // ----------------------------------------------------------------------//
@@ -75,10 +76,9 @@ if ( ! function_exists( 'toolset_common_initialize' ) ) {
         global $toolset_common_paths;
 
         $path = str_replace( '\\', '/', $path );
-        
-        if ( substr( $path, strlen( $path ) - 1 ) == '/' ) {
-            $path = substr( $path, 0, strlen( $path ) - 1 );
-        }
+
+        $path = untrailingslashit( $path );
+		$url = untrailingslashit( $url );
         
         // Save the url in the matching path
         foreach ( $toolset_common_paths as $key => $data ) {
@@ -89,4 +89,3 @@ if ( ! function_exists( 'toolset_common_initialize' ) ) {
         }
     }
 }
-

@@ -46,6 +46,31 @@ class Toolset_Settings implements ArrayAccess {
 	* @since 2.0
 	*/
 	const ADMIN_BAR_SHORTCODES_GENERATOR = 'shortcodes_generator';
+	
+	/**
+	* List of Types postmeta fields that we want to index in Relevanssi.
+	*
+	* Array.
+	*
+	* Defaults to an empty array.
+	*
+	* @since 2.2
+	*/
+	const RELEVANSSI_FIELDS_TO_INDEX = 'relevanssi_fields_to_index';
+
+    /**
+     * Bootstrap version that is expected to be used in a theme.
+     *
+     * Allowed values are:
+     * - '2': Bootstrap 2.0
+     * - '3': Bootstrap 3.0
+     * - '3.toolset': Bootstrap 3.0, but load it from toolset common
+     * - '-1': Site is not using Bootstrap (@since 1.9)
+     * - '1' or missing value (or perhaps anything else, too): Bootstrap version not set
+     *
+     * @since unknown
+     */
+    const BOOTSTRAP_VERSION = 'toolset_bootstrap_version';
 
 
 
@@ -58,6 +83,12 @@ class Toolset_Settings implements ArrayAccess {
 	* @var Toolset_Settings Instance of Toolset_Settings.
 	*/
 	private static $instance = null;
+
+	/**
+	 * @var
+	 * Used only to keep original value from the filter
+	 */
+	private $toolset_bootstrap_version_from_filter = null;
 
 
 	/**
@@ -86,9 +117,14 @@ class Toolset_Settings implements ArrayAccess {
 	* @var array Default setting values.
 	* @todo reformat and turn strings into documented constants
 	*/
+
+
+
 	protected static $defaults = array(
 		Toolset_Settings::ADMIN_BAR_CREATE_EDIT				=> 'on',
 		Toolset_Settings::ADMIN_BAR_SHORTCODES_GENERATOR	=> 'unset',
+		Toolset_Settings::RELEVANSSI_FIELDS_TO_INDEX		=> array(),
+        Toolset_Settings::BOOTSTRAP_VERSION				    =>  3,
 	);
 
 
@@ -106,7 +142,51 @@ class Toolset_Settings implements ArrayAccess {
 	* @todo make this private
 	*/
 	protected function __construct() {
+
+		add_action('ddl-before_init_layouts_plugin', array($this, 'check_is_this_first_layouts_activation') , 10);
+
 		$this->load_settings();
+        $this->set_default_bootstrap_version_from_views();
+
+		add_filter( 'toolset-toolset_bootstrap_version_filter', array( $this, 'toolset_bootstrap_version_filter' ) );
+		add_filter( 'toolset-toolset_bootstrap_version_manually_selected', array( $this, 'toolset_bootstrap_version_manually_selected' ) );
+
+	}
+
+	function check_is_this_first_layouts_activation(){
+
+		$layouts = apply_filters( 'ddl-get_all_layouts_settings', array() );
+		$bs_value_from_db = $this->toolset_bootstrap_version_manually_selected();
+
+		if( false === $bs_value_from_db ){
+			$set_version_in_db = ( count( $layouts ) === 0 ) ? '99' : '98';
+			$set_version = ( count( $layouts ) === 0 ) ? '3.toolset' : '3';
+			$this->__set("toolset_bootstrap_version", $set_version_in_db );
+			$this->save();
+			$this->toolset_bootstrap_version = $set_version;
+		}
+	}
+
+
+	/*
+	 * Get bootstrap version from Views and in case if option is not set from General tab
+	 * as default set option from Views options.
+	 */
+	protected function set_default_bootstrap_version_from_views(){
+		if(class_exists('WPV_Settings')){
+			$views_settings = WPV_Settings::get_instance();
+
+			$bootstrap_version_in_toolset_options = true;
+
+			$get_raw_options = get_option( Toolset_Settings::OPTION_NAME );
+			if( $get_raw_options && !isset( $get_raw_options['toolset_bootstrap_version'] ) ){
+				$bootstrap_version_in_toolset_options = false;
+			}
+
+			if( (int) $views_settings->wpv_bootstrap_version !== 1 && false === $bootstrap_version_in_toolset_options ){
+				$this->toolset_bootstrap_version = (int) $views_settings->wpv_bootstrap_version;
+			}
+		}
 	}
 
 
@@ -126,6 +206,77 @@ class Toolset_Settings implements ArrayAccess {
 		if ( ! is_array( $this->settings ) ) {
 			$this->settings = array(); // Defaults will be used in this case.
 		}
+
+
+		/*
+		 * Botstrap version filter
+		 */
+		$this->toolset_bootstrap_version = apply_filters( 'toolset_set_boostrap_option', $this->toolset_bootstrap_version );
+		$this->override_bootstrap_option_selection();
+	}
+
+	private function convert_to_real_bs_versions($bs_version){
+		$real_versions = array(
+			"99"=>"3.toolset",
+			"98"=>"3"
+		);
+
+		if(isset($real_versions[$bs_version])){
+			return $real_versions[$bs_version];
+		} else {
+			return $bs_version;
+		}
+	}
+
+	/**
+	 * Comparing value from filter and value in database,
+	 * we will force manually selected value (from db)
+	 */
+	private function override_bootstrap_option_selection(){
+		if( has_filter( 'toolset_set_boostrap_option' ) ){
+			// set filter value as backup
+			$this->toolset_bootstrap_version_from_filter = $this->toolset_bootstrap_version;
+			// get raw selection from database
+			$selected_bs_version = $this->toolset_bootstrap_version_manually_selected();
+
+			if( false !== $selected_bs_version && in_array( $selected_bs_version, array("99","98") ) ){
+				// if user already selected something force that version
+				$this->toolset_bootstrap_version = $this->toolset_bootstrap_version_from_filter;
+			} else {
+				$this->toolset_bootstrap_version = $selected_bs_version;
+			}
+		} else {
+			$this->toolset_bootstrap_version = $this->convert_to_real_bs_versions($this->toolset_bootstrap_version);
+		}
+
+	}
+
+	/**
+	 * @return string/false
+	 * Get unfiltered option value directly from db
+	 */
+	public function toolset_bootstrap_version_manually_selected(){
+		$get_raw_options = get_option( Toolset_Settings::OPTION_NAME );
+		if( $get_raw_options && isset( $get_raw_options['toolset_bootstrap_version'] ) ){
+			$bs_version_in_db = $get_raw_options['toolset_bootstrap_version'];
+			return $bs_version_in_db;
+		}
+		return false;
+	}
+	public function toolset_bootstrap_version_manually_selected_converted_value(){
+		$get_db_value = $this->toolset_bootstrap_version_manually_selected();
+		return $this->convert_to_real_bs_versions($get_db_value);
+	}
+
+	/**
+	 * @return string/false
+	 * Return value defined by filter
+	 */
+	public function toolset_bootstrap_version_filter(){
+		if( isset( $this->toolset_bootstrap_version_from_filter ) ){
+			return $this->toolset_bootstrap_version_from_filter;
+		}
+		return false;
 	}
 
 
@@ -417,6 +568,39 @@ class Toolset_Settings implements ArrayAccess {
 	*/
 	protected function _is_valid_shortcodes_generator( $value ) {
 		return in_array( $value, array( 'unset', 'disable', 'editor', 'always' ) );
+	}
+	
+	/**
+	* Safe shortcodes_generator getter, allways returns a valid value.
+	*
+	* @since 2.0
+	*/
+	protected function _get_relevanssi_fields_to_index() {
+		$value = $this->get_raw_value( Toolset_Settings::RELEVANSSI_FIELDS_TO_INDEX );
+		if ( ! $this->_is_valid_relevanssi_fields_to_index( $value ) ) {
+			return Toolset_Settings::$defaults[ Toolset_Settings::RELEVANSSI_FIELDS_TO_INDEX ];
+		}
+		return $value;
+	}
+
+	/**
+	* Safe shortcodes_generator setter.
+	*
+	* @since 2.0
+	*/
+	protected function _set_relevanssi_fields_to_index( $value ) {
+		if ( $this->_is_valid_relevanssi_fields_to_index( $value ) ) {
+			$this->settings[ Toolset_Settings::RELEVANSSI_FIELDS_TO_INDEX ] = $value;
+		}
+	}
+	
+	/**
+	* Helper validation for shortcodes_generator.
+	*
+	* @since 2.0
+	*/
+	protected function _is_valid_relevanssi_fields_to_index( $value ) {
+		return is_array( $value );
 	}
 
 

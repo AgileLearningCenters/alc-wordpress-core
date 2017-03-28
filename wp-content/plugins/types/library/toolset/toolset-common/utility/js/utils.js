@@ -8,8 +8,7 @@
 window.Toolset = window.Toolset || {};
 
 //Backbone.View Overrides
-if( Backbone && Backbone.View )
-{
+if (Backbone && Backbone.View) {
     Backbone.View.prototype.eventDispatcher = _.extend({}, Backbone.Events);
 }
 
@@ -68,19 +67,19 @@ WPV_Toolset.Utils.restoreEventPropagation = function (event) {
 WPV_Toolset.Utils.do_ajax_post = function (params, callback_object) {
     jQuery.post(ajaxurl, params, function (response) {
 
-            if ((typeof(response) !== 'undefined') && response !== null && ( response.message || response.Data )) {
+        if ((typeof(response) !== 'undefined') && response !== null && ( response.message || response.Data )) {
 
-                if (callback_object && callback_object.success && typeof callback_object.success == 'function')
-                    callback_object.success.call(this, response, params);
-                WPV_Toolset.Utils.eventDispatcher.trigger('on_ajax_success_' + params.action, response, params);
-            }
-            else if ((typeof(response) !== 'undefined') && response !== null && response.error) {
+            if (callback_object && callback_object.success && typeof callback_object.success == 'function')
+                callback_object.success.call(this, response, params);
+            WPV_Toolset.Utils.eventDispatcher.trigger('on_ajax_success_' + params.action, response, params);
+        }
+        else if ((typeof(response) !== 'undefined') && response !== null && response.error) {
 
-                if (callback_object && callback_object.error && typeof callback_object.error == 'function')
-                    callback_object.error.call(this, response, params);
-                WPV_Toolset.Utils.eventDispatcher.trigger('on_ajax_error_' + params.action, response, params);
-            }
-        }, 'json')
+            if (callback_object && callback_object.error && typeof callback_object.error == 'function')
+                callback_object.error.call(this, response, params);
+            WPV_Toolset.Utils.eventDispatcher.trigger('on_ajax_error_' + params.action, response, params);
+        }
+    }, 'json')
         .fail(function (jqXHR, textStatus, errorThrown) {
             console.log('Ajax call failed', textStatus, errorThrown)
             if (callback_object && callback_object.fail && typeof callback_object.fail == 'function')
@@ -469,8 +468,8 @@ if (typeof jQuery.fn.wpvToolsetHelp === 'undefined') {
             fadeInSpeed: 'fast',
             fadeOutSpeed: 'fast',
             displayLoader: true,
-            css:{
-                "opacity":"0.4"
+            css: {
+                "opacity": "0.4"
             },
             class: null
         };
@@ -488,7 +487,7 @@ if (typeof jQuery.fn.wpvToolsetHelp === 'undefined') {
                     .fadeIn(prms.fadeInSpeed, function () {
                         $overlayContainer.data('has-overlay', true);
                         $overlayContainer.data('overlay-el', $overlayEl);
-                        if( typeof options.onOpen === 'function' ){
+                        if (_.isObject(options) && typeof options.onOpen === 'function') {
                             options.onOpen.call(this, arguments);
                         }
                     });
@@ -499,11 +498,11 @@ if (typeof jQuery.fn.wpvToolsetHelp === 'undefined') {
             if ($overlayContainer.data('has-overlay')) {
                 $overlayContainer.data('overlay-el')
                     .fadeOut(prms.fadeOutSpeed, function () {
-                        if( options && typeof options.onRemove === 'function' ){
+                        $overlayEl.detach().remove();
+                        $overlayContainer.data('has-overlay', false);
+                        if (options && typeof options.onRemove === 'function') {
                             options.onRemove.call(this, arguments);
                         }
-                        $overlayEl.remove();
-                        $overlayContainer.data('has-overlay', false);
                     });
             }
         };
@@ -598,11 +597,17 @@ if (typeof jQuery.fn.wpvToolsetHelp === 'undefined') {
         var showPointer = function () {
 
             if (!$el.data('has-wppointer')) {
+
+                if( typeof prms.onOpen === 'function' ){
+                    prms.onOpen.call( this, arguments );
+                }
+
                 $el
                     .pointer({
                         content: function () {
                             return prms.content;
                         },
+                        pointerClass: 'wp-toolset-pointer wp-toolset-layouts-pointer',
                         position: {
                             edge: prms.edge,
                             align: prms.align,
@@ -617,6 +622,11 @@ if (typeof jQuery.fn.wpvToolsetHelp === 'undefined') {
                     .pointer('open');
 
                 $el.data('has-wppointer', true);
+
+                if( typeof prms.onComplete === 'function' ){
+                    prms.onComplete.call( this, arguments );
+                }
+
             }
         };
 
@@ -624,11 +634,14 @@ if (typeof jQuery.fn.wpvToolsetHelp === 'undefined') {
 
             if ($el.data('has-wppointer')) {
 
+                if( typeof prms.onClose === 'function' ){
+                    prms.onClose.call( this, arguments );
+                }
+
                 $el.pointer('close');
                 $el.data('has-wppointer', false);
 
             }
-
         };
 
         if (typeof(action) !== 'undefined') { // When 'action' parameter is given
@@ -680,9 +693,37 @@ WPV_Toolset.Utils.Loader = function () {
         return self.loader;
     };
     self.loadHide = function () {
-        self.loader.fadeOut(400, function () {
+        var $completeFlag = jQuery('<i class="fa fa-check" aria-hidden="true"></i>')
 
+        _.each(self.loader[0].attributes, function (attribute) {
+            if (attribute.name === 'style') {
+                $completeFlag.attr(attribute.name, attribute.value);
+            }
+        });
+
+        var adjustPosition = function( positionName, position ) {
+            position = parseInt(position);
+
+            if (position < 0) {
+                $completeFlag.css(positionName, '');
+            } else {
+                position += 8;
+                $completeFlag.css(positionName, position.toString() + 'px');
+            }
+        };
+
+        adjustPosition( 'left', self.loader.css('left') );
+        adjustPosition( 'right', self.loader.css('right') );
+
+        self.loader = $completeFlag.replaceAll(self.loader).css({
+            color: 'green',
+            fontSize: '22px'
+        });
+
+        self.loader.fadeOut(1800, function () {
+            self.loader = jQuery('<div class="ajax-loader spinner"></div>').replaceAll( jQuery(this) );
             self.loading = false;
+            self.loader.remove();
             jQuery(this).remove();
         });
 
@@ -1131,15 +1172,8 @@ WPV_Toolset.Utils._strip_scripts = function (data) {
     data = data.replace(/&lt;/g, "|-lt-|");
     data = data.replace(/&gt;/g, "|-gt-|");
     data = data.replace(/&(\w+);/g, "&amp;$1;"); // Preserve entities (rafael.v)
-    if (data.indexOf('srcset') === -1) {
-        var div = document.createElement('div');
-        div.innerHTML = data;
-        jQuery(div).find('script').remove();
-        var out = div.innerHTML;
-    } else {
-        var out = data.replace(/<script[^>]*>([\\S\\s]*?)<\/script>/img, "");
-    }
 
+    var out = data.replace(/<.*?script.*?>.*?<\/.*?script.*?>/igm, "");
     out = out.replace(/&lt;/g, "<");
     out = out.replace(/&gt;/g, ">");
     out = out.replace(/&amp;(\w+);/g, "&$1;"); // Preserve entities (rafael.v)
@@ -1226,13 +1260,13 @@ WPV_Toolset.Utils.has_shortcode = function (string) {
  * @param right
  * @returns int
  */
-WPV_Toolset.Utils.versionCompare = function(left, right) {
+WPV_Toolset.Utils.versionCompare = function (left, right) {
     if (typeof left + typeof right != 'stringstring')
         return false;
 
     var a = left.split('.')
-        ,   b = right.split('.')
-        ,   i = 0, len = Math.max(a.length, b.length);
+        , b = right.split('.')
+        , i = 0, len = Math.max(a.length, b.length);
 
     for (; i < len; i++) {
         if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
@@ -1255,7 +1289,7 @@ WPV_Toolset.Utils.versionCompare = function(left, right) {
  * @since 2.1
  * @link http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
  */
-WPV_Toolset.Utils.getParameterByName = function(name, url) {
+WPV_Toolset.Utils.getParameterByName = function (name, url) {
 
     if (!url) {
         url = window.location.href;
@@ -1267,11 +1301,11 @@ WPV_Toolset.Utils.getParameterByName = function(name, url) {
 
     var results = regex.exec(url);
 
-    if(!results) {
+    if (!results) {
         return null;
     }
 
-    if(!results[2]) {
+    if (!results[2]) {
         return '';
     }
 
@@ -1289,8 +1323,8 @@ WPV_Toolset.Utils.getParameterByName = function(name, url) {
  * @returns {string}
  * @link http://stackoverflow.com/a/11654596/3191395
  */
-WPV_Toolset.Utils.updateUrlQuery = function(key, value, url) {
-    if(!url) {
+WPV_Toolset.Utils.updateUrlQuery = function (key, value, url) {
+    if (!url) {
         url = window.location.href;
     }
     var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi");
@@ -1302,7 +1336,7 @@ WPV_Toolset.Utils.updateUrlQuery = function(key, value, url) {
         } else {
             hash = url.split('#');
             url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
-            if(typeof hash[1] !== 'undefined' && hash[1] !== null) {
+            if (typeof hash[1] !== 'undefined' && hash[1] !== null) {
                 url += '#' + hash[1];
             }
             return url;
@@ -1331,25 +1365,25 @@ WPV_Toolset.Utils.updateUrlQuery = function(key, value, url) {
  * @type {{create: WPV_Toolset.Utils.Spinner.create, show: WPV_Toolset.Utils.Spinner.show, hide: WPV_Toolset.Utils.Spinner.hide, find: WPV_Toolset.Utils.Spinner.find}}
  */
 WPV_Toolset.Utils.Spinner = {
-    create: function() {
+    create: function () {
         return jQuery('<span class="spinner"></span>');
     },
-    show: function(spinner, show) {
-        if(typeof(show) == 'undefined') {
+    show: function (spinner, show) {
+        if (typeof(show) == 'undefined') {
             show = true;
         }
 
-        if(!show) {
+        if (!show) {
             WPV_Toolset.Utils.Spinner.hide(spinner);
             return;
         }
 
         spinner.addClass('is-active');
     },
-    hide: function(spinner) {
+    hide: function (spinner) {
         spinner.removeClass('is-active');
     },
-    find: function(parentElement) {
+    find: function (parentElement) {
         return parentElement.find('.spinner');
     }
 };
@@ -1375,10 +1409,10 @@ WPV_Toolset.Utils.Ajax = {
      *
      * @since 2.1
      */
-    parseResponse: function(response) {
-        if( typeof(response.success) === 'undefined' ) {
+    parseResponse: function (response) {
+        if (typeof(response.success) === 'undefined') {
             console.log("parseResponse: no success value", response);
-            return { success: false };
+            return {success: false};
         } else {
             return response;
         }
@@ -1396,9 +1430,9 @@ WPV_Toolset.Utils.Ajax = {
      *
      * @since 2.1
      */
-    call: function(data, successCallback, failCallback) {
+    call: function (data, successCallback, failCallback) {
 
-        if( typeof(failCallback) == 'undefined' ) {
+        if (typeof(failCallback) == 'undefined') {
             failCallback = successCallback;
         }
 
@@ -1407,19 +1441,19 @@ WPV_Toolset.Utils.Ajax = {
             url: ajaxurl,
             data: data,
 
-            success: function(originalResponse) {
+            success: function (originalResponse) {
                 var response = WPV_Toolset.Utils.Ajax.parseResponse(originalResponse);
 
-                if(response.success) {
+                if (response.success) {
                     successCallback(response, response.data || {});
                 } else {
                     failCallback(response, response.data || {});
                 }
             },
 
-            error: function( ajaxContext ) {
+            error: function (ajaxContext) {
                 console.log('Error:', ajaxContext.responseText);
-                failCallback({ success: false, data: {} }, {});
+                failCallback({success: false, data: {}}, {});
             }
         });
 
@@ -1428,11 +1462,11 @@ WPV_Toolset.Utils.Ajax = {
 };
 
 
-WPV_Toolset.Utils._template = function( template, data, settings ){
+WPV_Toolset.Utils._template = function (template, data, settings) {
     var options = _.defaults({}, settings, _.templateSettings),
         _template = null;
 
-    if( WPV_Toolset.Utils.versionCompare(_.VERSION, '1.7') >= 0 ){
+    if (WPV_Toolset.Utils.versionCompare(_.VERSION, '1.7') >= 0) {
         _template = _.template(template, options);
         return _template(data);
     } else {
@@ -1441,72 +1475,74 @@ WPV_Toolset.Utils._template = function( template, data, settings ){
 };
 
 // override dialog whenever toolset is active and take possession
-jQuery.extend(jQuery.ui.dialog.prototype.options, {
-    dialogClass:'toolset-ui-dialog'
-});
+if (jQuery && jQuery.ui && jQuery.ui.dialog) {
+    jQuery.extend(jQuery.ui.dialog.prototype.options, {
+        dialogClass: 'toolset-ui-dialog'
+    });
+}
 
 
-if ( typeof Toolset.add_qt_editor_buttons !== 'function' ) {
-    Toolset.add_qt_editor_buttons = function( qt_instance, editor_instance ) {
+if (typeof Toolset.add_qt_editor_buttons !== 'function') {
+    Toolset.add_qt_editor_buttons = function (qt_instance, editor_instance) {
         var activeUrlEditor, html;
         QTags._buttonsInit();
         var editorInstance = {};
         editorInstance[qt_instance.id] = editor_instance;
 
-        for ( var button_name in qt_instance.theButtons ) {
-            if ( qt_instance.theButtons.hasOwnProperty( button_name ) ) {
+        for (var button_name in qt_instance.theButtons) {
+            if (qt_instance.theButtons.hasOwnProperty(button_name)) {
                 qt_instance.theButtons[button_name].old_callback = qt_instance.theButtons[button_name].callback;
-                if ( qt_instance.theButtons[button_name].id == 'img' ){
-                    qt_instance.theButtons[button_name].callback = function( element, canvas, ed ) {
+                if (qt_instance.theButtons[button_name].id == 'img') {
+                    qt_instance.theButtons[button_name].callback = function (element, canvas, ed) {
                         var t = this,
-                            id = jQuery( canvas ).attr( 'id' ),
+                            id = jQuery(canvas).attr('id'),
                             selection = editorInstance[id].getSelection(),
                             e = "http://",
-                            g = prompt( quicktagsL10n.enterImageURL, e ),
-                            f = prompt( quicktagsL10n.enterImageDescription, "" );
-                        t.tagStart = '<img src="'+g+'" alt="'+f+'" />';
+                            g = prompt(quicktagsL10n.enterImageURL, e),
+                            f = prompt(quicktagsL10n.enterImageDescription, "");
+                        t.tagStart = '<img src="' + g + '" alt="' + f + '" />';
                         selection = t.tagStart;
-                        t.closeTag( element, ed );
-                        editorInstance[id].replaceSelection( selection, 'end' );
+                        t.closeTag(element, ed);
+                        editorInstance[id].replaceSelection(selection, 'end');
                         editorInstance[id].focus();
                     }
-                } else if ( qt_instance.theButtons[button_name].id == 'close' ) {
+                } else if (qt_instance.theButtons[button_name].id == 'close') {
 
-                } else if ( qt_instance.theButtons[button_name].id == 'link' ) {
+                } else if (qt_instance.theButtons[button_name].id == 'link') {
                     var t = this;
                     qt_instance.theButtons[button_name].callback =
-                        function ( b, c, d, e ) {
+                        function (b, c, d, e) {
                             activeUrlEditor = c;
-                            var f,g=this;
-                            return "undefined" != typeof wpLink ?void wpLink.open(d.id) : (e||(e="http://"), void(g.isOpen(d)===!1 ? (f=prompt(quicktagsL10n.enterURL,e), f && (g.tagStart='<a href="'+f+'">', a.TagButton.prototype.callback.call(g,b,c,d))) : a.TagButton.prototype.callback.call(g,b,c,d)))
+                            var f, g = this;
+                            return "undefined" != typeof wpLink ? void wpLink.open(d.id) : (e || (e = "http://"), void(g.isOpen(d) === !1 ? (f = prompt(quicktagsL10n.enterURL, e), f && (g.tagStart = '<a href="' + f + '">', a.TagButton.prototype.callback.call(g, b, c, d))) : a.TagButton.prototype.callback.call(g, b, c, d)))
                         };
-                    jQuery( '#wp-link-submit' ).off();
-                    jQuery( '#wp-link-submit' ).on( 'click', function( event ) {
+                    jQuery('#wp-link-submit').off();
+                    jQuery('#wp-link-submit').on('click', function (event) {
                         event.preventDefault();
-                        if ( wpLink.isMCE() ) {
+                        if (wpLink.isMCE()) {
                             wpLink.mceUpdate();
                         } else {
-                            var id = jQuery( activeUrlEditor ).attr('id'),
+                            var id = jQuery(activeUrlEditor).attr('id'),
                                 selection = editorInstance[id].getSelection(),
                                 inputs = {},
                                 attrs, text, title, html;
                             inputs.wrap = jQuery('#wp-link-wrap');
-                            inputs.backdrop = jQuery( '#wp-link-backdrop' );
-                            if ( jQuery( '#link-target-checkbox' ).length > 0 ) {
+                            inputs.backdrop = jQuery('#wp-link-backdrop');
+                            if (jQuery('#link-target-checkbox').length > 0) {
                                 // Backwards compatibility - before WordPress 4.2
-                                inputs.text = jQuery( '#link-title-field' );
+                                inputs.text = jQuery('#link-title-field');
                                 attrs = wpLink.getAttrs();
                                 text = inputs.text.val();
-                                if ( ! attrs.href ) {
+                                if (!attrs.href) {
                                     return;
                                 }
                                 // Build HTML
                                 html = '<a href="' + attrs.href + '"';
-                                if ( attrs.target ) {
+                                if (attrs.target) {
                                     html += ' target="' + attrs.target + '"';
                                 }
-                                if ( text ) {
-                                    title = text.replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' );
+                                if (text) {
+                                    title = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                                     html += ' title="' + title + '"';
                                 }
                                 html += '>';
@@ -1516,15 +1552,15 @@ if ( typeof Toolset.add_qt_editor_buttons !== 'function' ) {
                                 selection = t.tagStart;
                             } else {
                                 // WordPress 4.2+
-                                inputs.text = jQuery( '#wp-link-text' );
+                                inputs.text = jQuery('#wp-link-text');
                                 attrs = wpLink.getAttrs();
                                 text = inputs.text.val();
-                                if ( ! attrs.href ) {
+                                if (!attrs.href) {
                                     return;
                                 }
                                 // Build HTML
                                 html = '<a href="' + attrs.href + '"';
-                                if ( attrs.target ) {
+                                if (attrs.target) {
                                     html += ' target="' + attrs.target + '"';
                                 }
                                 html += '>';
@@ -1532,35 +1568,35 @@ if ( typeof Toolset.add_qt_editor_buttons !== 'function' ) {
                                 html += '</a>';
                                 selection = html;
                             }
-                            jQuery( document.body ).removeClass( 'modal-open' );
+                            jQuery(document.body).removeClass('modal-open');
                             inputs.backdrop.hide();
                             inputs.wrap.hide();
-                            jQuery( document ).trigger( 'wplink-close', inputs.wrap );
-                            editorInstance[id].replaceSelection( selection, 'end' );
+                            jQuery(document).trigger('wplink-close', inputs.wrap);
+                            editorInstance[id].replaceSelection(selection, 'end');
                             editorInstance[id].focus();
                             return false;
                         }
                     });
                 } else {
-                    qt_instance.theButtons[button_name].callback = function( element, canvas, ed ) {
-                        var id = jQuery( canvas ).attr( 'id' ),
+                    qt_instance.theButtons[button_name].callback = function (element, canvas, ed) {
+                        var id = jQuery(canvas).attr('id'),
                             t = this,
                             selection = editorInstance[id].getSelection();
-                        if ( selection.length > 0 ) {
-                            if ( !t.tagEnd ) {
+                        if (selection.length > 0) {
+                            if (!t.tagEnd) {
                                 selection = selection + t.tagStart;
                             } else {
                                 selection = t.tagStart + selection + t.tagEnd;
                             }
                         } else {
-                            if ( !t.tagEnd ) {
+                            if (!t.tagEnd) {
                                 selection = t.tagStart;
-                            } else if ( t.isOpen( ed ) === false ) {
+                            } else if (t.isOpen(ed) === false) {
                                 selection = t.tagStart;
-                                t.openTag( element, ed );
+                                t.openTag(element, ed);
                             } else {
                                 selection = t.tagEnd;
-                                t.closeTag( element, ed );
+                                t.closeTag(element, ed);
                             }
                         }
                         editorInstance[id].replaceSelection(selection, 'end');
@@ -1572,67 +1608,67 @@ if ( typeof Toolset.add_qt_editor_buttons !== 'function' ) {
     }
 }
 
-if ( typeof Toolset.add_qt_editor_buttons !== 'function' ) {
-    Toolset.add_qt_editor_buttons = function( qt_instance, editor_instance ) {
+if (typeof Toolset.add_qt_editor_buttons !== 'function') {
+    Toolset.add_qt_editor_buttons = function (qt_instance, editor_instance) {
         var activeUrlEditor, html;
         QTags._buttonsInit();
         var editorInstance = {};
         editorInstance[qt_instance.id] = editor_instance;
 
-        for ( var button_name in qt_instance.theButtons ) {
-            if ( qt_instance.theButtons.hasOwnProperty( button_name ) ) {
+        for (var button_name in qt_instance.theButtons) {
+            if (qt_instance.theButtons.hasOwnProperty(button_name)) {
                 qt_instance.theButtons[button_name].old_callback = qt_instance.theButtons[button_name].callback;
-                if ( qt_instance.theButtons[button_name].id == 'img' ){
-                    qt_instance.theButtons[button_name].callback = function( element, canvas, ed ) {
+                if (qt_instance.theButtons[button_name].id == 'img') {
+                    qt_instance.theButtons[button_name].callback = function (element, canvas, ed) {
                         var t = this,
-                            id = jQuery( canvas ).attr( 'id' ),
+                            id = jQuery(canvas).attr('id'),
                             selection = editorInstance[id].getSelection(),
                             e = "http://",
-                            g = prompt( quicktagsL10n.enterImageURL, e ),
-                            f = prompt( quicktagsL10n.enterImageDescription, "" );
-                        t.tagStart = '<img src="'+g+'" alt="'+f+'" />';
+                            g = prompt(quicktagsL10n.enterImageURL, e),
+                            f = prompt(quicktagsL10n.enterImageDescription, "");
+                        t.tagStart = '<img src="' + g + '" alt="' + f + '" />';
                         selection = t.tagStart;
-                        t.closeTag( element, ed );
-                        editorInstance[id].replaceSelection( selection, 'end' );
+                        t.closeTag(element, ed);
+                        editorInstance[id].replaceSelection(selection, 'end');
                         editorInstance[id].focus();
                     }
-                } else if ( qt_instance.theButtons[button_name].id == 'close' ) {
+                } else if (qt_instance.theButtons[button_name].id == 'close') {
 
-                } else if ( qt_instance.theButtons[button_name].id == 'link' ) {
+                } else if (qt_instance.theButtons[button_name].id == 'link') {
                     var t = this;
                     qt_instance.theButtons[button_name].callback =
-                        function ( b, c, d, e ) {
+                        function (b, c, d, e) {
                             activeUrlEditor = c;
-                            var f,g=this;
-                            return "undefined" != typeof wpLink ?void wpLink.open(d.id) : (e||(e="http://"), void(g.isOpen(d)===!1 ? (f=prompt(quicktagsL10n.enterURL,e), f && (g.tagStart='<a href="'+f+'">', a.TagButton.prototype.callback.call(g,b,c,d))) : a.TagButton.prototype.callback.call(g,b,c,d)))
+                            var f, g = this;
+                            return "undefined" != typeof wpLink ? void wpLink.open(d.id) : (e || (e = "http://"), void(g.isOpen(d) === !1 ? (f = prompt(quicktagsL10n.enterURL, e), f && (g.tagStart = '<a href="' + f + '">', a.TagButton.prototype.callback.call(g, b, c, d))) : a.TagButton.prototype.callback.call(g, b, c, d)))
                         };
-                    jQuery( '#wp-link-submit' ).off();
-                    jQuery( '#wp-link-submit' ).on( 'click', function( event ) {
+                    jQuery('#wp-link-submit').off();
+                    jQuery('#wp-link-submit').on('click', function (event) {
                         event.preventDefault();
-                        if ( wpLink.isMCE() ) {
+                        if (wpLink.isMCE()) {
                             wpLink.mceUpdate();
                         } else {
-                            var id = jQuery( activeUrlEditor ).attr('id'),
+                            var id = jQuery(activeUrlEditor).attr('id'),
                                 selection = editorInstance[id].getSelection(),
                                 inputs = {},
                                 attrs, text, title, html;
                             inputs.wrap = jQuery('#wp-link-wrap');
-                            inputs.backdrop = jQuery( '#wp-link-backdrop' );
-                            if ( jQuery( '#link-target-checkbox' ).length > 0 ) {
+                            inputs.backdrop = jQuery('#wp-link-backdrop');
+                            if (jQuery('#link-target-checkbox').length > 0) {
                                 // Backwards compatibility - before WordPress 4.2
-                                inputs.text = jQuery( '#link-title-field' );
+                                inputs.text = jQuery('#link-title-field');
                                 attrs = wpLink.getAttrs();
                                 text = inputs.text.val();
-                                if ( ! attrs.href ) {
+                                if (!attrs.href) {
                                     return;
                                 }
                                 // Build HTML
                                 html = '<a href="' + attrs.href + '"';
-                                if ( attrs.target ) {
+                                if (attrs.target) {
                                     html += ' target="' + attrs.target + '"';
                                 }
-                                if ( text ) {
-                                    title = text.replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' );
+                                if (text) {
+                                    title = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                                     html += ' title="' + title + '"';
                                 }
                                 html += '>';
@@ -1642,15 +1678,15 @@ if ( typeof Toolset.add_qt_editor_buttons !== 'function' ) {
                                 selection = t.tagStart;
                             } else {
                                 // WordPress 4.2+
-                                inputs.text = jQuery( '#wp-link-text' );
+                                inputs.text = jQuery('#wp-link-text');
                                 attrs = wpLink.getAttrs();
                                 text = inputs.text.val();
-                                if ( ! attrs.href ) {
+                                if (!attrs.href) {
                                     return;
                                 }
                                 // Build HTML
                                 html = '<a href="' + attrs.href + '"';
-                                if ( attrs.target ) {
+                                if (attrs.target) {
                                     html += ' target="' + attrs.target + '"';
                                 }
                                 html += '>';
@@ -1658,35 +1694,35 @@ if ( typeof Toolset.add_qt_editor_buttons !== 'function' ) {
                                 html += '</a>';
                                 selection = html;
                             }
-                            jQuery( document.body ).removeClass( 'modal-open' );
+                            jQuery(document.body).removeClass('modal-open');
                             inputs.backdrop.hide();
                             inputs.wrap.hide();
-                            jQuery( document ).trigger( 'wplink-close', inputs.wrap );
-                            editorInstance[id].replaceSelection( selection, 'end' );
+                            jQuery(document).trigger('wplink-close', inputs.wrap);
+                            editorInstance[id].replaceSelection(selection, 'end');
                             editorInstance[id].focus();
                             return false;
                         }
                     });
                 } else {
-                    qt_instance.theButtons[button_name].callback = function( element, canvas, ed ) {
-                        var id = jQuery( canvas ).attr( 'id' ),
+                    qt_instance.theButtons[button_name].callback = function (element, canvas, ed) {
+                        var id = jQuery(canvas).attr('id'),
                             t = this,
                             selection = editorInstance[id].getSelection();
-                        if ( selection.length > 0 ) {
-                            if ( !t.tagEnd ) {
+                        if (selection.length > 0) {
+                            if (!t.tagEnd) {
                                 selection = selection + t.tagStart;
                             } else {
                                 selection = t.tagStart + selection + t.tagEnd;
                             }
                         } else {
-                            if ( !t.tagEnd ) {
+                            if (!t.tagEnd) {
                                 selection = t.tagStart;
-                            } else if ( t.isOpen( ed ) === false ) {
+                            } else if (t.isOpen(ed) === false) {
                                 selection = t.tagStart;
-                                t.openTag( element, ed );
+                                t.openTag(element, ed);
                             } else {
                                 selection = t.tagEnd;
-                                t.closeTag( element, ed );
+                                t.closeTag(element, ed);
                             }
                         }
                         editorInstance[id].replaceSelection(selection, 'end');

@@ -83,7 +83,7 @@ abstract class Types_Field_Group_Factory {
 		$fg_post = null;
 
 		// http://stackoverflow.com/questions/2559923/shortest-way-to-check-if-a-variable-contains-positive-integer-using-php
-		if ( is_scalar( $field_group ) && ( $field_group == (int) $field_group ) && ( (int) $field_group > 0 ) ) {
+		if ( is_numeric( $field_group ) && ( $field_group == (int) $field_group ) && ( (int) $field_group > 0 ) ) {
 			$fg_post = WP_Post::get_instance( $field_group );
 		} else if ( is_string( $field_group ) ) {
 			$query = new WP_Query( array( 'post_type' => $this->get_post_type(), 'name' => $field_group, 'posts_per_page' => 1 ) );
@@ -115,6 +115,10 @@ abstract class Types_Field_Group_Factory {
      * @return null|Types_Field_Group Field group instance or null if it's not cached.
 	 */
 	private function get_from_cache( $field_group_name ) {
+        if( defined( 'TYPES_DISABLE_CACHE' ) && TYPES_DISABLE_CACHE ) {
+            // disable caching
+            return null;
+        }
 		return wpcf_getarr( $this->field_groups, $field_group_name, null );
 	}
 
@@ -125,6 +129,10 @@ abstract class Types_Field_Group_Factory {
 	 * @param Types_Field_Group $field_group
 	 */
 	private function save_to_cache( $field_group ) {
+        if( defined( 'TYPES_DISABLE_CACHE' ) && TYPES_DISABLE_CACHE ) {
+            // disable caching
+            return;
+        }
 		$this->field_groups[ $field_group->get_slug() ] = $field_group;
 	}
 
@@ -250,6 +258,7 @@ abstract class Types_Field_Group_Factory {
 	 *     Post type query is added automatically.
 	 *     Additional arguments are allowed:
 	 *     - 'types_search': String for extended search. See WPCF_Field_Group::is_match() for details.
+	 *     - 'is_active' bool: If defined, only active/inactive field groups will be returned.
 	 * 
 	 * @return Types_Field_Group[]
 	 * @since 1.9
@@ -258,10 +267,17 @@ abstract class Types_Field_Group_Factory {
 
 		// Read specific arguments
 		$search_string = wpcf_getarr( $query_args, 'types_search' );
-
+		$is_active = wpcf_getarr( $query_args, 'is_active', null );
 
 		// Query posts
 		$query_args = array_merge( $query_args, array( 'post_type' => $this->get_post_type(), 'posts_per_page' => -1 ) );
+
+		// Group's "activeness" is defined by the post status.
+		if( null !== $is_active ) {
+			unset( $query_args['is_active'] );
+			$query_args['post_status'] = ( $is_active ? 'publish' : 'draft' );
+		}
+
 		$query = new WP_Query( $query_args );
 		$posts = $query->get_posts();
 

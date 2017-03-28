@@ -1,6 +1,6 @@
 <?php
 
-if ( ! class_exists( 'Toolset_Validate' ) ) {
+if ( ! class_exists( 'Toolset_Validate', false ) ) {
 	class Toolset_Validate
 	{
 	

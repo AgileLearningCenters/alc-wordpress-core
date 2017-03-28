@@ -313,7 +313,7 @@ class Types_Admin_Edit_Post_Type extends Types_Admin_Page
             '#attributes' => array(
                 'placeholder' => __('Enter Post Type name singular', 'wpcf' ),
                 'class' => 'js-wpcf-slugize-source large-text',
-                'data-anonymous-post-type' => __( 'this Post Type', 'types' ),
+                'data-anonymous-post-type' => __( 'this Post Type', 'wpcf' ),
             ),
             '_builtin' => true,
         );
@@ -866,8 +866,8 @@ class Types_Admin_Edit_Post_Type extends Types_Admin_Page
             'thumbnail' => array(
                 '#name' => 'ct[supports][thumbnail]',
                 '#default_value' => !empty( $this->ct['supports']['thumbnail'] ),
-                '#title' => __( 'Thumbnail', 'wpcf' ),
-                '#description' => __( "Allows to upload a 'featured image' to the post (a.k.a. 'thumbnail').", 'wpcf' ),
+                '#title' => __( 'Featured Image', 'wpcf' ),
+                '#description' => __( 'Allows to upload a featured image to the post.', 'wpcf' ),
                 '#inline' => true,
             ),
             'custom-fields' => array(
@@ -1012,69 +1012,43 @@ class Types_Admin_Edit_Post_Type extends Types_Admin_Page
     }
 
     /**
-     * Taxonomies
+     * Render the content of the metabox "Taxonomies to be used with $post_type".
+     *
+     * @since unknown
      */
-    public function box_taxonomies()
-    {
-        $form = array();
-        $taxonomies = get_taxonomies( '', 'objects' );
-        $options = array();
+    public function box_taxonomies() {
+	    $form = array();
+	    $taxonomies = Types_Utils::get_editable_taxonomies();
+	    $options = array();
 
-        foreach ( $taxonomies as $category_slug => $category ) {
-            if (
-                false
-                || $category_slug == 'nav_menu'
-                || $category_slug == 'link_category'
-                || $category_slug == 'post_format'
-            ) {
-                continue;
-            }
-            $options[$category_slug] = array(
-                '#name' => 'ct[taxonomies][' . $category_slug . ']',
-                '#title' => $category->labels->name,
-                '#default_value' => !empty( $this->ct['taxonomies'][$category_slug] ),
-                '#inline' => true,
-                '#before' => '<li>',
-                '#after' => '</li>',
-            );
-            $options[$category_slug]['_builtin'] = $category->_builtin;
-            /* if ( $this->ct['_builtin'] && $category->_builtin ) {
-                $options[$category_slug]['#attributes'] = array(
-                    'disabled' => 'disabled',
-                );
-            } */
-        }
+	    foreach( $taxonomies as $taxonomy_slug => $taxonomy ) {
 
-        $form['taxonomies'] = array(
-            '#type' => 'checkboxes',
-            '#options' => $options,
-            '#name' => 'ct[taxonomies]',
-            '#inline' => true,
-            '#before' => '<ul class="wpcf-list">',
-            '#after' => '</ul>',
-            '_builtin' => true,
-        );
-        $form = wpcf_form(__FUNCTION__, $form);
-        echo $form->renderForm();
+		    $options[ $taxonomy_slug ] = array(
+			    '#name' => 'ct[taxonomies][' . $taxonomy_slug . ']',
+			    '#title' => $taxonomy->labels->name,
+			    '#default_value' => ( ! empty( $this->ct['taxonomies'][ $taxonomy_slug ] ) ),
+			    '#inline' => true,
+			    '#before' => '<li>',
+			    '#after' => '</li>',
+		    );
+		    $options[ $taxonomy_slug ]['_builtin'] = $taxonomy->_builtin;
+
+	    }
+
+	    $form['taxonomies'] = array(
+		    '#type' => 'checkboxes',
+		    '#options' => $options,
+		    '#name' => 'ct[taxonomies]',
+		    '#inline' => true,
+		    '#before' => '<ul class="wpcf-list">',
+		    '#after' => '</ul>',
+		    '_builtin' => true,
+	    );
+	    $form = wpcf_form( __FUNCTION__, $form );
+	    echo $form->renderForm();
     }
 
-    /**
-     * Summary.
-     *
-     * Description.
-     *
-     * @since x.x.x
-     * @access (for functions: only use if private)
-     *
-     * @see Function/method/class relied on
-     * @link URL
-     * @global type $varname Description.
-     * @global type $varname Description.
-     *
-     * @param type $var Description.
-     * @param type $var Optional. Description.
-     * @return type Description.
-     */
+
     private function save()
     {
         global $wpcf;
@@ -1115,7 +1089,7 @@ class Types_Admin_Edit_Post_Type extends Types_Admin_Page
             || $_GET['wpcf-post-type'] == 'page'
             || $_GET['wpcf-post-type'] == 'attachment'
         ) {
-            $data['slug'] = $_GET['wpcf-post-type'];
+            $data['slug'] = sanitize_text_field( $_GET['wpcf-post-type'] );
         } else {
             $data['slug'] = null;
         }
@@ -1469,7 +1443,7 @@ class Types_Admin_Edit_Post_Type extends Types_Admin_Page
         $post_type_parent = get_post_type_object( $parent );
         $post_type_child = get_post_type_object( $child );
 
-        if ( empty( $post_type_parent ) || empty( $post_type_child ) ) {
+        if ( null == $post_type_parent || null == $post_type_child ) {
             die( __( 'Wrong post types', 'wpcf' ) );
         }
         $relationships = get_option( 'wpcf_post_relationship', array() );
@@ -1851,7 +1825,11 @@ class Types_Admin_Edit_Post_Type extends Types_Admin_Page
             'email-alt' => __('email alt', 'wcpf'),
             'email' => __('email', 'wcpf'),
             'excerpt-view' => __('excerpt view', 'wcpf'),
-            'exerpt-view' => __('exerpt view', 'wcpf'),
+
+	        // because https://core.trac.wordpress.org/ticket/30832
+	        // but we don't have to offer it at all, actually it looks deprecated
+            // 'exerpt-view' => __('excerpt view', 'wcpf'),
+
             'external' => __('external', 'wcpf'),
             'facebook-alt' => __('facebook alt', 'wcpf'),
             'facebook' => __('facebook', 'wcpf'),
@@ -2020,7 +1998,8 @@ class Types_Admin_Edit_Post_Type extends Types_Admin_Page
         // get current post type
         require_once WPCF_INC_ABSPATH.'/classes/class.types.admin.post-type.php';
         $wpcf_post_type = new Types_Admin_Post_Type();
-        $custom_post_type = $wpcf_post_type->get_post_type($_GET['wpcf-post-type']);
+		$get_post_type_slug_from_request = sanitize_text_field( $_GET['wpcf-post-type'] );
+        $custom_post_type = $wpcf_post_type->get_post_type($get_post_type_slug_from_request);
         if ( isset($custom_post_type['slug']) ) {
             return $custom_post_type['slug'];
         }

@@ -12,7 +12,7 @@ if ( ! defined( 'WPT_SETTINGS_SCREEN' ) ) {
 * @since 1.9
 */
 
-if ( ! class_exists( 'Toolset_Settings_Screen' ) ) {
+if ( ! class_exists( 'Toolset_Settings_Screen', false ) ) {
 
     class Toolset_Settings_Screen {
 
@@ -54,6 +54,10 @@ if ( ! class_exists( 'Toolset_Settings_Screen' ) ) {
 			add_filter( 'toolset_filter_toolset_register_settings_general_section',	array( $this, 'toolset_admin_bar_settings' ), 10, 2 );
 			add_action( 'wp_ajax_toolset_update_toolset_admin_bar_options',			array( $this, 'toolset_update_toolset_admin_bar_options' ) );
 			add_filter( 'toolset_filter_force_unset_shortcode_generator_option',	array( $this, 'force_unset_shortcode_generator_option_to_disable' ), 99 );
+
+			add_filter( 'toolset_filter_toolset_register_settings_general_section',	array( $this, 'toolset_bootstrap_options' ), 30 );
+			add_action( 'wp_ajax_toolset_update_bootstrap_version_status',							array( $this, 'toolset_update_bootstrap_version_status' ) );
+
 		}
 
 
@@ -120,8 +124,13 @@ if ( ! class_exists( 'Toolset_Settings_Screen' ) ) {
 				<div class="toolset-debug-info-helper">
 					<p>
 					<?php
+					echo __( 'Sometimes, our Customer Support personnel ask you to provide debug information. This information helps them give you quicker and better support.', 'wpv-views' );
+					?>
+					</p>
+					<p>
+					<?php
 					echo sprintf(
-						__( 'Need help? Grab some %1$sdebug information%2$s.', 'wpv-views' ),
+						__( 'To get this information, go to %1$sToolset Debug Information%2$s.', 'wpv-views' ),
 						'<a href="' . admin_url( 'admin.php?page=toolset-debug-information' ) . '">',
 						'</a>'
 					);
@@ -241,6 +250,124 @@ if ( ! class_exists( 'Toolset_Settings_Screen' ) ) {
 			}
 			return $state;
 		}
+
+
+
+		/**
+		 * Bootstrap - settings and saving
+		 */
+
+		function toolset_bootstrap_options( $sections ) {
+			$is_disabled = '';
+			$disabled_message = '';
+
+			$settings = Toolset_Settings::get_instance();
+			ob_start();
+			?>
+			<ul class="js-bootstrap-version-form">
+				<?php
+
+				$version_options = array(
+
+
+					array(
+						'label' => __( 'The theme or another plugin is already loading Bootstrap 2.0', 'wpv-views' ),
+						'value' => 2
+					),
+					array(
+						'label' => __( 'The theme or another plugin is already loading Bootstrap 3.0', 'wpv-views' ),
+						'value' => 3
+					),
+					array(
+						'label' =>  __( 'Toolset should load Bootstrap 3.0', 'wpv-views' ),
+						'value' => '3.toolset'
+					),
+					array(
+						'label' => __( 'This site is not using Bootstrap CSS', 'wpv-views' ),
+						'value' => -1
+					)
+				);
+
+				foreach( $version_options as $option ) {
+
+					printf(
+						'<li><label class="js-tolset-option-%s"><input type="radio" name="wpv-bootstrap-version" class="js-toolset-bootstrap-version" value="%s" %s %s autocomplete="off" />%s</label></li>',
+						str_replace(".","",$option['value']),
+						$option['value'],
+						checked( $option['value'], $settings->toolset_bootstrap_version, false ),
+						disabled( $is_disabled, true, false ),
+						$option['label']
+					);
+
+				}
+
+				?>
+			</ul>
+
+			<?php echo $disabled_message; ?>
+			<p>
+				<?php
+				echo sprintf(
+					__( 'Get more details in the <a href="%1$s" title="%2$s">documentation page</a>.', 'wpv-views' ),
+					'https://wp-types.com/documentation/user-guides/view-layouts-101/' ,
+					esc_attr( __( 'Documentation on the Bootstrap Layouts', 'wpv-views' ) )
+				);
+				?>
+			</p>
+			<?php
+			wp_nonce_field( 'toolset_bootstrap_version_nonce', 'toolset_bootstrap_version_nonce' );
+			?>
+			<?php
+			$section_content = ob_get_clean();
+
+			$sections['bootstrap-settings'] = array(
+				'slug'		=> 'bootstrap-settings',
+				'title'		=> __( 'Bootstrap Layouts', 'wpv-views' ),
+				'content'	=> $section_content
+			);
+			return $sections;
+		}
+
+		/**
+		 * Update the Views Bootrstap version
+		 *
+		 * $_POST:
+		 * 	wpnonce:	wpv_bootstrap_version_nonce
+		 * 	status:		1|2|3|3.toolset|-1
+		 */
+
+		function toolset_update_bootstrap_version_status() {
+			$settings = Toolset_Settings::get_instance();
+			if ( ! current_user_can( 'manage_options' ) ) {
+				$data = array(
+					'type' => 'capability',
+					'message' => __( 'You do not have permissions for that.', 'wpv-views' )
+				);
+				wp_send_json_error( $data );
+			}
+			if (
+				! isset( $_POST["wpnonce"] )
+				|| ! wp_verify_nonce( $_POST["wpnonce"], 'toolset_bootstrap_version_nonce' )
+			) {
+				$data = array(
+					'type' => 'nonce',
+					'message' => __( 'Your security credentials have expired. Please reload the page to get new ones.', 'wpv-views' )
+				);
+				wp_send_json_error( $data );
+			}
+
+			$status = in_array($_POST['status'], array( 1, 2, 3, '3.toolset', -1 ));
+			if ( null != $status ) {
+				$settings->toolset_bootstrap_version = $_POST['status'];
+				$settings->save();
+				wp_send_json_success();
+			} else {
+				wp_send_json_error();
+			}
+			wp_send_json_success();
+		}
+
+
 
 	}
 

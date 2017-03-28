@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/types/
 Description: Toolset Types defines custom content in WordPress. Easily create custom post types, fields and taxonomy and connect everything together.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
-Version: 2.1
+Version: 2.2.9
 License: GPLv2 or later
 
 Types is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ if( !function_exists( 'add_action' ) )
 
 // version
 if( ! defined( 'TYPES_VERSION' ) )
-	define( 'TYPES_VERSION', '2.1' );
+	define( 'TYPES_VERSION', '2.2.9' );
 
 // backward compatibility
 if ( ! defined( 'WPCF_VERSION' ) )
@@ -36,7 +36,8 @@ if ( ! defined( 'WPCF_VERSION' ) )
 
 // release notes
 if( ! defined( 'TYPES_RELEASE_NOTES' ) )
-	define( 'TYPES_RELEASE_NOTES', 'https://wp-types.com/version/types-2-1/?utm_source=typesplugin&utm_campaign=types&utm_medium=release-notes-admin-notice&utm_term=Types 2.1 release notes' );
+	// Mind the end of the URL string, it contains the plugin version.
+	define( 'TYPES_RELEASE_NOTES', 'https://wp-types.com/version/types-2-2-9/?utm_source=typesplugin&utm_campaign=types&utm_medium=release-notes-admin-notice&utm_term=Types%202.2.9%20release%20notes' );
 
 /*
  * Path Constants
@@ -61,3 +62,6 @@ require_once( dirname( __FILE__ ) . '/application/bootstrap.php' );
 //
 register_deactivation_hook( __FILE__, 'wpcf_deactivation_hook' );
 register_activation_hook( __FILE__, 'wpcf_activation_hook' );
+
+// adds "Leave feedback" link on plugins list page
+add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'types_plugin_action_links' );

@@ -173,14 +173,14 @@ final class Types_Ajax {
 
 		// Check permissions
 		if ( ! current_user_can( $capability_needed ) ) {
-			$error_message = __( 'You do not have permissions for that.', 'wpv-views' );
+			$error_message = __( 'You do not have permissions for that.', 'wpcf' );
 			$error_type = 'capability';
 			$is_error = true;
 		}
 
 		// Check nonce
 		if ( !$is_error && !wp_verify_nonce( wpcf_getarr( $parameter_source, $nonce_parameter, '' ), $nonce_name ) ) {
-			$error_message = __( 'Your security credentials have expired. Please reload the page to get new ones.', 'wpv-views' );
+			$error_message = __( 'Your security credentials have expired. Please reload the page to get new ones.', 'wpcf' );
 			$error_type = 'nonce';
 			$is_error = true;
 		}

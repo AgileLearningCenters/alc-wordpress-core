@@ -202,7 +202,7 @@ if (!class_exists('Enlimbo_Forms_Wpcf')) {
         /**
          * Renders form.
          * 
-         * @return type 
+         * @return string
          */
         public function renderForm()
         {
@@ -242,7 +242,7 @@ if (!class_exists('Enlimbo_Forms_Wpcf')) {
          * Renders elements.
          * 
          * @param type $elements
-         * @return type 
+         * @return string
          */
         public function renderElements($elements)
         {
@@ -931,7 +931,7 @@ if (!class_exists('Enlimbo_Forms_Wpcf')) {
                 if ($element['#type'] == 'file') {
                     return $_FILES[$name]['tmp_name'];
                 }
-                return isset($_REQUEST[$name]) ? $_REQUEST[$name] : in_array($element['#type'],
+                return isset($_REQUEST[$name]) ? sanitize_text_field( $_REQUEST[$name] ) : in_array($element['#type'],
                                 array('textfield', 'textarea')) ? '' : 0;
             }
 

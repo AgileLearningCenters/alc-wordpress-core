@@ -49,7 +49,7 @@ if ( defined( 'DOING_AJAX' ) ) {
 	        // that post and user fields can use the same handler (which is originally meant for post fields only).
 
 	        // We don't have functions.php at this point, can't use wpcf_getpost().
-	        $current_page = isset( $_REQUEST['page'] ) ? $_REQUEST['page'] : Types_Admin_Edit_Custom_Fields_Group::PAGE_NAME;
+	        $current_page = isset( $_REQUEST['page'] ) ? sanitize_text_field( $_REQUEST['page'] ) : Types_Admin_Edit_Custom_Fields_Group::PAGE_NAME;
 	        if( in_array( $current_page, array( Types_Admin_Edit_Custom_Fields_Group::PAGE_NAME, 'wpcf-edit-usermeta' ) ) ) {
 		        new Types_Admin_Edit_Custom_Fields_Group();
 	        }
@@ -175,7 +175,7 @@ function wpcf_admin_toolset_register_menu_pages( $pages ) {
 	
 	$current_page = '';
 	if ( isset( $_GET['page'] ) ) {
-	    $current_page = $_GET['page'];
+	    $current_page = sanitize_text_field( $_GET['page'] );
 	}
 	
 	$pages['wpcf-cpt'] = array(
@@ -358,23 +358,6 @@ function wpcf_admin_toolset_register_menu_pages( $pages ) {
 	}
 	
 
-	if (
-        (class_exists( 'Acf') && !class_exists('acf_pro'))
-        || defined( 'CPT_VERSION' ) 
-    ) {
-		$pages['wpcf-migration'] = array(
-			'slug'				=> 'wpcf-migration',
-			'menu_title'		=> __( 'Types Migration', 'wpcf' ),
-			'page_title'		=> __( 'Types Migration', 'wpcf' ),
-			'callback'			=> 'wpcf_admin_menu_migration',
-			'capability'		=> 'manage_options',
-		);
-		$pages['wpcf-migration']['capability'] = wpcf_admin_calculate_menu_page_capability( $pages['wpcf-migration'] );
-		$pages['wpcf-migration']['load_hook'] = wpcf_admin_calculate_menu_page_load_hook( $pages['wpcf-migration'] );
-		$pages['wpcf-migration']['contextual_help_legacy'] = wpcf_admin_help( 'wpcf-migration' );
-		$pages['wpcf-migration']['contextual_help_hook'] = 'wpcf_admin_help_add_tabs_load_hook';
-    }
-	
 	if ( 'installer' == $current_page ) {
 		// @todo Having a page with a slug "installer" is a direct path to a third-party plugin conflict. Just saying. Not to mention the callback funciton "installer_content", for god's sake
 		$pages['installer'] = array(
@@ -446,29 +429,29 @@ function wpcf_admin_menu_summary()
 function wpcf_admin_enqueue_group_edit_page_assets() {
 	do_action( 'wpcf_admin_page_init' );
 
-	/*
-	 * Enqueue scripts
-	 */
+	$asset_manager = Types_Asset_Manager::get_instance();
+
 	// Group filter
 	wp_enqueue_script( 'wpcf-filter-js',
 		WPCF_EMBEDDED_RES_RELPATH
 		. '/js/custom-fields-form-filter.js', array('jquery'), WPCF_VERSION );
-	// Form
-	wp_enqueue_script( 'wpcf-form-validation',
-		WPCF_EMBEDDED_RES_RELPATH . '/js/'
-		. 'jquery-form-validation/jquery.validate.min.js', array('jquery'),
-		WPCF_VERSION );
-	wp_enqueue_script( 'wpcf-form-validation-additional',
-		WPCF_EMBEDDED_RES_RELPATH . '/js/'
-		. 'jquery-form-validation/additional-methods.min.js',
-		array('jquery'), WPCF_VERSION );
-	// Scroll
-	wp_enqueue_script( 'wpcf-scrollbar',
-		WPCF_EMBEDDED_TOOLSET_RELPATH . '/toolset-common/visual-editor/res/js/scrollbar.js',
-		array('jquery') );
-	wp_enqueue_script( 'wpcf-mousewheel',
-		WPCF_EMBEDDED_TOOLSET_RELPATH . '/toolset-common/visual-editor/res/js/mousewheel.js',
-		array('wpcf-scrollbar') );
+
+
+	$asset_manager->enqueue_scripts(
+		array(
+			Types_Asset_Manager::SCRIPT_JQUERY_UI_VALIDATION,
+			Types_Asset_Manager::SCRIPT_ADDITIONAL_VALIDATION_RULES,
+
+            // These scripts are needed only for the Styling editor
+            Types_Asset_Manager::SCRIPT_CODEMIRROR,
+            Types_Asset_Manager::SCRIPT_CODEMIRROR_CSS,
+            Types_Asset_Manager::SCRIPT_CODEMIRROR_XML,
+            Types_Asset_Manager::SCRIPT_CODEMIRROR_HTMLMIXED,
+            Types_Asset_Manager::SCRIPT_JSCROLLPANE,
+            Types_Asset_Manager::SCRIPT_MOUSEWHEEL
+		)
+	);
+
 	// MAIN
 	wp_enqueue_script(
 		'wpcf-fields-form',
@@ -483,30 +466,18 @@ function wpcf_admin_enqueue_group_edit_page_assets() {
 		WPCF_VERSION
 	);
 
-	/*
-	 * Enqueue styles
-	 */
-	wp_enqueue_style( 'wpcf-scroll',
-		WPCF_EMBEDDED_TOOLSET_RELPATH . '/toolset-common/visual-editor/res/css/scroll.css' );
+	$asset_manager->enqueue_styles(
+	    array(
+		    // These styles are needed only for the Styling editor
+	        Types_Asset_Manager::STYLE_CODEMIRROR,
+            Types_Asset_Manager::STYLE_EDITOR_ADDON_MENU_SCROLL
+        )
+    );
 
-	//Css editor
-	wp_enqueue_script( 'wpcf-form-codemirror' ,
-		WPCF_RELPATH . '/resources/js/codemirror234/lib/codemirror.js', array('wpcf-js'));
-	wp_enqueue_script( 'wpcf-form-codemirror-css-editor' ,
-		WPCF_RELPATH . '/resources/js/codemirror234/mode/css/css.js', array('wpcf-js'));
-	wp_enqueue_script( 'wpcf-form-codemirror-html-editor' ,
-		WPCF_RELPATH . '/resources/js/codemirror234/mode/xml/xml.js', array('wpcf-js'));
-	wp_enqueue_script( 'wpcf-form-codemirror-html-editor2' ,
-		WPCF_RELPATH . '/resources/js/codemirror234/mode/htmlmixed/htmlmixed.js', array('wpcf-js'));
 	wp_enqueue_script( 'wpcf-form-codemirror-editor-resize' ,
 		WPCF_RELPATH . '/resources/js/jquery_ui/jquery.ui.resizable.min.js', array('wpcf-js'));
 
-	wp_enqueue_style( 'wpcf-css-editor',
-		WPCF_RELPATH . '/resources/js/codemirror234/lib/codemirror.css' );
-	//wp_enqueue_style( 'wpcf-css-editor-resize',
-	//        WPCF_RELPATH . '/resources/js/jquery_ui/jquery.ui.theme.min.css' );
-	wp_enqueue_style( 'wpcf-usermeta',
-		WPCF_EMBEDDED_RES_RELPATH . '/css/usermeta.css' );
+	wp_enqueue_style( 'wpcf-usermeta', WPCF_EMBEDDED_RES_RELPATH . '/css/usermeta.css' );
 
 	wp_enqueue_style( 'font-awesome' );
 
@@ -518,18 +489,17 @@ function wpcf_admin_enqueue_group_edit_page_assets() {
 /**
  * Menu page hook.
  */
-function wpcf_admin_menu_edit_fields_hook()
-{
+function wpcf_admin_menu_edit_fields_hook() {
 	wpcf_admin_enqueue_group_edit_page_assets();
 
-    require_once WPCF_INC_ABSPATH . '/fields.php';
-    require_once WPCF_INC_ABSPATH . '/fields-form.php';
-//    $form = wpcf_admin_fields_form();
-    //require_once WPCF_INC_ABSPATH.'/classes/class.types.admin.edit.custom.fields.group.php';
-    $wpcf_admin = new Types_Admin_Edit_Custom_Fields_Group();
-    $wpcf_admin->init_admin();
-    $form = $wpcf_admin->form();
-    wpcf_form( 'wpcf_form_fields', $form );
+	require_once WPCF_INC_ABSPATH . '/fields.php';
+	require_once WPCF_INC_ABSPATH . '/fields-form.php';
+	//    $form = wpcf_admin_fields_form();
+
+	$wpcf_admin = new Types_Admin_Edit_Custom_Fields_Group();
+	$wpcf_admin->init_admin();
+	$form = $wpcf_admin->form();
+	wpcf_form( 'wpcf_form_fields', $form );
 }
 
 /**
@@ -541,7 +511,7 @@ function wpcf_admin_menu_edit_fields()
     $post_type = current_filter();
     $title = __('View Post Field Group', 'wpcf');
     if ( isset( $_GET['group_id'] ) ) {
-        if ( WPCF_Roles::user_can_edit('custom-field', array('id' => $_GET['group_id']))) {
+        if ( WPCF_Roles::user_can_edit('custom-field', array('id' => (int) $_GET['group_id']))) {
             $title = __( 'Edit Post Field Group', 'wpcf' );
             $add_new = array(
                 'page' => 'wpcf-edit',
@@ -559,6 +529,7 @@ function wpcf_admin_menu_edit_fields()
     wpcf_add_admin_footer();
 }
 
+
 function wpcf_admin_page_add_options( $name, $label)
 {
     $option = 'per_page';
@@ -569,6 +540,7 @@ function wpcf_admin_page_add_options( $name, $label)
     );
     add_screen_option( $option, $args );
 }
+
 
 function wpcf_admin_menu_summary_cpt_ctt_hook()
 {
@@ -640,20 +612,21 @@ function wpcf_admin_menu_edit_type_hook()
     wp_enqueue_script( 'wpcf-custom-types-form',
             WPCF_RES_RELPATH . '/js/'
             . 'custom-types-form.js', array('jquery', 'jquery-ui-dialog', 'jquery-masonry'), WPCF_VERSION );
-    wp_enqueue_script( 'wpcf-form-validation',
-            WPCF_RES_RELPATH . '/js/'
-            . 'jquery-form-validation/jquery.validate.min.js', array('jquery'),
-            WPCF_VERSION );
-    wp_enqueue_script( 'wpcf-form-validation-additional',
-            WPCF_RES_RELPATH . '/js/'
-            . 'jquery-form-validation/additional-methods.min.js',
-            array('jquery'), WPCF_VERSION );
+
     wp_enqueue_style('wp-jquery-ui-dialog');
-    add_action( 'admin_footer', 'wpcf_admin_types_form_js_validation' );
+
+	$asset_manager = Types_Asset_Manager::get_instance();
+	$asset_manager->enqueue_scripts(
+		array(
+			Types_Asset_Manager::SCRIPT_JQUERY_UI_VALIDATION,
+			Types_Asset_Manager::SCRIPT_ADDITIONAL_VALIDATION_RULES,
+        )
+    );
+
+			add_action( 'admin_footer', 'wpcf_admin_types_form_js_validation' );
     wpcf_post_relationship_init();
 
 	// New page controller script.
-	$asset_manager = Types_Asset_Manager::get_instance();
 	$asset_manager->enqueue_scripts( Types_Asset_Manager::SCRIPT_PAGE_EDIT_POST_TYPE );
 
     /**
@@ -704,21 +677,22 @@ function wpcf_admin_menu_edit_type()
 function wpcf_admin_menu_edit_tax_hook()
 {
     do_action( 'wpcf_admin_page_init' );
-    wp_enqueue_script( 'wpcf-form-validation',
-            WPCF_RES_RELPATH . '/js/'
-            . 'jquery-form-validation/jquery.validate.min.js', array('jquery'),
-            WPCF_VERSION );
-    wp_enqueue_script( 'wpcf-form-validation-additional',
-            WPCF_RES_RELPATH . '/js/'
-            . 'jquery-form-validation/additional-methods.min.js',
-            array('jquery'), WPCF_VERSION );
+
     wp_enqueue_script( 'wpcf-taxonomy-form',
         WPCF_RES_RELPATH . '/js/'
         . 'taxonomy-form.js', array( 'jquery' ), WPCF_VERSION );
 
-	// New page controller script.
+
 	$asset_manager = Types_Asset_Manager::get_instance();
-	$asset_manager->enqueue_scripts( Types_Asset_Manager::SCRIPT_PAGE_EDIT_TAXONOMY );
+	$asset_manager->enqueue_scripts(
+		array(
+			Types_Asset_Manager::SCRIPT_JQUERY_UI_VALIDATION,
+			Types_Asset_Manager::SCRIPT_ADDITIONAL_VALIDATION_RULES,
+
+			// New page controller script.
+			Types_Asset_Manager::SCRIPT_PAGE_EDIT_TAXONOMY
+		)
+	);
 
     add_action( 'admin_footer', 'wpcf_admin_tax_form_js_validation' );
     require_once WPCF_EMBEDDED_INC_ABSPATH . '/custom-taxonomies.php';
@@ -895,35 +869,6 @@ function wpcf_render_import_form() {
     echo '</form>';
 }
 
-
-
-/**
- * Menu page hook.
- */
-function wpcf_admin_menu_migration_hook()
-{
-    do_action( 'wpcf_admin_page_init' );
-    require_once WPCF_INC_ABSPATH . '/fields.php';
-    require_once WPCF_INC_ABSPATH . '/custom-types.php';
-    require_once WPCF_INC_ABSPATH . '/custom-taxonomies.php';
-    require_once WPCF_INC_ABSPATH . '/migration.php';
-    $form = wpcf_admin_migration_form();
-    wpcf_form( 'wpcf_form_migration', $form );
-}
-
-/**
- * Menu page display.
- */
-function wpcf_admin_menu_migration()
-{
-    wpcf_add_admin_header( __( 'Migration', 'wpcf' ) );
-    echo '<form method="post" action="" id="wpcf-migration-form" class="wpcf-migration-form '
-    . 'wpcf-form-validate" enctype="multipart/form-data">';
-    $form = wpcf_form( 'wpcf_form_migration' );
-    echo $form->renderForm();
-    echo '</form>';
-    wpcf_add_admin_footer();
-}
 
 add_filter( 'toolset_filter_toolset_register_settings_section', 'wpcf_register_settings_custom_content_section', 20 );
 
@@ -1330,7 +1275,7 @@ function wpcf_register_settings_wpml_section( $sections ) {
 	if ( $wpml_installed ) {
 		$sections['wpml'] = array(
 			'slug'	=> 'wpml',
-			'title'	=> __( 'WPML integration', 'wpv-views' )
+			'title'	=> __( 'WPML integration', 'wpcf' )
 		);
 	}
 	return $sections;

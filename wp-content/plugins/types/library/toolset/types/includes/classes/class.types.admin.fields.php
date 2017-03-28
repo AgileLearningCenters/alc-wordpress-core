@@ -591,7 +591,7 @@ class Types_Admin_Fields extends Types_Admin_Page
                     '#title' => sprintf( '%s <small>(%s)</small>', $data['name'], $data['type']),
                     '#value' => 0,
                     '#inline' => true,
-                    '#before' => '<li class="js-wpcf-tooltip wpcf-custom-field-disabled" data-tooltip="'.__( 'This field cannot be shown in Post Type listing due to its complexity.', 'types' ).'">',
+                    '#before' => '<li class="js-wpcf-tooltip wpcf-custom-field-disabled" data-tooltip="'.__( 'This field cannot be shown in Post Type listing due to its complexity.', 'wpcf' ).'">',
                     '#after' => '</li>',
                     '#default_value' => 0,
                     '#attributes' => array(

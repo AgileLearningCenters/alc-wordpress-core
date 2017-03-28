@@ -8,7 +8,7 @@
 * @since unknown
 */
 
-if ( ! class_exists( 'Toolset_Admin_Bar_Menu' ) ) {
+if ( ! class_exists( 'Toolset_Admin_Bar_Menu', false ) ) {
 
     class Toolset_Admin_Bar_Menu {
         
@@ -180,7 +180,8 @@ if ( ! class_exists( 'Toolset_Admin_Bar_Menu' ) ) {
 		public function admin_bar_menu_disable( $state ) {
 			$toolset_options = get_option( 'toolset_options', array() );
 			$toolset_admin_bar_menu_remove = ( isset( $toolset_options['show_admin_bar_shortcut'] ) && $toolset_options['show_admin_bar_shortcut'] == 'off' ) ? true : false;
-			if ( $toolset_admin_bar_menu_remove ) {
+			$disable_admin_bar_filter = apply_filters('remove_toolset_admin_bar', false);
+			if ( $toolset_admin_bar_menu_remove || $disable_admin_bar_filter === true ) {
 				$state = true;
 			}
 			return $state;
@@ -580,7 +581,7 @@ if ( ! class_exists( 'Toolset_Admin_Bar_Menu' ) ) {
          * It is going to be like "post_type|archive" or null if link should not be displayed
          * @return string {post_type or archive_type or taxonomy or 404}|{page or archive}
          */
-        private function get_context() {
+        public function get_context() {
 
             // Rule of thumb: if there is a list of posts, it is an archive
             
@@ -664,7 +665,7 @@ if ( ! class_exists( 'Toolset_Admin_Bar_Menu' ) ) {
          * @param int $post_id must be layout or template id if !$is_new, else post
          * @return string title for menu subitem
          */
-        private function get_title( $plugin, $is_new, $type, $class, $post_id = null) {
+        public function get_title( $plugin, $is_new, $type, $class, $post_id = null) {
 
             if ( $is_new ) {
                 /* Create */
@@ -733,8 +734,6 @@ if ( ! class_exists( 'Toolset_Admin_Bar_Menu' ) ) {
             
             if ( 'page' === $class && '404' === $type && 'layouts' === $plugin ) {
                 $selection = __( 'Error 404 page', 'wpv-views' );
-            } else if ( 'page' === $type ) {
-                $selection = get_the_title( $post_id );
             } else if ( 'page' === $class ) {
                 $post_type = get_post_type_object( $type );
                 $selection = ucfirst( $post_type->label );

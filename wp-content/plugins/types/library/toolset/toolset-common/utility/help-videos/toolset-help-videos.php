@@ -1,6 +1,6 @@
 <?php
 
-if( !class_exists('Toolset_HelpVideo') ) {
+if( ! class_exists( 'Toolset_HelpVideo', false ) ) {
 
     class Toolset_HelpVideo extends stdClass
     {
@@ -22,7 +22,7 @@ if( !class_exists('Toolset_HelpVideo') ) {
 
             if (empty($arguments)) return;
 
-            self::$current = isset($_REQUEST[self::KEY]) ? $_REQUEST[self::KEY] : null;
+            self::$current = isset($_REQUEST[self::KEY]) ? sanitize_text_field( $_REQUEST[self::KEY] ) : null;
 
             if (self::$current === null) return;
 
@@ -54,13 +54,13 @@ if( !class_exists('Toolset_HelpVideo') ) {
 
         public function add_register_scripts($scripts)
         {
-            $scripts[] = new Toolset_Script('toolset-help-video', TOOLSET_COMMON_URL . '/utility/help-videos/res/js/toolset-help-videos.js', array('jquery', 'underscore', 'backbone', 'wp-mediaelement', 'toolset-utils'), '1.0', true);
+            $scripts['toolset-help-video'] = new Toolset_Script('toolset-help-video', TOOLSET_COMMON_URL . '/utility/help-videos/res/js/toolset-help-videos.js', array('jquery', 'underscore', 'backbone', 'wp-mediaelement', 'toolset-utils'), '1.0', true);
             return $scripts;
         }
 
         public function add_register_styles($styles)
         {
-            $styles[] = new Toolset_Style('toolset-help-video', TOOLSET_COMMON_URL . '/utility/help-videos/res/css/toolset-help-videos.css');
+            $styles['toolset-help-video'] = new Toolset_Style('toolset-help-video', TOOLSET_COMMON_URL . '/utility/help-videos/res/css/toolset-help-videos.css');
             return $styles;
         }
 
@@ -221,5 +221,7 @@ if( !class_exists('Toolset_HelpVideo') ) {
         }
     }
 
-    add_action('init', array('Toolset_VideoDetachedPage', 'getInstance'), 99);
+    add_action( 'admin_menu', array( 'Toolset_VideoDetachedPage', 'getInstance' ), 99 );
+    
+
 }

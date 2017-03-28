@@ -102,35 +102,9 @@ function wpcf_ajax_embedded() {
 			
 			$target_post_type = isset( $_GET['post_type_child'] ) ? sanitize_text_field( $_GET['post_type_child'] ) : '';
 			
-			$has_permissions = true;
-			if ( 
-				class_exists( 'Access_Helper' ) 
-				&& class_exists( 'TAccess_Loader' )
-				&& $target_post_type != ''
-			) {
-				$model = TAccess_Loader::get('MODEL/Access');
-				$settings_access = $model->getAccessTypes();
-				if ( isset( $settings_access[$target_post_type] ) ) {
-					$role = Access_Helper::wpcf_get_current_logged_user_role();
-					if ( $role == '' ) {
-						$role = 'guest';
-						$user_level = 0;	
-					} 
-					if ( $role != 'administrator' ) {
-						if ( $role != 'guest') {
-							$user_level = Access_Helper::wpcf_get_current_logged_user_level( $current_user );
-						}
-						$has_permissions = Access_Helper::wpcf_access_check_if_user_can( $settings_access[$target_post_type]['permissions']['publish']['role'], $user_level );
-					}
-				} else if ( ! current_user_can( 'publish_posts' ) ) {
-					$has_permissions = false;
-				}
-			} else {
-				if ( ! current_user_can( 'publish_posts' ) ) {
-					$has_permissions = false;
-				}
-			}
-			
+			$has_permissions  = current_user_can( 'publish_posts' );
+			$has_permissions = apply_filters('toolset_access_api_get_post_type_permissions', $has_permissions, $target_post_type, 'publish');
+						
 			if ( ! $has_permissions ) {
 				$output = '<tr><td>' . __( 'You do not have rights to create new items', 'wpcf' ) . '</td></tr>';
 			} else if ( 
@@ -370,7 +344,7 @@ function wpcf_ajax_embedded() {
         case 'um_repetitive_add':
 
             if ( isset( $_GET['user_id'] ) ) {
-                $user_id = $_GET['user_id'];
+                $user_id = (int) $_GET['user_id'];
             } else {
                 $user_id = wpcf_usermeta_get_user();
             }
@@ -520,7 +494,7 @@ function wpcf_ajax_embedded() {
                 $args = array(
                     'posts_per_page' => apply_filters( 'wpcf_pr_belongs_post_posts_per_page', $posts_per_page ),
                     'post_status' => apply_filters( 'wpcf_pr_belongs_post_status', array( 'publish', 'private' ) ),
-                    'post_type' => $_REQUEST['post_type'],
+                    'post_type' => sanitize_text_field( $_REQUEST['post_type'] ),
                     'suppress_filters' => 1,
                 );
 
@@ -570,7 +544,7 @@ function wpcf_ajax_embedded() {
 
         case 'wpcf_entry_entry':
             if( current_user_can( 'edit_posts' ) && isset($_REQUEST['p'])) {
-                $wpcf_post = get_post($_REQUEST['p'], ARRAY_A);
+                $wpcf_post = get_post( (int) $_REQUEST['p'], ARRAY_A );
                 if ( isset($wpcf_post['ID']) ) {
                         $post_title = $wpcf_post['post_title'];
                         if ( empty($post_title) ) {

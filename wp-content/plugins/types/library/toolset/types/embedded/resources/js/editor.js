@@ -125,6 +125,10 @@ var tedFrame = (function(window, $){
 
         // Bind click to the Colorbox close button
         jQuery('.js-close-types-popup').on('click',function(){
+			if (ted.callback == 'views_wizard') {
+                window.parent.typesWPViews.wizardCancel();
+                return false;
+            }
             parent.jQuery.colorbox.close();
         });
     }
@@ -148,12 +152,15 @@ var tedFrame = (function(window, $){
 
     function insertShortcode( shortcode, esc_shortcode )
     {
-        if (ted.callback == 'views_wizard') {
-            window.parent.typesWPViews.wizardSendShortcode(shortcode);
+        if ( ted.callback == 'views_wizard' ) {
+            window.parent.typesWPViews.wizardSendShortcode( shortcode );
             return true;
         }
-		if (ted.callback == 'admin_bar') {
-            window.parent.typesWPViews.adminBarCreateShortcode(shortcode);
+		if ( 
+			ted.callback == 'admin_bar' 
+			|| ted.callback == 'input_append'
+		) {
+            window.parent.typesWPViews.interceptCreateShortcode( shortcode );
             return true;
         }
         // Check if there is custom handler

@@ -9,9 +9,6 @@ require_once 'class.field_factory.php';
  */
 class WPToolset_Field_Date extends FieldFactory {
 
-    // 15/10/1582 00:00 - 31/12/3000 23:59
-    protected static $_mintimestamp = -12219292800, $_maxtimestamp = 32535215940;
-
     public function init() {
         $this->set_placeholder_as_attribute();
     }
@@ -96,10 +93,14 @@ class WPToolset_Field_Date extends FieldFactory {
         $data = $this->getData();
 
         $field_disable = false;
-        if (
+        $def_class_aux = 'js-wpt-date-auxiliar';
+
+        if ( // if field should get duplicated
                 is_admin() && defined('WPML_TM_VERSION') && intval($wpml_action) === 1 && function_exists('wpcf_wpml_post_is_original') && !wpcf_wpml_post_is_original() && function_exists('wpcf_wpml_have_original') && wpcf_wpml_have_original()
         ) {
             $field_disable = true;
+            // this will stop js validation of date field value (as it will get duplicated)
+            $def_class_aux = '';
         }
 
         if (!$timestamp) {
@@ -110,8 +111,6 @@ class WPToolset_Field_Date extends FieldFactory {
         }
 
         $def_class = 'js-wpt-date';
-
-        $def_class_aux = 'js-wpt-date-auxiliar';
 
         if (
                 $field_disable || (
@@ -289,10 +288,22 @@ class WPToolset_Field_Date extends FieldFactory {
         return $form;
     }
 
+
+	/**
+	 * @return mixed|string|void
+	 * @deprecated Use Toolset_Date_Utils::get_supported_date_format() instead.
+	 */
     public static function getDateFormat() {
         return WPToolset_Field_Date_Scripts::getDateFormat();
     }
 
+	/**
+	 * @param $format
+	 *
+	 * @return mixed
+	 *
+	 * @deprecated This doesn't seem to be used anywhere.
+	 */
     protected function _dateToStrftime($format) {
         $format = str_replace('d', '%d', $format);
         $format = str_replace('D', '%a', $format);
@@ -428,6 +439,8 @@ class WPToolset_Field_Date extends FieldFactory {
      * DEPRECATED
      *
      * This is not used anymore
+     *
+     * @deprecated
      */
     public static function timeIsValid($time) {
         /*
@@ -457,6 +470,8 @@ class WPToolset_Field_Date extends FieldFactory {
      * DEPRECATED
      *
      * This is not used anymore
+     *
+     * @deprecated
      */
     public static function timeNegativeSupported() {
         return strtotime('Fri, 13 Dec 1950 20:45:54 UTC') === -601010046;

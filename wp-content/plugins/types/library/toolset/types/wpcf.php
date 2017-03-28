@@ -44,15 +44,6 @@ add_action( 'plugins_loaded', 'wpcf_init' );
 add_action( 'init', 'wpcf_wp_init' );
 
 
-add_action( 'after_setup_theme', 'wpcf_initialize_autoloader_full', 20 );
-
-/**
- * Configure autoloader also for full Types (it has been loaded by embedded Types by now).
- */
-function wpcf_initialize_autoloader_full() {
-	WPCF_Autoloader::get_instance()->add_path( WPCF_INC_ABSPATH . '/classes' );
-}
-
 /**
  * Deactivation hook.
  *
@@ -143,12 +134,12 @@ function ajax_wpcf_is_reserved_name() {
 
     // slug
     $name = isset( $_POST['slug'] )
-        ? $_POST['slug']
+        ? sanitize_text_field( $_POST['slug'] )
         : '';
 
     // context
     $context = isset( $_POST['context'] )
-        ? $_POST['context']
+        ? sanitize_text_field( $_POST['context'] )
         : false;
 
     // check also page slugs
@@ -162,11 +153,11 @@ function ajax_wpcf_is_reserved_name() {
 
         // for taxonomy
         if( $context == 'taxonomy' )
-            $_POST['ct']['wpcf-tax'] = $_POST['slugPreSave'];
+            $_POST['ct']['wpcf-tax'] = sanitize_text_field( $_POST['slugPreSave'] );
 
         // for post_type
         if( $context == 'post_type' )
-            $_POST['ct']['wpcf-post-type'] = $_POST['slugPreSave'];
+            $_POST['ct']['wpcf-post-type'] = sanitize_text_field( $_POST['slugPreSave'] );
     }
 
     if( $context == 'post_type' || $context == 'taxonomy' ) {
@@ -286,6 +277,8 @@ function wpcf_reserved_names()
         'category__not_in',
         'comments_per_page',
         'comments_popup',
+        'custom_css',
+        'customize_changeset',
         'cpage',
         'day',
         'debug',
@@ -506,4 +499,75 @@ function types_plugin_plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data,
         . sprintf( __( 'Types %s release notes', 'wpcf' ), TYPES_VERSION ) . '</a>';
     }
     return $plugin_meta;
+}
+
+/**
+ * Feedback
+ */
+function types_plugin_action_links ( $links ) {
+	$feedback = array(
+		'<a id="types-leave-feedback-trigger" href="https://www.surveymonkey.com/r/types-uninstall" target="_blank">' . __( 'Leave feedback', 'wpcf' ) . '</a>',
+	);
+	return array_merge( $links, $feedback );
+}
+
+add_action( 'load-plugins.php', 'types_ask_for_feedback_on_deactivation' );
+
+function types_ask_for_feedback_on_deactivation() {
+    // abort if message was shown in the last 90 days
+    $user_dismissed_notices = get_user_meta( get_current_user_id(), '_types_feedback_dont_show_until', true );
+    if( $user_dismissed_notices && current_time( 'timestamp' ) < $user_dismissed_notices )
+        return;
+
+    add_action( 'admin_footer', 'types_feedback_on_deactivation_dialog' );
+    add_action( 'admin_enqueue_scripts', 'types_feedback_on_deactivation_scripts' );
+
+    function types_feedback_on_deactivation_dialog() { ?>
+        <div id="types-feedback" style="display:none;width:500px;">
+        <div class="types-message-icon" style="float: left; margin: 2px 0 0 0; padding: 0 15px 0 0;">
+            <?php //<span class="icon-toolset-logo"></span> ?>
+            <span class="icon-types-logo ont-icon-64" style="color: #f05a29;""></span>
+        </div>
+
+        <div style="margin-top: 8px;">
+            <p>
+                <?php _e( "Do you have a minute to tell us why you're removing Types?", 'wpcf' ); ?>
+            </p>
+
+            <a id="types-leave-feedback-dialog-survey-link" class="button-primary types-button types-external-link" style="margin-right: 8px;" target="_blank"
+               href="https://www.surveymonkey.com/r/types-uninstall">
+                <?php _e( 'Leave feedback', 'wpcf' ); ?>
+            </a>
+            <a id="types-leave-feedback-dialog-survey-link-cancel" class="button-secondary"
+               href="javascript:void(0);">
+                <?php _e( 'Skip feedback', 'wpcf' ); ?>
+            </a>
+        </div>
+
+        <br style="clear:both;" />
+        </div>
+    <?php }
+    function types_feedback_on_deactivation_scripts() {
+        wp_enqueue_script(
+            'types-feedback-on-deactivation',
+            TYPES_RELPATH . '/public/js/feedback-on-deactivation.js',
+            array( 'jquery-ui-dialog' ),
+            TYPES_VERSION,
+            true
+        );
+
+        wp_enqueue_style(
+            'types-information',
+            TYPES_RELPATH . '/public/css/information.css',
+            array( 'wp-jquery-ui-dialog' ),
+            TYPES_VERSION
+        );
+    }
+}
+
+add_action( 'wp_ajax_types_feedback_dont_show_for_90_days', 'types_feedback_dont_show_for_90_days' );
+
+function types_feedback_dont_show_for_90_days() {
+    $in_90_days = strtotime( '+90 days', current_time( 'timestamp' ) );
+    update_user_meta( get_current_user_id(), '_types_feedback_dont_show_until', $in_90_days );
 }

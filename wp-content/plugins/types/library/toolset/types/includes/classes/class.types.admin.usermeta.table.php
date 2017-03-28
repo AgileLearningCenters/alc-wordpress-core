@@ -153,8 +153,8 @@ class Types_Admin_Usermeta_Control_Table extends WP_List_Table
         }
 
         // Order
-        $orderby = isset($_REQUEST['orderby']) && !empty($_REQUEST['orderby'])? $_REQUEST['orderby']:'c';
-        $order = isset($_REQUEST['order']) && !empty($_REQUEST['order'])? $_REQUEST['order']:'asc';
+        $orderby = isset($_REQUEST['orderby']) && !empty($_REQUEST['orderby'])? sanitize_text_field( $_REQUEST['orderby'] ):'c';
+        $order = isset($_REQUEST['order']) && !empty($_REQUEST['order'])? sanitize_text_field( $_REQUEST['order'] ):'asc';
         $sort_matches = array(
             'c' => 'name',
             'g' => 'groups_txt',

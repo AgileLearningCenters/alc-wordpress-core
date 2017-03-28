@@ -60,7 +60,7 @@ if ( ! function_exists( 'toolset_wplog' ) ) {
 
 }
 
-if ( ! class_exists( 'Toolset_WPLogger' ) ) {
+if ( ! class_exists( 'Toolset_WPLogger', false ) ) {
 	
 	class Toolset_WPLogger {
 

@@ -16,7 +16,7 @@ class Types_Helper_Create_Layout {
 		// set name if no available
 		if( ! $name ) {
 			$type_object = get_post_type_object( $type );
-			$name = sprintf( __( 'Template for %s', 'types' ), $type_object->labels->name );
+			$name = sprintf( __( 'Template for %s', 'wpcf' ), $type_object->labels->name );
 		}
 
 		$name = $this->validate_name( $name );

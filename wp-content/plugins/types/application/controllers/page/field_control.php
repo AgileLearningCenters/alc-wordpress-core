@@ -171,7 +171,8 @@ final class Types_Page_Field_Control extends Types_Page_Abstract {
 				'wp-admin',
 				'common',
 				'font-awesome',
-				'wpcf-css-embedded'
+				'wpcf-css-embedded',
+				'wp-jquery-ui-dialog'
 			)
 		);
 
@@ -184,10 +185,10 @@ final class Types_Page_Field_Control extends Types_Page_Abstract {
 			$main_handle,
 			TYPES_RELPATH . '/public/page/field_control/main.js',
 			array( 
-				'jquery', 'backbone', 'headjs', 'underscore',
+				'jquery', 'backbone', 'underscore',
+				Types_Asset_Manager::SCRIPT_HEADJS,
 				Types_Asset_Manager::SCRIPT_ADJUST_MENU_LINK,
 				Types_Asset_Manager::SCRIPT_KNOCKOUT,
-				Types_Asset_Manager::SCRIPT_DIALOG_BOXES,
 				Types_Asset_Manager::SCRIPT_UTILS
 			),
 			TYPES_VERSION
@@ -395,7 +396,7 @@ final class Types_Page_Field_Control extends Types_Page_Abstract {
 				'changeAssignmentToGroups' => __( 'Change assignment to field groups for the field', 'wpcf' ),
 				'deleteField' => __( 'Delete field', 'wpcf' ),
 				'deleteFields' => __( 'Delete multiple fields', 'wpcf' ),
-				'cannotDeleteUnmanagedFields' => __( 'Some fields will cannot be deleted because they are not managed by Types.', 'wpcf' ),
+				'cannotDeleteUnmanagedFields' => __( 'Some fields cannot be deleted because they are not managed by Types.', 'wpcf' ),
 				'changeFieldType' => __( 'Change field type for the field', 'wpcf' ),
 				'startManagingFieldsWithTypes' => __( 'Start managing fields with Types', 'wpcf' ),
 				'stopManagingFieldsWithTypes' => __( 'Stop managing fields with Types', 'wpcf' )

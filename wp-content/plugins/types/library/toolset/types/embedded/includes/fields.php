@@ -248,10 +248,89 @@ function wpcf_admin_fields_get_fields( $only_active = false,
 
         $v['meta_type'] = $option_name_to_meta_type[ $option_name ];
         $fields[$k] = wpcf_sanitize_field( $v );
+
+        $fields[ $k ] = apply_filters( 'toolset_filter_field_definition_array', $v, 'types_fields' );
     }
     $cache[$cache_key] = apply_filters( 'types_fields', $fields );
     return $cache[$cache_key];
 }
+
+
+add_filter( 'toolset_filter_field_definition_array', 'wpcf_update_mandatory_validation_rules', 10, 2 );
+
+
+/**
+ * Modify field validation rules.
+ *
+ * Hooked into toolset_filter_field_definition_array. Not to be used elsewhere.
+ *
+ * Add mandatory validation rules that have not been stored in the database but are needed by Types and toolset-forms
+ * to work properly. Namely it's the URL validation for file fields. On the contrary CRED needs these validation rules
+ * removed.
+ *
+ * @param array $field_definition A field definition array.
+ * @return array
+ * @since 2.2.4
+ */
+function wpcf_update_mandatory_validation_rules( $field_definition, $ignored ) {
+
+    // Add URL validation to file fields (containing URLs).
+    //
+    // This doesn't include embed files because they are more variable and the URL validation can be
+    // configured on the Edit Field Group page.
+    $file_fields = array( 'file', 'image', 'audio', 'video' );
+
+    $field_type = toolset_getarr( $field_definition, 'type' );
+    $is_file_field = in_array( $field_type, $file_fields );
+    $validation_rules = wpcf_ensarr( wpcf_getnest( $field_definition, array( 'data', 'validate' ) ) );
+    $has_url2_validation = array_key_exists( 'url2', $validation_rules );
+
+    if ( $is_file_field ) {
+
+        unset( $validation_rules['url'] );
+
+        if ( ! $has_url2_validation ) {
+
+            $default_validation_error_message = __( 'Please enter a valid URL address pointing to the file.', 'wpcf' );
+            $validation_error_messages = array(
+                'file' => $default_validation_error_message,
+                'audio' => __( 'Please enter a valid URL address pointing to the audio file.', 'wpcf' ),
+                'image' => __( 'Please enter a valid URL address pointing to the image file.', 'wpcf' ),
+                'video' => __( 'Please enter a valid URL address pointing to the video file.', 'wpcf' )
+            );
+
+            // The url2 validation doesn't require the TLD part of the URL.
+            $validation_rules['url2'] = array(
+                'active' => '1',
+                'message' => toolset_getarr( $validation_error_messages, $field_type, $default_validation_error_message ),
+                'suppress_for_cred' => true
+            );
+        }
+
+        $field_definition['data']['validate'] = $validation_rules;
+    }
+
+
+    // On the contrary, CRED file fileds MUST NOT use this validation otherwise it won't be possible to
+    // submit not changed fields on the edit form. Thus we're making sure that no such rule goes through.
+    //
+    // These field types come via WPToolset_Types::filterValidation().
+    $cred_file_fields = array( 'credfile', 'credimage', 'credaudio', 'credvideo' );
+    $is_cred_field = in_array( $field_type, $cred_file_fields );
+
+    if( $is_cred_field ) {
+
+        unset( $validation_rules['url'] );
+        unset( $validation_rules['url2'] );
+
+        $field_definition['data']['validate'] = $validation_rules;
+    }
+
+
+    return $field_definition;
+}
+
+
 
 function wpcf_admin_fields_get_field_by_meta_key( $meta_key )
 {
@@ -288,10 +367,10 @@ function wpcf_admin_fields_get_field( $field_id, $only_active = false,
 
 /**
  * Gets field by slug.
- * Modified by Gen, 13.02.2013
  *
- * @param type $slug
- * @return type
+ * @param string $slug
+ * @param string $meta_name
+ * @return array
  */
 function wpcf_fields_get_field_by_slug( $slug, $meta_name = 'wpcf-fields' ) {
     return wpcf_admin_fields_get_field( $slug, false, false, false, $meta_name );
@@ -771,15 +850,15 @@ function wpcf_get_usermeta_form_addon_submit() {
     $add = '';
     if ( !empty( $_POST['is_usermeta'] ) ) {
         if ( $_POST['display_username_for'] == 'post_autor' ) {
-            $add .= ' user_is_author="true"';
+            $add .= ' user_is_author=\'true\'';
         } elseif ( $_POST['display_username_for'] == 'current_user' ) {
-            $add .= ' user_current="true"';
+            $add .= ' user_current=\'true\'';
         }
          else {
             if ( $_POST['display_username_for_suser_selector'] == 'specific_user_by_id' ) {
-                $add .= ' user_id="' . sanitize_text_field($_POST['display_username_for_suser_id_value']) . '"';
+                $add .= ' user_id=\'' . sanitize_text_field($_POST['display_username_for_suser_id_value']) . '\'';
             } else {
-                $add .= ' user_name="' . sanitize_text_field($_POST['display_username_for_suser_username_value']) . '"';
+                $add .= ' user_name=\'' . sanitize_text_field($_POST['display_username_for_suser_username_value']) . '\'';
             }
         }
     }
@@ -863,26 +942,34 @@ function wpcf_admin_fields_get_groups_by_field( $field_id,
 /**
  * Saves last field settings when inserting from toolbar.
  *
- * @param type $field_id
- * @param type $settings
- * @param type $append
+ * @param $field_id
+ * @param $settings
+ * @param bool $append
+ * @param bool $overwrite
  */
-function wpcf_admin_fields_save_field_last_settings( $field_id, $settings,
-        $append = false, $overwrite = false ) {
-    $data = get_user_meta( get_current_user_id(), 'wpcf-field-settings', true );
-    if ( $append && isset( $data[$field_id] ) && is_array( $data[$field_id] ) ) {
-        $data[$field_id] = $overwrite ? array_merge( $data[$field_id], $settings ) : array_merge( $settings,
-                        $data[$field_id] );
-    } else {
-        $data[$field_id] = $settings;
-    }
-    update_user_meta( get_current_user_id(), 'wpcf-field-settings', $data );
+function wpcf_admin_fields_save_field_last_settings(
+	$field_id, $settings, $append = false, $overwrite = false
+) {
+	$data = wpcf_ensarr( get_user_meta( get_current_user_id(), 'wpcf-field-settings', true ) );
+	if ( $append && isset( $data[ $field_id ] ) && is_array( $data[ $field_id ] ) ) {
+		$data[ $field_id ] = (
+			$overwrite
+			? array_merge( $data[ $field_id ], $settings )
+			: array_merge( $settings, $data[ $field_id ] )
+		);
+	} else {
+		$data[ $field_id ] = $settings;
+	}
+	update_user_meta( get_current_user_id(), 'wpcf-field-settings', $data );
 }
+
 
 /**
  * Gets last field settings when inserting from toolbar.
  *
- * @param type $field_id
+ * @param $field_id
+ *
+ * @return array
  */
 function wpcf_admin_fields_get_field_last_settings( $field_id ) {
     $data = get_user_meta( get_current_user_id(), 'wpcf-field-settings', true );
@@ -940,7 +1027,7 @@ function wpcf_get_all_field_slugs_except_current_group( $current_group = false )
         }
     }
     if( !$current_group && isset( $_REQUEST['group_id'] ) )
-        $current_group = $_REQUEST['group_id'];
+        $current_group = (int) $_REQUEST['group_id'];
 
     // if no new group
     if( $current_group && !empty( $all_fields ) ) {
@@ -965,3 +1052,40 @@ function wpcf_get_all_field_slugs_except_current_group( $current_group = false )
     return $all_slugs;
 }
 add_action('wp_ajax_wpcf_get_all_field_slugs_except_current_group', 'wpcf_get_all_field_slugs_except_current_group');
+
+
+/**
+ * Helper function used on submitting a form with custom fields.
+ *
+ * When there's nothing checked in a checkbox/checkboxes/radio fields, there is no corresponding element
+ * in $_POST['wpcf'][ $field_slug ], which would lead to _not removing_ the value from the database because of
+ * the way the submission data is further processed.
+ *
+ * Here, we just create the key for the field without any further notification, and actual saving
+ * these fields' values will be handled later as a special case via wpcf_update_checkboxes_field().
+ *
+ * @param array $wpcf_form_data Form data, usually coming from $_POST['wpcf'].
+ * @param array $fields An associative array with checkbox/checkboxes/radio fields,
+ *     where keys are field slugs with the 'wpcf-' prefix.
+ *
+ * @return array Updated form data with added keys for provided fields.
+ * @since 2.2.7
+ */
+function wpcf_adjust_form_input_for_checkboxlike_fields( $wpcf_form_data, $fields ) {
+
+	if( ! is_array( $wpcf_form_data ) ) {
+		return array();
+	}
+
+	if( is_array( $fields ) ) {
+		foreach ( $fields as $field_key => $field_value ) {
+			$field_slug = preg_replace( '/^wpcf\-/', '', $field_key );
+			if ( array_key_exists( $field_slug, $wpcf_form_data ) ) {
+				continue;
+			}
+			$wpcf_form_data[ $field_slug ] = false;
+		}
+	}
+
+	return $wpcf_form_data;
+}

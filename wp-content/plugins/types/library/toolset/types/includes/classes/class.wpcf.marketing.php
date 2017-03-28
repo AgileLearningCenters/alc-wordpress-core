@@ -48,6 +48,7 @@ class WPCF_Types_Marketing
         if ( defined('WPV_VERSION') ) {
             return $content;
         }
+
         /**
          * Allow to turn off views advert.
          *
@@ -61,6 +62,10 @@ class WPCF_Types_Marketing
         if ( !apply_filters('show_views_advertising', true )) {
             return;
         }
+
+	    // documentation urls
+	    Types_Helper_Url::load_documentation_urls();
+	    
         $content .= '<div class="types-marketing types-marketing-views">';
         $content .= sprintf(
             '<h4><span class="icon-toolset-logo ont-color-orange"></span>%s</h4>',

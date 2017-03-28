@@ -43,7 +43,7 @@ class WPToolset_Forms_Validation {
             'form_id' => $formID,
             'use_ajax' => (!is_admin() && isset($formSET->form['use_ajax']) && $formSET->form['use_ajax'] == 1) ? true : false,
             'operation_ok' => __('Operation completed successfully', 'wpv-views'),
-            'operation_ko' => __('Operation not completed successfully', 'wpv-views'),
+            'operation_ko' => __('There was an error while submitting the form', 'wpv-views'),
             'delay_message' => __('You are being redirectd. Please Wait.', 'wpv-views')
                 )
         );
@@ -136,16 +136,16 @@ class WPToolset_Forms_Validation {
     /**
      * Bulk PHP validation.
      *
-     * @param type $field Field class instance
-     * @param type $value
+     * @param FieldFactory $field Field instance.
      * @return \WP_Error|boolean
      * @throws Exception
      */
-    public function validateField($field) {
-        $value = apply_filters('wptoolset_validation_value_' . $field->getType(), $field->getValue());
-        $rules = $this->_parseRules($field->getValidationData(), $value);
+    public function validateField( $field ) {
+        $value = apply_filters( 'wptoolset_validation_value_' . $field->getType(), $field->getValue() );
+        $rules = $this->_parseRules( $field->getValidationData(), $value );
+
         // If not required but empty - skip
-        if (!isset($rules['required']) && ( is_null($value) || $value === false || $value === '' )) {
+        if ( ! isset( $rules['required'] ) && $this->is_field_semantically_empty( $value, $field->getType() ) ) {
             return true;
         }
 
@@ -153,16 +153,15 @@ class WPToolset_Forms_Validation {
             $errors = array();
             foreach ($rules as $rule => $args) {
                 if (!$this->validate($rule, $args['args'])) {
-                    /**
-                     * Allow turn off field name.
+
+                	/**
+	                 * toolset_common_validation_add_field_name_to_error
+	                 *
+                     * Allow to avoid using the field name in the validation error message.
                      *
-                     * Allow turn off field name from error message.
-                     *
-                     * @since x.x.x
-                     *
-                     * @param boolean $var show field title in message, * default true.
+                     * @param boolean $var show field title in message. Default is true.
                      */
-                    if (apply_filters('toolset_common_validation_add_field_name_to_error', true)) {
+                    if( apply_filters( 'toolset_common_validation_add_field_name_to_error', true ) ) {
                         $errors[] = $field->getTitle() . ' ' . $args['message'];
                     } else {
                         $errors[] = $args['message'];
@@ -176,6 +175,25 @@ class WPToolset_Forms_Validation {
             return new WP_Error(__CLASS__ . '::' . __METHOD__, 'Field not validated', $errors);
         }
         return true;
+    }
+
+
+	/**
+	 * Check that the semantic (display) value is empty, opposed to checking the raw data from *meta database row.
+	 *
+	 * @param mixed|string $value Raw field value.
+	 * @param string $field_type Field type slug.
+	 * @return bool
+	 * @since 2.3
+	 */
+    protected function is_field_semantically_empty( $value, $field_type ) {
+    	switch( $field_type ) {
+		    case 'skype':
+		    	// Check the emptiness of skype name only, ignore the rest.
+				return $this->is_field_semantically_empty( toolset_getarr( $value, 'skypename' ), 'textfield' );
+		    default:
+		    	return ( is_null( $value ) || $value === false || $value === '' );
+	    }
     }
 
     protected function _parseRules($rules, $value) {

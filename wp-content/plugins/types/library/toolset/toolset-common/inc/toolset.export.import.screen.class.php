@@ -12,7 +12,7 @@ if ( ! defined( 'WPT_EXPORT_IMPORT_SCREEN' ) ) {
 * @since 1.9
 */
 
-if ( ! class_exists( 'Toolset_Export_Import_Screen' ) ) {
+if ( ! class_exists( 'Toolset_Export_Import_Screen', false ) ) {
 
     /**
      * Class to show promotion message.
@@ -121,8 +121,13 @@ if ( ! class_exists( 'Toolset_Export_Import_Screen' ) ) {
 				<div class="toolset-debug-info-helper">
 					<p>
 					<?php
+					echo __( 'Sometimes, our Customer Support personnel ask you to provide debug information. This information helps them give you quicker and better support.', 'wpv-views' );
+					?>
+					</p>
+					<p>
+					<?php
 					echo sprintf(
-						__( 'Need help? Grab some %1$sdebug information%2$s.', 'wpv-views' ),
+						__( 'To get this information, go to %1$sToolset Debug Information%2$s.', 'wpv-views' ),
 						'<a href="' . admin_url( 'admin.php?page=toolset-debug-information' ) . '">',
 						'</a>'
 					);

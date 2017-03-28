@@ -150,13 +150,17 @@ class WPToolset_Types
      * Loop over validation settings and create array of validation rules.
      * array( $rule => array( 'args' => array, 'message' => string ), ... )
      *
-     * @param array|string $field settings array (as stored in DB) or field ID
+     * @param array|string $config settings array (as stored in DB) or field ID
      * @return array array( $rule => array( 'args' => array, 'message' => string ), ... )
      */
-    public static function filterValidation($config)
+    public static function filterValidation( $config )
     {
         $config = self::getConfig( $config );
         if ( is_null( $config ) ) return array();
+
+        // Handle surplus url/url2 validation rules for CRED fields through this
+        $config = apply_filters( 'toolset_filter_field_definition_array', $config, 'filter_validation' );
+
         /* Placeholder for field value '$value'.
          *
          * Used for validation settings.

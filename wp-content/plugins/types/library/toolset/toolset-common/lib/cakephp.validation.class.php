@@ -29,7 +29,7 @@
  * @since         CakePHP v 1.2.0.3830
  */
 //class Validation extends Object {
-if ( ! class_exists( 'Toolset_CakePHP_Validation' ) ) {
+if ( ! class_exists( 'Toolset_CakePHP_Validation', false ) ) {
 
     class Toolset_CakePHP_Validation {
 

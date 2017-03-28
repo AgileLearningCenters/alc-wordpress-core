@@ -282,6 +282,8 @@ class WPCF_Page_Listing_Termmeta_Table extends WPCF_Page_Listing_Table {
 
 		foreach ( $selected_field_group_ids as $field_group_id ) {
 
+			$field_group_id = (int) $field_group_id;
+
 			if ( ! WPCF_Roles::user_can_edit( 'term-field', array( 'id' => $field_group_id ) ) ) {
 				continue;
 			}

@@ -6,7 +6,7 @@ require_once 'class.textfield.php';
  *
  * @author Srdjan
  */
-class WPToolset_Field_Recaptcha extends WPToolset_Field_Textfield
+class WPToolset_Field_Recaptcha_v1 extends WPToolset_Field_Textfield
 {
     private $pubkey = '';
     private $privkey = '';

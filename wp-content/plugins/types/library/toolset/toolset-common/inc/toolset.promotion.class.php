@@ -12,7 +12,7 @@ if ( ! defined( 'WPT_PROMOTION' ) ) {
 * @since unknown
 */
 
-if ( ! class_exists( 'Toolset_Promotion' ) ) {
+if ( ! class_exists( 'Toolset_Promotion', false ) ) {
 
     /**
      * Class to show promotion message.
@@ -107,7 +107,7 @@ if ( ! class_exists( 'Toolset_Promotion' ) ) {
                             <ul>
                                 <li class="template"><?php _e('Create templates', 'wpcf'); ?></li>
                                 <li class="layout"><?php _e('Design page layouts using drag-and-drop', 'wpcf'); ?></li>
-                                <li class="toolset-search"><?php _e('Build parametric searches', 'wpcf'); ?></li>
+                                <li class="toolset-search"><?php _e('Build custom searches', 'wpcf'); ?></li>
                             </ul>
                             <ul>
                                 <li class="list"><?php _e('Display lists of content', 'wpcf'); ?></li>

@@ -1,102 +1,87 @@
 <?php
+
 // Add usermeta and post fileds groups to access.
 $usermeta_access = new Usermeta_Access;
 $fields_access = new Post_Fields_Access;
-//setlocale(LC_ALL, 'nl_NL');
+
 
 /**
  * Add User Fields menus hook
  *
- * @author Gen gen.i@icanlocalize.com
- * @since Types 1.3
- *
- *
+ * @since 1.3
  */
 function wpcf_admin_menu_edit_user_fields_hook() {
-    do_action( 'wpcf_admin_page_init' );
+	do_action( 'wpcf_admin_page_init' );
 
-    // Group filter
-    wp_enqueue_script( 'wpcf-filter-js',
-            WPCF_EMBEDDED_RES_RELPATH
-            . '/js/custom-fields-form-filter.js', array('jquery'), WPCF_VERSION );
-    // Form
-    wp_enqueue_script( 'wpcf-form-validation',
-            WPCF_EMBEDDED_RES_RELPATH . '/js/'
-            . 'jquery-form-validation/jquery.validate.min.js', array('jquery'),
-            WPCF_VERSION );
-    wp_enqueue_script( 'wpcf-form-validation-additional',
-            WPCF_EMBEDDED_RES_RELPATH . '/js/'
-            . 'jquery-form-validation/additional-methods.min.js',
-            array('jquery'), WPCF_VERSION );
-    // Scroll
-    wp_enqueue_script( 'wpcf-scrollbar',
-        WPCF_EMBEDDED_TOOLSET_RELPATH . '/toolset-common/visual-editor/res/js/scrollbar.js',
-            array('jquery') );
-    wp_enqueue_script( 'wpcf-mousewheel',
-        WPCF_EMBEDDED_TOOLSET_RELPATH . '/toolset-common/visual-editor/res/js/mousewheel.js',
-            array('wpcf-scrollbar') );
-    //Css editor
-    wp_enqueue_script( 'wpcf-form-codemirror',
-            WPCF_RELPATH . '/resources/js/codemirror234/lib/codemirror.js',
-            array('wpcf-js') );
-    wp_enqueue_script( 'wpcf-form-codemirror-css-editor',
-            WPCF_RELPATH . '/resources/js/codemirror234/mode/css/css.js',
-            array('wpcf-js') );
-    wp_enqueue_script( 'wpcf-form-codemirror-html-editor',
-            WPCF_RELPATH . '/resources/js/codemirror234/mode/xml/xml.js',
-            array('wpcf-js') );
-    wp_enqueue_script( 'wpcf-form-codemirror-html-editor2',
-            WPCF_RELPATH . '/resources/js/codemirror234/mode/htmlmixed/htmlmixed.js',
-            array('wpcf-js') );
-    wp_enqueue_script( 'wpcf-form-codemirror-editor-resize',
-            WPCF_RELPATH . '/resources/js/jquery_ui/jquery.ui.resizable.min.js',
-            array('wpcf-js') );
+	// Group filter
+	wp_enqueue_script( 'wpcf-filter-js',
+		WPCF_EMBEDDED_RES_RELPATH
+		. '/js/custom-fields-form-filter.js', array( 'jquery' ), WPCF_VERSION );
+
+	// Form
+	$asset_manager = Types_Asset_Manager::get_instance();
+	$asset_manager->enqueue_scripts(
+		array(
+			Types_Asset_Manager::SCRIPT_JQUERY_UI_VALIDATION,
+			Types_Asset_Manager::SCRIPT_ADDITIONAL_VALIDATION_RULES,
+
+			// These scripts are needed only for the Styling editor
+			Types_Asset_Manager::SCRIPT_CODEMIRROR,
+			Types_Asset_Manager::SCRIPT_CODEMIRROR_CSS,
+			Types_Asset_Manager::SCRIPT_CODEMIRROR_XML,
+			Types_Asset_Manager::SCRIPT_CODEMIRROR_HTMLMIXED,
+			Types_Asset_Manager::SCRIPT_JSCROLLPANE,
+			Types_Asset_Manager::SCRIPT_MOUSEWHEEL
+		)
+	);
+
+	wp_enqueue_script( 'wpcf-form-codemirror-editor-resize',
+		WPCF_RELPATH . '/resources/js/jquery_ui/jquery.ui.resizable.min.js',
+		array( 'wpcf-js' ) );
 
 
+	wp_enqueue_style( 'wpcf-usermeta',
+		WPCF_EMBEDDED_RES_RELPATH . '/css/usermeta.css' );
 
-    wp_enqueue_style( 'wpcf-css-editor',
-            WPCF_RELPATH . '/resources/js/codemirror234/lib/codemirror.css' );
-    wp_enqueue_style( 'wpcf-usermeta',
-            WPCF_EMBEDDED_RES_RELPATH . '/css/usermeta.css' );
+	// MAIN
+	wp_enqueue_script( 'wpcf-fields-form',
+		WPCF_EMBEDDED_RES_RELPATH
+		. '/js/fields-form.js', array( 'wpcf-js' ) );
 
-    // MAIN
-    wp_enqueue_script( 'wpcf-fields-form',
-            WPCF_EMBEDDED_RES_RELPATH
-            . '/js/fields-form.js', array('wpcf-js') );
+	/**
+	 * fields form to manipulate fields
+	 */
+	wp_enqueue_script(
+		'wpcf-admin-fields-form',
+		WPCF_RES_RELPATH . '/js/fields-form.js',
+		array(),
+		WPCF_VERSION
+	);
 
-    /**
-     * fields form to manipulate fields
-     */
-    wp_enqueue_script(
-        'wpcf-admin-fields-form',
-        WPCF_RES_RELPATH.'/js/fields-form.js',
-        array(),
-        WPCF_VERSION
-    );
+	// Enqueue styles
 
-    /*
-     * Enqueue styles
-     */
-    wp_enqueue_style( 'wpcf-scroll', WPCF_EMBEDDED_TOOLSET_RELPATH . '/toolset-common/visual-editor/res/css/scroll.css' );
-    wp_enqueue_style( 'font-awesome' );
+	$asset_manager->enqueue_styles(
+		array(
+			// These styles are needed only for the Styling editor
+			Types_Asset_Manager::STYLE_CODEMIRROR,
+			Types_Asset_Manager::STYLE_EDITOR_ADDON_MENU_SCROLL
+		)
+	);
 
-    add_action( 'admin_footer', 'wpcf_admin_fields_form_js_validation' );
-    require_once WPCF_INC_ABSPATH . '/fields.php';
-    require_once WPCF_INC_ABSPATH . '/usermeta.php';
-    require_once WPCF_INC_ABSPATH . '/fields-form.php';
-    require_once WPCF_INC_ABSPATH . '/usermeta-form.php';
 
-    require_once WPCF_INC_ABSPATH.'/classes/class.types.admin.edit.meta.fields.group.php';
-    $wpcf_admin = new Types_Admin_Edit_Meta_Fields_Group();
-    $wpcf_admin->init_admin();
-    $form = $wpcf_admin->form();
-    wpcf_form( 'wpcf_form_fields', $form );
+	wp_enqueue_style( 'font-awesome' );
 
-    return;
+	add_action( 'admin_footer', 'wpcf_admin_fields_form_js_validation' );
+	require_once WPCF_INC_ABSPATH . '/fields.php';
+	require_once WPCF_INC_ABSPATH . '/usermeta.php';
+	require_once WPCF_INC_ABSPATH . '/fields-form.php';
+	require_once WPCF_INC_ABSPATH . '/usermeta-form.php';
 
-    $form = wpcf_admin_usermeta_form();
-    wpcf_form( 'wpcf_form_fields', $form );
-
+	require_once WPCF_INC_ABSPATH . '/classes/class.types.admin.edit.meta.fields.group.php';
+	$wpcf_admin = new Types_Admin_Edit_Meta_Fields_Group();
+	$wpcf_admin->init_admin();
+	$form = $wpcf_admin->form();
+	wpcf_form( 'wpcf_form_fields', $form );
 }
 
 /**
@@ -111,7 +96,7 @@ function wpcf_admin_menu_edit_user_fields()
     $post_type = current_filter();
     $title = __('View User Field Group', 'wpcf');
     if ( isset( $_GET['group_id'] ) ) {
-        $item = wpcf_admin_get_user_field_group_by_id($_GET['group_id']);
+        $item = wpcf_admin_get_user_field_group_by_id( (int) $_GET['group_id'] );
         if ( WPCF_Roles::user_can_edit('user-meta-field', $item) ) {
             $title = __( 'Edit User Field Group', 'wpcf' );
             $add_new = array(
@@ -238,7 +223,7 @@ if ( !isset( $_GET['post_type'] ) && isset( $_GET['post'] ) ) {
     isset( $_GET['post_type'] )
     && in_array( $_GET['post_type'], get_post_types( array('show_ui' => true) ) ) 
 ) {
-    $post_type = $_GET['post_type'];
+    $post_type = sanitize_text_field( $_GET['post_type'] );
 }
 
 /*
@@ -285,8 +270,8 @@ function wpcf_usermeta_get_user( $method = '' ){
 function wpcf_admin_post_add_usermeta_to_editor_js( $menu, $views_callback = false ){
     global $wpcf;
 
-    $post = wpcf_admin_get_edited_post();
-    if ( empty( $post ) ) {
+    $post = apply_filters( 'wpcf_filter_wpcf_admin_get_current_edited_post', null );
+    if ( ! $post ) {
         $post = (object) array('ID' => -1);
     }
 
@@ -345,155 +330,17 @@ function wpcf_admin_post_add_usermeta_to_editor_js( $menu, $views_callback = fal
 /**
  * Calls view function for specific field type.
  *
- * @global object $wpdb
+ * @param $field_id
+ * @param $params
+ * @param null $content
+ * @param string $code
  *
- * @param type $field
- * @param type $atts
- * @return type
+ * @return string
  *
- * @deprecated I can not find where it is being used, we use types_render_usermeta() instead
+ * @deprecated Use types_render_usermeta() instead.
  */
-function types_render_usermeta_field( $field_id, $params, $content = null,
-        $code = '' ) {
-
-    require_once WPCF_EMBEDDED_INC_ABSPATH . '/fields.php';
-    global $wpcf, $post, $wpdb;
-
-    // HTML var holds actual output
-    $html = '';
-
-    // Set post ID
-    $post_id = $post->ID;
-    if ( isset( $params['post_id'] ) && !empty( $params['post_id'] ) ) {
-        $post_id = $params['post_id'];
-    }
-
-    // Get field
-    $field = wpcf_fields_get_field_by_slug( $field_id, 'wpcf-usermeta' );
-
-    // If field not found return empty string
-    if ( empty( $field ) ) {
-
-        // Log
-        if ( !function_exists( 'wplogger' ) ) {
-            require_once WPCF_EMBEDDED_TOOLSET_ABSPATH . '/toolset-common/wplogger.php';
-        }
-        global $wplogger;
-        $wplogger->log( 'types_render_usermeta_field call for missing field \''
-                . $field_id . '\'', WPLOG_DEBUG );
-
-        return '';
-    }
-
-    //Get user By ID
-    if ( isset( $params['user_id'] ) ) {
-        $user_id = $params['user_id'];
-    } else if ( isset( $params['user_name'] ) ) { //Get user by login
-        $user_id = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT * FROM " . $wpdb->users . " WHERE user_login = %s",
-                $params['user_name']
-            )
-        );
-    } else if ( isset( $params['user_is_author'] ) ) { //Get Post author
-        $user_id = $post->post_author;
-    } else if ( isset( $params['user_current'] ) ) {//Get current logged user
-        $user_id = wpcf_usermeta_get_user();
-    } else { //If empty get post author, if no post, return empty
-        if ( !empty( $post_id ) ) {
-            $user_id = $post->post_author;
-        } else {
-            return;
-        }
-    }
-
-    if ( empty( $user_id ) ) {
-        return;
-    }
-
-    // Set field
-    $wpcf->usermeta_field->set( $user_id, $field );
-
-    // See if repetitive
-    if ( wpcf_admin_is_repetitive( $field ) ) {
-        $wpcf->usermeta_repeater->set( $user_id, $field );
-        $_meta = $wpcf->usermeta_repeater->_get_meta();
-        $meta = $_meta['custom_order'];
-//        $meta = get_post_meta( $post_id,
-//                wpcf_types_get_meta_prefix( $field ) . $field['slug'], false );
-        // Sometimes if meta is empty - array(0 => '') is returned
-        if ( (count( $meta ) == 1 ) ) {
-            $meta_id = key( $meta );
-            $_temp = array_shift( $meta );
-            if ( strval( $_temp ) == '' ) {
-                return '';
-            } else {
-
-                $params['field_value'] = $_temp;
-                return types_render_field_single( $field, $params, $content,
-                                $code, $meta_id );
-            }
-        } else if ( !empty( $meta ) ) {
-            $output = '';
-
-            if ( isset( $params['index'] ) ) {
-                $index = $params['index'];
-            } else {
-                $index = '';
-            }
-
-            // Allow wpv-for-each shortcode to set the index
-            $index = apply_filters( 'wpv-for-each-index', $index );
-
-            if ( $index === '' ) {
-                $output = array();
-                foreach ( $meta as $temp_key => $temp_value ) {
-                    $params['field_value'] = $temp_value;
-                    $temp_output = types_render_field_single( $field, $params,
-                            $content, $code, $temp_key );
-                    if ( !empty( $temp_output ) ) {
-                        $output[] = $temp_output;
-                    }
-                }
-                if ( !empty( $output ) && isset( $params['separator'] ) ) {
-                    $output = implode( html_entity_decode( $params['separator'] ),
-                            $output );
-                } else if ( !empty( $output ) ) {
-                    $output = implode( '', $output );
-                } else {
-                    return '';
-                }
-            } else {
-                // Make sure indexed right
-                $_index = 0;
-                foreach ( $meta as $temp_key => $temp_value ) {
-                    if ( $_index == $index ) {
-                        $params['field_value'] = $temp_value;
-                        return types_render_field_single( $field, $params,
-                                        $content, $code, $temp_key );
-                    }
-                    $_index++;
-                }
-                // If missed index
-                return '';
-            }
-            $html = $output;
-        } else {
-            return '';
-        }
-    } else {
-        $params['field_value'] = get_user_meta( $user_id,
-                wpcf_types_get_meta_prefix( $field ) . $field['slug'], true );
-        if ( $params['field_value'] == '' && $field['type'] != 'checkbox' ) {
-            return '';
-        }
-        $html = types_render_field_single( $field, $params, $content, $code,
-                $wpcf->usermeta_field->meta_object->umeta_id );
-    }
-
-    // API filter
-//    $wpcf->usermeta_field->set( $user_id, $field );
-    return $wpcf->usermeta_field->html( $html, $params );
+function types_render_usermeta_field( $field_id, $params, $content = null, $code = '' ) {
+	return types_render_usermeta( $field_id, $params, $content, $code );
 }
 
 /**
@@ -569,8 +416,6 @@ function wpcf_admin_user_profile_save_hook( $user_id )
 
 /*
  *  Register Usermeta Groups in Types Access
- *
- *
  */
 
 class Usermeta_Access

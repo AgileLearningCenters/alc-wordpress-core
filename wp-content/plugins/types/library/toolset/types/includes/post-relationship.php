@@ -14,7 +14,7 @@ function wpcf_post_relationship_init() {
     wp_enqueue_script(
         'wpcf-post-relationship',
         WPCF_EMBEDDED_RELPATH . '/resources/js/post-relationship.js',
-        array('jquery', 'select2'),
+        array('jquery', 'toolset_select2'),
         WPCF_VERSION
     );
     add_filter('wpcf_meta_box_order_defaults', 'wpcf_post_relationship_add_metabox', 10, 2);
@@ -111,7 +111,7 @@ function wpcf_pr_admin_edit_fields( $parent, $child ) {
 
     $post_type_parent = get_post_type_object( $parent );
     $post_type_child = get_post_type_object( $child );
-    if ( empty( $post_type_parent ) || empty( $post_type_child ) ) {
+    if ( null == $post_type_parent || null == $post_type_child ) {
         die( __( 'Wrong post types', 'wpcf' ) );
     }
     $relationships = get_option( 'wpcf_post_relationship', array() );
@@ -331,32 +331,47 @@ function wpcf_admin_metabox_relationship($post_type)
             )
         )
     );
-    $custom_types = get_option( WPCF_OPTION_NAME_CUSTOM_TYPES, array() );
-    if ( !isset($_REQUEST['wpcf-post-type']) || !isset( $custom_types[$_REQUEST['wpcf-post-type']] ) ) {
-        $form['alert'] = array(
-            '#type' => 'notice',
-            '#markup' => __( 'Please save first, before you can edit the relationship.', 'wpcf' ),
-        );
-        $form = wpcf_form(__FUNCTION__, $form);
-        echo $form->renderForm();
-        return false;
+
+	$custom_types = get_option( WPCF_OPTION_NAME_CUSTOM_TYPES, array() );
+
+	$is_error = false;
+	$error_message = '';
+
+	// Detect situations when we cannot configure post relationships yet. Render a message and finish.
+	$is_unsaved_post_type = ( ! isset( $_REQUEST['wpcf-post-type'] ) || ! isset( $custom_types[ $_REQUEST['wpcf-post-type'] ] ) );
+	if ( $is_unsaved_post_type ) {
+		$is_error = true;
+		$error_message = __( 'Please save first, before you can edit the relationship.', 'wpcf' );
+	}
+
+	$is_attachment = ( isset( $_REQUEST['wpcf-post-type'] ) && 'attachment' == $_REQUEST['wpcf-post-type'] );
+    if( $is_attachment ) {
+	    $is_error = true;
+	    $error_message = __( 'Post relationships are not allowed for the Media post type.', 'wpcf' );
     }
 
-    $post_type = false;;
+    if( $is_error ) {
+        $form['alert'] = array(
+            '#type' => 'notice',
+            '#markup' => $error_message,
+        );
+        $form = wpcf_form( __FUNCTION__, $form );
+        echo $form->renderForm();
+        return;
+    }
 
     $post_type = $custom_types[$_REQUEST['wpcf-post-type']];
+
     unset($custom_types);
 
-    /**
-     * belongs/children section
-     */
+	// No problems detected, go ahead and render the options.
+
+    // belongs/children section
     $has = wpcf_pr_admin_get_has( $post_type['slug'] );
     $belongs = wpcf_pr_admin_get_belongs( $post_type['slug'] );
     $post_types = get_post_types( '', 'objects' );
 
-    /**
-     * parents
-     */
+    // parents
     $form['parent-h3'] = array(
         '#type' => 'markup',
         '#markup' => sprintf(
@@ -374,40 +389,40 @@ function wpcf_admin_metabox_relationship($post_type)
     );
     $options = array();
 
-    /**
-     * build excluded post types
-     */
+    // Build excluded post types
     global $wpcf;
     $excluded_post_types = $wpcf->excluded_post_types;
     $excluded_post_types[] = $post_type['slug'];
+	// Explicitly exclude attachments for post relationships because there is no GUI for it
+	// (but we're not excluding them from all Types functionality)
+	$excluded_post_types[] = 'attachment';
 
-    foreach ( $post_types as $temp_post_type_slug => $temp_post_type ) {
-        if (
-            in_array( $temp_post_type_slug, $excluded_post_types )
-            || (
-                !$temp_post_type->show_ui
-                && !apply_filters('wpcf_show_ui_hide_in_relationships', true)
-            )
-        ) {
+    foreach ( $post_types as $post_type_option_slug => $post_type_option ) {
+
+    	$is_excluded = in_array( $post_type_option_slug, $excluded_post_types );
+	    $has_no_ui = ( ! $post_type_option->show_ui && ! apply_filters('wpcf_show_ui_hide_in_relationships', true ) );
+
+        if ( $is_excluded || $has_no_ui ) {
             continue;
         }
-        $options[$temp_post_type_slug] = array(
-            '#name' => 'ct[post_relationship][belongs][' . $temp_post_type_slug . ']',
-            '#title' => $temp_post_type->labels->singular_name,
-            '#default_value' => isset( $belongs[$temp_post_type_slug] ),
+
+        $options[$post_type_option_slug] = array(
+            '#name' => 'ct[post_relationship][belongs][' . $post_type_option_slug . ']',
+            '#title' => $post_type_option->labels->singular_name,
+            '#default_value' => isset( $belongs[$post_type_option_slug] ),
             '#inline' => true,
             '#before' => '<li>',
             '#after' => '</li>',
             '#attributes' => array(
                 'class' => 'js-wpcf-relationship-checkbox',
                 'data-wpcf-type' => 'belongs',
-                'data-wpcf-value' => esc_attr($temp_post_type_slug),
+                'data-wpcf-value' => esc_attr($post_type_option_slug),
                 'data-wpcf-message-disabled' => esc_attr__('This post type is disabled, becouse is used as child post.', 'wpcf'),
             ),
         );
-        if ( isset( $has[$temp_post_type_slug] ) ) {
-            $options[$temp_post_type_slug]['#before'] = '<li class="disabled">';
-            $options[$temp_post_type_slug]['#attributes']['disabled'] = 'disabled';
+        if ( isset( $has[$post_type_option_slug] ) ) {
+            $options[$post_type_option_slug]['#before'] = '<li class="disabled">';
+            $options[$post_type_option_slug]['#attributes']['disabled'] = 'disabled';
         }
     }
     $form['table-pr-belongs-form'] = array(
@@ -419,9 +434,8 @@ function wpcf_admin_metabox_relationship($post_type)
         '#after' => '</ul>',
     );
 
-    /**
-     * child posts
-     */
+
+    // child posts
     $form['child-h3'] = array(
         '#type' => 'markup',
         '#markup' => sprintf(
@@ -438,11 +452,11 @@ function wpcf_admin_metabox_relationship($post_type)
         )
     );
     $options = array();
-    foreach ( $post_types as $temp_post_type_slug => $temp_post_type ) {
+    foreach ( $post_types as $post_type_option_slug => $post_type_option ) {
         if (
-            in_array( $temp_post_type_slug, $excluded_post_types )
+            in_array( $post_type_option_slug, $excluded_post_types )
             || (
-                !$temp_post_type->show_ui
+                !$post_type_option->show_ui
                 && !apply_filters('wpcf_show_ui_hide_in_relationships', true)
             )
         ) {
@@ -452,46 +466,46 @@ function wpcf_admin_metabox_relationship($post_type)
         $nonce = sprintf(
             'child-post-fields-%s-%s',
             $post_type['slug'],
-            $temp_post_type_slug
+            $post_type_option_slug
         );
         $a = sprintf(
             ' <span>(<a class="js-wpcf-edit-child-post-fields" href="#" data-wpcf-nonce="%s" data-wpcf-child="%s" data-wpcf-parent="%s" data-wpcf-title="%s" data-wpcf-buttons-apply="%s" data-wpcf-buttons-cancel="%s" data-wpcf-message-loading="%s" data-wpcf-save-status="%s">%s</a>)</span>',
             esc_attr(wp_create_nonce($nonce)),
-            esc_attr($temp_post_type_slug),
+            esc_attr($post_type_option_slug),
             esc_attr($post_type['slug']),
             esc_attr(
                 sprintf(
                     __('Select child fields from %s to be displayed in Post Relationship table', 'wpcf'),
-                    $temp_post_type->labels->singular_name
+                    $post_type_option->labels->singular_name
                 )
             ),
             esc_attr__('Apply', 'wpcf'),
             esc_attr__('Cancel', 'wpcf'),
             esc_attr__('Please Wait, Loading…', 'wpcf'),
-            esc_attr(isset( $has[$temp_post_type_slug] )?'saved':'new'),
+            esc_attr(isset( $has[$post_type_option_slug] )?'saved':'new'),
             esc_attr__('Select fields', 'wpcf')
         );
 
-        $options[$temp_post_type_slug] = array(
-            '#name' => 'ct[post_relationship][has][' . $temp_post_type_slug . ']',
-            '#title' => $temp_post_type->labels->singular_name,
+        $options[$post_type_option_slug] = array(
+            '#name' => 'ct[post_relationship][has][' . $post_type_option_slug . ']',
+            '#title' => $post_type_option->labels->singular_name,
             '#inline' => true,
             '#before' => '<li>',
             '#after' => $a.'</li>',
             '#attributes' => array(
                 'class' => 'js-wpcf-relationship-checkbox',
                 'data-wpcf-type' => 'has',
-                'data-wpcf-value' => esc_attr($temp_post_type_slug),
+                'data-wpcf-value' => esc_attr($post_type_option_slug),
                 'data-wpcf-message-disabled' => esc_attr__('This post type is disabled, becouse is used as parent post.', 'wpcf'),
             ),
         );
         // Check if it already belongs
-        if ( isset( $belongs[$temp_post_type_slug] ) ) {
-            $options[$temp_post_type_slug]['#before'] = '<li class="disabled">';
-            $options[$temp_post_type_slug]['#attributes']['disabled'] = 'disabled';
-        } else if ( isset( $has[$temp_post_type_slug] ) ) {
-            $options[$temp_post_type_slug]['#default_value'] = true;
-            $options[$temp_post_type_slug]['#before'] = '<li class="active">';
+        if ( isset( $belongs[$post_type_option_slug] ) ) {
+            $options[$post_type_option_slug]['#before'] = '<li class="disabled">';
+            $options[$post_type_option_slug]['#attributes']['disabled'] = 'disabled';
+        } else if ( isset( $has[$post_type_option_slug] ) ) {
+            $options[$post_type_option_slug]['#default_value'] = true;
+            $options[$post_type_option_slug]['#before'] = '<li class="active">';
         }
     }
     $form['table-pr-has-form'] = array(
@@ -503,7 +517,7 @@ function wpcf_admin_metabox_relationship($post_type)
         '#after' => '</ul>',
     );
 
-     $form = wpcf_form(__FUNCTION__, $form);
+     $form = wpcf_form( __FUNCTION__, $form );
      echo $form->renderForm();
 }
 

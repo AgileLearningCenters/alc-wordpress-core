@@ -183,7 +183,7 @@ function wpcf_translate_register_string( $context, $name, $value,
         $allow_empty_value = false ) {
     if ( function_exists( 'icl_register_string' ) ) {
         icl_register_string( $context, $name, stripslashes( $value ),
-                $allow_empty_value );
+            $allow_empty_value );
     }
 }
 
@@ -300,13 +300,8 @@ function wpcf_admin_bulk_string_translation() {
     // Register groups
     $groups = wpcf_admin_fields_get_groups();
     foreach ( $groups as $group_id => $group ) {
-	    $group_id = $group['id'];
-        wpcf_translate_register_string( 'plugin Types',
-                'group ' . $group_id . ' name', $group['name'] );
-        if ( isset( $group['description'] ) ) {
-            wpcf_translate_register_string( 'plugin Types',
-                    'group ' . $group_id . ' description', $group['description'] );
-        }
+        $group_wpml = new Types_Wpml_Field_Group( Types_Field_Group_Post_Factory::load( $group['slug'] ) );
+        $group_wpml->register();
     }
 
     // Register fields
@@ -916,31 +911,62 @@ function wpcf_wpml_group_filter_add_missing_terms( $form, $settings ) {
 /**
  * Sync when slug changed.
  *
- * @global type $sitepress
- * @global type $sitepress_settings
- * @param type $new_slug
- * @param type $old_slug
+ * @param string $new_slug
+ * @param string $old_slug
+ * @since unknown
  */
 function wpcf_wpml_post_type_renamed( $new_slug, $old_slug ) {
-    global $sitepress, $sitepress_settings, $wpdb;
-    if ( isset( $sitepress_settings['custom_posts_sync_option'][$old_slug] ) ) {
-        $sitepress_settings['custom_posts_sync_option'][$new_slug] = $sitepress_settings['custom_posts_sync_option'][$old_slug];
-        unset( $sitepress_settings['custom_posts_sync_option'][$old_slug] );
-        $sitepress->save_settings( $sitepress_settings );
-        /*
-         * Update slug in icl_strings table
-         */
-        $wpdb->update( $wpdb->prefix . 'icl_strings',
-                array(
-            'name' => 'URL slug: ' . $new_slug,
-            'value' => $new_slug,
-                ),
-                array(
-            'name' => 'URL slug: ' . $old_slug,
-            'context' => 'URL slugs - wpcf',
-                )
-        );
-    }
+	global $sitepress, $sitepress_settings, $wpdb;
+
+	if ( isset( $sitepress_settings['custom_posts_sync_option'][ $old_slug ] ) ) {
+
+		$sitepress_settings['custom_posts_sync_option'][ $new_slug ] = $sitepress_settings['custom_posts_sync_option'][ $old_slug ];
+		unset( $sitepress_settings['custom_posts_sync_option'][ $old_slug ] );
+
+		$sitepress->save_settings( $sitepress_settings );
+
+		// Update the URL slug for the post type in icl_strings table
+		$icl_strings_table = $wpdb->prefix . 'icl_strings';
+		$old_string_name = 'URL slug: ' . $old_slug;
+		$new_string_name = 'URL slug: ' . $new_slug;
+		$string_context = 'URL slugs - wpcf';
+
+		$conflict_count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(1) 
+				FROM {$icl_strings_table} AS s 
+				WHERE `name` LIKE %s AND `context` LIKE %s
+				LIMIT 1",
+				$new_string_name,
+				$string_context
+			)
+		);
+		$has_conflicts = ( 0 < $conflict_count );
+
+		if( $has_conflicts ) {
+
+			$wpdb->update(
+				$icl_strings_table,
+				array( 'value' => $new_slug ),
+				array( 'name' => $new_string_name, 'context' => $string_context )
+			);
+
+			$wpdb->delete(
+				$icl_strings_table,
+				array( 'name' => $old_string_name, 'context' => $string_context )
+			);
+
+		} else {
+
+			$wpdb->update(
+				$icl_strings_table,
+				array( 'name' => $new_string_name, 'value' => $new_slug ),
+				array( 'name' => $old_string_name, 'context' => $string_context )
+			);
+
+		}
+
+	}
 }
 
 /**
@@ -1236,7 +1262,7 @@ function wpcf_wpml_warnings_init()
  */
 function wpcf_wpml_warning()
 {
-	if(!defined('WPML_ST_PATH') || !class_exists( 'ICL_AdminNotifier' )) return;
+	if(!defined('ICL_SITEPRESS_VERSION') || !defined('WPML_ST_PATH') || !class_exists( 'ICL_AdminNotifier' )) return;
 	ICL_AdminNotifier::displayMessages('wp-types');
 }
 

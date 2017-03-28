@@ -327,7 +327,7 @@ class WPCF_Custom_Fields_List_Table extends WP_List_Table
         if (!empty($action)) {
             $nonce = '';
             if ( isset($_REQUEST['_wpnonce'] ) ) {
-                $nonce = $_REQUEST['_wpnonce'];
+                $nonce = sanitize_text_field( $_REQUEST['_wpnonce'] );
             }
             if ( !wp_verify_nonce($nonce, 'bulk-customfieldgroups')) {
                 die( 'Security check' );

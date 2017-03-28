@@ -17,7 +17,7 @@ if ( ! defined( 'TOOLSET_LOCALIZATION_ABSPATH' ) ) {
 }
 
 
-if ( ! class_exists( 'Toolset_Localization' ) ) {
+if ( ! class_exists( 'Toolset_Localization', false ) ) {
 
 	/**
 	 * Toolset_Localization
@@ -35,10 +35,10 @@ if ( ! class_exists( 'Toolset_Localization' ) ) {
 		 */
 		function __construct( $textdomain = 'wpv-views', $path = TOOLSET_LOCALIZATION_ABSPATH , $mo_name = 'views-%s' ) {
 			// Set instance properties
-			$this->textdomain			= $textdomain;
-			$this->path					= $path;
-			$this->mo_name				= $mo_name;
-			$this->mo_processed_name	= '';
+			$this->textdomain = $textdomain;
+			$this->path = $path;
+			$this->mo_name = $mo_name;
+			$this->mo_processed_name = '';
 			// Set init action
 			add_action( 'init', array( $this, 'load_textdomain' ) );
 		}
@@ -51,7 +51,8 @@ if ( ! class_exists( 'Toolset_Localization' ) ) {
 		 * @since July 18, 2014
 		 */
 		function load_textdomain() {
-			$locale = get_locale();
+			// get_user_locale() was introduced in WordPress 4.7
+			$locale = ( function_exists( 'get_user_locale') ? get_user_locale() : get_locale() );
 			$this->mo_processed_name = sprintf( $this->mo_name, $locale );
 			load_textdomain( $this->textdomain, $this->path . '/' . $this->mo_processed_name . '.mo' );
 		}

@@ -3,6 +3,8 @@
 /**
  * Types_Helper_Condition
  *
+ * FIXME please document this!
+ *
  * @since 2.0
  */
 abstract class Types_Helper_Condition {
@@ -13,8 +15,10 @@ abstract class Types_Helper_Condition {
 
 	protected static function get_type_name() {
 		// per post
-		if( isset( $_GET['post'] ) )
-			return get_post_type( $_GET['post'] );
+		if( isset( $_GET['post'] ) ) {
+			$get_type_name_id = (int) $_GET['post'];
+			return get_post_type( $get_type_name_id );
+		}
 
 		return self::$post_type->name;
 	}

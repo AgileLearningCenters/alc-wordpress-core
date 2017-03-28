@@ -711,16 +711,61 @@ class Enlimbo_Forms {
         $element['_render']['element'] .= sprintf(' data-wpt-type="%s"', __FUNCTION__);
         $element['_render']['element'] .= $this->_getDataWptId($element);
 
-        $element['_render']['element'] .= ' value="';
-        /**
-         * Specific: if value is empty force 1 to be rendered
-         * but if is defined default value, use default
+        /*
+         * Add html attribute value=""
+         *
+         * We have key #value and we also have #default-value key
+         * #value
+         *   CRED:  fills this with what value="" of input should be
+         *   TYPES: fills this with the stored database value (WRONG)
+         *
+         * #default-value (this should better be called #checked)
+         *   CRED:  uses this to determine if the checkbox is checked or not (empty / 1)
+         *   TYPES: uses this for the "value to store" input when creating a checkbox field (WRONG)
+         *
+         * To get things right we flip the usage of Types fields to handle it the same way as CRED does
+         *
+         * The fact that a field comes from Types is determined from its name (sic!). This is very fragile.
+         *
+         * START Todo: Types should deliver the correct values instead of flipping it here
          */
+        $is_types_field = (
+	        ( strpos( $element['#name'], 'wpcf[' ) === 0 )
+	        || ( strpos( $element['#name'], 'wpcf_post_relationship[' ) === 0 )
+        );
+
+        if( $is_types_field ) {
+            $tmp_value = $element['#value'];
+
+            $element['#value'] = array_key_exists( '#default_value', $element )
+                ? $element['#default_value']
+                : '';
+
+            $element['#default_value'] = $tmp_value;
+        }
+        /* END To-do */
+
+
+        $element['_render']['element'] .= ' value="';
+
+        // Specific: if value is empty force 1 to be rendered
+        // but if is defined default value, use default
         $value = 1;
-        if (array_key_exists('#default_value', $element)) {
+        if( array_key_exists( '#default_value', $element ) ) {
             $value = $element['#default_value'];
         }
-        $element['_render']['element'] .= ( empty($element['#value']) && !preg_match('/^0$/', $element['#value']) ) ? $value : esc_attr($element['#value']);
+
+        // Decide whether we should use the default value from field definition
+	    // or the current value this checkbox has (from database, presumably)
+	    //
+	    // fixme this logic needs to be reviewed and simplified
+	    $is_zero = ! preg_match('/^0$/', $element['#value'] );
+	    $is_empty = empty( $element['#value'] );
+	    $is_boolean = is_bool( $element['#value'] );
+        $use_default_value = ( ( $is_empty && $is_zero ) || $is_boolean );
+        $value_output = ( $use_default_value ? $value : esc_attr( $element['#value'] ) );
+	    $element['_render']['element'] .= $value_output;
+
         $element['_render']['element'] .= '"' . $element['_attributes_string'];
         if (
                 (
@@ -937,7 +982,11 @@ class Enlimbo_Forms {
         //$element['_render']['element'] .= sprintf( ' data-wpt-type="%s" ', __FUNCTION__ );
         $element['_render']['element'] .= sprintf(' id="%s"', $element['#id']);
         $element['_render']['element'] .= sprintf(' name="%s"', $element['#name']);
-        $element['_render']['element'] .= sprintf(' value="%s"', isset($element['#value']) ? esc_attr($element['#value']) : '' );
+
+        $value = toolset_getarr( $element, '#value' );
+        $value = ( is_string( $value ) ? esc_attr( $value ) : '' );
+        $element['_render']['element'] .= sprintf(' value="%s"', $value );
+
         $element['_render']['element'] .= $element['_attributes_string'];
         if (isset($element['#disable']) && $element['#disable']) {
             $element['_render']['element'] .= ' disabled="disabled"';
@@ -1127,7 +1176,7 @@ class Enlimbo_Forms {
             if ($element['#type'] == 'file') {
                 return $_FILES[$name]['tmp_name'];
             }
-            return isset($_REQUEST[$name]) ? $_REQUEST[$name] : in_array($element['#type'], array('textfield', 'textarea')) ? '' : 0;
+            return isset($_REQUEST[$name]) ? sanitize_text_field( $_REQUEST[$name] ) : in_array($element['#type'], array('textfield', 'textarea')) ? '' : 0;
         }
 
         $parts = explode('[', $name);

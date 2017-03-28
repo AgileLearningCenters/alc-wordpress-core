@@ -4,7 +4,7 @@
 * Curently used by Views for rendering parametric search items and some backend elements
 */
 
-if ( ! class_exists('Toolset_Enlimbo_Forms' ) ) {
+if ( ! class_exists('Toolset_Enlimbo_Forms', false ) ) {
     
     class Toolset_Enlimbo_Forms
     {
@@ -927,7 +927,7 @@ if ( ! class_exists('Toolset_Enlimbo_Forms' ) ) {
                 if ($element['#type'] == 'file') {
                     return $_FILES[$name]['tmp_name'];
                 }
-                return isset($_REQUEST[$name]) ? $_REQUEST[$name] : in_array($element['#type'],
+                return isset($_REQUEST[$name]) ? sanitize_text_field( $_REQUEST[$name] ) : in_array($element['#type'],
                                 array('textfield', 'textarea')) ? '' : 0;
             }
 
@@ -974,7 +974,7 @@ if ( ! class_exists('Toolset_Enlimbo_Forms' ) ) {
 * Curently used by Views for rendering parametric search items and some backend elements
 */
 
-if ( ! class_exists('Toolset_Enlimbo_Forms_Control' ) ) {
+if ( ! class_exists( 'Toolset_Enlimbo_Forms_Control', false ) ) {
 
 	class Toolset_Enlimbo_Forms_Control extends Toolset_Enlimbo_Forms {
 		

@@ -260,6 +260,7 @@ Helper styles
 
 .toolset-mightlong-list {
 	overflow: hidden;
+	list-style: outside none none;
 }
 
 	.toolset-mightlong-list li {
@@ -326,4 +327,8 @@ Overlay
 	padding: 5px 15px;
 	color: #c09853;
 	background: #fcf8e3;
+}
+
+.select2-container--open{
+	z-index: 10000 !important;
 }

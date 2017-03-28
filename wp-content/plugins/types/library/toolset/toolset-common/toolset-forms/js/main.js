@@ -28,6 +28,15 @@ jQuery(document).ready(function () {
             jQuery('input.wpt-taxonomy-add-new', parent).click();
         }, 50);
     });
+    
+    setTimeout(function(){
+        
+        if(jQuery(".wpt-hierarchical-taxonomy-add-new-show-hide").is(":hidden")){
+            jQuery(".wpt-hierarchical-taxonomy-add-new:hidden").remove();
+            jQuery(".wpt-hierarchical-taxonomy-add-new-show-hide:hidden").remove();
+        }
+        
+    }, 1000);
 });
 
 
@@ -555,16 +564,18 @@ toolsetForms.CRED_taxonomy = function () {
             jQuery('<input name="' + taxonomy + '_hierarchy" style="display:none" type="hidden">').insertAfter(jQuery('[name="new_tax_text_' + taxonomy + '"]', form));
             new_taxonomy_input = jQuery('input[name="' + taxonomy + '_hierarchy"]', form);
         }
+        
+        if (typeof self._new_taxonomy[taxonomy] == 'undefined')
+            self._new_taxonomy[taxonomy] = new Array();
 
         var parent = jQuery('[name="new_tax_select_' + taxonomy + '"]', form).val();
-        self._new_taxonomy.push(parent + ',' + new_taxonomy);
+        self._new_taxonomy[taxonomy].push(parent + ',' + new_taxonomy);
 
         var value = '';
-        for (var i = 0; i < self._new_taxonomy.length; i++) {
-            value += '{' + self._new_taxonomy[i] + '}';
+        for (var i = 0; i < self._new_taxonomy[taxonomy].length; i++) {
+            value += '{' + self._new_taxonomy[taxonomy][i] + '}';
         }
         new_taxonomy_input.val(value);
-
     }
 
     self._flash_it = function (element) {

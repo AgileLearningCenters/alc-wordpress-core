@@ -99,6 +99,9 @@ function wpcf_fields_select_insert_form( $form_data = array(), $parent_name = ''
 
     if ( !empty( $options ) ) {
         $count = count( $options );
+        if( $count > 1 && array_key_exists( 'default', $options ) ) {
+        	$count--;
+        }
     } else {
         $count = 1;
     }

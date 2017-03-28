@@ -14,7 +14,7 @@ define('WPT_UTILS', true);
  *
  * @since unknown
  */
-if (!class_exists('Toolset_Utils')) {
+if( ! class_exists( 'Toolset_Utils', false ) ) {
 
     /**
      * ToolsetUtils
@@ -30,7 +30,7 @@ if (!class_exists('Toolset_Utils')) {
          *
          * Creates the HTML version for the wpvToolsetHelp() javascript function
          *
-         * @param data array containing the attributes
+         * @param array $data Data containing the attributes
          * 		text					=> The content to show inside the help box.
          * 		tutorial-button-text	=> Optional button anchor text.
          * 		tutorial-button-url		=> Optional button url.
@@ -100,6 +100,70 @@ if (!class_exists('Toolset_Utils')) {
 
             return $sizes;
         }
+
+	    /**
+	     * Check for a custom field value's "emptiness".
+	     *
+	     * "0" is also a valid value that we need to take into account.
+	     *
+	     * @param $field_value
+	     * @return bool
+	     * @since 2.2.3
+	     */
+        public static function is_field_value_truly_empty( $field_value ) {
+			$is_truly_empty = ( empty( $field_value ) && ! is_numeric( $field_value ) );
+	        return $is_truly_empty;
+        }
+
+
+	    /**
+	     * Return an ID of an attachment by searching the database with the file URL.
+	     *
+	     * First checks to see if the $url is pointing to a file that exists in
+	     * the wp-content directory. If so, then we search the database for a
+	     * partial match consisting of the remaining path AFTER the wp-content
+	     * directory. Finally, if a match is found the attachment ID will be
+	     * returned.
+	     *
+	     * Taken from:
+	     * @link http://frankiejarrett.com/get-an-attachment-id-by-url-in-wordpress/
+	     *
+	     * @param string $url URL of the file.
+	     * @return int|null Attachment ID if it exists.
+	     * @since 2.2.9
+	     */
+	    public static function get_attachment_id_by_url( $url ) {
+
+		    // Split the $url into two parts with the wp-content directory as the separator.
+		    $parsed_url = explode( parse_url( WP_CONTENT_URL, PHP_URL_PATH ), $url );
+
+		    // Get the host of the current site and the host of the $url, ignoring www.
+		    $this_host = str_ireplace( 'www.', '', parse_url( home_url(), PHP_URL_HOST ) );
+		    $file_host = str_ireplace( 'www.', '', parse_url( $url, PHP_URL_HOST ) );
+
+		    // Return nothing if there aren't any $url parts or if the current host and $url host do not match.
+		    $attachment_path = toolset_getarr( $parsed_url, 1 );
+		    if ( ! isset( $attachment_path ) || empty( $attachment_path ) || ( $this_host != $file_host ) ) {
+			    return null;
+		    }
+
+		    // Now we're going to quickly search the DB for any attachment GUID with a partial path match.
+		    // Example: /uploads/2013/05/test-image.jpg
+		    global $wpdb;
+
+		    $query = $wpdb->prepare(
+			    "SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid LIKE %s",
+			    '%' . $attachment_path
+		    );
+
+		    $attachment = $wpdb->get_col( $query );
+
+		    if ( is_array( $attachment ) && ! empty( $attachment ) ) {
+			    return (int) array_shift( $attachment );
+		    }
+
+		    return null;
+	    }
 
     }
 
@@ -216,7 +280,7 @@ if (!function_exists('wp_json_encode')) {
     }
 }
 
-if (!class_exists('Toolset_ArrayUtils')) {
+if( ! class_exists( 'Toolset_ArrayUtils', false ) ) {
 
     Class Toolset_ArrayUtils {
 
@@ -252,6 +316,10 @@ if (!class_exists('Toolset_ArrayUtils')) {
         }
 
         function value_in_array($array) {
+            if( ! is_array( $array ) ) {
+                return false;
+            }
+
             return in_array($this->value, array_values($array));
         }
 
@@ -265,7 +333,7 @@ if (!class_exists('Toolset_ArrayUtils')) {
 
 
 
-if (!class_exists('Toolset_ErrorHandler')) {
+if( ! class_exists( 'Toolset_ErrorHandler', false ) ) {
 
     /**
      * ErrorHandler that can be used to catch internal PHP errors
@@ -456,17 +524,17 @@ if (!function_exists('toolset_getget')) {
  */
 if (!function_exists('toolset_getarr')) {
 
-    function toolset_getarr(&$source, $key, $default = '', $valid = null) {
-        if (isset($source[$key])) {
-            $val = $source[$key];
-            if (is_array($valid) && !in_array($val, $valid)) {
-                return $default;
-            }
+	function toolset_getarr( &$source, $key, $default = '', $valid = null ) {
+		if ( isset( $source[ $key ] ) ) {
+			$val = $source[ $key ];
+			if ( is_array( $valid ) && ! in_array( $val, $valid ) ) {
+				return $default;
+			}
 
-            return $val;
-        } else {
-            return $default;
-        }
-    }
+			return $val;
+		} else {
+			return $default;
+		}
+	}
 
 }

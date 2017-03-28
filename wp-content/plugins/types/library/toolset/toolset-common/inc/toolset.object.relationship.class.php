@@ -5,10 +5,10 @@
 *
 * Manages the id="XXX" attribute on Types and Views shortcodes.
 *
-* @since 1.9
+* @since 1.9.0
 */
 
-if ( ! class_exists( 'Toolset_Object_Relationship' ) ) {
+if ( ! class_exists( 'Toolset_Object_Relationship', false ) ) {
 	class Toolset_Object_Relationship
 	{
 		private static $instance;
@@ -21,6 +21,9 @@ if ( ! class_exists( 'Toolset_Object_Relationship' ) ) {
 			$this->post_relationship		= array();
 			
             add_action( 'admin_init',								array( $this, 'admin_init' ) );
+			
+			add_action( 'toolset_action_record_post_relationship_belongs',	array( $this, 'force_record_post_relationship_belongs' ) );
+			add_action( 'toolset_action_restore_post_relationship_belongs',	array( $this, 'force_restore_post_relationship_belongs' ) );
 			
 			add_filter( 'the_content', 								array( $this, 'record_post_relationship_belongs' ), 0, 1 );
 			add_filter( 'wpv_filter_wpv_the_content_suppressed', 	array( $this, 'record_post_relationship_belongs' ), 0, 1 );
@@ -40,22 +43,42 @@ if ( ! class_exists( 'Toolset_Object_Relationship' ) ) {
             
         }
 		
-		function record_post_relationship_belongs( $content ) {
-
-			global $post;
+		/**
+		 * Manually record the Types relationships for a post.
+		 *
+		 * Given a WP_Post instance, this records the relations for its post type in this object relations property.
+		 * AFter that, it calculates the specific parents for this given post in each of its stored relations.
+		 * Finally, those specific relations are added to the post_relationship_track propery using a depth counter.
+		 *
+		 * @note This might be a little inefficient since we query once per relation.
+		 * @note This is automatically called when looping over a post and calling the the_content filter.
+		 * @note This might be much more efficient if we stored each post relationships, insted of a post_relationship_track property depending on a depth index.
+		 *         Especially in the case that we need to get this same post relationships later on the same request.
+		 *         This will need extensive review once the m2m feature lands in.
+		 *         Right now, we use this depth index because of nested structures, but a permanent $post->ID based data schema might be much better.
+		 *
+		 * @since 2.3.0
+		 */
+		
+		function force_record_post_relationship_belongs( $post_object = null ) {
+			
+			if ( ! $post_object instanceof WP_Post ) {
+				return;
+			}
+			
 			$this->post_relationship_depth = ( $this->post_relationship_depth + 1 );
 
 			if ( 
-				! empty( $post->ID ) 
+				! empty( $post_object->ID ) 
 				&& function_exists( 'wpcf_pr_get_belongs' ) 
 			) {
 
-				if ( ! isset( $this->relations[ $post->post_type ] ) ) {
-					$this->relations[ $post->post_type ] = wpcf_pr_get_belongs( $post->post_type );
+				if ( ! isset( $this->relations[ $post_object->post_type ] ) ) {
+					$this->relations[ $post_object->post_type ] = wpcf_pr_get_belongs( $post_object->post_type );
 				}
-				if ( is_array( $this->relations[ $post->post_type ] ) ) {
-					foreach ( $this->relations[ $post->post_type ] as $post_type => $data ) {
-						$related_id = wpcf_pr_post_get_belongs( $post->ID, $post_type );
+				if ( is_array( $this->relations[ $post_object->post_type ] ) ) {
+					foreach ( $this->relations[ $post_object->post_type ] as $post_type => $data ) {
+						$related_id = wpcf_pr_post_get_belongs( $post_object->ID, $post_type );
 						if ( $related_id ) {
 							$this->post_relationship['$' . $post_type . '_id'] = $related_id;
 						} else {
@@ -66,11 +89,24 @@ if ( ! class_exists( 'Toolset_Object_Relationship' ) ) {
 			}
 			
 			$this->post_relationship_track[ $this->post_relationship_depth ] = $this->post_relationship;
-
-			return $content;
+			
 		}
 		
-		function restore_post_relationship_belongs( $content ) {
+		/**
+		 * Manually restore the Types relationships.
+		 *
+		 * AFter using the relationships of a given post, before moving to the next one, this cleans the data.
+		 * As the data is stored in a post_relationship_track property with a depth index, we clean the last one.
+		 *
+		 * @note This is automatically called when looping over a post and calling the the_content filter, at a very late priority.
+		 * @note As described above, a permanent $post->ID based data schema might be better and would not require this kind of cleaning.
+		 *         This will be reviewed once the m2m feture lands in.
+		 *
+		 * @since 2.3.0
+		 */
+		
+		function force_restore_post_relationship_belongs() {
+			
 			$this->post_relationship_depth = ( $this->post_relationship_depth - 1 );
 			if ( 
 				$this->post_relationship_depth > 0 
@@ -80,7 +116,40 @@ if ( ! class_exists( 'Toolset_Object_Relationship' ) ) {
 			} else {
 				$this->post_relationship = array();
 			}
+			
+		}
+		
+		/**
+		 * Callback to record the current post relationships early in the the_content filter.
+		 *
+		 * @uses Toolset_Object_Relationship::force_record_post_relationship_belongs
+		 *
+		 * @since unknown
+		 */
+		
+		function record_post_relationship_belongs( $content ) {
+			
+			global $post;
+			$this->force_record_post_relationship_belongs( $post );
+
 			return $content;
+			
+		}
+		
+		/**
+		 * Callback to restore the stored post relationships late in the the_content filter.
+		 *
+		 * @uses Toolset_Object_Relationship::force_restore_post_relationship_belongs
+		 *
+		 * @since unknown
+		 */
+		
+		function restore_post_relationship_belongs( $content ) {
+			
+			$this->force_restore_post_relationship_belongs();
+			
+			return $content;
+			
 		}
 	}
 }
@@ -102,7 +171,7 @@ if ( ! class_exists( 'Toolset_Object_Relationship' ) ) {
  * [types field='my-field' id='$guest']
  * [types field='my-field' id='$room']
  */
-if ( ! class_exists( 'WPV_wpcf_switch_post_from_attr_id' ) ) {
+if ( ! class_exists( 'WPV_wpcf_switch_post_from_attr_id', false ) ) {
 	class WPV_wpcf_switch_post_from_attr_id
 	{
 
@@ -132,6 +201,27 @@ if ( ! class_exists( 'WPV_wpcf_switch_post_from_attr_id' ) ) {
 								$current_post = $wp_query->posts[0];
 								$post_id = $current_post->ID;
 							}
+						}
+						
+						/**
+						 * Get the current top post.
+						 *
+						 * Some Toolset plugins might need to set the top current post under some scenarios,
+						 * like Toolset Views when doing AJAX pagination or AJAX custom search.
+						 * In those cases, they can use this filter to get the top current post they are setting
+						 * and override the ID to apply as the $current_page value.
+						 *
+						 * @not Toolset plugins should set this just in time, not globally, when needed, meaning AJAX calls or whatever.
+						 *
+						 * @param $top_post 	null
+						 *
+						 * @return $top_post 	null/WP_Post object 	The top current post, if set by any Toolset plugin.
+						 *
+						 * @since 2.3.0
+						 */
+						$top_current_post = apply_filters( 'toolset_filter_get_top_current_post', null );
+						if ( $top_current_post ) {
+							$post_id = $top_current_post->ID;
 						}
 					} else {
 						// See if Views has the variable

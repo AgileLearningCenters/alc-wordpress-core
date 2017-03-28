@@ -132,20 +132,23 @@ class WPToolset_Forms_Bootstrap {
      * @since 1.5.0
      */
     public function wpt_suggest_taxonomy_term() {
+
         if (
                 !isset($_REQUEST['q']) || $_REQUEST['q'] == ''
         ) {
             die();
         }
         global $wpdb;
+        $_q = $_REQUEST['q'];
         $values_to_prepare = array();
         if (function_exists("wpv_esc_like")) {
-            $term_name = '%' . wpv_esc_like($_REQUEST['q']) . '%';
+            $term_name = '%' . wpv_esc_like($_q) . '%';
         } else {
             if (function_exists("cred_wrap_esc_like")) {
-                $term_name = '%' . cred_wrap_esc_like($_REQUEST['q']) . '%';
+                $term_name = '%' . cred_wrap_esc_like($_q) . '%';
             }
         }
+
         $values_to_prepare[] = $term_name;
 
         $tax_join = "";
@@ -155,23 +158,25 @@ class WPToolset_Forms_Bootstrap {
         ) {
             $tax_join = " JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id  ";
             $tax_where = " AND tt.taxonomy = %s ";
-            $values_to_prepare[] = $_REQUEST['taxonomy'];
+            $values_to_prepare[] = sanitize_text_field( $_REQUEST['taxonomy'] );
 
             global $sitepress;
             if (isset($sitepress)) {
-                if (isset($_GET['source_lang'])) {
-                    $src_lang = $_GET['source_lang'];
+                if (isset($_REQUEST['source_lang'])) {
+                    $src_lang = sanitize_text_field( $_REQUEST['source_lang'] );
                 } else {
                     $src_lang = $sitepress->get_current_language();
                 }
-                if (isset($_GET['lang'])) {
-                    $lang = sanitize_text_field($_GET['lang']);
+                if (isset($_REQUEST['lang'])) {
+                    $lang = sanitize_text_field( $_REQUEST['lang'] );
                 } else {
                     $lang = $src_lang;
                 }
-                $tax_where .= " AND t.term_id in (SELECT element_id from {$wpdb->prefix}icl_translations WHERE element_type = 'tax_{$_REQUEST['taxonomy']}' AND language_code = '{$lang}'  ) ";
+                $tax_where .= " AND t.term_id in (SELECT element_id from {$wpdb->prefix}icl_translations WHERE element_type = %s AND language_code = %s  ) ";
+                $values_to_prepare[] = sanitize_text_field( "tax_" . $_REQUEST['taxonomy'] );
+                $values_to_prepare[] = $lang;
             }
-        }        
+        }
 
         $results = $wpdb->get_results(
                 $wpdb->prepare(
@@ -182,7 +187,7 @@ class WPToolset_Forms_Bootstrap {
 				LIMIT 5", $values_to_prepare
                 )
         );
-                 
+
         foreach ($results as $row) {
             echo $row->name . "\n";
         }

@@ -12,7 +12,7 @@ if ( ! defined( 'WPT_MENU' ) ) {
  * @since 1.9
  */
 
-if ( ! class_exists( 'Toolset_Menu' ) ) {
+if ( ! class_exists( 'Toolset_Menu', false ) ) {
 
     /**
      * Class to show promotion message.
@@ -81,7 +81,7 @@ if ( ! class_exists( 'Toolset_Menu' ) ) {
                     $top_level_page = array_shift( $registered_pages );
                     $top_level_page['capability'] = isset( $top_level_page['capability'] ) ? $top_level_page['capability'] : 'manage_options';
                     if ( current_user_can( $top_level_page['capability'] ) ) {
-                        $hook = add_menu_page( $top_level_page['page_title'], __( 'Toolset', 'wpv-views' ), $top_level_page['capability'], $top_level_page['slug'], $top_level_page['callback'] );
+                        $hook = add_menu_page( $top_level_page['page_title'], 'Toolset', $top_level_page['capability'], $top_level_page['slug'], $top_level_page['callback'] );
                         $this->add_menu_page_hooks( $top_level_page, $hook );
                         $top_level_page_registered = true;
                     }
@@ -215,8 +215,10 @@ if ( ! class_exists( 'Toolset_Menu' ) ) {
                     'id'		=> 'toolset-debug-information',
                     'title'		=> __('Toolset Debug', 'wpv-views'),
                     'content'	=> '<p>'
+						. __( 'Sometimes, our Customer Support personnel ask you to provide debug information. This information helps them give you quicker and better support.', 'wpv-views' )
+						. '</p><p>'
                         . sprintf(
-                            __( 'Need help? Grab some %1$sdebug information%2$s.', 'wpv-views' ),
+                            __( 'To get this information, go to %1$sToolset Debug Information%2$s.', 'wpv-views' ),
                             '<a href="' . admin_url( 'admin.php?page=toolset-debug-information' ) . '">',
                             '</a>'
                         )

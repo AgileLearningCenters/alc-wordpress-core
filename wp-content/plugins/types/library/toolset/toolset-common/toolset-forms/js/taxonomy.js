@@ -1,3 +1,7 @@
 jQuery(document).ready(function () {
-    initTaxonomies(wptoolset_taxonomy_settings.values, wptoolset_taxonomy_settings.name, wptoolset_taxonomy_settings.form, wptoolset_taxonomy_settings.field);
+    var wptoolset_taxonomy_settings_instances = wptoolset_taxonomy_settings['instances'];
+    for(var taxonomy_settings_instance_index in wptoolset_taxonomy_settings_instances){
+        var currentTaxonomySettings = wptoolset_taxonomy_settings_instances[taxonomy_settings_instance_index];
+        initTaxonomies(currentTaxonomySettings.values, currentTaxonomySettings.name, currentTaxonomySettings.form, currentTaxonomySettings.field);
+    }
 });

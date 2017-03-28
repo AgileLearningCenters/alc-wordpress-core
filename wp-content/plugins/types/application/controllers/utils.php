@@ -23,8 +23,47 @@ final class Types_Utils {
 
 
 	/**
+	 * Get a list of taxonomies that should be excluded from any sort of Types/Toolset functionality.
+	 *
+	 * @return string[] Taxonomy slugs.
+	 * @since 2.2.9
+	 */
+	public static function get_excluded_taxonomies() {
+		return array( 'nav_menu', 'link_category', 'post_format' );
+	}
+
+
+	/**
+	 * Get registered taxonomies that can be edited by Types/Toolset.
+	 *
+	 * That includes custom taxonomies from Types and the built-in ones (which are not excluded).
+	 *
+	 * @return WP_Taxonomy[] Taxonomy objects.
+	 * @since 2.2.9
+	 */
+	public static function get_editable_taxonomies() {
+		$custom_taxonomies = array_keys( wpcf_ensarr( get_option( WPCF_OPTION_NAME_CUSTOM_TAXONOMIES, array() ) ) );
+		$builtin_taxonomies = self::get_builtin_taxonomies( 'names' );
+		$allowed_taxonomies = array_merge( $custom_taxonomies, $builtin_taxonomies );
+
+		$excluded_taxonomies = self::get_excluded_taxonomies();
+		$allowed_taxonomies = array_diff( $allowed_taxonomies, $excluded_taxonomies );
+
+		$taxonomies = get_taxonomies( '', 'objects' );
+		foreach( $taxonomies as $taxonomy_slug => $taxonomy ) {
+			if( ! in_array( $taxonomy_slug, $allowed_taxonomies ) ) {
+				unset( $taxonomies[ $taxonomy_slug ] );
+			}
+		}
+
+		return $taxonomies;
+	}
+
+
+	/**
 	 * Get a definitive set of all taxonomies recognized by Types.
 	 *
+	 * That also includes inactive taxonomies.
 	 * Respects if some builtin taxonomy is overridden by Types.
 	 *
 	 * @return array
@@ -34,18 +73,18 @@ final class Types_Utils {
 		// todo add simple caching
 		$taxonomies = array();
 
-		// Read custom taxonomies first.
-		$custom_taxonomies = get_option( WPCF_OPTION_NAME_CUSTOM_TAXONOMIES, array() );
-		if ( is_array( $custom_taxonomies ) ) {
-			foreach ( $custom_taxonomies as $slug => $data ) {
+		// Read Types taxonomies first.
+		$types_taxonomies = get_option( WPCF_OPTION_NAME_CUSTOM_TAXONOMIES, array() );
+		if ( is_array( $types_taxonomies ) ) {
+			foreach ( $types_taxonomies as $slug => $data ) {
 				$taxonomies[ $slug ] = $data;
 			}
 		}
 
-		// Get built-in taxonomies and add them to the set, but avoid overwriting custom taxonomies
-		$builtin_taxonomies = self::object_to_array_deep( self::get_builtin_taxonomies() );
-		foreach ( $builtin_taxonomies as $slug => $data ) {
-			// check if built-in taxonomies are already saved as custom taxonomies
+		// Get all taxonomies and add them to the set, but avoid overwriting Types taxonomies
+		$all_taxonomies = self::object_to_array_deep( get_taxonomies( array( 'public' => true ) , 'objects' ) );
+		foreach ( $all_taxonomies as $slug => $data ) {
+			// check if taxonomies are already saved as custom taxonomies
 			if ( isset( $taxonomies[ $slug ] ) ) {
 				continue;
 			}
@@ -183,6 +222,7 @@ final class Types_Utils {
 	 * @param string $url URL of the file.
 	 * @return int|null Attachment ID if it exists.
 	 * @since 1.9.1
+	 * @deprecated Since 2.2.7. Use Toolset_Utils::get_attachment_id_by_url() instead. To be removed in 2.3 or later.
 	 */
 	public static function get_attachment_id_by_url( $url ) {
 
