@@ -19,6 +19,9 @@ class URE_View {
     }
     // end of __construct()
     
+    public function display() {}
+    
+    public function toolbar() {}
     
     /**
      * display opening part of the HTML box with title and CSS style
@@ -46,15 +49,22 @@ class URE_View {
         <?php
     }
     // end of display_box_end()
-
+        
 
     public function show_caps_groups() {
         $groups = URE_Capabilities_Groups_Manager::get_instance();
         $groups_list = $groups->get_groups_tree();
         $output = '<ul id="ure_caps_groups_list">'. PHP_EOL;
         foreach($groups_list as $group_id=>$group) {
-            $spacer = $group_id=='all' ? '' : str_repeat('&nbsp;', $group['level']*2) .'- ';
-            $output .= '<li id="ure_caps_group_'. $group_id .'">'. $spacer . $group['caption'] .'</li>'. PHP_EOL;
+            if ($group_id=='all') {
+                $spacer = '';
+                $subgroup = '';
+            } else {
+                $spacer =  'style="padding-left: '. 15*$group['level'] .'px"';
+                $subgroup = '- ';
+            }
+            $output .= '<li id="ure_caps_group_'. $group_id .'" '. $spacer .'>' . 
+                    $subgroup . $group['caption'] .'</li>'. PHP_EOL;
         }
         $output .= '</ul>'. PHP_EOL;
         
@@ -84,7 +94,7 @@ class URE_View {
         $blocked = false;
         $multisite = $this->lib->get('multisite');
         if ($multisite && $this->lib->block_cap_for_single_admin($cap_id, true)) {
-            if (is_super_admin()) {
+            if ($this->lib->is_super_admin()) {
                 if (!is_network_admin()) {
                     $label_style = 'style="color: red;"';
                 }
@@ -108,7 +118,7 @@ class URE_View {
         $onclick_for_admin = '';
         $multisite = $this->lib->get('multisite');
         $current_role = $this->lib->get('current_role');
-        if (!($multisite && is_super_admin())) {  // do not limit SuperAdmin for multi-site
+        if (!($multisite && $this->lib->is_super_admin())) {  // do not limit SuperAdmin for multi-site
             if ('administrator'==$current_role) {
                 $onclick_for_admin = 'onclick="ure_turn_it_back(this)"';
             }
@@ -120,16 +130,17 @@ class URE_View {
         $caps_readable = $this->lib->get('caps_readable');
         $caps_groups_manager = URE_Capabilities_Groups_Manager::get_instance();
         
-        $key_capability = $this->lib->get_key_capability();
+        $key_capability = URE_Own_Capabilities::get_key_capability();
         $user_is_ure_admin = current_user_can($key_capability);
-        $ure_caps = $this->lib->get_ure_caps();
+        $ure_caps = URE_Own_Capabilities::get_caps();
         
-        $output = '';
+        $output = '<div id="ure_caps_list_container">'
+                . '<div id="ure_caps_list">';
         foreach ($full_capabilities as $capability) {    
             $cap_id = $capability['inner'];
             if (!$user_is_ure_admin) { 
                 if (isset($ure_caps[$cap_id]) || 
-                    ($this->multisite && $cap_id=='manage_network_plugins')) { 
+                    ($multisite && $cap_id=='manage_network_plugins')) { 
                     // exclude URE caps if user does not have full access to URE
                     continue;
                 }
@@ -172,12 +183,12 @@ class URE_View {
                 }
             }                        
             $class = 'class="' . implode(' ', $classes) .'"';
-            $cap_id_esc = str_replace(' ', URE_SPACE_REPLACER, $cap_id);
+
+            $cap_id_esc = URE_Capability::escape($cap_id);
             $cap_html = '<div id="ure_cap_div_'. $cap_id_esc .'" '. $class .'><input type="checkbox" name="' . $cap_id_esc . '" id="' . 
                     $cap_id_esc . '" value="' . $cap_id .'" '. $checked . ' ' . $disabled . ' ' . $onclick_for_admin . 
                     'class="ure-cap-cb">';
             
-
             if ($caps_readable) {
                 $cap_ind = 'human';
                 $cap_ind_alt = 'inner';
@@ -190,6 +201,7 @@ class URE_View {
             
             $output .= $cap_html;
         }
+        $output .= '</div></div>' ;
 
         echo $output;
     }
@@ -241,26 +253,42 @@ class URE_View {
  
     
     public function display_caps($for_role = true, $edit_mode=true) {
+        $caps_columns_quant = $this->lib->get('caps_columns_quant');
 ?>        
-    <table id="ure_role_caps" cellpadding="0" cellspacing="0">
+    <table id="ure_caps_container" cellpadding="0" cellspacing="0">
         <tr> 
-            <td id="ure_role_caps_groups_title"><?php esc_html_e('Group', 'user-role-editor');?></td>
-            <td id="ure_role_caps_select">
-                <input type="checkbox" id="ure_select_all_caps" name="ure_select_all_caps" value="ure_select_all_caps"/>
+            <td id="ure_caps_groups_title"><span style="font-weight: bold;"><?php esc_html_e('Group', 'user-role-editor');?></span> (<?php esc_html_e('Total', 'user-role-editor');?>/<?php esc_html_e('Granted', 'user-role-editor');?>)</td>
+            <td id="ure_caps_select">
+                <div class="ure-table">
+                    <div class="ure-table-cell">
+                        <input type="checkbox" id="ure_select_all_caps" name="ure_select_all_caps" value="ure_select_all_caps"/>                
+                    </div>
+                    <div class="ure-table-cell ure-caps-option nowrap">
+                        <?php esc_html_e('Quick filter:', 'user-role-editor'); ?>&nbsp;
+                        <input type="text" id="quick_filter" name="quick_filter" value="" size="10" onkeyup="ure_filter_capabilities(this.value);" />&nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" id="granted_only" name="granted_only" />
+                        <label for="granted_only"><?php esc_html_e('Granted Only', 'user-role-editor'); ?></label>&nbsp;
+                    </div>                    
+                    <div class="ure-table-cell ure-caps-option nowrap">
+                        <?php esc_html_e('Columns:', 'user-role-editor');?>
+                        <select id="caps_columns_quant" name="caps_columns_quant" onchange="ure_change_caps_columns_quant();">
+                            <option value="1" <?php selected(1, $caps_columns_quant);?> >1</option>
+                            <option value="2" <?php selected(2, $caps_columns_quant);?> >2</option>
+                            <option value="3" <?php selected(3, $caps_columns_quant);?> >3</option>
+                        </select>
+                    </div>    
+                </div>
             </td>
-            <td id="ure_role_caps_quick_filter">
-                <?php esc_html_e('Quick filter:', 'user-role-editor'); ?>&nbsp;
-                <input type="text" id="quick_filter" name="quick_filter" value="" size="20" onkeyup="ure_filter_capabilities(this.value);" />
-            </td>
+            <td id="ure_toolbar_title">&nbsp;</td>
         </tr>    
         <tr>
-            <td class="ure-caps-cell" style="padding:0 10px 0 10px;">
+            <td id="ure_caps_groups_td" class="ure-caps-cell">
                 <?php $this->show_caps_groups(); ?>
             </td>
-            <td class="ure-caps-cell">
-                <?php $this->show_capabilities($for_role, $edit_mode); ?>
+            <td id="ure_caps_td" class="ure-caps-cell">
+                <?php $this->show_capabilities($for_role, $edit_mode); ?>                
             </td>
-            <td class="ure-caps-cell">
+            <td id="ure_toolbar_td" class="ure-caps-cell">
                 <?php $this->toolbar(); ?>
             </td>
         </tr>

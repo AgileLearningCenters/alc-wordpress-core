@@ -13,6 +13,8 @@ class URE_Capabilities_Groups_Manager {
     private static $instance = null;
     private $lib = null;
     private $groups = null;
+    private $built_in_wp_caps = null;
+    private $cpt_caps = null;
     
     
     public static function get_instance() {
@@ -30,6 +32,8 @@ class URE_Capabilities_Groups_Manager {
     private function __construct() {
         
         $this->lib = URE_Lib::get_instance();
+        $this->_get_built_in_wp_caps();
+        $this->_get_all_custom_post_types_capabilities();
         
     }
     // end of __construct()
@@ -46,24 +50,61 @@ class URE_Capabilities_Groups_Manager {
             $built_in_pt[] = 'attachment';
         }
 
+        $show_wc_post_types_under_wc_only = apply_filters('ure_show_wc_post_types_under_wc_only', false);
         foreach($post_types as $post_type) {
-            if (!isset($_post_types[$post_type->name])) {
+            if (!isset($_post_types[$post_type->name]) || in_array($post_type->name, $built_in_pt)) {
                 continue;
             }
-            if (in_array($post_type->name, $built_in_pt)) {
+            if ($show_wc_post_types_under_wc_only && in_array($post_type->name, URE_Woocommerce_Capabilities::$post_types)) {
                 continue;
             }
+            /*
+            if (!$post_type->public) {
+                continue;
+            }
+             * 
+             */
             $this->groups[$post_type->name] = array('caption'=>$post_type->labels->name, 'parent'=>'custom_post_types', 'level'=>2);
         }
     }
-    // add_custom_post_types()
+    // end of add_custom_post_types()
+    
+    
+    private function add_ure_group() {
+        
+        $this->groups['user_role_editor'] = array('caption'=>esc_html__('User Role Editor', 'user-role-editor'), 'parent'=>'custom', 'level'=>3);
+        
+    }
+    // end of get_ure_group()
+    
+    
+    private function add_woocommerce_groups() {
+        
+        $full_caps = $this->lib->get('full_capabilities');
+        if (!isset($full_caps['manage_woocommerce'])) {
+            return;
+        }
+        
+        $post_types = get_post_types(array(), 'objects');
+        
+        $this->groups['woocommerce'] = array('caption'=>esc_html__('WooCommerce', 'user-role-editor'), 'parent'=>'custom', 'level'=>3);
+        $this->groups['woocommerce_core'] = array('caption'=>esc_html__('Core', 'user-role-editor'), 'parent'=>'woocommerce', 'level'=>4);
+        foreach(URE_Woocommerce_Capabilities::$post_types as $post_type) {
+            if (!isset($post_types[$post_type])) {
+                continue;                
+            }    
+            $this->groups['woocommerce_'. $post_type] = array('caption'=>$post_types[$post_type]->labels->name, 'parent'=>'woocommerce', 'level'=>4);
+        }
+        
+    }
+    // end of add_woocommerce_group()
     
     
     public function get_groups_tree() {
         
         if ($this->groups!==null) {
             return $this->groups;
-        }
+        }        
         
         $this->groups = array(
             'all'=>array('caption'=>esc_html__('All', 'user-role-editor'), 'parent'=>null, 'level'=>0),
@@ -81,10 +122,12 @@ class URE_Capabilities_Groups_Manager {
         }
         $this->groups['deprecated'] = array('caption'=>esc_html__('Deprecated', 'user-role-editor'), 'parent'=>'core', 'level'=>2);
         
-        $this->add_custom_post_types();                
-        
-        $this->groups = apply_filters('ure_capabilities_groups_tree', $this->groups);
+        $this->add_custom_post_types();                                
         $this->groups['custom'] = array('caption'=>esc_html__('Custom capabilities', 'user-role-editor'), 'parent'=>'all', 'level'=>1);
+        $this->add_ure_group();
+        $this->add_woocommerce_groups();
+        
+        $this->groups = apply_filters('ure_capabilities_groups_tree', $this->groups);        
         
         return $this->groups;
     }
@@ -96,7 +139,7 @@ class URE_Capabilities_Groups_Manager {
      * 
      * @return array 
      */
-    public function get_built_in_wp_caps() {
+    private function _get_built_in_wp_caps() {
 
         $wp_version = get_bloginfo('version');
         $multisite = $this->lib->get('multisite');
@@ -114,7 +157,7 @@ class URE_Capabilities_Groups_Manager {
         $caps['manage_links'] = array('core', 'others');
         $caps['upload_files'] = array('core', 'general'); 
         $caps['import'] = array('core', 'general');
-        $caps['unfiltered_html'] = array('core');
+        $caps['unfiltered_html'] = array('core','general');
         if ($multisite) {
             $caps['unfiltered_html'] = array('deprecated');
         }
@@ -186,27 +229,64 @@ class URE_Capabilities_Groups_Manager {
         
         $caps = apply_filters('ure_built_in_wp_caps', $caps);
         
-        return $caps;
+        $this->built_in_wp_caps = $caps;
+        
+        return $this->built_in_wp_caps;
+    }
+    // end of _get_built_in_wp_caps()
+    
+    
+    public function get_built_in_wp_caps() {
+        
+        return $this->built_in_wp_caps;
     }
     // end of get_built_in_wp_caps()
 
     
-    private function get_custom_post_type_capabilities($post_type, $post_edit_caps, &$cpt_caps) {
-        foreach($post_edit_caps as $capability) {
-            if (!isset($post_type->cap->$capability)) {
-                continue;                    
+    private function get_post_types_without_caps() {
+        $pt_without_caps = array();
+        $wc_pts = URE_Woocommerce_Capabilities::get_post_types_without_caps();
+        
+        $pt_without_caps = array_merge($pt_without_caps, $wc_pts);
+        
+        return $pt_without_caps;
+    }
+    // end of get_post_types_without_caps()
+    
+    
+    /**
+     * Get capabilities registered with custom post type
+     * 
+     * @param object $post_type
+     * @param array $post_edit_caps
+     */
+    private function get_registered_cpt_caps($post_type, $post_edit_caps) {
+        foreach ($post_edit_caps as $capability) {
+            if (isset($post_type->cap->$capability)) {
+                $cap = $post_type->cap->$capability;
+            } else {
+                continue;
             }
-            $cap = $post_type->cap->$capability;
-            if (!isset($cpt_caps[$cap])) {
-                $cpt_caps[$cap] = array('custom', 'custom_post_types');
+
+            if (!isset($this->cpt_caps[$cap])) {
+                $this->cpt_caps[$cap] = array('custom', 'custom_post_types');
             }
-            $cpt_caps[$cap][] = $post_type->name;                
+            $this->cpt_caps[$cap][] = $post_type->name;
+        }
+    }
+    // end of get_registered_cpt_caps()
+    
+    
+    private function get_custom_post_type_capabilities($post_type, $post_edit_caps) {
+        $pt_without_caps = $this->get_post_types_without_caps();
+        if (!in_array($post_type->name, $pt_without_caps)) {
+            $this->get_registered_cpt_caps($post_type, $post_edit_caps);
         }
     }
     // end of get_custom_post_type_capabilities()
     
     
-    private function get_all_custom_post_types_capabilities() {
+    private function _get_all_custom_post_types_capabilities() {
         
         $post_edit_caps = $this->lib->get_edit_post_capabilities();        
         $post_types = get_post_types(array(), 'objects');
@@ -215,7 +295,7 @@ class URE_Capabilities_Groups_Manager {
         if ($post_types['attachment']->cap->edit_posts=='edit_posts') {
             $built_in_pt[] = 'attachment';
         }
-        $cpt_caps = array();
+        $this->cpt_caps = array();
         foreach($post_types as $post_type) {
             if (!isset($_post_types[$post_type->name])) {
                 continue;
@@ -226,39 +306,39 @@ class URE_Capabilities_Groups_Manager {
             if (!isset($post_type->cap)) {
                 continue;
             }
-            $this->get_custom_post_type_capabilities($post_type, $post_edit_caps, $cpt_caps);
+            $this->get_custom_post_type_capabilities($post_type, $post_edit_caps);
         }
         
-        return $cpt_caps;
+        return $this->cpt_caps;
     }
-    // end of get_custom_post_types_capabilities()
-    
-    
-    private function get_woocommerce_capabilities() {
-        
-        $caps = array();
-        
-        return $caps;
-    }
-    // end of get_woocommerce_capabilities()
-    
+    // end of _get_all_custom_post_types_capabilities()
+                
     
     private function get_groups_for_custom_cap($cap_id) {
         
-        $wc_caps = $this->get_woocommerce_capabilities();
-        $groups = array();
-        if (isset($wc_caps[$cap_id])) {
-            $groups = $wc_caps[$cap_id];
+        $ure_caps = URE_Own_Capabilities::get_caps_groups();
+        if (isset($ure_caps[$cap_id])) {
+            $groups1 = $ure_caps[$cap_id];
         }
         
-        $cpt_caps = $this->get_all_custom_post_types_capabilities();
-        if (isset($cpt_caps[$cap_id])) {
-            $groups = $cpt_caps[$cap_id];
+        if (empty($groups1)) {
+            $wc_caps = URE_Woocommerce_Capabilities::get_caps_groups();
+            if (isset($wc_caps[$cap_id])) {
+                $groups1 = $wc_caps[$cap_id];
+            }
         }
         
-        if (empty($groups)) {
-            $groups = array('custom');
-        }                
+        if (isset($this->cpt_caps[$cap_id])) {
+            $groups2 = $this->cpt_caps[$cap_id];
+        }
+        
+        $groups = array('custom');
+        if (!empty($groups1)) {
+            $groups = array_merge($groups, $groups1);
+        }
+        if (!empty($groups2)) {
+            $groups = array_merge($groups, $groups2);
+        }
         
         return $groups;
     }
@@ -266,23 +346,23 @@ class URE_Capabilities_Groups_Manager {
     
     
     public function get_cap_groups($cap_id, $built_in_wp_caps=null) {
-        
-        if (empty($built_in_wp_caps)) {
-            $built_in_wp_caps = $this->get_built_in_wp_caps();
-        }
-        
-        if (isset($built_in_wp_caps[$cap_id])) {
+                
+        if (isset($this->built_in_wp_caps[$cap_id])) {
             $groups = $built_in_wp_caps[$cap_id];            
         } else {
             $groups = $this->get_groups_for_custom_cap($cap_id);
-        }
-         
-        $groups = apply_filters('ure_custom_capability_groups', $groups, $cap_id);
+        }         
+        $groups = apply_filters('ure_custom_capability_groups', $groups, $cap_id);        
+        $groups[] = 'all'; // Every capability belongs to the 'all' group        
+        $groups = array_unique($groups);
         
-        $groups[] = 'all'; // Every capability belongs to the 'all' group
+        foreach($groups as $key=>$value) {
+            $groups[$key] = 'ure-'. $value;            
+        }
         
         return $groups;
     }
     // end of get_cap_groups()
+        
 }
 // end of class URE_Capabilities_Groups_Manager

@@ -1,4 +1,4 @@
-/* User Role Editor for users.php */
+/* User Role Editor: support of 'Without Roles' button for users.php */
 
 jQuery(document).ready(function() {        
     jQuery('#move_from_no_role_content').append(ure_users_data.to +' <select id="ure_new_role" name="ure_new_role"></select>');
@@ -77,7 +77,7 @@ function ure_move_users_from_no_role() {
             }
         },
         error: function(XMLHttpRequest, textStatus, exception) {
-            alert("Ajax failure\n" + errortext);
+            alert("Ajax failure\n" + XMLHttpRequest.statusText);
         },
         async: true
     });
