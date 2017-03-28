@@ -3,14 +3,13 @@
 Plugin Name: Join My Multisite
 Plugin URI: http://halfelf.org/plugins/join-my-multisite/
 Description: Allow logged in users to add themselves to sites (or auto-add them to all sites). <strong>Settings are per-site, under the Users menu</strong>.
-Version: 1.7.8
+Version: 1.8
 Author: Mika Epstein (Ipstenu)
 Author URI: http://halfelf.org/
 Network: true
 Text Domain: join-my-multisite
-Domain Path: /i18n
 
-Copyright 2012 Mika Epstein (email: ipstenu@ipstenu.org)
+	Copyright 2012-2016 Mika Epstein (email: ipstenu@halfelf.org)
 
     This file is part of Join My Multisite, a plugin for WordPress.
 
@@ -28,10 +27,10 @@ Copyright 2012 Mika Epstein (email: ipstenu@ipstenu.org)
     along with WordPress.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// First we check to make sure you meet the requirements
-global $wp_version;
-$exit_msg_version = 'Sorry, but this plugin is no longer supported on pre-3.7 WordPress installs.';
-if (version_compare($wp_version,"3.7","<")) { exit($exit_msg_version); }
+if (!defined('ABSPATH')) {
+    die();
+}
+
 $exit_msg_multisite = 'This plugin only functions on WordPress Multisite.';
 if( !is_multisite() ) { exit($exit_msg_multisite); }
 
@@ -40,11 +39,38 @@ require_once dirname(__FILE__) . '/admin/defines.php';
 
 class JMM {
 
-    public static function init() {
-        load_plugin_textdomain( 'join-my-multisite', false, dirname( plugin_basename( __FILE__ ) ) . '/i18n/' );
-    }
+	/**
+	 * Plugin Construct
+	 *
+	 * @since 1.8
+	 * @access public
+	 */
+	public function __construct() {
+		// Registers our widget.
+		function jmm_load_add_user_widgets() {
+		    include_once( JMM_PLUGIN_DIR . '/lib/widget.php');
+		}
+		
+		// This is what controls how people get added.
+		$jmm_options = get_option( 'helfjmm_options' );
+		if ($jmm_options['type'] == 1) { add_action('init', array('JMM','join_site')); }
+		if ($jmm_options['type'] == 2) { add_action( 'widgets_init', 'jmm_load_add_user_widgets' ); }
+		
+		// Shortcode
+		include_once( JMM_PLUGIN_DIR . '/lib/shortcode.php');
+		
+		add_filter('plugin_row_meta', array( &$this, 'donate_link'), 10, 2);
+		add_action('admin_menu', array( &$this, 'add_settings_page'), 10, 2);
+		add_action('jmm_joinsite', array( &$this, 'join_site'), 10, 2);
+		//add_action('plugins_loaded', array( &$this, 'init'), 10, 2);
+	}
 
-    // donate link on manage plugin page
+	/**
+	 * Donate Link
+	 *
+	 * @since 1.0
+	 * @access public
+	 */
     public static function donate_link($links, $file) {
         if ($file == plugin_basename(__FILE__)) {
                 $donate_link = '<a href="https://store.halfelf.org/donate/">Donate</a>';
@@ -53,18 +79,34 @@ class JMM {
         return $links;
     }
 
-     // Sets up the settings page
+	/**
+	 * Add Settings Page
+	 *
+	 * @since 1.0
+	 * @access public
+	 */
 	public static function add_settings_page() {
         global $jmm_settings_page;
         $jmm_settings_page = add_users_page(__('Join My Multisite Settings','join-my-multisite'), __('Join My Multisite','join-my-multisite'), 'manage_options', 'jmm', array('JMM', 'settings_page'));
     	}
-	 
- 	public static function settings_page() {
+    	
+	/**
+	 * Settings Page Content
+	 *
+	 * @since 1.0
+	 * @access public
+	 */
+	public static function settings_page() {
 	   // Main Settings
 		include_once( JMM_PLUGIN_DIR . '/admin/settings.php');
 	}
 	
-	    // Add users
+	/**
+	 * Join Site code
+	 *
+	 * @since 1.0
+	 * @access public
+	 */
     static function join_site( ) {
         global $current_user, $blog_id;
         
