@@ -87,12 +87,12 @@ function bpdw_is_wiki_home() {
 function bpdw_is_wiki_doc( $doc_id ) {
 
 	// This should already have been pulled up
-	$cached_is_wiki_term = wp_cache_get( $doc_id, 'bpdw_is_wiki_relationships' );
+	$cached_is_wiki_term = get_object_term_cache( $doc_id, 'bpdw_is_wiki' );
 
 	if ( false === $cached_is_wiki_term ) {
 		$docs = array( get_post( $doc_id ) );
 		update_post_caches( $docs, bp_docs_get_post_type_name(), true, false );
-		$cached_is_wiki_term = wp_cache_get( $doc_id, 'bpdw_is_wiki_relationships' );
+		$cached_is_wiki_term = get_object_term_cache( $doc_id, 'bpdw_is_wiki' );
 	}
 
 	$is_wiki_doc = false;
@@ -190,7 +190,7 @@ function bpdw_get_item_terms( $terms ) {
 
 	foreach ( $item_ids as $item_id ) {
 		// This data should be cached
-		$cached_terms = wp_cache_get( $item_id, 'bp_docs_tag_relationships' );
+		$cached_terms = get_object_term_cache( $item_id, 'bp_docs_tag' );
 		if ( ! empty( $cached_terms ) ) {
 			foreach ( $cached_terms as $t ) {
 				if ( ! isset( $all_terms[ $t->slug ] ) ) {

@@ -1,8 +1,11 @@
 === BuddyPress Docs Wiki add-on ===
 Contributors: boonebgorges, cuny-academic-commons
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 
 == Changelog ==
+
+= 1.0.10 =
+* Fixed bug related to the fetching of cached "is_wiki" values in recent versions of WordPress
 
 = 1.0.9 =
 * Fixed some bugs related to pagination rewrites
