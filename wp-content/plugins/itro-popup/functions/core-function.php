@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /* ------------------ADD MENU PAGE */
 function itro_plugin_menu() {
-	add_options_page( 'Popup Plugin Options', 'ITRO Popup', 'manage_options', 'itro-popup/admin/popup-admin.php', '' );
+	add_options_page( 'Popup Plugin Options', 'ITRO Popup', 'manage_options', itroRootPath . 'admin/popup-admin.php', '' );
 }
 
 /* -------------- INITIALIZATION */

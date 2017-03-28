@@ -6,26 +6,28 @@ Description: EN - Show a perfecly centered customizable popup and a popup-system
 Author: ITRO Team
 E-mail: support@itroteam.com
 Text Domain: itro-popup
-Version: 5.0
+Version: 5.0.1
 Author URI: http://www.itroteam.com
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 global $ITRO_VER;
-$ITRO_VER = '5.0';
+$ITRO_VER = '5.0.1';
 
 global $popup_fired; //it check if there is a popup visualization via shortcode or via automatic visualization
 $popup_fired = false;
 
-define('itroPath', plugins_url() . '/itro-popup/');
-define('itroImages', plugins_url() . '/itro-popup/images/');
+define('itroRootPath', basename( dirname( __FILE__ ) ) . "/");
+define('itroPath', plugins_url() . '/' . itroRootPath);
+define('itroImages', plugins_url() . '/' . itroRootPath . 'images/');
 
 include_once ('functions/core-function.php');
 include_once ('functions/database-function.php');
 include_once ('functions/js-function.php');
 include_once ('templates/itro-popup-template.php');
 include_once ('css/itro-style-functions.php');
+
 load_plugin_textdomain('itro-plugin', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 global $post;

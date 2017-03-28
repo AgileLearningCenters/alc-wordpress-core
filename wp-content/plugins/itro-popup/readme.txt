@@ -3,8 +3,8 @@ Contributors: ITRO
 Donate link: https://www.itroteam.com/leave-a-review/
 Tags: multilingual popup, popup, popup message, popuup optin, popup box, popup ads, popup advertising, popup block, popup content warning, fancy box, fancy popup, advertising popup, pop-up, lightbox popup
 Requires at least: 3.0.1
-Tested up to: 4.5.3
-Stable tag: 5.0
+Tested up to: 4.7.1
+Stable tag: 5.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -131,6 +131,9 @@ LIVE DEMOS - [CLICK HERE!](https://www.itroteam.com/wordpress-popup-samples-demo
 BACKEND SCREENSHOT - [CLICK HERE!](https://www.itroteam.com/wordpress-popup-samples-demos/#backend)
 
 == Changelog ==
+= 5.0.1 =
+ADDED: force_balance_tags used to prevent popup content break the DOM
+
 = 5.0 =
 FIXED: automatic top margin not working with popup delay
 ADDED: close cross can be a custom image
@@ -393,53 +396,15 @@ bug fixed: color table now works in admin pannel.
 First released version.
 
 == Upgrade Notice ==
+= 5.0.1 =
+ADDED: force_balance_tags used to prevent popup content break the DOM
+
 = 5.0 =
 FIXED: automatic top margin not working with popup delay
 ADDED: close cross can be a custom image
 IMPROVED: cleaned the js script in itro-admin-scripts.js
 IMPROVED: admin pannel aspect and options order
-IMPROVED: plugin version check for DB updates 
-
-= 4.9.9 =
-FIXED: pragraph broken by a useless css directive
-FIXED: embedded player (youtube, etc...) continue playing after popup close
-ADDED: itro_enter_admin() now manage js exit animation of popup
-
-= 4.9.8 =
-FIXED: unistall not working due missing include
-FIXED: popup slide up on first appear
-ADDED: control on width and height for no-sense values
-
-= 4.9.7 =
-FIXED: changed control for the wp_editor for popup content
-
-= 4.9.6 =
-FIXED: slashes not stripped in popup content
-
-= 4.9.5 =
-FIXED: DB update for "auto" height error of 4.9.3
-
-= 4.9.4 =
-FIXED: obsolete WPLANG usage
-FIXED: data sanification reject "auto" setting for popup height
-
-= 4.9.3 =
-FIXED: selected page not working
-
-= 4.9.2 =
-FIXED: no data validation/sanitization
-
-= 4.9.1 =
-ADDED: customizable text for the countdown
-FIXED: overlayng behaviour with iframes in the popup content
-FIXED: undefined variable error
-
-= 4.9 =
-ADDED: shortcode for visualization.
-ADDED: mobile close tag text automatic font color.
-FIXED: mobile close tab not working.
-FIXED: popup delay default value set to 0.
-IMPROVED: automatic vertical align.
+IMPROVED: plugin version check for DB updates
 
 == Notes ==
 FOR FAQ VISIT THE OFFICIAL SITE [CLICK HERE!](https://www.itroteam.com/itro-wordpress-popup-plugin-faq/)

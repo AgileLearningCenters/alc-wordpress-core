@@ -33,12 +33,15 @@ function itro_enter_anim(auto_margin)
 			if( itro_age_restriction === false )
 			{
 				itro_set_cookie("popup_cookie","one_time_popup", itro_cookie_expiration);
-				// refresh every 0.5 second the popup top margin (needed for browser window resizeing)
-				if(auto_margin == 'yes'){
-					setInterval(function(){itro_margin_refresh();},500);
-				}
+			}
+			// refresh every 0.5 second the popup top margin (needed for browser window resizeing)
+			if(auto_margin == 'yes'){
+				setInterval(function(){itro_margin_refresh();},500);
 			}
 		});
+	}
+	else{
+		jQuery("#itro_popup").css('display', 'none');
 	}
 	
 }
@@ -69,7 +72,6 @@ function itro_exit_anim(){
 function itro_margin_refresh(speed){
 	if(typeof(speed) == undefined){speed = 200;}
 	
-	//if( jQuery('#itro_popup').css('position') )
 	if( typeof( window.innerWidth ) == 'number' ) 
 	{
 		/* Non-IE */
