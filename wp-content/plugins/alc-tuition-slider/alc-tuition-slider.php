@@ -22,7 +22,8 @@ function alc_slider_shortcode( $atts ) {
         'low_income' => 50000,
         'high_income' => 100000,
         'max_income' => 120000,
-        'min_income' => 30000
+        'min_income' => 30000,
+	'suggestion_title' => 'Recommended tuition:'
     ), $atts );
     
     wp_enqueue_script( 'alc-tuition-slider-css' );
@@ -38,7 +39,7 @@ data-max_income="'  . $a['max_income'] . '"
 data-min_income="'  . $a['min_income'] . '"></div>';
     
     $out .= '</div>';
-    $out .= '<div id="tuition"><p>Recommended tuition:</p>';
+    $out .= '<div id="tuition"><p>' . $a['suggestion_title'] . '</p>';
     $out .= '<h1 class="tuition-suggestion"></h1>';
     $out .= '</div>';
     
