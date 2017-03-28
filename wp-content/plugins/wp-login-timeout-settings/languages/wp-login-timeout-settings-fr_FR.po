@@ -1,0 +1,131 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-login-timeout-settings\n"
+"POT-Creation-Date: 2014-10-05 19:25+0100\n"
+"PO-Revision-Date: 2014-10-24 10:15+0100\n"
+"Last-Translator: Julien ELIAS <j.elias@laposte.net>\n"
+"Language-Team: \n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../wp-login-timeout-settings.php:130
+msgid "Settings"
+msgstr "Réglages"
+
+#: ../wp-login-timeout-settings.php:147 ../wp-login-timeout-settings.php:157
+msgid "Login timeout"
+msgstr "Durée de connexion"
+
+#: ../wp-login-timeout-settings.php:176
+msgid "Authentication cookies"
+msgstr "Cookies d'authentification"
+
+#: ../wp-login-timeout-settings.php:177
+msgid ""
+"By default, the authentication cookies remembering is 2 days. When "
+"\"Remember me\" is set, the cookies will be kept for 14 days. (see <a href="
+"\"http://codex.wordpress.org/Function_Reference/wp_set_auth_cookie\" target="
+"\"_blank\">Function Reference/wp set auth cookie in Wordpress Codex</a>)"
+msgstr ""
+"Par défaut, les cookies d'authentification sont valables 2 jours. Quand \"Se "
+"souvenir de moi\" est cochée, les cookies d'authentification sont valables "
+"14 jours. (voir <a href=\"http://codex.wordpress.org/Function_Reference/"
+"wp_set_auth_cookie\" target=\"_blank\">Function Reference/wp set auth cookie "
+"dans le Codex WordPress</a> (en))"
+
+#: ../wp-login-timeout-settings.php:184
+msgid "For more information:"
+msgstr "Pour plus d'informations:"
+
+#: ../wp-login-timeout-settings.php:187
+msgid "Visit plugin page"
+msgstr "Aller sur la page de l'extension"
+
+#: ../wp-login-timeout-settings.php:195
+msgid "Timeout settings"
+msgstr "Réglages de durée de connexion"
+
+#: ../wp-login-timeout-settings.php:196
+msgid "Default timeout (default: 2 days)"
+msgstr "Durée de connexion standard (par défaut: 2 jours)"
+
+#: ../wp-login-timeout-settings.php:197
+msgid "Remember me timeout (default: 14 days)"
+msgstr "Durée de connexion avec \"Se souvenir de moi\" (par défaut: 14 jours)"
+
+#: ../wp-login-timeout-settings.php:199
+msgid "Special timeout settings based on user's capability"
+msgstr "Durée de connexion spéciale basée sur les droits de l'utilisateur"
+
+#: ../wp-login-timeout-settings.php:200
+msgid "Activate special timeout settings"
+msgstr "Activer la durée d'authentification spéciale"
+
+#: ../wp-login-timeout-settings.php:201
+msgid ""
+"Select user capabilitie activating the special timeout (default: edit_posts)"
+msgstr ""
+"Sélectionnez une capacité de l'utilisateur (user capabilitie) qui va activer "
+"la durée de connexion spéciale (par défaut : edit_posts)"
+
+#: ../wp-login-timeout-settings.php:202
+msgid "Special timeout (default: 2 days)"
+msgstr "Durée de connexion spéciale (par défaut: 2 jours)"
+
+#: ../wp-login-timeout-settings.php:203
+msgid "Special Remember me timeout (default: 14 days)"
+msgstr ""
+"Durée de connexion spéciale avec \"Se souvenir de moi\" (par défaut: 14 "
+"jours)"
+
+#: ../wp-login-timeout-settings.php:208
+msgid ""
+"By default, the authentication cookies remembering is 2 days. When "
+"\"Remember me\" is set, the cookies will be kept for 14 days. This panel "
+"allows you to change these settings."
+msgstr ""
+"Par défaut, les cookies d'authentification sont valables 2 jours. Quand \"Se "
+"souvenir de moi\" est cochée, les cookies d'authentification sont valables "
+"14 jours. Cette fenêtre vous permet de modifier ces paramètres."
+
+#: ../wp-login-timeout-settings.php:218 ../wp-login-timeout-settings.php:231
+#: ../wp-login-timeout-settings.php:277 ../wp-login-timeout-settings.php:290
+msgid "minute(s)"
+msgstr "minute(s)"
+
+#: ../wp-login-timeout-settings.php:219 ../wp-login-timeout-settings.php:232
+#: ../wp-login-timeout-settings.php:278 ../wp-login-timeout-settings.php:291
+msgid "hour(s)"
+msgstr "heure(s)"
+
+#: ../wp-login-timeout-settings.php:220 ../wp-login-timeout-settings.php:233
+#: ../wp-login-timeout-settings.php:279 ../wp-login-timeout-settings.php:292
+msgid "day(s)"
+msgstr "jour(s)"
+
+#: ../wp-login-timeout-settings.php:239
+msgid ""
+"You can set a different login timeout to Users with a specific capability."
+msgstr ""
+"Vous pouvez configurer une durée de connexion spéciale pour les utilisateurs "
+"avec un droit spécifique."
+
+#: ../wp-login-timeout-settings.php:241
+msgid ""
+"eg. : You can set longer/shorter login timeout to Administrators using "
+"\"edit_theme_options\" capability. (see <a href=\"http://codex.wordpress.org/"
+"Roles_and_Capabilities\" target=\"_blank\">Roles and Capabilities in "
+"Wordpress Codex</a>)"
+msgstr ""
+"ex. : Vous pouvez configurer un temps de connexion plus court/plus long pour "
+"les Administrateurs en utilisant la capacité \"edit_theme_options\". (Voir "
+"<a href=\"http://codex.wordpress.org/Roles_and_Capabilities\" target=\"_blank"
+"\">Roles and Capabilities dans le Codex WordPress </a>)"

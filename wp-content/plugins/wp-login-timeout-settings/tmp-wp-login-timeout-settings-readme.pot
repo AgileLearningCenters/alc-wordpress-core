@@ -1,0 +1,110 @@
+msgid ""
+msgstr "MIME-Version: 1.0\n"
+
+#. Name.
+msgid "WP Login Timeout Settings"
+msgstr ""
+
+#. Short description.
+msgid "Configure WordPress Login Timeout through UI (User Interface)."
+msgstr ""
+
+#. Screenshot description.
+msgid "Activate the plugin"
+msgstr ""
+
+#. Screenshot description.
+msgid "Link to Login Timeout Settings"
+msgstr ""
+
+#. Screenshot description.
+msgid "Login Timeout Settings panel"
+msgstr ""
+
+#. Found in description header.
+msgid "Features"
+msgstr ""
+
+#. Found in description header.
+msgid "Languages"
+msgstr ""
+
+#. Found in description list item.
+msgid "Set default login timeout"
+msgstr ""
+
+#. Found in description list item.
+msgid "Set login 'Remember me' timeout"
+msgstr ""
+
+#. Found in description list item.
+msgid "Set special timeout for Users with a specific capability. eg. : You can set longer/shorter login timeout to Administrators using \"edit_theme_options\" capability. (see <a href=\"http://codex.wordpress.org/Roles_and_Capabilities\">Roles and Capabilities in Wordpress Codex</a>)"
+msgstr ""
+
+#. Found in description list item.
+msgid "Use default Wordpress behaviors"
+msgstr ""
+
+#. Found in description list item.
+msgid "Add Updates panel (Settings &gt; Login timeout)"
+msgstr ""
+
+#. Found in description list item.
+msgid "Contextual Help"
+msgstr ""
+
+#. Found in description list item.
+msgid "Translation MO/PO files"
+msgstr ""
+
+#. Found in description list item.
+msgid "Desactivate restore default WordPress behavior"
+msgstr ""
+
+#. Found in description list item.
+msgid "Uninstall restore default WordPress behavior"
+msgstr ""
+
+#. Found in description list item.
+msgid "English"
+msgstr ""
+
+#. Found in description list item.
+msgid "French"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "Allows you the ability to set login timeout Settings panel."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Download and extract plugin files to wp-content/plugin directory."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Activate the plugin through the WordPress admin interface."
+msgstr ""
+
+#. Found in installation paragraph.
+msgid "You will find 'Login timeout' menu in your WordPress Settings panel."
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Feature : better translation integration with WordPress.org"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix : notice on WP_DEBUG is true"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix : remove user_level form capabilities"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Add feature special timeout"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Initial version"
+msgstr ""
