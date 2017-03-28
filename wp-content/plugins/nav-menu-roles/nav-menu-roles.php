@@ -3,10 +3,10 @@
 Plugin Name: Nav Menu Roles
 Plugin URI: http://www.kathyisawesome.com/449/nav-menu-roles/
 Description: Hide custom menu items based on user roles.
-Version: 1.8.2
+Version: 1.8.6
 Author: Kathy Darling
 Author URI: http://www.kathyisawesome.com
-License: GPL2
+License: GPL-3.0
 Text Domain: nav-menu-roles
 
 Copyright 2014 Kathy Darling(email: kathy.darling@gmail.com)
@@ -54,7 +54,7 @@ class Nav_Menu_Roles {
 	* @constant string version number
 	* @since 1.7.1
 	*/
-	CONST VERSION = '1.8.2';
+	CONST VERSION = '1.8.6';
 
 	/**
 	* Main Nav Menu Roles Instance
@@ -125,7 +125,8 @@ class Nav_Menu_Roles {
 
 		// exclude items via filter instead of via custom Walker
 		if ( ! is_admin() ) {
-			add_filter( 'wp_get_nav_menu_items', array( $this, 'exclude_menu_items' ) );
+			$priority = 20; // Because WP_Customize_Nav_Menu_Item_Setting::filter_wp_get_nav_menu_items() runs at 10.
+			add_filter( 'wp_get_nav_menu_items', array( $this, 'exclude_menu_items' ), $priority );
 		}
 
 		// upgrade routine
@@ -140,15 +141,6 @@ class Nav_Menu_Roles {
 	* @return void
 	*/
 	public function admin_init() {
-
-		if( ! class_exists( 'Walker_Nav_Menu_Edit_Roles' ) ){
-			global $wp_version;
-		    if ( version_compare( $wp_version, '4.5.0', '>=' ) ){
-				include_once( plugin_dir_path( __FILE__ ) . 'inc/class.Walker_Nav_Menu_Edit_Roles_4.5.php');
-			} else {
-				include_once( plugin_dir_path( __FILE__ ) . 'inc/class.Walker_Nav_Menu_Edit_Roles.php');
-			}
-        }
 
 		// Register Importer
 		$this->register_importer();
@@ -236,6 +228,16 @@ class Nav_Menu_Roles {
 	* @since 1.0
 	*/
 	public function edit_nav_menu_walker( $walker ) {
+		if( ! class_exists( 'Walker_Nav_Menu_Edit_Roles' ) ){
+			global $wp_version;
+		    if ( version_compare( $wp_version, '4.7', '>=' ) ){
+				require_once( plugin_dir_path( __FILE__ ) . 'inc/class.Walker_Nav_Menu_Edit_Roles_4.7.php');
+			} else if ( version_compare( $wp_version, '4.5', '>=' ) ){
+				require_once( plugin_dir_path( __FILE__ ) . 'inc/class.Walker_Nav_Menu_Edit_Roles_4.5.php');
+			} else {
+				require_once( plugin_dir_path( __FILE__ ) . 'inc/class.Walker_Nav_Menu_Edit_Roles.php');
+			}
+        }
 		return 'Walker_Nav_Menu_Edit_Roles';
 	}
 

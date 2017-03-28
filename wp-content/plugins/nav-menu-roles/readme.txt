@@ -4,8 +4,8 @@ Contributors: helgatheviking
 Donate link: https://www.paypal.me/helgatheviking
 Tags: menu, menus, nav menu, nav menus
 Requires at least: 4.5.0
-Tested up to: 4.5.1
-Stable tag: 1.8.2
+Tested up to: 4.7.0
+Stable tag: 1.8.6
 License: GPLv3
 
 Hide custom menu items based on user roles. PLEASE READ THE FAQ IF YOU ARE NOT SEEING THE SETTINGS.
@@ -14,7 +14,7 @@ Hide custom menu items based on user roles. PLEASE READ THE FAQ IF YOU ARE NOT S
 
 This plugin lets you hide custom menu items based on user roles.  So if you have a link in the menu that you only want to show to logged in users, certain types of users, or even only to logged out users, this plugin is for you.
 
-Nav Menu Roles is very flexible. In addition to standard user roles, you can customize the functionality by adding your own check boxes with custom labels using the `nav_menu_roles` filter and then using the `nav_menu_roles_item_visibility` filter to check against whatever criteria you need. You can check against any user meta values (like capabilities) and any custom attributes added by other plugins. See the [FAQ](http://wordpress.org/plugins/nav-menu-roles/faq/#new-role).
+Nav Menu Roles is very flexible. In addition to standard user roles, you can customize the functionality by adding your own check boxes with custom labels using the `nav_menu_roles` filter and then using the `nav_menu_roles_item_visibility` filter to check against whatever criteria you need. You can check against any user meta values (like capabilities) and any custom attributes added by other plugins.
 
 = IMPORTANT NOTE =
 
@@ -46,7 +46,7 @@ Please report any bugs, errors, warnings, code problems to [Github](https://gith
 
 == Frequently Asked Questions ==
 
-= <a id="conflict"></a>I don't see the Nav Menu Roles options in the admin menu items?  =
+= I don't see the Nav Menu Roles options in the admin menu items?  =
 
 This is because you have another plugin (or theme) that is also trying to alter the same code that creates the Menu section in the admin.  
 
@@ -54,7 +54,7 @@ WordPress does not have sufficient hooks in this area of the admin and until the
 
 **A non-exhaustive list of known conflicts:**
 
-1. UberMenu 2.x Mega Menus plugin
+1. UberMenu 2.x Mega Menus plugin (UberMenu 3.x supports NMR!)
 2. Add Descendants As Submenu Items plugin
 3. Navception plugin
 4. Suffusion theme
@@ -63,9 +63,10 @@ WordPress does not have sufficient hooks in this area of the admin and until the
 7. Jupiter Theme
 8. iMedica theme
 9. Prostyler EVO theme
+10. Mega Main Plugin
 
 
-= <a id="compatibility"></a>Workaround #1 =
+= Workaround #1 =
 [Shazdeh](https://profiles.wordpress.org/shazdeh/) had the genius idea to not wait for a core hook and simply add the hook ourselves. If all plugin and theme authors use the same hook, we can make our plugins play together.
 
 Therefore, as of version 1.6 I am modifying my admin nav menu Walker to *only* adding the following lines (right after the description input):
@@ -80,7 +81,7 @@ do_action( 'wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args );
 
 **Ask your conflicting plugin/theme's author to add this code to his plugin or theme and our plugins will become compatible.**
 
-= <a id="patch"></a>Patching Your Plugin/Theme =
+= Instructions for Patching Your Plugin/Theme =
 
 Should you wish to attempt this patch yourself, you can modify your conflicting plugin/theme's admin menu Walker class. 
 
@@ -123,13 +124,17 @@ do_action( 'wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args );
 
 As a workaround, you can switch to a default theme (or disable the conflicting plugin), edit the Nav Menu Roles, for each menu item, then revert to your original theme/ reenable the conflicting plugin. The front-end functionality of Nav Menu Roles will still work. 
 
+= Workaround #3 =
+
+Download and install this [tiny plugin](https://gist.github.com/helgatheviking/d00f9c033a4b0aab0f69cf50d7dcd89c). Activate it when you need to make the NMR options appear and then disable it when you are done editing. 
+
 = I'm using XYZ Membership plugin and I don't see its "levels"? =
 
 There are apparently a few membership plugins out there that *don't* use traditional WordPress roles/capabilities. My plugin will list any role registered in the traditional WordPress way. If your membership plugin is using some other system, then Nav Menu Roles won't work with it out of the box.  Since 1.3.5 I've added a filter called `nav_menu_roles_item_visibility` just before my code decides whether to show/hide a menu item. There's also always been the `nav_menu_roles` filter which lets you modify the roles listed in the admin. Between these two, I believe you have enough to integrate Nav Menu Roles with any membership plugin. 
 
 Here's an example where I've added a new pseudo role, creatively called "new-role".  The first function adds it to the menu item admin screen. The second function is pretty generic and won't actually do anything because you need to supply your own logic based on the plugin you are using.  Nav Menu Roles will save the new "role" info and add it to the item in an array to the `$item->roles` variable.
 
-= <a id="new-role"></a>Adding a new "role" =
+= Adding a new "role" =
 
 `
 /*
@@ -198,6 +203,15 @@ However, the Import plugin only imports certain post meta for menu items.  As of
 1. No duplicate posts will be created but all menu post meta (including your Nav Menu Roles info) will be imported
 
 == Changelog ==
+
+= 1.8.5 =
+* Use new Walker for WP4.7
+
+= 1.8.4 =
+* Prevent nav menu items edited in the customizer from rendering when they should be excluded
+
+= 1.8.3 = 
+* Remove deprecated screen_icon()
 
 = 1.8.2 = 
 * Reduce number of parameters passed to `add_action_links` filter
