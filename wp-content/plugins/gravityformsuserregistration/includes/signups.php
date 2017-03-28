@@ -120,7 +120,7 @@ class GFUserSignups {
 			return false;
 		}
 
-		$url = add_query_arg( array( 'page' => 'gf_activation', 'key' => $key ), get_site_url() . '/' );
+		$url = add_query_arg( array( 'page' => 'gf_activation', 'key' => $key ), home_url( '/' ) );
 
 		// BP replaces URL before passing the message, get the BP activation URL and replace
 		if ( gf_user_registration()->is_bp_active() ) {
@@ -138,7 +138,7 @@ class GFUserSignups {
 			return false;
 		}
 
-		$url = add_query_arg( array( 'page' => 'gf_activation', 'key' => $key ), get_site_url() );
+		$url = add_query_arg( array( 'page' => 'gf_activation', 'key' => $key ), home_url( '/' ) );
 
 		// BP replaces URL before passing the message, get the BP activation URL and replace
 		if ( gf_user_registration()->is_bp_active() ) {
@@ -282,7 +282,7 @@ class GFSignup {
 		$this->meta   = unserialize( $signup->meta );
 		$this->lead   = GFFormsModel::get_lead( $this->meta['lead_id'] );
 		$this->form   = GFFormsModel::get_form_meta( $this->lead['form_id'] );
-		$this->config = gf_user_registration()->get_single_submission_feed( $this->lead, $this->form );
+		$this->config = gf_user_registration()->get_filtered_single_submission_feed( $this->lead, $this->form );
 
 	}
 
