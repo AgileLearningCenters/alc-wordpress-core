@@ -1,0 +1,4693 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: team-booking\n"
+"POT-Creation-Date: 2017-08-13 19:15+0200\n"
+"PO-Revision-Date: 2017-08-13 19:15+0200\n"
+"Last-Translator: \n"
+"Language-Team: VonStroheim\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:4c,1,2;_n:1,2;_nx:4c,1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: libs/tgm/class-tgm-plugin-activation.php\n"
+
+#: includes/tb_admin_notices.php:14
+msgid "Team Booking is active, yet not configured!"
+msgstr "TeamBooking è attivo, ma non ancora configurato!"
+
+#: includes/tb_admin_notices.php:21
+#, php-format
+msgid ""
+"Please set your TimeZone in WordPress general settings! DSTs are not "
+"compatible with manual GMT offsets, so TeamBooking is assuming %s as your "
+"equivalent Timezone."
+msgstr ""
+"Per favore imposta il fuso orario della tua città nelle impostazioni "
+"generali di WordPress! TeamBooking sta assumendo %s come fuso orario "
+"equivalente."
+
+#: includes/tb_admin_notices.php:32 includes/tb_admin_notices.php:93
+msgid "Settings saved!"
+msgstr "Impostazioni salvate!"
+
+#: includes/tb_admin_notices.php:37
+msgid "Settings imported!"
+msgstr "Impostazioni importate!"
+
+#: includes/tb_admin_notices.php:42
+msgid ""
+"This settings file comes from a different plugin version and cannot be "
+"imported"
+msgstr ""
+"Questo file di impostazioni appartiene a una versione differente del plugin "
+"e non può essere importato"
+
+#: includes/tb_admin_notices.php:47
+msgid "API token created!"
+msgstr "Token API creato!"
+
+#: includes/tb_admin_notices.php:52
+msgid "API token removed!"
+msgstr "Token API rimosso!"
+
+#: includes/tb_admin_notices.php:57
+msgid ""
+"Database repaired. Please perform a full sync of your Google Calendars now!"
+msgstr ""
+"Database riparato. Effettua una sincronizzazione completa di tutti i tuoi "
+"Google Calendar ora!"
+
+#: includes/tb_admin_notices.php:62
+msgid "Sorry, this is not a TeamBooking settings file!"
+msgstr "Questo non è un file di TeamBooking!"
+
+#: includes/tb_admin_notices.php:70
+msgid "Service added succesfully!"
+msgstr "Servizio aggiunto correttamente!"
+
+#: includes/tb_admin_notices.php:75
+msgid "Service updated succesfully!"
+msgstr "Servizio aggiornato correttamente!"
+
+#: includes/tb_admin_notices.php:80
+msgid "Service removed succesfully!"
+msgstr "Servizio eliminato correttamente!"
+
+#: includes/tb_admin_notices.php:85
+msgid "Services removed succesfully!"
+msgstr "Servizi rimossi con successo!"
+
+#: includes/tb_admin_notices.php:98
+msgid "Settings deleted succesfully!"
+msgstr "Impostazioni eliminate con successo!"
+
+#: includes/tb_admin_notices.php:104
+#, php-format
+msgid "Go <a href=\"%s\">here</a> and revoke auth to "
+msgstr "Vai <a href=\"%s\">qui</a> e ritira l'autorizzazione a "
+
+#: includes/tb_admin_notices.php:109
+msgid ""
+"Personal settings deleted, but for some reason you should revoke Google Auth "
+"manually!"
+msgstr ""
+"Le impostazioni personalizzate sono state eliminate, ma per qualche ragione "
+"devi ritirare manualmente l'autorizzazione sul tuo Account Google!"
+
+#: includes/tb_admin_notices.php:116
+msgid "You are now fully authorized!"
+msgstr "Ora sei autorizzato!"
+
+#: includes/tb_admin_notices.php:121
+msgid "Something went wrong, are you sure you have asked for authorization?"
+msgstr "Qualcosa è andato storto, sei sicuro di aver chiesto l'autorizzazione?"
+
+#: includes/tb_admin_notices.php:126
+msgid ""
+"It seems that the authorization was already given in the past, but was not "
+"correctly revoked lately. Browse your authorized apps using the link in the "
+"useful links section, and try to manually revoke it, before trying again. It "
+"could also be possible that the Google Account you are logged in is already "
+"in use by another coworker."
+msgstr ""
+"Sembra che l'autorizzazione sia già stata data in passato, ma non "
+"correttamente revocata. Visita le tue applicazioni autorizzate in Google "
+"usando il link in basso, e prova a revocare manualmente l'autorizzazione "
+"prima di riprovare."
+
+#: includes/tb_admin_notices.php:131
+msgid ""
+"It seems that the Google Account you are logged in is already in use by "
+"another coworker."
+msgstr ""
+"Sembra che l'Account Google in cui sei loggato sia già in uso da un altro "
+"Collaboratore."
+
+#: includes/tb_admin_notices.php:136
+msgid "This linked event title is already used!"
+msgstr "Questo titolo è già utilizzato!"
+
+#: includes/tb_admin_notices.php:141
+#, php-format
+msgid "Error revoking authorization: %s"
+msgstr "Errore durante la revoca dell'autorizzazione: %s"
+
+#: includes/tb_admin_notices.php:151 src/TeamBooking/API/REST.php:251
+msgid "Reservation succesfully cancelled!"
+msgstr "Prenotazione correttamente revocata!"
+
+#: includes/tb_admin_notices.php:156
+msgid "Reservation succesfully confirmed!"
+msgstr "Prenotazione approvata con successo!"
+
+#: includes/tb_admin_notices.php:161
+msgid "Cancellation not possible for Unscheduled Service class!"
+msgstr "Cancellazione non possibile per classe Servizio!"
+
+#: includes/tb_admin_notices.php:171
+msgid "Error logs succesfully cleaned!"
+msgstr "Log degli errori correttamente pulito!"
+
+#: includes/tb_file_generators.php:104 includes/tb_file_generators.php:315
+#: src/TeamBooking/Admin/Customers.php:112
+#: src/TeamBooking/Admin/PromotionTable.php:94
+#: src/TeamBooking/Admin/ReservationsTable.php:103
+#: src/TeamBooking/Admin/SlotsTable.php:147
+#: src/TeamBooking/Admin/SlotsTable.php:498
+#: src/TeamBooking/Admin/SlotsTable.php:507
+#: src/TeamBooking/Shortcodes/Reservations.php:61
+msgid "Status"
+msgstr "Stato"
+
+#: includes/tb_file_generators.php:105 includes/tb_file_generators.php:316
+#: src/TeamBooking/Admin/Coworkers.php:48
+#: src/TeamBooking/Admin/Customers.php:113
+#: src/TeamBooking/Admin/Personal.php:125
+#: src/TeamBooking/Admin/Promotion.php:208
+#: src/TeamBooking/Admin/PromotionTable.php:92
+#: src/TeamBooking/Admin/PromotionTable.php:435
+#: src/TeamBooking/Admin/Service.php:517 src/TeamBooking/Admin/Services.php:55
+#: src/TeamBooking/Admin/Services.php:266
+#: src/TeamBooking/Admin/SlotsTable.php:500
+#: src/TeamBooking/Admin/SlotsTable.php:509
+msgid "Name"
+msgstr "Nome"
+
+#: includes/tb_file_generators.php:106 includes/tb_file_generators.php:317
+#: includes/tb_functions.php:183 src/TeamBooking/Abstracts/FormElement.php:240
+#: src/TeamBooking/Admin/Services.php:128
+#: src/TeamBooking/Database/Services.php:75
+#: src/TeamBooking/Legacy/Service.php:569
+#: src/TeamBooking/Legacy/TextField.php:175 src/TeamBooking/Update.php:92
+msgid "Email"
+msgstr "Email"
+
+#: includes/tb_file_generators.php:107 includes/tb_file_generators.php:318
+msgid "Total Reservations"
+msgstr "Prenotazioni totali"
+
+#: includes/tb_file_generators.php:117 includes/tb_file_generators.php:331
+#: src/TeamBooking/Admin/Customers.php:157
+#: src/TeamBooking/Admin/Customers.php:166
+msgid "Registered"
+msgstr "Registrato"
+
+#: includes/tb_file_generators.php:117 includes/tb_file_generators.php:331
+#: src/TeamBooking/Admin/Customers.php:157
+#: src/TeamBooking/Admin/Customers.php:166
+msgid "Guest"
+msgstr "Non registrato"
+
+#: includes/tb_file_generators.php:170 includes/tb_file_generators.php:395
+#: src/TeamBooking/Admin/Overview.php:314
+#: src/TeamBooking/Admin/ReservationsTable.php:187
+#: src/TeamBooking/Admin/ReservationsTable.php:497
+#: src/TeamBooking/Services/Unscheduled.php:45
+#: src/TeamBooking/Shortcodes/Reservations.php:75
+msgid "Unscheduled"
+msgstr "Servizio non programmato"
+
+#: includes/tb_file_generators.php:189 includes/tb_file_generators.php:368
+msgid "ID"
+msgstr "ID"
+
+#: includes/tb_file_generators.php:190 includes/tb_file_generators.php:369
+#: src/TeamBooking/API/REST.php:616 src/TeamBooking/Admin/Customers.php:121
+#: src/TeamBooking/Admin/Overview.php:472
+#: src/TeamBooking/Admin/ReservationsTable.php:100
+#: src/TeamBooking/Admin/SlotsTable.php:145
+#: src/TeamBooking/Database/Services.php:25
+#: src/TeamBooking/Shortcodes/Reservations.php:58
+msgid "Service"
+msgstr "Servizio"
+
+#: includes/tb_file_generators.php:191 includes/tb_file_generators.php:370
+#: src/TeamBooking/API/REST.php:619 src/TeamBooking/Admin/Overview.php:127
+#: src/TeamBooking/Frontend/Review.php:77
+#: src/TeamBooking/Shortcodes/Reservations.php:59
+msgid "When"
+msgstr "Quando"
+
+#: includes/tb_file_generators.php:192 includes/tb_file_generators.php:371
+msgid "Date of reservation"
+msgstr "Data della prenotazione"
+
+#: includes/tb_file_generators.php:193 includes/tb_file_generators.php:372
+msgid "Reservation Status"
+msgstr "Stato della prenotazione"
+
+#: includes/tb_file_generators.php:194 includes/tb_file_generators.php:373
+#: src/TeamBooking/Admin/ReservationsTable.php:104
+msgid "Payment Status"
+msgstr "Stato del pagamento"
+
+#: includes/tb_file_generators.php:195 includes/tb_file_generators.php:374
+msgid "Price"
+msgstr "Prezzo"
+
+#: includes/tb_file_generators.php:196 src/TeamBooking/Admin/Payments.php:57
+msgid "Currency"
+msgstr "Valuta"
+
+#: includes/tb_file_generators.php:199 includes/tb_file_generators.php:375
+#: src/TeamBooking/Admin/Overview.php:497
+#: src/TeamBooking/Admin/SlotsTable.php:501
+#: src/TeamBooking/Frontend/Form.php:114
+#: src/TeamBooking/Frontend/Review.php:125
+msgid "Tickets"
+msgstr "Biglietti"
+
+#: includes/tb_file_generators.php:200 includes/tb_file_generators.php:376
+msgid "Total price paid"
+msgstr "Costo totale"
+
+#: includes/tb_file_generators.php:203 includes/tb_file_generators.php:379
+#: src/TeamBooking/Admin/Overview.php:130
+#: src/TeamBooking/Admin/Overview.php:485
+#: src/TeamBooking/Admin/ReservationsTable.php:107
+#: src/TeamBooking/Admin/SlotsTable.php:150
+msgid "Coworker"
+msgstr "Collaboratore"
+
+#: includes/tb_file_generators.php:205 includes/tb_file_generators.php:381
+msgid "Discounts used"
+msgstr "Promozioni utilizzate"
+
+#: includes/tb_file_generators.php:206 includes/tb_file_generators.php:382
+#: src/TeamBooking/Admin/Overview.php:435
+msgid "WordPress User"
+msgstr "Utente WordPress"
+
+#: includes/tb_file_generators.php:214 includes/tb_file_generators.php:414
+#: src/TeamBooking/Admin/ReservationsTable.php:649
+msgid "paid"
+msgstr "pagato"
+
+#: includes/tb_file_generators.php:216 includes/tb_file_generators.php:416
+#: src/TeamBooking/Admin/ReservationsTable.php:664
+msgid "not paid"
+msgstr "non pagato"
+
+#: includes/tb_file_generators.php:220 includes/tb_file_generators.php:428
+#: src/TeamBooking/Admin/ReservationsTable.php:570
+#: src/TeamBooking/Shortcodes/Reservations.php:113
+msgid "todo"
+msgstr "aperto"
+
+#: includes/tb_file_generators.php:251 includes/tb_file_generators.php:456
+#: src/TeamBooking/Admin/Overview.php:438
+msgid "User removed"
+msgstr "Utente rimosso"
+
+#: includes/tb_file_generators.php:383
+#: src/TeamBooking/Admin/ReservationsTable.php:737
+#: src/TeamBooking/Admin/SlotsTable.php:491
+msgid "Details"
+msgstr "Dettagli"
+
+#: includes/tb_functions.php:177
+msgid "Validation rule"
+msgstr "Regola di validazione"
+
+#: includes/tb_functions.php:181
+msgid "No validation"
+msgstr "Nessuna validazione"
+
+#: includes/tb_functions.php:185
+msgid "Alphanumeric"
+msgstr "Alfanumerica"
+
+#: includes/tb_functions.php:187
+msgid "Phone number (US only)"
+msgstr "Numero di telefono (Stati Uniti)"
+
+#: includes/tb_functions.php:189
+msgid "Custom"
+msgstr "Personalizzata"
+
+#: includes/tb_functions.php:193
+msgid "Custom validation regex (works if \"custom\" is selected)"
+msgstr "Regex personalizzata (funziona se \"personalizzata\" è selezionata)"
+
+#: includes/tb_functions.php:200 includes/tb_mappers.php:601
+#: includes/tb_mappers.php:731 src/TeamBooking/Admin/Framework/Modal.php:30
+#: src/TeamBooking/Admin/Overview.php:550
+msgid "Close"
+msgstr "Chiudi"
+
+#: includes/tb_mappers.php:46 src/TeamBooking/ReservationData.php:1113
+msgid "Not selected"
+msgstr "Non selezionato"
+
+#: includes/tb_mappers.php:192
+msgid "Built-in"
+msgstr "Predefinito"
+
+#: includes/tb_mappers.php:221
+msgid "Text field"
+msgstr "Campo di testo"
+
+#: includes/tb_mappers.php:232 includes/tb_mappers.php:306
+#: includes/tb_mappers.php:379 includes/tb_mappers.php:436
+#: includes/tb_mappers.php:509 includes/tb_mappers.php:638
+#: includes/tb_mappers.php:759
+msgid "Label"
+msgstr "Etichetta"
+
+#: includes/tb_mappers.php:245
+msgid "Default value"
+msgstr "Valore predefinito"
+
+#: includes/tb_mappers.php:254 includes/tb_mappers.php:328
+#: includes/tb_mappers.php:402 includes/tb_mappers.php:449
+#: includes/tb_mappers.php:575 includes/tb_mappers.php:705
+#: includes/tb_mappers.php:781
+msgid "Hook"
+msgstr "Hook"
+
+#: includes/tb_mappers.php:262 includes/tb_mappers.php:336
+#: includes/tb_mappers.php:457 includes/tb_mappers.php:566
+#: includes/tb_mappers.php:696 includes/tb_mappers.php:772
+msgid "Description (optional)"
+msgstr "Descrizione (opzionale)"
+
+#: includes/tb_mappers.php:272 includes/tb_mappers.php:346
+msgid "Pre-fill meta_key (optional)"
+msgstr "meta_key per l'inserimento automatico di dati (opzionale)"
+
+#: includes/tb_mappers.php:295 src/TeamBooking/Admin/Service.php:1113
+msgid "Textarea"
+msgstr "Area di testo"
+
+#: includes/tb_mappers.php:319
+msgid "Default text"
+msgstr "Testo predefinito"
+
+#: includes/tb_mappers.php:369 src/TeamBooking/Admin/Service.php:1141
+msgid "Paragraph"
+msgstr "Paragrafo"
+
+#: includes/tb_mappers.php:392
+msgid "Content"
+msgstr "Contenuto"
+
+#: includes/tb_mappers.php:394
+msgid "If you use html code, please ensure it is not broken!"
+msgstr "Se stai usando codice html, assicurati che sia giusto e coerente!"
+
+#: includes/tb_mappers.php:424 src/TeamBooking/Admin/Service.php:1120
+msgid "Checkbox"
+msgstr "Checkbox"
+
+#: includes/tb_mappers.php:469
+msgid "Selected by default"
+msgstr "Selezionata di default"
+
+#: includes/tb_mappers.php:493
+#: src/TeamBooking/Admin/Framework/PanelSettingInsertMedia.php:82
+#: src/TeamBooking/Admin/Service.php:1106
+msgid "Select"
+msgstr "Select"
+
+#: includes/tb_mappers.php:532 includes/tb_mappers.php:552
+#: includes/tb_mappers.php:661 includes/tb_mappers.php:682
+msgid "Option"
+msgstr "Opzione"
+
+#: includes/tb_mappers.php:560 includes/tb_mappers.php:690
+msgid "Add option"
+msgstr "Aggiungi opzione"
+
+#: includes/tb_mappers.php:588 includes/tb_mappers.php:718
+msgid "Price increment"
+msgstr "Incremento di prezzo"
+
+#: includes/tb_mappers.php:590 includes/tb_mappers.php:720
+msgid "base price"
+msgstr "prezzo base"
+
+#: includes/tb_mappers.php:601 includes/tb_mappers.php:731
+msgid "Set"
+msgstr "Imposta"
+
+#: includes/tb_mappers.php:601 includes/tb_mappers.php:731
+msgid "remember to save"
+msgstr "ricorda di salvare"
+
+#: includes/tb_mappers.php:602 includes/tb_mappers.php:732
+msgid "advanced option settings"
+msgstr "impostazioni avanzate opzione"
+
+#: includes/tb_mappers.php:622
+msgid "Radio group"
+msgstr "Radio"
+
+#: includes/tb_mappers.php:748
+msgid "File Field"
+msgstr "File"
+
+#: includes/tb_mappers.php:790
+msgid "Allowed extensions (no dots, comma separated)"
+msgstr "Estensioni ammesse (niente punti, separate da virgole)"
+
+#: includes/tb_vc_elements.php:22
+msgctxt "Visual Composer element"
+msgid "TeamBooking Calendar"
+msgstr "Calendario TeamBooking"
+
+#: includes/tb_vc_elements.php:23
+msgctxt "Visual Composer element"
+msgid "Frontend booking calendar"
+msgstr "Calendario delle prenotazioni"
+
+#: includes/tb_vc_elements.php:29 includes/tb_vc_elements.php:102
+#: includes/tb_vc_elements.php:207
+msgctxt "Visual Composer category"
+msgid "Booking"
+msgstr "Prenotazioni"
+
+#: includes/tb_vc_elements.php:36 includes/tb_vc_elements.php:38
+#: includes/tb_vc_elements.php:109 includes/tb_vc_elements.php:111
+#: includes/tb_vc_elements.php:214 includes/tb_vc_elements.php:216
+msgctxt "Visual Composer element"
+msgid "Read only"
+msgstr "Sola lettura"
+
+#: includes/tb_vc_elements.php:38 includes/tb_vc_elements.php:47
+#: includes/tb_vc_elements.php:65 includes/tb_vc_elements.php:72
+#: includes/tb_vc_elements.php:111 includes/tb_vc_elements.php:120
+#: includes/tb_vc_elements.php:127 includes/tb_vc_elements.php:134
+#: includes/tb_vc_elements.php:143 includes/tb_vc_elements.php:185
+#: includes/tb_vc_elements.php:216 src/TeamBooking/Admin/Core.php:90
+#: src/TeamBooking/Admin/Coworkers.php:141
+#: src/TeamBooking/Admin/Framework/PanelSettingYesOrNo.php:37
+#: src/TeamBooking/Admin/Overview.php:82 src/TeamBooking/Admin/Overview.php:90
+#: src/TeamBooking/Admin/Overview.php:102 src/TeamBooking/Admin/Personal.php:78
+#: src/TeamBooking/Admin/Personal.php:210
+#: src/TeamBooking/Admin/Personal.php:217
+#: src/TeamBooking/Admin/Promotion.php:563
+#: src/TeamBooking/Admin/ReservationsTable.php:762
+#: src/TeamBooking/Admin/ReservationsTable.php:791
+#: src/TeamBooking/Admin/Service.php:804 src/TeamBooking/Admin/Service.php:805
+#: src/TeamBooking/Admin/Services.php:212
+#: src/TeamBooking/Admin/Services.php:222
+#: src/TeamBooking/Widgets/Calendar.php:165
+#: src/TeamBooking/Widgets/Calendar.php:172
+#: src/TeamBooking/Widgets/Calendar.php:179
+#: src/TeamBooking/Widgets/Upcoming.php:177
+#: src/TeamBooking/Widgets/Upcoming.php:182
+#: src/TeamBooking/Widgets/Upcoming.php:187
+#: src/TeamBooking/Widgets/Upcoming.php:192
+#: src/TeamBooking/Widgets/Upcoming.php:197
+#: src/TeamBooking/Widgets/Upcoming.php:202
+msgid "Yes"
+msgstr "Si"
+
+#: includes/tb_vc_elements.php:39 includes/tb_vc_elements.php:112
+msgctxt "Visual Composer element"
+msgid "Reservations will be forbidden"
+msgstr "Le prenotazioni saranno impedite"
+
+#: includes/tb_vc_elements.php:45 includes/tb_vc_elements.php:47
+#: includes/tb_vc_elements.php:118 includes/tb_vc_elements.php:120
+msgctxt "Visual Composer element"
+msgid "Registered users only"
+msgstr "Solo utenti registrati"
+
+#: includes/tb_vc_elements.php:48 includes/tb_vc_elements.php:121
+msgctxt "Visual Composer element"
+msgid "Reservations will be allowed for registered users only"
+msgstr "Le prenotazioni saranno permesse solo a utenti registrati"
+
+#: includes/tb_vc_elements.php:52 includes/tb_vc_elements.php:164
+msgctxt "Visual Composer element"
+msgid "Alternative slot style"
+msgstr "Stile alternativo degli slot"
+
+#: includes/tb_vc_elements.php:58 includes/tb_vc_elements.php:170
+msgctxt "Visual Composer element"
+msgid "Renders the slots with an alternative style"
+msgstr "Visualizza gli slot con uno stile alternativo"
+
+#: includes/tb_vc_elements.php:59 includes/tb_vc_elements.php:137
+#: includes/tb_vc_elements.php:171
+msgid "Style"
+msgstr "Stile"
+
+#: includes/tb_vc_elements.php:63
+msgctxt "Visual Composer element"
+msgid "Hide filters"
+msgstr "Nascondi filtri"
+
+#: includes/tb_vc_elements.php:66
+msgctxt "Visual Composer element"
+msgid "Services and Coworkers selectors will be hidden"
+msgstr "I pulsanti per la scelta di Servizi e Collaboratori saranno nascosti"
+
+#: includes/tb_vc_elements.php:70 includes/tb_vc_elements.php:141
+msgctxt "Visual Composer element"
+msgid "Hide timezones"
+msgstr "Nascondi le timezone"
+
+#: includes/tb_vc_elements.php:73 includes/tb_vc_elements.php:144
+msgctxt "Visual Composer element"
+msgid "Timezone selector will be hidden"
+msgstr "Il pulsante per la scelta della timezone sarà nascosto"
+
+#: includes/tb_vc_elements.php:77 includes/tb_vc_elements.php:148
+msgctxt "Visual Composer element"
+msgid "Specific services"
+msgstr "Servizi specifici"
+
+#: includes/tb_vc_elements.php:80 includes/tb_vc_elements.php:88
+#: includes/tb_vc_elements.php:151 includes/tb_vc_elements.php:159
+msgctxt "Visual Composer element"
+msgid "Leave blank for all"
+msgstr "Lascia vuoto per tutti"
+
+#: includes/tb_vc_elements.php:81 includes/tb_vc_elements.php:152
+#: src/TeamBooking/Admin/Misc.php:42 src/TeamBooking/Admin/Misc.php:65
+#: src/TeamBooking/Admin/Promotion.php:410
+#: src/TeamBooking/Admin/Promotion.php:548
+#: src/TeamBooking/Admin/PromotionTable.php:645
+#: src/TeamBooking/Admin/PromotionTable.php:704
+#: src/TeamBooking/Admin/Services.php:41
+#: src/TeamBooking/Frontend/Calendar.php:405
+msgid "Services"
+msgstr "Servizi"
+
+#: includes/tb_vc_elements.php:85 includes/tb_vc_elements.php:156
+msgctxt "Visual Composer element"
+msgid "Specific coworkers"
+msgstr "Collaboratori specifici"
+
+#: includes/tb_vc_elements.php:89 includes/tb_vc_elements.php:160
+#: src/TeamBooking/Admin/Coworkers.php:41 src/TeamBooking/Admin/Misc.php:43
+#: src/TeamBooking/Frontend/Calendar.php:466
+msgid "Coworkers"
+msgstr "Collaboratori"
+
+#: includes/tb_vc_elements.php:95
+msgctxt "Visual Composer element"
+msgid "TeamBooking Upcoming"
+msgstr "TeamBooking prossimi eventi"
+
+#: includes/tb_vc_elements.php:96
+msgctxt "Visual Composer element"
+msgid "Upcoming events list"
+msgstr "Lista dei prossimi eventi"
+
+#: includes/tb_vc_elements.php:125
+msgctxt "Visual Composer element"
+msgid "Show service descriptions"
+msgstr "Mostra le descrizioni dei servizi"
+
+#: includes/tb_vc_elements.php:128
+msgctxt "Visual Composer element"
+msgid "Shows service descriptions right under each slot"
+msgstr "Visualizza le descrizioni dei servizi in ogni slot"
+
+#: includes/tb_vc_elements.php:132
+msgctxt "Visual Composer element"
+msgid "Show little calendar only once per day"
+msgstr "Mostra l'icona calendario una sola volta per giorno"
+
+#: includes/tb_vc_elements.php:136
+msgctxt "Visual Composer element"
+msgid "The little calendar will be shown only once per day"
+msgstr "L'icona calendario sarà visualizzata una sola volta per giorno"
+
+#: includes/tb_vc_elements.php:175
+msgctxt "Visual Composer element"
+msgid "How many events"
+msgstr "Quanti eventi mostrare"
+
+#: includes/tb_vc_elements.php:179
+msgctxt "Visual Composer element"
+msgid "Select how many events must be shown"
+msgstr "Seleziona quanti eventi devono essere visualizzati"
+
+#: includes/tb_vc_elements.php:183
+msgctxt "Visual Composer element"
+msgid "Show more"
+msgstr "Mostra altri"
+
+#: includes/tb_vc_elements.php:186
+msgctxt "Visual Composer element"
+msgid "Allows the loading of more events"
+msgstr "Permette il caricamento di altri eventi"
+
+#: includes/tb_vc_elements.php:190
+msgctxt "Visual Composer element"
+msgid "Maximum number of events to be shown"
+msgstr "Numero massimo di eventi da mostrare"
+
+#: includes/tb_vc_elements.php:194
+msgctxt "Visual Composer element"
+msgid ""
+"If the loading of more events is allowed, you can set a limit for their "
+"maximum total number."
+msgstr ""
+"Se \"mostra altri\" è attivo, puoi impostare un limite massimo di eventi "
+"totali da visualizzare."
+
+#: includes/tb_vc_elements.php:200
+msgctxt "Visual Composer element"
+msgid "TeamBooking reservations"
+msgstr "Prenotazioni TeamBooking"
+
+#: includes/tb_vc_elements.php:201
+msgctxt "Visual Composer element"
+msgid "List of reservations placed by the current user"
+msgstr "Lista delle prenotazioni effettuate dall'utente corrente"
+
+#: includes/tb_vc_elements.php:217
+msgctxt "Visual Composer element"
+msgid "No action can be performed"
+msgstr "Nessuna azione potrà essere eseguita"
+
+#: src/TeamBooking/API/REST.php:223
+msgid "Cancellation error"
+msgstr "Errore di cancellazione"
+
+#: src/TeamBooking/API/REST.php:232
+msgid "This reservation is cancelled already!"
+msgstr "Questa prenotazione è già annullata!"
+
+#: src/TeamBooking/API/REST.php:234 src/TeamBooking/API/REST.php:253
+#: src/TeamBooking/API/REST.php:262 src/TeamBooking/API/REST.php:291
+#: src/TeamBooking/API/REST.php:306 src/TeamBooking/API/REST.php:333
+#: src/TeamBooking/API/REST.php:349 src/TeamBooking/API/REST.php:587
+#: src/TeamBooking/API/REST.php:694
+#, php-format
+msgid "Reservation %s"
+msgstr "Prenotazione %s"
+
+#: src/TeamBooking/API/REST.php:246
+msgid "Do you want to cancel this reservation?"
+msgstr "Vuoi annullare questa prenotazione?"
+
+#: src/TeamBooking/API/REST.php:260
+msgid "This reservation can no longer be cancelled!"
+msgstr "Questa prenotazione non può più essere cancellata!"
+
+#: src/TeamBooking/API/REST.php:278
+msgid "Approval error"
+msgstr "Errore durante l'approvazione"
+
+#: src/TeamBooking/API/REST.php:290 src/TeamBooking/API/REST.php:332
+msgid "Approval not required!"
+msgstr "Approvazione non richiesta!"
+
+#: src/TeamBooking/API/REST.php:301
+msgid "Do you want to approve this reservation?"
+msgstr "Vuoi approvare questa prenotazione?"
+
+#: src/TeamBooking/API/REST.php:305
+msgid "Reservation succesfully approved!"
+msgstr "Prenotazione approvata!"
+
+#: src/TeamBooking/API/REST.php:321
+msgid "Decline error"
+msgstr "Errore durante la disapprovazione"
+
+#: src/TeamBooking/API/REST.php:343
+msgid "Do you want to decline this reservation?"
+msgstr "Vuoi disapprovare questa prenotazione?"
+
+#: src/TeamBooking/API/REST.php:348
+msgid "Reservation succesfully declined!"
+msgstr "Prenotazione rifiutata!"
+
+#: src/TeamBooking/API/REST.php:551 src/TeamBooking/API/REST.php:633
+#, php-format
+msgid "on %1$s at %2$s"
+msgstr "il %1$s alle %2$s"
+
+#: src/TeamBooking/API/REST.php:560
+msgid "If yes, please tell us why"
+msgstr "Se sì, scrivi perché"
+
+#: src/TeamBooking/API/REST.php:580
+msgid "yes"
+msgstr "sì"
+
+#: src/TeamBooking/API/REST.php:583
+msgid "no"
+msgstr "no"
+
+#: src/TeamBooking/API/REST.php:598
+msgid "This reservation is paid already!"
+msgstr "Questa prenotazione è già saldata!"
+
+#: src/TeamBooking/API/REST.php:600
+msgid "This reservation is cancelled."
+msgstr "Questa prenotazione è cancellata."
+
+#: src/TeamBooking/API/REST.php:602
+msgid "Payment is not due."
+msgstr "Il pagamento non è dovuto."
+
+#: src/TeamBooking/API/REST.php:604
+msgid "There are currently no payment gateways active."
+msgstr "Non ci sono metodi di pagamento attivi."
+
+#: src/TeamBooking/API/REST.php:609
+msgid "Please choose a payment method"
+msgstr "Scegli un metodo di pagamento"
+
+#: src/TeamBooking/API/REST.php:610
+msgid "Reservation details"
+msgstr "Dettagli della prenotazione"
+
+#: src/TeamBooking/API/REST.php:622
+msgid "Amount"
+msgstr "Totale"
+
+#: src/TeamBooking/Abstracts/FormElement.php:238
+#: src/TeamBooking/Database/Services.php:67
+#: src/TeamBooking/Legacy/Service.php:565
+#: src/TeamBooking/Legacy/TextField.php:173 src/TeamBooking/Update.php:90
+msgid "First name"
+msgstr "Nome"
+
+#: src/TeamBooking/Abstracts/FormElement.php:239
+#: src/TeamBooking/Database/Services.php:71
+#: src/TeamBooking/Legacy/Service.php:567
+#: src/TeamBooking/Legacy/TextField.php:174 src/TeamBooking/Update.php:91
+msgid "Last name"
+msgstr "Cognome"
+
+#: src/TeamBooking/Abstracts/FormElement.php:241
+#: src/TeamBooking/Database/Services.php:79
+#: src/TeamBooking/Legacy/Service.php:571
+#: src/TeamBooking/Legacy/TextField.php:176 src/TeamBooking/Update.php:93
+msgid "Address"
+msgstr "Indirizzo"
+
+#: src/TeamBooking/Abstracts/FormElement.php:242
+#: src/TeamBooking/Database/Services.php:83
+#: src/TeamBooking/Legacy/Service.php:573
+#: src/TeamBooking/Legacy/TextField.php:177 src/TeamBooking/Update.php:94
+msgid "Phone number"
+msgstr "Telefono"
+
+#: src/TeamBooking/Abstracts/FormElement.php:243
+#: src/TeamBooking/Database/Services.php:87
+#: src/TeamBooking/Legacy/Service.php:347
+#: src/TeamBooking/Legacy/Service.php:575
+#: src/TeamBooking/Legacy/TextField.php:178 src/TeamBooking/Update.php:95
+msgid "Website"
+msgstr "Sito web"
+
+#: src/TeamBooking/Abstracts/Service.php:138
+msgid "A new reservation"
+msgstr "Una nuova prenotazione"
+
+#: src/TeamBooking/Abstracts/Service.php:139
+msgid "You have just got a new reservation!"
+msgstr "Hai appena ricevuto una nuova prenotazione!"
+
+#: src/TeamBooking/Abstracts/Service.php:145
+msgid "Your reservation details"
+msgstr "I dettagli della tua prenotazione"
+
+#: src/TeamBooking/Abstracts/Service.php:146
+msgid "Thanks for your reservation!"
+msgstr "Grazie per la tua prenotazione!"
+
+#: src/TeamBooking/Abstracts/Service.php:150
+#: src/TeamBooking/Abstracts/Service.php:155
+#: src/TeamBooking/Legacy/Service.php:272
+#: src/TeamBooking/Legacy/Service.php:289
+msgid "Reservation cancelled"
+msgstr "Prenotazione annullata"
+
+#: src/TeamBooking/Abstracts/Service.php:151
+#: src/TeamBooking/Abstracts/Service.php:156
+#: src/TeamBooking/Legacy/Service.php:271
+#: src/TeamBooking/Legacy/Service.php:288
+msgid "Your reservation was cancelled."
+msgstr "La tua prenotazione è stata annullata."
+
+#: src/TeamBooking/Admin.php:262
+msgid "new reservations"
+msgstr "nuove prenotazioni"
+
+#: src/TeamBooking/Admin.php:307
+msgid "Reservations per page"
+msgstr "Prenotazioni per pagina"
+
+#: src/TeamBooking/Admin.php:314
+msgid "Slots per page"
+msgstr "Slot per pagina"
+
+#: src/TeamBooking/Admin.php:797
+msgid "You are not allowed to be on this page."
+msgstr "Non sei autorizzato a visionare questa pagina."
+
+#: src/TeamBooking/Admin.php:985
+msgid "This user must re-authorize"
+msgstr "Questo utente deve ri-autorizzare"
+
+#: src/TeamBooking/Admin.php:991 src/TeamBooking/Admin/Coworkers.php:71
+msgid "ready"
+msgstr "pronto"
+
+#: src/TeamBooking/Admin.php:1787
+msgid "A new custom text field"
+msgstr "Nuovo campo di testo"
+
+#: src/TeamBooking/Admin.php:1797
+msgid "A new custom textarea"
+msgstr "Nuova area di testo"
+
+#: src/TeamBooking/Admin.php:1807
+msgid "A new custom select"
+msgstr "Nuova selezione"
+
+#: src/TeamBooking/Admin.php:1817
+msgid "A new custom checkbox"
+msgstr "Nuova checkbox"
+
+#: src/TeamBooking/Admin.php:1829
+msgid "A new custom radio group"
+msgstr "Nuovo gruppo di opzioni"
+
+#: src/TeamBooking/Admin.php:1839
+msgid "A new file upload field"
+msgstr "Nuovo file"
+
+#: src/TeamBooking/Admin.php:1849
+msgid "A new paragraph"
+msgstr "Nuovo paragrafo"
+
+#: src/TeamBooking/Admin.php:2358
+msgid "TeamBooking shortcodes"
+msgstr "TeamBooking shortcode"
+
+#: src/TeamBooking/Admin.php:2359
+msgid "Add calendar"
+msgstr "Aggiungi calendario"
+
+#: src/TeamBooking/Admin.php:2360
+msgid "Add reservations list"
+msgstr "Aggiungi lista delle prenotazioni"
+
+#: src/TeamBooking/Admin.php:2361
+msgid "Add upcoming list"
+msgstr "Aggiungi lista prossimi eventi"
+
+#: src/TeamBooking/Admin.php:2362
+msgid "Read only"
+msgstr "Sola lettura"
+
+#: src/TeamBooking/Admin.php:2363 src/TeamBooking/Admin.php:2366
+#: src/TeamBooking/Widgets/Calendar.php:169
+#: src/TeamBooking/Widgets/Upcoming.php:180
+msgid "Hide filter buttons"
+msgstr "Nascondi filtri"
+
+#: src/TeamBooking/Admin.php:2364 src/TeamBooking/Widgets/Calendar.php:176
+#: src/TeamBooking/Widgets/Upcoming.php:185
+msgid "Hide timezone selector"
+msgstr "Nascondi pulsante fuso orario"
+
+#: src/TeamBooking/Admin.php:2365
+msgid "Show to logged users only"
+msgstr "Mostra solo a utenti loggati"
+
+#: src/TeamBooking/Admin.php:2367
+msgid "Specific service(s), leave blank for all"
+msgstr "Specifica il/i servizio/i, lascia vuoto per tutti"
+
+#: src/TeamBooking/Admin.php:2368
+msgid "Specific coworker(s), leave blank for all"
+msgstr "Specifica il/i collaboratore/i, lascia vuoto per tutti"
+
+#: src/TeamBooking/Admin.php:2369 src/TeamBooking/Shortcodes/Upcoming.php:260
+#: src/TeamBooking/Widgets/Upcoming.php:190
+msgid "Show more"
+msgstr "Mostra altri"
+
+#: src/TeamBooking/Admin.php:2370 src/TeamBooking/Widgets/Upcoming.php:195
+msgid "Show service descriptions"
+msgstr "Mostra descrizione dei servizi"
+
+#: src/TeamBooking/Admin.php:2371 src/TeamBooking/Widgets/Upcoming.php:157
+msgid "How many events to show"
+msgstr "Quanti slot mostrare"
+
+#: src/TeamBooking/Admin.php:2372
+msgid "Please write a number"
+msgstr "Inserisci un numero"
+
+#: src/TeamBooking/Admin.php:2373
+msgid "Max total number of events, leave blank for no limit"
+msgstr "Numero massimo di slot mostrati, lascia vuoto per nessun limite"
+
+#: src/TeamBooking/Admin.php:2374
+msgid "Please write a number or leave blank"
+msgstr "Inserisci un numero o lascia vuoto"
+
+#: src/TeamBooking/Admin.php:2375 src/TeamBooking/Widgets/Calendar.php:154
+#: src/TeamBooking/Widgets/Upcoming.php:167
+msgid "Choose the slots display style"
+msgstr "Scegli lo stile degli slot"
+
+#: src/TeamBooking/Admin.php:2376 src/TeamBooking/Admin/Style.php:256
+#: src/TeamBooking/Widgets/Calendar.php:157
+#: src/TeamBooking/Widgets/Upcoming.php:170
+msgid "Basic"
+msgstr "Base"
+
+#: src/TeamBooking/Admin.php:2377 src/TeamBooking/Admin/Style.php:257
+#: src/TeamBooking/Widgets/Calendar.php:159
+#: src/TeamBooking/Widgets/Upcoming.php:172
+msgid "Elegant"
+msgstr "Elegante"
+
+#: src/TeamBooking/Admin.php:2378 src/TeamBooking/Widgets/Upcoming.php:200
+msgid "Show little calendar only once per day"
+msgstr "Mostra l'icona del calendario una sola volta per giorno"
+
+#: src/TeamBooking/Admin/Core.php:66 src/TeamBooking/Admin/Coworkers.php:99
+#: src/TeamBooking/Admin/Coworkers.php:103
+#: src/TeamBooking/Admin/Services.php:160
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: src/TeamBooking/Admin/Core.php:71
+msgid "Roles allowed to be Coworkers"
+msgstr "Ruoli autorizzati a diventare Collaboratori"
+
+#: src/TeamBooking/Admin/Core.php:72
+msgid ""
+"Users with selected roles will be your Coworkers. Those who link a Google "
+"Calendar can participate to all service classes. Coworkers without a linked "
+"Google Calendar can participate to \"Unscheduled services\" only."
+msgstr ""
+"Gli utenti con i ruoli selezionati diventeranno Collaboratori. Quelli che "
+"collegano il proprio Google Calendar portranno fissare disponibilità per "
+"ciascuna classe di servizi. I Collaboratori che non collegano il proprio "
+"Google Calendar potranno fissare disponibilità soltanto per le classi"
+"\"Servizio non programmato\"."
+
+#: src/TeamBooking/Admin/Core.php:73
+msgid "Administrators are always allowed."
+msgstr "Gli Amministratori sono sempre abilitati."
+
+#: src/TeamBooking/Admin/Core.php:86
+msgid "Autofill reservation form fields for registered users"
+msgstr "Riempi automaticamente i campi del form per gli utenti registrati"
+
+#: src/TeamBooking/Admin/Core.php:88
+msgid ""
+"If yes, a logged-in customer will found some reservation form fields pre-"
+"filled, based on his WordPress profile data. If yes and hide, the pre-filled "
+"fields will not be shown, but their data still pass."
+msgstr ""
+"Se attivo, un cliente loggato troverà alcuni campi del form di prenotazione "
+"precompilati, in base ai dati reperibili sul suo profilo WordPress. Se sì e "
+"nascondi i campi, i campi precompilati verranno nascosti, e i loro dati "
+"comunque inoltrati."
+
+#: src/TeamBooking/Admin/Core.php:95
+msgid "Yes, and hide fields"
+msgstr "Si, e nascondi i campi"
+
+#: src/TeamBooking/Admin/Core.php:100 src/TeamBooking/Admin/Coworkers.php:142
+#: src/TeamBooking/Admin/Framework/PanelSettingYesOrNo.php:44
+#: src/TeamBooking/Admin/Overview.php:82 src/TeamBooking/Admin/Overview.php:90
+#: src/TeamBooking/Admin/Overview.php:102 src/TeamBooking/Admin/Personal.php:78
+#: src/TeamBooking/Admin/Personal.php:210
+#: src/TeamBooking/Admin/Personal.php:217
+#: src/TeamBooking/Admin/Promotion.php:563
+#: src/TeamBooking/Admin/ReservationsTable.php:762
+#: src/TeamBooking/Admin/ReservationsTable.php:791
+#: src/TeamBooking/Admin/Service.php:810 src/TeamBooking/Admin/Service.php:811
+#: src/TeamBooking/Admin/Services.php:213
+#: src/TeamBooking/Admin/Services.php:223
+#: src/TeamBooking/Widgets/Calendar.php:168
+#: src/TeamBooking/Widgets/Calendar.php:175
+#: src/TeamBooking/Widgets/Calendar.php:182
+#: src/TeamBooking/Widgets/Upcoming.php:179
+#: src/TeamBooking/Widgets/Upcoming.php:184
+#: src/TeamBooking/Widgets/Upcoming.php:189
+#: src/TeamBooking/Widgets/Upcoming.php:194
+#: src/TeamBooking/Widgets/Upcoming.php:199
+#: src/TeamBooking/Widgets/Upcoming.php:204
+msgid "No"
+msgstr "No"
+
+#: src/TeamBooking/Admin/Core.php:107
+msgid "Load the frontend calendar at the closest month with available slots"
+msgstr "Apri il calendario al primo mese con slot disponibili"
+
+#: src/TeamBooking/Admin/Core.php:108
+msgid ""
+"If yes, the frontend calendar will be automatically loaded at the closest "
+"month with at least one free slot. Please note: if yes, the first page "
+"loading can be slower."
+msgstr ""
+"Se attivo, il calendario verrà aperto al più vicino mese con slot "
+"disponibili. Potrebbe causare lievi rallentamenti."
+
+#: src/TeamBooking/Admin/Core.php:114
+msgid "Allow customers to download ICAL file after a reservation"
+msgstr ""
+"Permetti ai clienti di scaricare il file ICAL al termine della prenotazione"
+
+#: src/TeamBooking/Admin/Core.php:120
+msgid "Login URL"
+msgstr "Indirizzo di login"
+
+#: src/TeamBooking/Admin/Core.php:121
+msgid "Logged-only services will invite users to login here"
+msgstr ""
+"I servizi prenotabili solo da utenti loggati inviteranno l'utente ad "
+"accedere da questo indirizzo"
+
+#: src/TeamBooking/Admin/Core.php:127
+msgid "Registration URL"
+msgstr "Indirizzo per registrazione utenti"
+
+#: src/TeamBooking/Admin/Core.php:128
+msgid "Logged-only services will invite users to register here"
+msgstr ""
+"I servizi prenotabili solo da utenti loggati inviteranno l'utente a "
+"registrarsi a questo indirizzo"
+
+#: src/TeamBooking/Admin/Core.php:134
+msgid ""
+"Redirect the customers back to the calendar page after login/registration"
+msgstr ""
+"Rimanda i clienti alla pagina della prenotazione dopo il login/registrazione"
+
+#: src/TeamBooking/Admin/Core.php:137
+msgid "An eventual login redirect plugin may interfere with that."
+msgstr ""
+"Un eventuale plugin di login redirect può interferire con questa "
+"funzionalità."
+
+#: src/TeamBooking/Admin/Core.php:141
+msgid "Keep reservations in database for"
+msgstr "Conserva le prenotazioni nel database per"
+
+#: src/TeamBooking/Admin/Core.php:143
+msgid "Counting starts from reservation's date"
+msgstr "Il conteggio parte dalla data di prenotazione"
+
+#: src/TeamBooking/Admin/Core.php:145
+msgid "15 days"
+msgstr "15 giorni"
+
+#: src/TeamBooking/Admin/Core.php:146 src/TeamBooking/Admin/Core.php:148
+#: src/TeamBooking/Admin/Core.php:150 src/TeamBooking/Admin/Core.php:152
+#: src/TeamBooking/Admin/Core.php:154
+msgid "Warning: some reservations will be deleted on save"
+msgstr "Attenzione: alcune prenotazioni saranno eliminate dopo il salvataggio"
+
+#: src/TeamBooking/Admin/Core.php:147
+msgid "30 days"
+msgstr "30 giorni"
+
+#: src/TeamBooking/Admin/Core.php:149
+msgid "60 days"
+msgstr "60 giorni"
+
+#: src/TeamBooking/Admin/Core.php:151
+msgid "120 days"
+msgstr "120 giorni"
+
+#: src/TeamBooking/Admin/Core.php:153
+msgid "240 days"
+msgstr "240 giorni"
+
+#: src/TeamBooking/Admin/Core.php:155
+msgid "Forever"
+msgstr "Per sempre"
+
+#: src/TeamBooking/Admin/Core.php:159
+msgid "Max pending time"
+msgstr "Massimo tempo di attesa"
+
+#: src/TeamBooking/Admin/Core.php:161
+msgid ""
+"If payment is not made within this time, the reservation will be released. "
+"It affects only services where payment must be done immediately."
+msgstr ""
+"Se il pagamento non viene effettuato entro questo tempo, la prenotazione "
+"verrà cancellata. Agisce soltanto sui servizi per i quali è richiesto "
+"pagamento immediato."
+
+#: src/TeamBooking/Admin/Core.php:163
+msgid "Never"
+msgstr "Mai"
+
+#: src/TeamBooking/Admin/Core.php:164
+msgid "15min"
+msgstr "15min"
+
+#: src/TeamBooking/Admin/Core.php:165
+msgid "30min"
+msgstr "30min"
+
+#: src/TeamBooking/Admin/Core.php:166
+msgid "1h"
+msgstr "1h"
+
+#: src/TeamBooking/Admin/Core.php:167
+msgid "2h"
+msgstr "2h"
+
+#: src/TeamBooking/Admin/Core.php:168
+msgid "3h"
+msgstr "3h"
+
+#: src/TeamBooking/Admin/Core.php:169
+msgid "6h"
+msgstr "6h"
+
+#: src/TeamBooking/Admin/Core.php:170
+msgid "12h"
+msgstr "12h"
+
+#: src/TeamBooking/Admin/Core.php:171
+msgid "1day"
+msgstr "1 giorno"
+
+#: src/TeamBooking/Admin/Core.php:172
+msgid "2days"
+msgstr "2 giorni"
+
+#: src/TeamBooking/Admin/Core.php:173
+msgid "3days"
+msgstr "3 giorni"
+
+#: src/TeamBooking/Admin/Core.php:174
+msgid "4days"
+msgstr "4 giorni"
+
+#: src/TeamBooking/Admin/Core.php:175 src/TeamBooking/Admin/Service.php:662
+#: src/TeamBooking/Admin/Service.php:775 src/TeamBooking/Admin/Service.php:941
+#: src/TeamBooking/Admin/Style.php:277 src/TeamBooking/Admin/Style.php:294
+#: src/TeamBooking/Admin/Style.php:428
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:326
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:340
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:349
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:389
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:215
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:240
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:253
+msgid "Note"
+msgstr "Note"
+
+#: src/TeamBooking/Admin/Core.php:176
+msgid ""
+"Values too low could, in extreme cases, lead to payments after reservation "
+"is released. Also consider that, in order to process IPN confirmation, your "
+"server must be up and running. PayPal example: if your server is down, IPN "
+"will be resent by PayPal for up to four days, with a maximum of 15 retries. "
+"The interval will increase after each fail attempt."
+msgstr ""
+"Valori troppo bassi possono, in casi estremi, portare a pagamenti oltre il "
+"termine entro il quale la prenotazione è considerata valida. Inoltre, per "
+"processare le IPN, il tuo server deve essere online e funzionante."
+
+#: src/TeamBooking/Admin/Core.php:180
+msgid "Delete plugin's database tables when the plugin is uninstalled"
+msgstr ""
+"Rimuovi le tabelle del plugin dal database durante la disinstallazione del "
+"plugin"
+
+#: src/TeamBooking/Admin/Core.php:186
+msgid "Debug"
+msgstr "Debug"
+
+#: src/TeamBooking/Admin/Core.php:189
+msgid "Silent"
+msgstr "Silenzioso"
+
+#: src/TeamBooking/Admin/Core.php:194
+msgid "Verbose (Google API error messages on frontend calendar)"
+msgstr "Verboso (messaggi di errore di Google API mostrati nel frontend)"
+
+#: src/TeamBooking/Admin/Core.php:201
+msgid "Google Maps API key"
+msgstr "Google Maps API key"
+
+#: src/TeamBooking/Admin/Core.php:202
+msgid ""
+"This is mandatory in order to use Google Maps for installations made after "
+"22nd of June, 2016. If you don't have a Google Maps API key already, please "
+"check the documentation in order to know how to obtain it."
+msgstr ""
+"La chiave è obbligatoria per usare Google Maps nelle installazioni "
+"effettuate dopo il 22 Giugno 2016. Se non possiedi una chiave Google Maps, "
+"fai riferimento alla documentazione del plugin per conoscere come ottenerla."
+
+#: src/TeamBooking/Admin/Core.php:208
+msgid "Skip Google Maps library loading"
+msgstr "Bypassa il caricamento della libreria di Google Maps"
+
+#: src/TeamBooking/Admin/Core.php:214
+msgid "Restrict continents in frontend timezone selectors"
+msgstr "Seleziona i continenti da mostrare nel selettore della timezone"
+
+#: src/TeamBooking/Admin/Core.php:215
+msgid "Unchecked continents will be hidden"
+msgstr "I continenti deselezionati non saranno visibili"
+
+#: src/TeamBooking/Admin/Core.php:227 src/TeamBooking/Admin/Core.php:436
+#: src/TeamBooking/Admin/Service.php:365 src/TeamBooking/Admin/Service.php:417
+#: src/TeamBooking/Admin/Service.php:464 src/TeamBooking/Admin/Service.php:675
+#: src/TeamBooking/Admin/Service.php:738 src/TeamBooking/Admin/Service.php:783
+#: src/TeamBooking/Admin/Service.php:912 src/TeamBooking/Admin/Service.php:979
+#: src/TeamBooking/Admin/Service.php:1025
+#: src/TeamBooking/Admin/Service.php:1078
+#: src/TeamBooking/Admin/Service.php:1773 src/TeamBooking/Admin/Style.php:189
+#: src/TeamBooking/Admin/Style.php:263 src/TeamBooking/Admin/Style.php:301
+#: src/TeamBooking/Admin/Style.php:440
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:416
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:272
+msgid "Save changes"
+msgstr "Salva"
+
+#: src/TeamBooking/Admin/Core.php:240 src/TeamBooking/Admin/Promotion.php:401
+#: src/TeamBooking/Admin/PromotionTable.php:636
+msgid "Advanced"
+msgstr "Avanzate"
+
+#: src/TeamBooking/Admin/Core.php:245
+msgid "Export current settings"
+msgstr "Esporta configurazione corrente"
+
+#: src/TeamBooking/Admin/Core.php:260 src/TeamBooking/Admin/Core.php:280
+msgid "Import settings from file"
+msgstr "Importa configurazione da file"
+
+#: src/TeamBooking/Admin/Core.php:269
+msgid "Repair database"
+msgstr "Ripara database"
+
+#: src/TeamBooking/Admin/Core.php:282 src/TeamBooking/Admin/Core.php:297
+#: src/TeamBooking/Admin/Core.php:306
+msgid "OK"
+msgstr "OK"
+
+#: src/TeamBooking/Admin/Core.php:283 src/TeamBooking/Admin/Core.php:298
+#: src/TeamBooking/Admin/Core.php:307 src/TeamBooking/Admin/Promotion.php:201
+#: src/TeamBooking/Admin/PromotionTable.php:426
+#: src/TeamBooking/Admin/ReservationsTable.php:818
+#: src/TeamBooking/Admin/Services.php:239
+#: src/TeamBooking/Admin/Services.php:263
+#: src/TeamBooking/Shortcodes/Reservations.php:166
+msgid "Cancel"
+msgstr "Cancella"
+
+#: src/TeamBooking/Admin/Core.php:294 src/TeamBooking/Admin/Coworkers.php:139
+#: src/TeamBooking/Admin/Overview.php:81 src/TeamBooking/Admin/Overview.php:89
+#: src/TeamBooking/Admin/Overview.php:101 src/TeamBooking/Admin/Personal.php:72
+#: src/TeamBooking/Admin/Personal.php:209
+#: src/TeamBooking/Admin/Personal.php:216
+#: src/TeamBooking/Admin/Promotion.php:564
+#: src/TeamBooking/Admin/Services.php:215
+#: src/TeamBooking/Admin/Services.php:225
+#: src/TeamBooking/Shortcodes/Reservations.php:160
+msgid "Are you sure?"
+msgstr "Sei sicuro?"
+
+#: src/TeamBooking/Admin/Core.php:295
+msgid "This may take a while, please be patient."
+msgstr "Questa operazione può richiedere del tempo, per favore attendi."
+
+#: src/TeamBooking/Admin/Core.php:304 src/TeamBooking/Admin/Core.php:398
+msgid "Import from JSON file"
+msgstr "Importa da file JSON"
+
+#: src/TeamBooking/Admin/Core.php:312
+msgid ""
+"The Authorized redirect URI and/or Authorized Javascript Origins seems to be "
+"incorrect, have you correctly pasted the values provided here in your Google "
+"Project console? Please double check, and retry with the new JSON file!"
+msgstr ""
+"Authorized redirect URI e/o Authorized Javascript Origins non sembrano "
+"corretti, sei sicuro di averli copiati nella tua Google Console? Controlla "
+"di nuovo, e riprova col nuovo file JSON!"
+
+#: src/TeamBooking/Admin/Core.php:313
+msgid "Sorry, this is not a JSON Google Project file, or it is not complete."
+msgstr ""
+"Spiacente, questo non è un file JSON di un Google Project, o non è completo."
+
+#: src/TeamBooking/Admin/Core.php:314
+msgid "Please select a file!"
+msgstr "Per favore seleziona un file!"
+
+#: src/TeamBooking/Admin/Core.php:330
+msgid "Are you lost?"
+msgstr "Hai dei dubbi?"
+
+#: src/TeamBooking/Admin/Core.php:334
+msgid ""
+"To made Team Booking working, you need to start a new Project on your Google "
+"Developer Console"
+msgstr ""
+"Per far funzionare TeamBooking, devi creare un nuovo Progetto nella tua "
+"Google Developer Console"
+
+#: src/TeamBooking/Admin/Core.php:335
+msgid ""
+"Then read the \"Core Configuration\" paragraph of the Team Booking "
+"Documentation"
+msgstr ""
+"Quindi leggi il paragrafo \"Core Configuration\" della documentazione di "
+"TeamBooking"
+
+#: src/TeamBooking/Admin/Core.php:351
+msgid "API tokens"
+msgstr "API tokens"
+
+#: src/TeamBooking/Admin/Core.php:353
+msgid "New API token (read-only)"
+msgstr "Nuovo token API (sola lettura)"
+
+#: src/TeamBooking/Admin/Core.php:357
+msgid "New API token"
+msgstr "Nuovo token API"
+
+#: src/TeamBooking/Admin/Core.php:366
+msgid "Token"
+msgstr "Token"
+
+#: src/TeamBooking/Admin/Core.php:367
+msgid "Scope"
+msgstr "Ambito"
+
+#: src/TeamBooking/Admin/Core.php:368
+msgid "Usages"
+msgstr "Utilizzi"
+
+#: src/TeamBooking/Admin/Core.php:369 src/TeamBooking/Admin/Coworkers.php:52
+#: src/TeamBooking/Admin/Personal.php:130
+#: src/TeamBooking/Admin/PromotionTable.php:97
+#: src/TeamBooking/Admin/ReservationsTable.php:109
+#: src/TeamBooking/Admin/Services.php:63
+#: src/TeamBooking/Admin/SlotsTable.php:152
+#: src/TeamBooking/Shortcodes/Reservations.php:63
+msgid "Actions"
+msgstr "Azioni"
+
+#: src/TeamBooking/Admin/Core.php:375
+#: src/TeamBooking/Admin/PromotionTable.php:277
+#: src/TeamBooking/Admin/PromotionTable.php:395
+#: src/TeamBooking/Admin/ReservationsTable.php:261
+#: src/TeamBooking/Admin/ReservationsTable.php:744
+#: src/TeamBooking/Admin/Services.php:140
+msgid "Delete"
+msgstr "Elimina"
+
+#: src/TeamBooking/Admin/Core.php:379
+msgid "read/write"
+msgstr "lettura/scrittura"
+
+#: src/TeamBooking/Admin/Core.php:379
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:398
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:406
+msgid "read"
+msgstr "leggi"
+
+#: src/TeamBooking/Admin/Core.php:397
+msgid "Google Project Data"
+msgstr "Google Project Data"
+
+#: src/TeamBooking/Admin/Core.php:405
+msgid "Client ID"
+msgstr "Client ID"
+
+#: src/TeamBooking/Admin/Core.php:412
+msgid "Client Secret"
+msgstr "Client Secret"
+
+#: src/TeamBooking/Admin/Core.php:419
+msgid "Product name"
+msgstr "Product name"
+
+#: src/TeamBooking/Admin/Core.php:426
+msgid "Authorized redirect URI"
+msgstr "Authorized redirect URI"
+
+#: src/TeamBooking/Admin/Core.php:431
+msgid "Authorized Javascript Origins"
+msgstr "Authorized Javascript Origins"
+
+#: src/TeamBooking/Admin/Coworkers.php:49
+#: src/TeamBooking/Admin/Customers.php:114
+msgid "E-mail"
+msgstr "E-mail"
+
+#: src/TeamBooking/Admin/Coworkers.php:50
+msgid "WP Roles"
+msgstr "Ruoli WP"
+
+#: src/TeamBooking/Admin/Coworkers.php:51 src/TeamBooking/Admin/Personal.php:53
+msgid "Google Calendars"
+msgstr "Google Calendars"
+
+#: src/TeamBooking/Admin/Coworkers.php:58
+msgid "WP role no longer allowed"
+msgstr "Ruolo WordPress non più ammesso"
+
+#: src/TeamBooking/Admin/Coworkers.php:61
+msgid "not set"
+msgstr "non impostato"
+
+#: src/TeamBooking/Admin/Coworkers.php:74
+msgid "sync needed"
+msgstr "sincronizzazione necessaria"
+
+#: src/TeamBooking/Admin/Coworkers.php:78
+msgid "temporarily authorized"
+msgstr "temporaneamente autorizzato"
+
+#: src/TeamBooking/Admin/Coworkers.php:81
+msgid "not authorized"
+msgstr "non autorizzato"
+
+#: src/TeamBooking/Admin/Coworkers.php:85
+#: src/TeamBooking/Admin/ReservationsTable.php:681
+#: src/TeamBooking/Admin/SlotsTable.php:442
+msgid "you"
+msgstr "tu"
+
+#: src/TeamBooking/Admin/Coworkers.php:94
+msgid "Remove data"
+msgstr "Rimuovi dati"
+
+#: src/TeamBooking/Admin/Coworkers.php:105
+msgid "Profile URL (leave it blank for WordPress default)"
+msgstr "URL profilo (lascia vuoto per il profilo WordPress di default)"
+
+#: src/TeamBooking/Admin/Coworkers.php:107
+msgid "Services allowed:"
+msgstr "Servizi ammessi:"
+
+#: src/TeamBooking/Admin/Coworkers.php:120
+msgid "Revoke Authorization"
+msgstr "Revoca l'autorizzazione"
+
+#: src/TeamBooking/Admin/Coworkers.php:128
+#: src/TeamBooking/Admin/Personal.php:176
+msgid "Sync"
+msgstr "Sincronizza"
+
+#: src/TeamBooking/Admin/Coworkers.php:144
+msgid ""
+"You are going to revoke authorization given to TeamBooking by the Google "
+"Account of:"
+msgstr ""
+"Stai per revocare l'autorizzazione data a TeamBooking dall'account Google di:"
+
+#: src/TeamBooking/Admin/Coworkers.php:145
+msgid ""
+"He won't be able to place availability to your services until he gives "
+"authorization again"
+msgstr ""
+"Non sarà più in grado di fornire disponibilità ai servizi finché non "
+"autorizzerà di nuovo il suo account Google"
+
+#: src/TeamBooking/Admin/Customers.php:94 src/TeamBooking/Admin/Misc.php:44
+#: src/TeamBooking/Admin/SlotsTable.php:146
+msgid "Customers"
+msgstr "Clienti"
+
+#: src/TeamBooking/Admin/Customers.php:96
+#: src/TeamBooking/Admin/ReservationsTable.php:222
+#: src/TeamBooking/Admin/ReservationsTable.php:262
+#: src/TeamBooking/Admin/SlotsTable.php:577
+msgid "Export CSV"
+msgstr "Esporta CSV"
+
+#: src/TeamBooking/Admin/Customers.php:99
+#: src/TeamBooking/Admin/ReservationsTable.php:225
+#: src/TeamBooking/Admin/ReservationsTable.php:263
+#: src/TeamBooking/Admin/SlotsTable.php:585
+msgid "Export XLSX"
+msgstr "Esporta XLSX"
+
+#: src/TeamBooking/Admin/Customers.php:115
+msgid "Reservations (click for details)"
+msgstr "Prenotazioni (clicca per i dettagli)"
+
+#: src/TeamBooking/Admin/Customers.php:122 src/TeamBooking/Admin/Service.php:39
+#: src/TeamBooking/Admin/Services.php:56 src/TeamBooking/Admin/Services.php:280
+msgid "Class"
+msgstr "Classe"
+
+#: src/TeamBooking/Admin/Customers.php:123
+msgid "Total"
+msgstr "Totale"
+
+#: src/TeamBooking/Admin/Customers.php:136
+msgid "no left"
+msgstr "esaurite"
+
+#: src/TeamBooking/Admin/Customers.php:139
+#: src/TeamBooking/Admin/Customers.php:142
+#: src/TeamBooking/Frontend/Form.php:418
+#: src/TeamBooking/Frontend/Schedule.php:147
+msgid "left"
+msgstr "rimasti"
+
+#: src/TeamBooking/Admin/Customers.php:143
+msgid "reset"
+msgstr "resetta"
+
+#: src/TeamBooking/Admin/Framework/Header.php:60
+msgid "What's new"
+msgstr "Novità"
+
+#: src/TeamBooking/Admin/Framework/Modal.php:29
+#: src/TeamBooking/Admin/Overview.php:547
+#: src/TeamBooking/Admin/PromotionTable.php:426
+msgid "Save"
+msgstr "Salva"
+
+#: src/TeamBooking/Admin/Framework/Notice.php:45
+msgid "Warning"
+msgstr "Attenzione"
+
+#: src/TeamBooking/Admin/Framework/Notice.php:46
+#: src/TeamBooking/Frontend/Components/SuccessActions.php:46
+msgid "Ok"
+msgstr "Ok"
+
+#: src/TeamBooking/Admin/Framework/PanelSettingEmailEditor.php:54
+msgid "Insert link text here"
+msgstr "Inserisci il testo qui"
+
+#: src/TeamBooking/Admin/Framework/PanelSettingEmailEditor.php:72
+msgid "Send"
+msgstr "Invia"
+
+#: src/TeamBooking/Admin/Framework/PanelSettingEmailEditor.php:79
+msgid "Subject"
+msgstr "Oggetto"
+
+#: src/TeamBooking/Admin/Framework/PanelSettingEmailEditor.php:82
+msgid "Available form hooks (click to insert at cursor point):"
+msgstr "Form Hooks disponibili (clicca per inserire dopo il cursore):"
+
+#: src/TeamBooking/Admin/Framework/PanelSettingInsertMedia.php:77
+msgid "Choose a logo"
+msgstr "Scegli un logo"
+
+#: src/TeamBooking/Admin/Framework/PanelSettingTextWithLock.php:23
+#: src/TeamBooking/Admin/Framework/PanelSettingTextWithLock.php:36
+msgid "locked"
+msgstr "bloccato"
+
+#: src/TeamBooking/Admin/Framework/PanelSettingTextWithLock.php:32
+msgid "unlocked"
+msgstr "sbloccato"
+
+#: src/TeamBooking/Admin/Framework/PanelTitleAddNewButton.php:72
+msgid "Add new"
+msgstr "Aggiungi nuovo"
+
+#: src/TeamBooking/Admin/Misc.php:40 src/TeamBooking/Admin/Misc.php:63
+msgid "Overview"
+msgstr "Panoramica"
+
+#: src/TeamBooking/Admin/Misc.php:41 src/TeamBooking/Admin/Misc.php:64
+#: src/TeamBooking/Admin/Slots.php:28 src/TeamBooking/Admin/SlotsTable.php:45
+msgid "Slots"
+msgstr "Slot"
+
+#: src/TeamBooking/Admin/Misc.php:45 src/TeamBooking/Admin/Misc.php:66
+msgid "Personal"
+msgstr "Personale"
+
+#: src/TeamBooking/Admin/Misc.php:46
+msgid "Frontend style"
+msgstr "Stile calendario"
+
+#: src/TeamBooking/Admin/Misc.php:47
+msgid "Core settings"
+msgstr "Impostazioni generali"
+
+#: src/TeamBooking/Admin/Misc.php:48
+msgid "Payment gateways"
+msgstr "Sistemi di pagamento"
+
+#: src/TeamBooking/Admin/Misc.php:49 src/TeamBooking/Admin/Promotion.php:159
+#: src/TeamBooking/Admin/PromotionTable.php:41
+msgid "Promotions"
+msgstr "Promozioni"
+
+#: src/TeamBooking/Admin/Misc.php:74
+#, php-format
+msgid "Welcome to TeamBooking %s"
+msgstr "Benvenuto in TeamBooking %s"
+
+#: src/TeamBooking/Admin/Misc.php:76
+msgid "Thank you for updating to the latest version."
+msgstr "Grazie per aver aggiornato all'ultima versione."
+
+#: src/TeamBooking/Admin/Misc.php:83
+msgid "Features"
+msgstr "Funzionalità"
+
+#: src/TeamBooking/Admin/Misc.php:88
+msgid "Backend slots list!"
+msgstr "Lista degli slot in backend!"
+
+#: src/TeamBooking/Admin/Misc.php:90
+msgid ""
+"A new section in the backend allows you to have a quick overview of the "
+"availability slots and who reserved what."
+msgstr ""
+"Una nuova sezione del backend ti permette di avere una rapida panoramica "
+"degli slot disponibili e chi ha prenotato cosa."
+
+#: src/TeamBooking/Admin/Misc.php:98
+msgid "Single use Coupon list"
+msgstr "Lista di coupon ad utilizzo singolo"
+
+#: src/TeamBooking/Admin/Misc.php:100
+msgid ""
+"The Coupon promotions are now more flexible. You can write down a list of "
+"single use coupon codes to give to your customers."
+msgstr ""
+"I coupon sono ora più flessibili. Puoi scrivere una lista di coupon ad "
+"utilizzo singolo da dare ai tuoi clienti."
+
+#: src/TeamBooking/Admin/Misc.php:105
+msgid "Improvements"
+msgstr "Miglioramenti"
+
+#: src/TeamBooking/Admin/Misc.php:112
+msgid "Selectable timezone continents"
+msgstr "Continenti delle timezone selezionabili"
+
+#: src/TeamBooking/Admin/Misc.php:114
+msgid ""
+"Your business is limited to some continents and you want to limit the "
+"timezones to those continents only? Now you can do it!"
+msgstr ""
+"Il tuo business è limitato ad alcuni continenti e vuoi restringere la "
+"cerchia delle timezone selezionabili soltanto a questi? Ora puoi farlo!"
+
+#: src/TeamBooking/Admin/Misc.php:122
+msgid "Customizable login URL"
+msgstr "URL di login personalizzabile"
+
+#: src/TeamBooking/Admin/Misc.php:124
+msgid ""
+"The login URL is now customizable. Oh, and you can choose if the customers "
+"must be redirected back to the calendar page after login/registration."
+msgstr ""
+"L'indirizzo di login è ora configurabile. Oh, e puoi scegliere se far "
+"ritornare il cliente alla pagina di prenotazione dopo il login/registrazione."
+
+#: src/TeamBooking/Admin/Misc.php:130
+msgid "Show or hide the map"
+msgstr "Mostra o nascondi mappa"
+
+#: src/TeamBooking/Admin/Misc.php:132
+msgid ""
+"When a service address is specified, TeamBooking used to display the map "
+"automatically. Now you can choose if the map should be displayed or not. We "
+"know: better late than never, right?"
+msgstr ""
+"Quando per un servizio è specificato un indirizzo, TeamBooking mostra "
+"automaticamente la mappa. Ora puoi scegliere di non mostrarla. Lo sappiamo: "
+"meglio tardi che mai, giusto?"
+
+#: src/TeamBooking/Admin/Misc.php:137
+msgid "In case you missed it"
+msgstr "Nel caso ti fosse sfuggito"
+
+#: src/TeamBooking/Admin/Misc.php:144
+msgid "Visual Composer elements."
+msgstr "Elementi di Visual Composer."
+
+#: src/TeamBooking/Admin/Misc.php:146
+msgid ""
+"The popular Page Builder is fully supported by TeamBooking. You can add all "
+"the shortcodes even via frontend live editor."
+msgstr ""
+"Il famoso Page Builder è totalmente supportato da TeamBooking. Puoi "
+"aggiungere tutti gli shortcode anche attraverso l'editor live."
+
+#: src/TeamBooking/Admin/Misc.php:154
+msgid "New promotions features."
+msgstr "Nuove funzionalità per le promozioni."
+
+#: src/TeamBooking/Admin/Misc.php:157
+msgid "Usage limit:"
+msgstr "Limiti d'uso:"
+
+#: src/TeamBooking/Admin/Misc.php:159
+msgid ""
+"you can set a limit of usages (one usage = one slot) for your campaigns or "
+"coupons. Once the limit is reached, the promotion will be stopped. If you "
+"want, you can raise the limit then."
+msgstr ""
+"puoi impostare un limite di utilizzi (un utilizzo = uno slot) per le tue "
+"campagne e i tuoi coupon. Una volta raggiunto il limite, la promozione verrà "
+"disattivata. Se vuoi, a quel punto potrai alzare il limite."
+
+#: src/TeamBooking/Admin/Misc.php:163
+msgid "Time bounds:"
+msgstr "Confini temporali:"
+
+#: src/TeamBooking/Admin/Misc.php:165
+msgid ""
+"you can specify a minimum time (and/or a maximum time) which the promotion "
+"targets. If a timeslot does not comply with those bounds, the promotion will "
+"not be applied to it."
+msgstr ""
+"puoi specificare una data minima (e/o una data massima) come target delle "
+"promozioni. Se uno slot non è conforme a questi limiti, la promozione non "
+"sarà applicata ad esso."
+
+#: src/TeamBooking/Admin/Misc.php:171
+msgid "Dynamic booked slot titles."
+msgstr "Titoli dinamici degli eventi prenotati."
+
+#: src/TeamBooking/Admin/Misc.php:173
+msgid ""
+"For your Appointment services, now you can set a dynamic booked event title. "
+"That means you can add customer's data (e-mail and name) directly to the "
+"booked slot title in Google Calendar, to check who reserved them without "
+"even opening the slots."
+msgstr ""
+"Per i servizi di classe \"Appuntamento\" puoi impostare un titolo "
+"dell'evento prenotato dinamico. Significa che puoi aggiungere alcuni dati "
+"del cliente (e-mail e nome) direttamente al titolo dello slot prenotato su "
+"Google Calendar, per controllare chi l'ha prenotato senza dover aprire lo "
+"slot."
+
+#: src/TeamBooking/Admin/Misc.php:179
+msgid "Under the hood"
+msgstr "Sotto il cofano"
+
+#: src/TeamBooking/Admin/Misc.php:183
+msgid "Query string parameters"
+msgstr "Parametri di query"
+
+#: src/TeamBooking/Admin/Misc.php:185
+msgid ""
+"A useful way to a further customization of your frontend calendar pages. "
+"Check the documentation for all the details."
+msgstr ""
+"Un nuovo modo di personalizzare le pagine di prenotazione. Controlla la "
+"documentazione per tutti i dettagli."
+
+#: src/TeamBooking/Admin/Misc.php:189
+msgid "New e-mail hooks"
+msgstr "Nuovi e-mail hooks"
+
+#: src/TeamBooking/Admin/Misc.php:191
+msgid "The reservation_id and service_name hooks are now available."
+msgstr "Gli hook reservation_id e service_name sono ora disponibili."
+
+#: src/TeamBooking/Admin/Misc.php:195
+msgid "New do_reservation API request"
+msgstr "Nuova richiesta API: do_reservation"
+
+#: src/TeamBooking/Admin/Misc.php:197
+msgid "Now you are able to make a reservation through the API!"
+msgstr "Ora sarai in grado di effettuare prenotazioni attraverso le API!"
+
+#: src/TeamBooking/Admin/Overview.php:67
+#: src/TeamBooking/Admin/ReservationsTable.php:41
+msgid "Reservations"
+msgstr "Prenotazioni"
+
+#: src/TeamBooking/Admin/Overview.php:74 src/TeamBooking/Admin/Slots.php:34
+msgid "Search"
+msgstr "Cerca"
+
+#: src/TeamBooking/Admin/Overview.php:83
+msgid "The reservation will be removed from the database."
+msgstr "La prenotazione sarà rimossa dal database."
+
+#: src/TeamBooking/Admin/Overview.php:84 src/TeamBooking/Admin/Overview.php:96
+#: src/TeamBooking/Admin/Overview.php:104
+msgid ""
+"Please note: non-expired-nor-cancelled Appointments Classes will stay "
+"booked, non-expired-nor-cancelled Events Classes will regain the tickets, "
+"but customers and coworkers will not be notified of that."
+msgstr ""
+"Nota: Appuntamenti non scaduti o non cancellati rimarranno non disponibili, "
+"Eventi non scaduti o non cancellati riotterranno indietro i posti, ma i "
+"clienti e i Collaboratori non ne avranno notifica."
+
+#: src/TeamBooking/Admin/Overview.php:91
+msgid "The reservation will be revoked, and the slot will be freed."
+msgstr "La prenotazione sarà annullata, e lo slot reso nuovamente disponibile."
+
+#: src/TeamBooking/Admin/Overview.php:93
+msgid "Add a reason (optional, will be added to the cancellation email):"
+msgstr ""
+"Aggiungi una motivazione (opzionale, sarà aggiunta alla email di notifica "
+"dell'annullamento):"
+
+#: src/TeamBooking/Admin/Overview.php:103
+msgid ""
+"All the reservations for all the services, regardless of current filtering "
+"options, will be removed from the database. This action is permanent."
+msgstr ""
+"Tutte le prenotazioni di tutti i servizi, a prescindere dai filtri attivati, "
+"saranno rimosse dal database. Questa azione è permanente."
+
+#: src/TeamBooking/Admin/Overview.php:126
+msgid "Message"
+msgstr "Messaggio"
+
+#: src/TeamBooking/Admin/Overview.php:236
+#: src/TeamBooking/Admin/ReservationsTable.php:179
+msgid "Upcoming"
+msgstr "In arrivo"
+
+#: src/TeamBooking/Admin/Overview.php:237
+msgid "Cancelled"
+msgstr "Cancellate"
+
+#: src/TeamBooking/Admin/Overview.php:238
+#: src/TeamBooking/Frontend/Review.php:136
+msgid "Total amount"
+msgstr "Totale degli importi"
+
+#: src/TeamBooking/Admin/Overview.php:239
+msgid "Paid amount"
+msgstr "Importi pagati"
+
+#: src/TeamBooking/Admin/Overview.php:240
+msgid "Waiting for approval"
+msgstr "In attesa di approvazione"
+
+#: src/TeamBooking/Admin/Overview.php:305
+#: src/TeamBooking/Admin/ReservationsTable.php:484
+#: src/TeamBooking/Admin/SlotsTable.php:380
+#: src/TeamBooking/ReservationData.php:926
+#: src/TeamBooking/ReservationData.php:936 src/TeamBooking/Slot.php:483
+#: src/TeamBooking/Slot.php:508 src/TeamBooking/Slot.php:516
+msgid "All day"
+msgstr "Intera giornata"
+
+#: src/TeamBooking/Admin/Overview.php:323
+#: src/TeamBooking/Admin/ReservationsTable.php:40
+msgid "Reservation"
+msgstr "Prenotazione"
+
+#: src/TeamBooking/Admin/Overview.php:326
+msgid "Print PDF"
+msgstr "Stampa PDF"
+
+#: src/TeamBooking/Admin/Overview.php:334
+#: src/TeamBooking/Admin/SlotsTable.php:499
+#: src/TeamBooking/Admin/SlotsTable.php:508
+msgid "Customer"
+msgstr "Cliente"
+
+#: src/TeamBooking/Admin/Overview.php:338
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:130
+msgid "Payment"
+msgstr "Pagamento"
+
+#: src/TeamBooking/Admin/Overview.php:342
+#: src/TeamBooking/Admin/ReservationsTable.php:99
+msgid "Booking"
+msgstr "Prenotazione"
+
+#: src/TeamBooking/Admin/Overview.php:346
+msgid "Files"
+msgstr "File"
+
+#: src/TeamBooking/Admin/Overview.php:351
+msgid "Other"
+msgstr "Altro"
+
+#: src/TeamBooking/Admin/Overview.php:360
+msgid "Cancellation reason"
+msgstr "Motivazione dell'annullamento"
+
+#: src/TeamBooking/Admin/Overview.php:366
+msgid "Pending reason"
+msgstr "Ragione della sospensione"
+
+#: src/TeamBooking/Admin/Overview.php:377
+#: src/TeamBooking/Admin/PromotionTable.php:402
+msgid "Edit"
+msgstr "Modifica"
+
+#: src/TeamBooking/Admin/Overview.php:381
+msgid "Customer details"
+msgstr "Dettagli cliente"
+
+#: src/TeamBooking/Admin/Overview.php:405
+msgid "reminder"
+msgstr "promemoria"
+
+#: src/TeamBooking/Admin/Overview.php:406
+msgid "sent"
+msgstr "inviato"
+
+#: src/TeamBooking/Admin/Overview.php:407
+msgid "not sent yet"
+msgstr "non ancora inviato"
+
+#: src/TeamBooking/Admin/Overview.php:409
+msgid "send now"
+msgstr "invia ora"
+
+#: src/TeamBooking/Admin/Overview.php:426
+msgid "Customer's timezone"
+msgstr "Fuso orario del cliente"
+
+#: src/TeamBooking/Admin/Overview.php:450
+msgid "Payment details"
+msgstr "Dettagli di pagamento"
+
+#: src/TeamBooking/Admin/Overview.php:453
+msgid "Payment gateway"
+msgstr "Sistema di pagamento"
+
+#: src/TeamBooking/Admin/Overview.php:469
+msgid "Booking details"
+msgstr "Dettagli prenotazione"
+
+#: src/TeamBooking/Admin/Overview.php:478 src/TeamBooking/Admin/Service.php:632
+msgid "Location"
+msgstr "Indirizzo"
+
+#: src/TeamBooking/Admin/Overview.php:492
+#: src/TeamBooking/Admin/ReservationsTable.php:102
+msgid "Date of service"
+msgstr "Data del servizio"
+
+#: src/TeamBooking/Admin/Overview.php:505
+msgid "Total price"
+msgstr "Prezzo totale"
+
+#: src/TeamBooking/Admin/Overview.php:514
+msgid "Promotions used"
+msgstr "Promozioni utilizzate"
+
+#: src/TeamBooking/Admin/Overview.php:530
+msgid "Attached files"
+msgstr "Allegati"
+
+#: src/TeamBooking/Admin/Overview.php:535
+msgid "Open it"
+msgstr "Apri"
+
+#: src/TeamBooking/Admin/Payments.php:61
+msgid "Select currency..."
+msgstr "Seleziona valuta..."
+
+#: src/TeamBooking/Admin/Personal.php:63
+msgid "Revoke"
+msgstr "Revoca"
+
+#: src/TeamBooking/Admin/Personal.php:67
+msgid "please revoke and authorize again"
+msgstr "per favore revoca e autorizza nuovamente"
+
+#: src/TeamBooking/Admin/Personal.php:73
+msgid "You are going to revoke your authorization of your Google Account"
+msgstr "Stai per revocare l'autorizzazione del tuo account Google"
+
+#: src/TeamBooking/Admin/Personal.php:77
+msgid ""
+"All your Google Calendars will be unlinked. You can reauthorize with another "
+"Google Account, if not already used by another coworker."
+msgstr ""
+"Tutti i tuoi Google Calendars saranno disconnessi. Puoi autorizzare con un "
+"altro Account Google, se non già in uso da un altro Collaboratore."
+
+#: src/TeamBooking/Admin/Personal.php:88
+msgid "Add a Google Calendar"
+msgstr "Aggiungi un Google Calendar"
+
+#: src/TeamBooking/Admin/Personal.php:92
+msgid "Please select one of your owned calendars"
+msgstr "Seleziona uno dei tuoi calendari"
+
+#: src/TeamBooking/Admin/Personal.php:112
+msgid ""
+"This Google Calendar ID cannot be found in your authorized Google Account "
+"anymore."
+msgstr ""
+"Questo Google Calendar ID non può essere trovato nel tuo Account Google."
+
+#: src/TeamBooking/Admin/Personal.php:126
+msgid "State"
+msgstr "Stato"
+
+#: src/TeamBooking/Admin/Personal.php:127
+msgid "Independent"
+msgstr "Indipendente"
+
+#: src/TeamBooking/Admin/Personal.php:128 src/TeamBooking/Admin/Service.php:43
+#: src/TeamBooking/Admin/Services.php:273
+msgid "Id"
+msgstr "ID"
+
+#: src/TeamBooking/Admin/Personal.php:129
+#: src/TeamBooking/Admin/SlotsTable.php:502
+#: src/TeamBooking/Admin/SlotsTable.php:510
+#: src/TeamBooking/Frontend/Calendar.php:72
+#: src/TeamBooking/Frontend/Calendar.php:73
+#: src/TeamBooking/Shortcodes/Upcoming.php:144
+#: src/TeamBooking/Shortcodes/Upcoming.php:145
+msgid "Timezone"
+msgstr "Fuso orario"
+
+#: src/TeamBooking/Admin/Personal.php:129
+msgid "local:"
+msgstr "locale:"
+
+#: src/TeamBooking/Admin/Personal.php:145
+msgid "Not found anymore!"
+msgstr "Non trovato!"
+
+#: src/TeamBooking/Admin/Personal.php:150
+msgid "synced"
+msgstr "sincronizzato"
+
+#: src/TeamBooking/Admin/Personal.php:156
+msgid "not synced"
+msgstr "non sincronizzato"
+
+#: src/TeamBooking/Admin/Personal.php:169
+msgid "Remove"
+msgstr "Rimuovi"
+
+#: src/TeamBooking/Admin/Personal.php:182
+msgid "Delete past events"
+msgstr "Elimina eventi passati"
+
+#: src/TeamBooking/Admin/Personal.php:197
+msgid "Authorize"
+msgstr "Autorizza"
+
+#: src/TeamBooking/Admin/Personal.php:211
+msgid ""
+"By removing this Google Calendar, eventual availabilities on it will be "
+"ignored."
+msgstr ""
+"Rimuovendo questo Google Calendar, eventuali disponibilità presenti in esso "
+"saranno ignorate."
+
+#: src/TeamBooking/Admin/Personal.php:218
+msgid ""
+"You are going to delete all the past events on this calendar (going "
+"backwards from 7 days ago)"
+msgstr ""
+"Stai per rimuovere gli eventi passati in questo calendario (da sette giorni "
+"fa, indietro)"
+
+#: src/TeamBooking/Admin/Personal.php:223
+msgid "Your authorized apps"
+msgstr "Le tue applicazioni autorizzate"
+
+#: src/TeamBooking/Admin/Promotion.php:27
+#: src/TeamBooking/Admin/Promotion.php:366
+#: src/TeamBooking/Admin/Promotion.php:396
+#: src/TeamBooking/Admin/PromotionTable.php:490
+#: src/TeamBooking/Admin/PromotionTable.php:511
+#: src/TeamBooking/Admin/PromotionTable.php:601
+#: src/TeamBooking/Admin/PromotionTable.php:631
+msgid "Wrong date or format. Please retry."
+msgstr "Formato data errato. Riprova."
+
+#: src/TeamBooking/Admin/Promotion.php:168
+#: src/TeamBooking/Admin/Promotion.php:200
+msgid "New coupon"
+msgstr "Nuovo coupon"
+
+#: src/TeamBooking/Admin/Promotion.php:172
+#: src/TeamBooking/Admin/Promotion.php:200
+msgid "New campaign"
+msgstr "Nuova campagna"
+
+#: src/TeamBooking/Admin/Promotion.php:201
+#: src/TeamBooking/Admin/Services.php:262
+msgid "Add"
+msgstr "Aggiungi"
+
+#: src/TeamBooking/Admin/Promotion.php:202
+#: src/TeamBooking/Admin/PromotionTable.php:427
+msgid "Error: please select at least one service"
+msgstr "Errore: per favore seleziona almeno un servizio"
+
+#: src/TeamBooking/Admin/Promotion.php:211
+#: src/TeamBooking/Admin/PromotionTable.php:438
+msgid "This name is already in use, please provide a fresh one."
+msgstr "Questo nome è già in uso, per favore scegline un altro."
+
+#: src/TeamBooking/Admin/Promotion.php:216
+#: src/TeamBooking/Admin/PromotionTable.php:443
+msgid "Discount"
+msgstr "Sconto"
+
+#: src/TeamBooking/Admin/Promotion.php:217
+#: src/TeamBooking/Admin/PromotionTable.php:444
+msgid "It will be applied to the base price of the service."
+msgstr "Sarà applicato al costo base del servizio."
+
+#: src/TeamBooking/Admin/Promotion.php:244
+#: src/TeamBooking/Admin/PromotionTable.php:473
+msgid "Start date"
+msgstr "Data di inizio"
+
+#: src/TeamBooking/Admin/Promotion.php:245
+#: src/TeamBooking/Admin/PromotionTable.php:474
+msgid "The promotion will be running from this date."
+msgstr "La promozione sarà attiva a partire da questa data."
+
+#: src/TeamBooking/Admin/Promotion.php:266
+#: src/TeamBooking/Admin/PromotionTable.php:494
+msgid "End date"
+msgstr "Data di conclusione"
+
+#: src/TeamBooking/Admin/Promotion.php:267
+#: src/TeamBooking/Admin/PromotionTable.php:495
+msgid "The promotion will be deactivated from this date."
+msgstr "La promozione sarà disattivata a partire da questa data."
+
+#: src/TeamBooking/Admin/Promotion.php:289
+#: src/TeamBooking/Admin/PromotionTable.php:516
+msgid "General"
+msgstr "Generali"
+
+#: src/TeamBooking/Admin/Promotion.php:294
+#: src/TeamBooking/Admin/PromotionTable.php:521
+msgid "Maximum uses"
+msgstr "Massimo numero di utilizzi"
+
+#: src/TeamBooking/Admin/Promotion.php:295
+#: src/TeamBooking/Admin/PromotionTable.php:522
+msgid ""
+"How many times (reservations) the discount can be used. Set 0 for no limit."
+msgstr ""
+"Quante volte (prenotazioni) la promozione può essere usata. Imposta 0 per "
+"nessun limite."
+
+#: src/TeamBooking/Admin/Promotion.php:299
+msgid "This setting will be ignored if the coupon mode is set to \"list\""
+msgstr ""
+"Questa impostazione è ignorata se la modalità coupon è impostata su \"lista\""
+
+#: src/TeamBooking/Admin/Promotion.php:305
+#: src/TeamBooking/Admin/PromotionTable.php:538
+msgid "Coupon mode"
+msgstr "Modalità coupon"
+
+#: src/TeamBooking/Admin/Promotion.php:306
+#: src/TeamBooking/Admin/PromotionTable.php:539
+msgid ""
+"If fixed, the coupon text will be equal to the promotion name. Otherwise, "
+"you can provide a list of comma-separated single use coupons. Check the "
+"documentation for more details."
+msgstr ""
+"Se fisso, il coupon da inserire sarà uguale al nome della promozione. "
+"Altrimenti, puoi fornire una lista di coupon ad utilizzo singolo, separati "
+"da virgole. Controlla la documentazione per maggiori dettagli."
+
+#: src/TeamBooking/Admin/Promotion.php:308
+#: src/TeamBooking/Admin/PromotionTable.php:541
+msgid "fixed"
+msgstr "fisso"
+
+#: src/TeamBooking/Admin/Promotion.php:315
+#: src/TeamBooking/Admin/PromotionTable.php:548
+msgid "list"
+msgstr "lista"
+
+#: src/TeamBooking/Admin/Promotion.php:320
+#: src/TeamBooking/Admin/PromotionTable.php:554
+msgid "List of comma-separated coupons (e.g. Summer171, Summer172, Summer173)"
+msgstr ""
+"Lista dei coupon separati da virgola (es. Summer171, Summer172, Summer173)"
+
+#: src/TeamBooking/Admin/Promotion.php:340
+#: src/TeamBooking/Admin/PromotionTable.php:575
+msgid "Timeslots min start date"
+msgstr "Data di inizio minima degli slot"
+
+#: src/TeamBooking/Admin/Promotion.php:341
+#: src/TeamBooking/Admin/PromotionTable.php:576
+msgid ""
+"If active, this promotion will be applied only to timeslots that begin from "
+"this date or subsequently."
+msgstr ""
+"Se attivo, questa promozione sarà applicata soltanto agli slot che iniziano "
+"in tale data o successivamente."
+
+#: src/TeamBooking/Admin/Promotion.php:357
+#: src/TeamBooking/Admin/Promotion.php:387
+#: src/TeamBooking/Admin/PromotionTable.php:592
+#: src/TeamBooking/Admin/PromotionTable.php:622
+#: src/TeamBooking/Admin/Service.php:98
+msgid "active"
+msgstr "attivo"
+
+#: src/TeamBooking/Admin/Promotion.php:363
+#: src/TeamBooking/Admin/Promotion.php:393
+#: src/TeamBooking/Admin/PromotionTable.php:598
+#: src/TeamBooking/Admin/PromotionTable.php:628
+msgid "This setting will be ignored by unscheduled services."
+msgstr "Questa impostazione è ignorata dai servizi non calendarizzati."
+
+#: src/TeamBooking/Admin/Promotion.php:370
+#: src/TeamBooking/Admin/PromotionTable.php:605
+msgid "Timeslots max end date"
+msgstr "Data di termine massimo degli slot"
+
+#: src/TeamBooking/Admin/Promotion.php:371
+#: src/TeamBooking/Admin/PromotionTable.php:606
+msgid ""
+"If active, this promotion will be applied only to timeslots that end within "
+"this date."
+msgstr ""
+"Se attivo, questa promozione sarà applicata soltanto agli slot che terminano "
+"entro e non oltre tale data."
+
+#: src/TeamBooking/Admin/Promotion.php:413
+#: src/TeamBooking/Admin/PromotionTable.php:648
+msgid "Base price"
+msgstr "Prezzo base"
+
+#: src/TeamBooking/Admin/Promotion.php:416
+#: src/TeamBooking/Admin/PromotionTable.php:651
+msgid "Discounted price"
+msgstr "Prezzo scontato"
+
+#: src/TeamBooking/Admin/Promotion.php:561
+#: src/TeamBooking/Admin/Services.php:216
+#: src/TeamBooking/Admin/Services.php:227
+#, php-format
+msgid "You are going to permanently delete %s"
+msgstr "Stai per eliminare definitivamente %s"
+
+#: src/TeamBooking/Admin/PromotionTable.php:40
+msgid "Promotion"
+msgstr "Promozione"
+
+#: src/TeamBooking/Admin/PromotionTable.php:82
+msgid "No promotions available."
+msgstr "Nessuna promozione disponibile."
+
+#: src/TeamBooking/Admin/PromotionTable.php:93
+msgid "Uses"
+msgstr "Utilizzi"
+
+#: src/TeamBooking/Admin/PromotionTable.php:95
+#: src/TeamBooking/Frontend/Review.php:77
+msgid "Start"
+msgstr "Inizio"
+
+#: src/TeamBooking/Admin/PromotionTable.php:96
+#: src/TeamBooking/Frontend/Review.php:89
+msgid "End"
+msgstr "Fine"
+
+#: src/TeamBooking/Admin/PromotionTable.php:200
+#: src/TeamBooking/Admin/ReservationsTable.php:171
+#: src/TeamBooking/Admin/SlotsTable.php:214
+#: src/TeamBooking/Frontend/Calendar.php:448
+#: src/TeamBooking/Frontend/Calendar.php:483
+#: src/TeamBooking/Frontend/Schedule.php:417
+#: src/TeamBooking/Frontend/Schedule.php:439
+#: src/TeamBooking/Frontend/Schedule.php:472
+msgid "All"
+msgstr "Tutti"
+
+#: src/TeamBooking/Admin/PromotionTable.php:209
+msgid "Campaigns"
+msgstr "Campagne"
+
+#: src/TeamBooking/Admin/PromotionTable.php:218
+msgid "Coupons"
+msgstr "Coupon"
+
+#: src/TeamBooking/Admin/PromotionTable.php:227
+#: src/TeamBooking/Admin/PromotionTable.php:316
+msgid "Running"
+msgstr "In corso"
+
+#: src/TeamBooking/Admin/PromotionTable.php:278
+#: src/TeamBooking/Admin/PromotionTable.php:380
+msgid "Pause"
+msgstr "Pausa"
+
+#: src/TeamBooking/Admin/PromotionTable.php:279
+#: src/TeamBooking/Admin/PromotionTable.php:387
+msgid "Run"
+msgstr "Attiva"
+
+#: src/TeamBooking/Admin/PromotionTable.php:297
+#: src/TeamBooking/Admin/ReservationsTable.php:536
+#: src/TeamBooking/Admin/ReservationsTable.php:638
+msgid "expired"
+msgstr "scaduta"
+
+#: src/TeamBooking/Admin/PromotionTable.php:302
+msgid "Deactivated"
+msgstr "Disattivato"
+
+#: src/TeamBooking/Admin/PromotionTable.php:311
+msgid "Limit reached"
+msgstr "Limite raggiunto"
+
+#: src/TeamBooking/Admin/PromotionTable.php:322
+msgid "Not running"
+msgstr "Non in esecuzione"
+
+#: src/TeamBooking/Admin/PromotionTable.php:327
+#: src/TeamBooking/Admin/PromotionTable.php:331
+#, php-format
+msgctxt "expressing ratio like: 1 out of 3"
+msgid "out of %d"
+msgstr "su %d"
+
+#: src/TeamBooking/Admin/PromotionTable.php:330
+msgid "Unlimited"
+msgstr "Illimitato"
+
+#: src/TeamBooking/Admin/PromotionTable.php:336
+msgid "Coupon"
+msgstr "Coupon"
+
+#: src/TeamBooking/Admin/PromotionTable.php:336
+msgid "Campaign"
+msgstr "Campagna"
+
+#: src/TeamBooking/Admin/PromotionTable.php:527
+#, php-format
+msgid "Already used %d times, please set either 0 or >= %d"
+msgstr "Già usato %d volte, imposta un valore di 0 oppure >= %d"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:89
+msgid "No reservations available."
+msgstr "Nessuna prenotazione disponibile."
+
+#: src/TeamBooking/Admin/ReservationsTable.php:101
+#: src/TeamBooking/Frontend/Calendar.php:470
+#: src/TeamBooking/Shortcodes/Reservations.php:60
+msgid "Who"
+msgstr "Chi"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:196
+msgid "Pending payments"
+msgstr "Pagamenti in attesa"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:205
+#: src/TeamBooking/Admin/ReservationsTable.php:619
+msgid "waiting for approval"
+msgstr "in attesa di approvazione"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:229
+msgid "Delete All"
+msgstr "Elimina Tutte"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:391
+msgid "Mark as unpaid"
+msgstr "Segna come non pagato"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:396
+msgid "Mark as paid"
+msgstr "Segna come pagato"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:420
+msgid "Mark as todo"
+msgstr "Segna come da fare"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:424
+msgid "Mark as done"
+msgstr "Segna come chiuso"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:432
+msgid "Mark as confirmed"
+msgstr "Segna come confermata"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:526
+msgid "new"
+msgstr "nuovo"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:542
+#: src/TeamBooking/Admin/SlotsTable.php:519
+#: src/TeamBooking/Admin/SlotsTable.php:543
+#: src/TeamBooking/Shortcodes/Reservations.php:115
+msgid "confirmed"
+msgstr "confermato"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:548
+#: src/TeamBooking/Admin/ReservationsTable.php:591
+msgid "by Admin"
+msgstr "da Amministratore"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:554
+#: src/TeamBooking/Admin/ReservationsTable.php:597
+msgid "by Coworker"
+msgstr "da Collaboratore"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:560
+#: src/TeamBooking/Admin/ReservationsTable.php:609
+msgid "via API"
+msgstr "via API"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:575
+#: src/TeamBooking/Shortcodes/Reservations.php:119
+msgid "done"
+msgstr "chiuso"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:580
+msgid "on hold"
+msgstr "in attesa"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:585
+#: src/TeamBooking/Admin/SlotsTable.php:537
+#: src/TeamBooking/Shortcodes/Reservations.php:128
+msgid "cancelled"
+msgstr "cancellato"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:603
+msgid "by Customer"
+msgstr "dal Cliente"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:625
+msgid "service removed"
+msgstr "servizio rimosso"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:633
+#: src/TeamBooking/Admin/SlotsTable.php:531
+#: src/TeamBooking/Shortcodes/Reservations.php:125
+msgid "pending"
+msgstr "in attesa"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:756
+#: src/TeamBooking/Frontend/Review.php:193
+msgid "Confirm"
+msgstr "Conferma"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:762
+msgid "Yes and set as paid"
+msgstr "Sì e imposta come pagata"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:763
+msgid "Are you sure you want to confirm this pending reservation?"
+msgstr ""
+"Sei sicuro di voler confermare questa prenotazione con pagamento in sospeso?"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:764
+#: src/TeamBooking/Admin/ReservationsTable.php:792
+msgid ""
+"Accordingly to the service settings, the confirmation and notification e-"
+"mail messages will be sent."
+msgstr ""
+"A seconda delle impostazioni, l'e-mail di notifica e di conferma verranno "
+"inviate."
+
+#: src/TeamBooking/Admin/ReservationsTable.php:766
+msgid "The pending reservation cannot be confirmed due the following error:"
+msgstr ""
+"La prenotazione in sospeso non può essere confermata a causa del seguente "
+"errore:"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:784
+msgid "Approve"
+msgstr "Approva"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:790
+msgid "Are you sure you want to confirm this reservation?"
+msgstr "Sei sicuro di voler approvare questa prenotazione?"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:794
+msgid "The reservation cannot be approved due the following error:"
+msgstr "La prenotazione non può essere approvata a causa dei seguenti errori:"
+
+#: src/TeamBooking/Admin/ReservationsTable.php:818
+msgid "Decline"
+msgstr "Declina"
+
+#: src/TeamBooking/Admin/Service.php:97
+msgid "E-mail settings"
+msgstr "Impostazioni e-mail"
+
+#: src/TeamBooking/Admin/Service.php:99
+msgid "inactive"
+msgstr "disattivo"
+
+#: src/TeamBooking/Admin/Service.php:100
+msgid "confirmation e-mail"
+msgstr "e-mail di conferma"
+
+#: src/TeamBooking/Admin/Service.php:101
+msgid "reminder e-mail"
+msgstr "e-mail promemoria"
+
+#: src/TeamBooking/Admin/Service.php:201 src/TeamBooking/Admin/Service.php:1463
+#: src/TeamBooking/Admin/Services.php:167
+msgid "Personal availability settings"
+msgstr "Impostazioni personali della disponibilità"
+
+#: src/TeamBooking/Admin/Service.php:202
+msgid "Those settings are applied to your Google Account only"
+msgstr "Queste impostazioni sono applicate soltanto al tuo account Google"
+
+#: src/TeamBooking/Admin/Service.php:245 src/TeamBooking/Admin/Service.php:1162
+#: src/TeamBooking/Admin/Services.php:134
+msgid "Reservation form"
+msgstr "Form di prenotazione"
+
+#: src/TeamBooking/Admin/Service.php:274
+msgid ""
+"E-mail reminders are sent via WordPress Cron system, which is triggered by "
+"site's visits. If your site has low traffic, then reminders can have delays, "
+"or not be sent at all."
+msgstr ""
+"Le e-mail promemoria sono inviate attraverso WordPress Cron system, che è "
+"azionato dalle visite al tuo sito. Se il tuo sito ha un traffico basso, il "
+"promemoria può essere inviato in ritardo, o non inviato affatto."
+
+#: src/TeamBooking/Admin/Service.php:275
+msgid "Admin notification and customer confirmation"
+msgstr "Notifica dell'Amministratore e conferma al cliente"
+
+#: src/TeamBooking/Admin/Service.php:278
+msgid "Admin address for receiving notifications"
+msgstr "Indirizzo email dell'amministratore per le notifiche"
+
+#: src/TeamBooking/Admin/Service.php:279
+msgid "This address will be the sender of confirmation e-mail to customers"
+msgstr "Questo indirizzo sarà il mittente delle e-mail di conferma al cliente"
+
+#: src/TeamBooking/Admin/Service.php:286 src/TeamBooking/Admin/Service.php:396
+msgid "Include uploaded files as attachment"
+msgstr "Allega file caricati"
+
+#: src/TeamBooking/Admin/Service.php:292
+msgid "Notification e-mail message to admin"
+msgstr "E-mail di notifica all'Admin"
+
+#: src/TeamBooking/Admin/Service.php:309
+msgid "Confirmation e-mail message to customer"
+msgstr "E-mail di conferma al cliente"
+
+#: src/TeamBooking/Admin/Service.php:330
+msgid "Reminder e-mail message to customer"
+msgstr "E-mail promemoria al cliente"
+
+#: src/TeamBooking/Admin/Service.php:350
+#, php-format
+msgid "%d day before"
+msgid_plural "%d days before"
+msgstr[0] "%d giorno prima"
+msgstr[1] "%d giorni prima"
+
+#: src/TeamBooking/Admin/Service.php:382
+msgid "Your personal notification"
+msgstr "La tua personale notifica"
+
+#: src/TeamBooking/Admin/Service.php:385
+msgid "Get reservation details by e-mail"
+msgstr "Ricevi i dettagli della prenotazione per e-mail"
+
+#: src/TeamBooking/Admin/Service.php:386
+msgid "Send to:"
+msgstr "Invia a:"
+
+#: src/TeamBooking/Admin/Service.php:389
+msgid "where can I change this?"
+msgstr "dove posso modificarlo?"
+
+#: src/TeamBooking/Admin/Service.php:402
+msgid "Notification e-mail message"
+msgstr "E-mail di notifica"
+
+#: src/TeamBooking/Admin/Service.php:433
+msgid "Cancellation notification"
+msgstr "Notifica di annullamento"
+
+#: src/TeamBooking/Admin/Service.php:436
+msgid "Cancellation e-mail message to customer"
+msgstr "E-mail di cancellazione per il cliente"
+
+#: src/TeamBooking/Admin/Service.php:450
+msgid "Cancellation e-mail message to admin and coworker"
+msgstr "Notifica di cancellazione all'amministratore e al collaboratore"
+
+#: src/TeamBooking/Admin/Service.php:486
+msgid "Back to list"
+msgstr "Torna all'elenco"
+
+#: src/TeamBooking/Admin/Service.php:514
+msgid "General settings"
+msgstr "Impostazioni generali"
+
+#: src/TeamBooking/Admin/Service.php:525
+msgid "Service description"
+msgstr "Descrizione del servizio"
+
+#: src/TeamBooking/Admin/Service.php:526
+msgid ""
+"This description will be shown on reservation modal. You can use html "
+"formatting."
+msgstr ""
+"Questa descrizione sarà mostrata nel form di prenotazione. Puoi usare codice "
+"HTML."
+
+#: src/TeamBooking/Admin/Service.php:532
+msgid "Service color"
+msgstr "Colore del servizio"
+
+#: src/TeamBooking/Admin/Service.php:539
+msgid "Max total tickets per slot"
+msgstr "Ticket totali per slot"
+
+#: src/TeamBooking/Admin/Service.php:541
+msgid "Max value = 200"
+msgstr "Valore massimo = 200"
+
+#: src/TeamBooking/Admin/Service.php:547
+msgid "Max user tickets per slot"
+msgstr "Ticket massimi per utente per slot"
+
+#: src/TeamBooking/Admin/Service.php:549
+msgid ""
+"By default a customer can book only one ticket per single slot. If you want "
+"to allow the customer to book multiple tickets per slot, provide the maximum "
+"number here."
+msgstr ""
+"Di default, un cliente può prenotare un solo ticket per slot. Se vuoi "
+"permettere al cliente di prenotare più ticket per un singolo slot, imposta "
+"il numero massimo qui."
+
+#: src/TeamBooking/Admin/Service.php:550
+msgid "The limit will be ignored by logged-in Administrators"
+msgstr "Il limite sarà ignorato dagli Amministratori"
+
+#: src/TeamBooking/Admin/Service.php:559 src/TeamBooking/Admin/Service.php:1559
+msgid "Slot duration rule"
+msgstr "Regola per la durata dello slot"
+
+#: src/TeamBooking/Admin/Service.php:562 src/TeamBooking/Admin/Service.php:563
+msgid "Let Coworkers decide"
+msgstr "Lascia decidere ai collaboratori"
+
+#: src/TeamBooking/Admin/Service.php:568 src/TeamBooking/Admin/Service.php:569
+#: src/TeamBooking/Admin/Service.php:1569
+#: src/TeamBooking/Admin/Service.php:1580
+#: src/TeamBooking/Admin/Service.php:1581
+msgid "Inherited from Google Calendar event"
+msgstr "Ereditato dall'evento di Google Calendar"
+
+#: src/TeamBooking/Admin/Service.php:573 src/TeamBooking/Admin/Service.php:582
+#: src/TeamBooking/Admin/Service.php:1566
+#: src/TeamBooking/Admin/Service.php:1585
+#: src/TeamBooking/Admin/Service.php:1594
+msgid "Fixed"
+msgstr "Fisso"
+
+#: src/TeamBooking/Admin/Service.php:576 src/TeamBooking/Admin/Service.php:1015
+#: src/TeamBooking/Admin/Service.php:1588
+#: src/TeamBooking/Admin/Service.php:1607
+msgid "hours"
+msgstr "ore"
+
+#: src/TeamBooking/Admin/Service.php:577 src/TeamBooking/Admin/Service.php:1016
+#: src/TeamBooking/Admin/Service.php:1589
+#: src/TeamBooking/Admin/Service.php:1608
+msgid "minutes"
+msgstr "minuti"
+
+#: src/TeamBooking/Admin/Service.php:591
+msgid "Assignment rule"
+msgstr "Regola di assegnazione"
+
+#: src/TeamBooking/Admin/Service.php:592
+msgid ""
+"In case of multiple coworkers giving the availability to this service, it "
+"needs a rule to decide which of them will be assigned to a new reservation, "
+"time after time."
+msgstr ""
+"Se più di un collaboratore dà disponibilità per questo servizio, è "
+"necessaria una regola per l'assegnazione delle prenotazioni di volta in "
+"volta."
+
+#: src/TeamBooking/Admin/Service.php:595 src/TeamBooking/Admin/Service.php:596
+msgid "Equal"
+msgstr "Equo"
+
+#: src/TeamBooking/Admin/Service.php:599
+msgid ""
+"A new reservation will be assigned to the coworker with less of them "
+"assigned (for this service), based on reservation history in the database."
+msgstr ""
+"Una nuova prenotazione sarà assegnata al Collaboratore con meno prenotazioni "
+"all'attivo (per questo servizio), in base allo storico delle prenotazioni "
+"presenti nel database."
+
+#: src/TeamBooking/Admin/Service.php:603
+msgid ""
+"A new reservation will be always assigned to the coworker specified below."
+msgstr ""
+"Una nuova prenotazione sarà sempre assegnata al Collaboratore selezionato di "
+"seguito."
+
+#: src/TeamBooking/Admin/Service.php:614 src/TeamBooking/Admin/Service.php:615
+msgid "Direct"
+msgstr "Diretto"
+
+#: src/TeamBooking/Admin/Service.php:621 src/TeamBooking/Admin/Service.php:622
+msgid "Random"
+msgstr "Casuale"
+
+#: src/TeamBooking/Admin/Service.php:625
+msgid "Picks a random coworker."
+msgstr "Sceglie un Collaboratore casuale."
+
+#: src/TeamBooking/Admin/Service.php:633
+msgid ""
+"If a location is set, a map will appear on the reservation form. If "
+"inherited from Google Calendar slot, but the slot has no location, the map "
+"won't show."
+msgstr ""
+"Se è impostato un indirizzo, apparirà la relativa mappa nel form di "
+"prenotazione. Se derivato dal Google Calendar slot, ma l'evento in Google "
+"Calendar non presenta nessun indirizzo, la mappa non apparirà."
+
+#: src/TeamBooking/Admin/Service.php:636 src/TeamBooking/Admin/Service.php:637
+msgid "No location"
+msgstr "No indirizzo"
+
+#: src/TeamBooking/Admin/Service.php:643 src/TeamBooking/Admin/Service.php:644
+msgid "Inherited from Google Calendar slot"
+msgstr "Ereditato dall'evento di Google Calendar"
+
+#: src/TeamBooking/Admin/Service.php:655 src/TeamBooking/Admin/Service.php:656
+msgid "Fixed location"
+msgstr "Indirizzo fisso"
+
+#: src/TeamBooking/Admin/Service.php:663
+msgid ""
+"If set to \"no location\" and the reservation form has the built-in address "
+"field active, then the Google Calendar event will be updated with the "
+"address of the customer, if given. Only for Appointment Class."
+msgstr ""
+"Se impostato su \"nessun indirizzo\" e il form di prenotazione contiene il "
+"campo predefinito di indirizzo, allora l'evento in Google Calendar sarà "
+"aggiornato con l'indirizzo del cliente, se fornito. Valido solo per classe "
+"\"Appuntamento\"."
+
+#: src/TeamBooking/Admin/Service.php:668
+msgid "Show map"
+msgstr "Mostra la mappa"
+
+#: src/TeamBooking/Admin/Service.php:669
+msgid ""
+"If a location is present, a map will be shown by default. Change this "
+"setting to hide the map if it is not needed."
+msgstr ""
+"Se è presente un indirizzo, di default verrà mostrata la mappa. Cambia "
+"questa impostazione per nascondere la mappa se non ne hai bisogno."
+
+#: src/TeamBooking/Admin/Service.php:689
+msgid "Payments settings"
+msgstr "Impostazioni di pagamento"
+
+#: src/TeamBooking/Admin/Service.php:692
+msgid "Price for reservation"
+msgstr "Prezzo della prenotazione"
+
+#: src/TeamBooking/Admin/Service.php:694
+msgid ""
+"If zero, won't appears. To change the currency, go to Payments Gateway tab."
+msgstr ""
+"Se zero, non apparirà. Per modificare la valuta, vai nella scheda dei "
+"Sistemi di pagamento."
+
+#: src/TeamBooking/Admin/Service.php:702
+msgid "How the payment must be done"
+msgstr "Quando deve essere effettuato il pagamento"
+
+#: src/TeamBooking/Admin/Service.php:705 src/TeamBooking/Admin/Service.php:706
+#: src/TeamBooking/Admin/Service.php:1540
+msgid "Immediately"
+msgstr "Immediatamente"
+
+#: src/TeamBooking/Admin/Service.php:710
+msgid ""
+"The customer is redirect to the payment gateway after the reservation. If no "
+"payment will be done within the Max Pending Time specified in Payments "
+"gateway section, the reservation will be released."
+msgstr ""
+"Il cliente sarà reindirizzato al sistema di pagamento dopo la prenotazione. "
+"Se nessun pagamento viene effettuato entro il tempo massimo di attesa "
+"specificato nella scheda dei Sistemi di pagamento, la prenotazione verrà "
+"automaticamente cancellata."
+
+#: src/TeamBooking/Admin/Service.php:715 src/TeamBooking/Admin/Service.php:716
+msgid "Later"
+msgstr "In un secondo momento"
+
+#: src/TeamBooking/Admin/Service.php:720
+msgid ""
+"The customer will pay on a later time. Team Booking will not handle the "
+"payment, and you should manually set the reservation as \"Paid\", eventually."
+msgstr ""
+"Il cliente pagherà in un secondo momento. Team Booking non gestirà il "
+"pagamento, e tu dovrai all'occorrenza impostare manualmente la prenotazione "
+"come \"Pagato\"."
+
+#: src/TeamBooking/Admin/Service.php:725 src/TeamBooking/Admin/Service.php:726
+msgid "At the customer's discretion"
+msgstr "A discrezione del cliente"
+
+#: src/TeamBooking/Admin/Service.php:730
+msgid ""
+"The customer choose whether redirect to the payment gateway after the "
+"reservation, or pay locally/later. If he wants to pay on a later time and/or "
+"cancel the payment, the reservation will still be in place, as \"Not paid\". "
+"You should manually set the reservation as \"Paid\", eventually."
+msgstr ""
+"Il cliente può scegliere se essere reindirizzato alla pagina del pagamento, "
+"o pagare in un secondo momento. Se sceglie di pagare in un secondo momento, "
+"oppure non effettua il pagamento, la prenotazione rimane effettiva, come "
+"\"Non pagato\". Dovrai eventualmente impostare manualmente la prenotazione "
+"come \"Pagato\"."
+
+#: src/TeamBooking/Admin/Service.php:734
+msgid "Logged-in Administrators will always skip any payment process"
+msgstr "Gli Amministratori loggati salteranno qualsiasi step di pagamento"
+
+#: src/TeamBooking/Admin/Service.php:752
+msgid "Redirect and conversion tracking"
+msgstr "Reindirizzamento e conversioni"
+
+#: src/TeamBooking/Admin/Service.php:754
+msgid "Redirect"
+msgstr "Reindirizzamento"
+
+#: src/TeamBooking/Admin/Service.php:756
+msgid ""
+"If active, the customer will be redirected to the specified URL after a "
+"successful reservation for this service. This is meant for tracking "
+"conversions. If an offsite payment gateway like PayPal is chosen, then this "
+"URL will override the one specified in the gateway settings and will be "
+"called after the payment (but if the customer decides not to be redirected, "
+"then an eventual conversion code will not be triggered)."
+msgstr ""
+"Se attivo, il cliente sarà reindirizzato all'URL specificato dopo una "
+"prenotazione per questo servizio."
+
+#: src/TeamBooking/Admin/Service.php:758 src/TeamBooking/Admin/Service.php:759
+msgid "No redirect"
+msgstr "Nessun reindirizzamento"
+
+#: src/TeamBooking/Admin/Service.php:769 src/TeamBooking/Admin/Service.php:770
+msgid "Redirect to URL"
+msgstr "Reindirizza all'URL"
+
+#: src/TeamBooking/Admin/Service.php:777
+msgid ""
+"About payments: when redirect is active, while the immediate and later "
+"payment settings will work just fine, the customer's discretional payment "
+"setting otherwise won't work if selected, so no payment option will be "
+"presented to the customer after the reservation."
+msgstr ""
+"Riguardo ai pagamenti: quando il reindirizzamento è attivo, mentre le "
+"opzioni di pagamento immediato e successivo funzioneranno senza problemi, "
+"l'opzione discrezionale non funzionerà se selezionata, perciò nessun metodo "
+"di pagamento verrà presentato al cliente dopo la prenotazione."
+
+#: src/TeamBooking/Admin/Service.php:797
+msgid "Frontend slot settings"
+msgstr "Impostazioni slot calendario"
+
+#: src/TeamBooking/Admin/Service.php:797
+msgid "Frontend settings"
+msgstr "Impostazioni calendario"
+
+#: src/TeamBooking/Admin/Service.php:801
+msgid "Show tickets left"
+msgstr "Mostra ticket rimasti"
+
+#: src/TeamBooking/Admin/Service.php:822 src/TeamBooking/Admin/Service.php:823
+msgid "Yes under this threshold"
+msgstr "Sì al di sotto di questa soglia"
+
+#: src/TeamBooking/Admin/Service.php:834
+msgid "Show sold-out slots"
+msgstr "Mostra slot esauriti"
+
+#: src/TeamBooking/Admin/Service.php:836
+msgid "Show booked slots"
+msgstr "Mostra slot prenotati"
+
+#: src/TeamBooking/Admin/Service.php:845
+msgid "How to treat discarded free slots"
+msgstr "Come considerare gli slot liberi scartati"
+
+#: src/TeamBooking/Admin/Service.php:848
+msgid ""
+"Discarded free slots (as a result of overlapping events under certain "
+"ovelapping settings, or in the context of a multiple services container) can "
+"be simply discarded (i.e. not shown) or shown as booked/sold-out."
+msgstr ""
+"Gli slot liberi scartati (come risultato di eventi in sovrapposizione sotto "
+"certe regole di sovrapposizione, o nel contesto dei container multi-"
+"servizio) possono essere semplicemente scartati (ovvero non mostrati) oppure "
+"mostrati come prenotati/esauriti."
+
+#: src/TeamBooking/Admin/Service.php:851 src/TeamBooking/Admin/Service.php:852
+#: src/TeamBooking/Admin/Service.php:876 src/TeamBooking/Admin/Service.php:877
+msgid "Don't show"
+msgstr "Non mostrare"
+
+#: src/TeamBooking/Admin/Service.php:857 src/TeamBooking/Admin/Service.php:858
+msgid "Show them as booked/sold-out"
+msgstr "Mostrali come prenotati/esauriti"
+
+#: src/TeamBooking/Admin/Service.php:867
+msgid "Show start/end times"
+msgstr "Mostra orario di inizio/fine"
+
+#: src/TeamBooking/Admin/Service.php:870 src/TeamBooking/Admin/Service.php:871
+msgid "Show start/end"
+msgstr "Mostra orario di inizio/fine"
+
+#: src/TeamBooking/Admin/Service.php:882 src/TeamBooking/Admin/Service.php:883
+msgid "Show start time only"
+msgstr "Mostra soltanto orario di inizio"
+
+#: src/TeamBooking/Admin/Service.php:891
+msgid "Show coworker's name"
+msgstr "Mostra nome collaboratore"
+
+#: src/TeamBooking/Admin/Service.php:898
+msgid "Show service's name"
+msgstr "Mostra nome del servizio"
+
+#: src/TeamBooking/Admin/Service.php:905
+msgid "Show coworker's profile page link"
+msgstr "Mostra link alla pagina profilo del Collaboratore"
+
+#: src/TeamBooking/Admin/Service.php:906
+msgid ""
+"If yes, and if Coworker's name is shown, then it becomes a link pointing to "
+"Coworker's profile page. You can set the profile page for each of your "
+"Coworkers in the Manage Coworkers tab."
+msgstr ""
+"Se sì, e se è mostrato il nome del Collaboratore, quest'ultimo diventerà un "
+"link alla sua pagina profilo. Puoi specificare la pagina del profilo per "
+"ogni collaboratore nella scheda \"Gestisci collaboratori\"."
+
+#: src/TeamBooking/Admin/Service.php:925
+msgid "Approval settings"
+msgstr "Impostazioni di approvazione"
+
+#: src/TeamBooking/Admin/Service.php:928
+msgid "Approval requirement"
+msgstr "Impostazioni di Approvazione"
+
+#: src/TeamBooking/Admin/Service.php:931
+msgid ""
+"If approval is required, then the reservation will be shown in the overview "
+"panel in \"approval required\" status. No actions like sending confirmation "
+"e-mail, or updating Google Calendar will be taken, until the reservation is "
+"confirmed."
+msgstr ""
+"Se l'Approvazione è richiesta, la prenotazione comparirà nella Panoramica "
+"con lo stato \"in attesa di approvazione\". Nessuna e-mail di conferma sarà "
+"inviata prima dell'approvazione."
+
+#: src/TeamBooking/Admin/Service.php:935 src/TeamBooking/Admin/Service.php:936
+msgid "Do not require approval"
+msgstr "Non richiedere approvazione"
+
+#: src/TeamBooking/Admin/Service.php:942
+msgid ""
+"you can activate approval only if the \"payment must be done\" setting for "
+"this service is set to \"later\"!"
+msgstr ""
+"puoi attivare l'approvazione solo se l'impostazione dei pagamenti per questo "
+"servizio è impostata su \"in un secondo momento\"!"
+
+#: src/TeamBooking/Admin/Service.php:945 src/TeamBooking/Admin/Service.php:946
+msgid "Require Admin approval"
+msgstr "Richiedi approvazione dell'Amministratore"
+
+#: src/TeamBooking/Admin/Service.php:951 src/TeamBooking/Admin/Service.php:952
+msgid "Require Coworker approval"
+msgstr "Richiedi approvazione del Collaboratore"
+
+#: src/TeamBooking/Admin/Service.php:961
+msgid "Until approval:"
+msgstr "Fino all'approvazione:"
+
+#: src/TeamBooking/Admin/Service.php:964 src/TeamBooking/Admin/Service.php:965
+msgid "keep the slot/tickets free (could lead to overbooking)"
+msgstr "mantieni il posto disponibile (può causare overbooking)"
+
+#: src/TeamBooking/Admin/Service.php:970 src/TeamBooking/Admin/Service.php:971
+msgid "set the slot/tickets in a booked status"
+msgstr "segna il posto come prenotato"
+
+#: src/TeamBooking/Admin/Service.php:993
+msgid "Cancellation settings"
+msgstr "Impostazioni di cancellazione"
+
+#: src/TeamBooking/Admin/Service.php:996
+msgid "Allow cancellation by customer"
+msgstr "Permetti l'annullamento da parte del cliente"
+
+#: src/TeamBooking/Admin/Service.php:997
+msgid ""
+"Allow the customer to cancel a reservation for this service. If yes, "
+"customers will be able to cancel their reservations for this service either "
+"by the e-mail cancellation link (if provided) or by the page where [tb-"
+"reservations] shortcode is placed (in which case they must be logged in)"
+msgstr ""
+"Permette al cliente di annullare le proprie prenotazioni per questo servizio."
+
+#: src/TeamBooking/Admin/Service.php:1003
+msgid "Allow cancellation reason"
+msgstr "Permetti motivazione"
+
+#: src/TeamBooking/Admin/Service.php:1004
+msgid "Allow the customer to left a reason for the cancellation."
+msgstr "Permetti al cliente di lasciare una motivazione."
+
+#: src/TeamBooking/Admin/Service.php:1010
+msgid "Cancellation time span"
+msgstr "Tempo minimo per l'annullamento"
+
+#: src/TeamBooking/Admin/Service.php:1012
+msgid ""
+"Choose a time limit, relative to the reservation's start time, after which "
+"the cancellation will be not possible anymore by the customer."
+msgstr ""
+"Scegli un limite di tempo, relativo alla data e all'orario di inizio della "
+"prenotazione, dopo il quale il cliente non può più cancellare la "
+"prenotazione."
+
+#: src/TeamBooking/Admin/Service.php:1014
+msgid "days"
+msgstr "giorni"
+
+#: src/TeamBooking/Admin/Service.php:1039
+msgid "Access settings"
+msgstr "Permessi"
+
+#: src/TeamBooking/Admin/Service.php:1042
+msgid "Who can make a reservation"
+msgstr "Chi può effettuare una prenotazione"
+
+#: src/TeamBooking/Admin/Service.php:1045
+msgid ""
+"If \"Logged user only\" is selected, then an advice with link to "
+"registration page will be shown.\n"
+"            The default link can be changed in the \"Core settings\" tab."
+msgstr ""
+"Se \"Solo utenti loggati\" è selezionato, apparirà un avviso con un link \n"
+"verso la pagina di registrazione. Il link di default può essere modificato\n"
+"nella scheda \"Impostazioni generali\"."
+
+#: src/TeamBooking/Admin/Service.php:1050
+#: src/TeamBooking/Admin/Service.php:1051
+msgid "Everyone"
+msgstr "Tutti"
+
+#: src/TeamBooking/Admin/Service.php:1056
+#: src/TeamBooking/Admin/Service.php:1057
+msgid "Logged users only"
+msgstr "Solo utenti loggati"
+
+#: src/TeamBooking/Admin/Service.php:1065
+msgid "Max reservations per logged user"
+msgstr "Massime prenotazioni per utente registrato"
+
+#: src/TeamBooking/Admin/Service.php:1068
+msgid ""
+"If the reservations are allowed to logged users only, then you can also "
+"allow a limited number of them. The book now button will show how many are "
+"left. If the limit is reached, the logged user can't proceed. The counter "
+"decreases if the reservations are deleted."
+msgstr ""
+"Se le prenotazioni sono permesse soltanto agli utenti registrati, allora "
+"puoi anche impostare un limite. Il pulsante \"Prenota ora\" mostrerà quante "
+"prenotazioni sono rimaste all'utente. Se il limite è raggiunto, l'utente non "
+"potrà procedere. Il contatore diminuisce se le prenotazioni vengono "
+"eliminate."
+
+#: src/TeamBooking/Admin/Service.php:1073
+msgid "endless"
+msgstr "infinite"
+
+#: src/TeamBooking/Admin/Service.php:1091
+msgid "Elements"
+msgstr "Elementi"
+
+#: src/TeamBooking/Admin/Service.php:1099
+msgid "Text Field"
+msgstr "Campo di testo"
+
+#: src/TeamBooking/Admin/Service.php:1127
+msgid "Radio Group"
+msgstr "Radio Group"
+
+#: src/TeamBooking/Admin/Service.php:1134
+msgid "File Upload"
+msgstr "File Upload"
+
+#: src/TeamBooking/Admin/Service.php:1170
+msgid "No custom fields for this service yet."
+msgstr "Per adesso non sono presenti campi personalizzati per questo servizio."
+
+#: src/TeamBooking/Admin/Service.php:1239
+msgid "Availability modes"
+msgstr "Modalità di disponibilità"
+
+#: src/TeamBooking/Admin/Service.php:1242
+msgid ""
+"The three modes of placing availability in Google Calendar are described "
+"below. You can use all of them, but please note that the Container Mode is "
+"NOT available if the slot duration is inherited from Google Calendar event."
+msgstr ""
+"Le tre modalità per la creazione delle disponibilità in Google Calendar sono "
+"descritte di seguito. Puoi usarle tutte insieme, ma fai presente che il "
+"Container Mode NON funzionerà se la durata degli slot è ereditata "
+"dall'evento in Google Calendar."
+
+#: src/TeamBooking/Admin/Service.php:1245
+msgid "Slot mode"
+msgstr "Modalità Slot"
+
+#: src/TeamBooking/Admin/Service.php:1247
+#: src/TeamBooking/Admin/Service.php:1294
+#: src/TeamBooking/Admin/Service.php:1372
+msgid "Event name"
+msgstr "Nome evento"
+
+#: src/TeamBooking/Admin/Service.php:1292
+msgid "Container mode"
+msgstr "Modalità container"
+
+#: src/TeamBooking/Admin/Service.php:1370
+msgid "Container mode (mutually exclusive multiple services)"
+msgstr "Container mode (servizi multipli mutuamente esclusivi)"
+
+#: src/TeamBooking/Admin/Service.php:1467
+msgid "Event title (free slot)"
+msgstr "Nome dell'evento (slot libero)"
+
+#: src/TeamBooking/Admin/Service.php:1469
+msgid ""
+"Case insensitive. Events in your Google Calendar must have this title in "
+"order to become free slots for the service."
+msgstr ""
+"Case insensitive. Gli eventi nel tuo Google Calendar devono avere questo "
+"nome, per poter diventare slot liberi relativi a questo servizio."
+
+#: src/TeamBooking/Admin/Service.php:1476
+msgid "Event title (booked slot)"
+msgstr "Titolo dell'evento (slot prenotato)"
+
+#: src/TeamBooking/Admin/Service.php:1478
+msgid ""
+"Case insensitive. A free slot in your Google Calendar will get this title, "
+"once booked. If you write this title manually to an event, it will appear as "
+"a booked slot."
+msgstr ""
+"Case insensitive. Uno slot libero sul tuo Google Calendar avrà questo "
+"titolo, una volta prenotato. Se dai manualmente questo titolo a un evento, "
+"esso apparirà come slot prenotato."
+
+#: src/TeamBooking/Admin/Service.php:1483
+msgid "Event title additional dynamic data (booked slot)"
+msgstr "Dati aggiuntivi per il titolo dell'evento (slot prenotato)"
+
+#: src/TeamBooking/Admin/Service.php:1484
+msgid ""
+"Additional customer's data to be appended to the Event title (booked slot). "
+"This additional data, if available, will be preceded by a '||' delimiter."
+msgstr ""
+"Alcuni dati del cliente possono essere aggiunti al titolo dell'evento (slot "
+"prenotato). Questi dati aggiuntivi, se disponibili, saranno preceduti dal "
+"delimitatore '||'."
+
+#: src/TeamBooking/Admin/Service.php:1486
+msgid "Customer's name"
+msgstr "Nome del cliente"
+
+#: src/TeamBooking/Admin/Service.php:1491
+msgid "Customer's e-mail"
+msgstr "Indirizzo e-mail del cliente"
+
+#: src/TeamBooking/Admin/Service.php:1496
+msgid "Customer's phone number"
+msgstr "Numero di telefono del cliente"
+
+#: src/TeamBooking/Admin/Service.php:1505
+msgid "When reservations should be closed?"
+msgstr "Quando devono essere chiuse le prenotazioni?"
+
+#: src/TeamBooking/Admin/Service.php:1507
+msgid "Choose the minimum time to book prior to the slot start or end time"
+msgstr ""
+"Scegli il lasso di tempo minimo richiesto per poter prenotare prima "
+"dell'orario di inizio o di fine dello slot"
+
+#: src/TeamBooking/Admin/Service.php:1509
+#: src/TeamBooking/Admin/Service.php:1510
+#: src/TeamBooking/Admin/Service.php:1647
+#: src/TeamBooking/Admin/Service.php:1648
+#: src/TeamBooking/Admin/Service.php:1653
+#: src/TeamBooking/Admin/Service.php:1654
+#, php-format
+msgid "%d minutes before"
+msgstr "%d minuti prima"
+
+#: src/TeamBooking/Admin/Service.php:1511
+#: src/TeamBooking/Admin/Service.php:1512
+#: src/TeamBooking/Admin/Service.php:1513
+#: src/TeamBooking/Admin/Service.php:1514
+#: src/TeamBooking/Admin/Service.php:1515
+#: src/TeamBooking/Admin/Service.php:1516
+#: src/TeamBooking/Admin/Service.php:1541
+#: src/TeamBooking/Admin/Service.php:1659
+#: src/TeamBooking/Admin/Service.php:1660
+#, php-format
+msgid "%d hour before"
+msgid_plural "%d hours before"
+msgstr[0] "%d ora prima"
+msgstr[1] "%d ore prima"
+
+#: src/TeamBooking/Admin/Service.php:1517
+#: src/TeamBooking/Admin/Service.php:1518
+#: src/TeamBooking/Admin/Service.php:1519
+#: src/TeamBooking/Admin/Service.php:1520
+#: src/TeamBooking/Admin/Service.php:1521
+#: src/TeamBooking/Admin/Service.php:1522
+#: src/TeamBooking/Admin/Service.php:1523
+#: src/TeamBooking/Admin/Service.php:1524
+#: src/TeamBooking/Admin/Service.php:1525
+#: src/TeamBooking/Admin/Service.php:1526
+#: src/TeamBooking/Admin/Service.php:1527
+#: src/TeamBooking/Admin/Service.php:1528
+#: src/TeamBooking/Admin/Service.php:1542
+#: src/TeamBooking/Admin/Service.php:1543
+#: src/TeamBooking/Admin/Service.php:1544
+#: src/TeamBooking/Admin/Service.php:1545
+#: src/TeamBooking/Admin/Service.php:1546
+#: src/TeamBooking/Admin/Service.php:1547
+#: src/TeamBooking/Admin/Service.php:1548
+#: src/TeamBooking/Admin/Service.php:1549
+#: src/TeamBooking/Admin/Service.php:1550
+#: src/TeamBooking/Admin/Service.php:1551
+#: src/TeamBooking/Admin/Service.php:1552
+#: src/TeamBooking/Admin/Service.php:1553
+#, php-format
+msgid "%d day before (until midnight)"
+msgid_plural "%d days before (until midnight)"
+msgstr[0] "%d giorno prima (fino a mezzanotte)"
+msgstr[1] "%d giorni prima (fino a mezzanotte)"
+
+#: src/TeamBooking/Admin/Service.php:1529
+msgid "slot start time"
+msgstr "dell'orario di inizio dello slot"
+
+#: src/TeamBooking/Admin/Service.php:1530
+msgid "slot end time"
+msgstr "del termine dello slot"
+
+#: src/TeamBooking/Admin/Service.php:1536
+msgid "When reservations should be opened?"
+msgstr "Quando devono essere aperte le prenotazioni?"
+
+#: src/TeamBooking/Admin/Service.php:1538
+msgid ""
+"When we are closer than the following time span to the start time of the "
+"event, the slots begin to appear. If \"Immediately\", they appear right "
+"after their creation. If not \"Immediately\", the value must be greater than "
+"the previous one!"
+msgstr ""
+"Quando ci avviciniamo alla data dell'evento oltre il limite specificato di "
+"seguito, gli slot libero cominceranno ad apparire. Se impostato su "
+"\"Immediatamente\", appariranno subito dopo la creazione dell'evento. In "
+"ogni altro caso, il valore deve essere superiore a quello dell'impostazione "
+"precedente!"
+
+#: src/TeamBooking/Admin/Service.php:1560
+msgid "If inherited, the container mode will not be available"
+msgstr "Se ereditata, la modalità contenitore non sarà disponibile"
+
+#: src/TeamBooking/Admin/Service.php:1574
+msgid "Set by Admin"
+msgstr "Impostato dall'Amministratore"
+
+#: src/TeamBooking/Admin/Service.php:1604
+msgid "Buffer between consecutive slots"
+msgstr "Tempo di pausa tra due slot consecutivi"
+
+#: src/TeamBooking/Admin/Service.php:1606
+msgid "This applies only inside container slots"
+msgstr "E' valido soltanto per gli slots-contenitore"
+
+#: src/TeamBooking/Admin/Service.php:1616
+msgid "Event color after reservation"
+msgstr "Colore dell'evento dopo la prenotazione"
+
+#: src/TeamBooking/Admin/Service.php:1618
+msgid ""
+"Visual aid to distinguish between free and reserved slots in your Google "
+"Calendar"
+msgstr ""
+"Aiuto visivo per distinguere sul tuo Google Calendar gli eventi prenotati da "
+"quelli liberi"
+
+#: src/TeamBooking/Admin/Service.php:1619
+msgid "Calendar default color"
+msgstr "Colore di default"
+
+#: src/TeamBooking/Admin/Service.php:1637
+msgid "Set a reminder for reserved slot"
+msgstr "Imposta un reminder insieme alla prenotazione"
+
+#: src/TeamBooking/Admin/Service.php:1639
+msgid ""
+"If active, you will receive a reminder by email for any reserved slot for "
+"this service."
+msgstr ""
+"Se attiva, riceverai un reminder per email, per ciascuno slot prenotato per "
+"questo servizio."
+
+#: src/TeamBooking/Admin/Service.php:1641
+#: src/TeamBooking/Admin/Service.php:1642
+msgid "No reminder"
+msgstr "Nessun reminder"
+
+#: src/TeamBooking/Admin/Service.php:1669
+msgid "Add customers as guests of the Google Calendar event"
+msgstr "Aggiungi il cliente come ospite dell'evento in Google Calendar"
+
+#: src/TeamBooking/Admin/Service.php:1672
+msgid ""
+"If yes, the customer will be added as guest of the Google Calendar event. It "
+"will receive Google notifications according to your Google Calendar "
+"settings, a copy of the event will be created in his Google Calendar (if "
+"any) and he will be able to read the event description. He will not be able "
+"to see the guests list."
+msgstr ""
+"Se sì, il cliente sarà aggiunto come ospite all'evento in Google Calendar. "
+"Riceverà le notifiche di Google a seconda delle impostazioni del tuo Google "
+"Calendar, una copia dell'evento sarà creata nel suo Google Calendar (se "
+"esistente) e lui potrà leggere la descrizione dell'evento. Non sarà in grado "
+"di vedere la lista degli ospiti."
+
+#: src/TeamBooking/Admin/Service.php:1681
+msgid "Google Calendar event description content"
+msgstr "Contenuto della descrizione dell'evento in Google Calendar"
+
+#: src/TeamBooking/Admin/Service.php:1684
+msgid ""
+"Specify the content of the Google Calendar event description. If privacy is "
+"your concern, then keep in mind: this content will be visible by guests. If "
+"customers are being added as guests, then it will be visible by customers."
+msgstr ""
+"Specifica il contenuto della descrizione dell'evento in Google Calendar. Se "
+"ti preoccupa la privacy, allora tieni a mente: questo contenuto è visibile "
+"agli ospiti dell'evento. Se i clienti sono aggiunti come ospiti, allora "
+"questo contenuto sarà visibile dai clienti."
+
+#: src/TeamBooking/Admin/Service.php:1688
+#: src/TeamBooking/Admin/Service.php:1689
+msgid "Leave it blank"
+msgstr "Lascia vuoto"
+
+#: src/TeamBooking/Admin/Service.php:1694
+#: src/TeamBooking/Admin/Service.php:1695
+msgid ""
+"Customer's names, tickets, e-mail addresses and phone numbers if available"
+msgstr "Nome, ticket, e-mail e numero di telefono del cliente, se disponibile"
+
+#: src/TeamBooking/Admin/Service.php:1704
+msgid "Overlapping with personal events"
+msgstr "Sovrapposizione con eventi personali"
+
+#: src/TeamBooking/Admin/Service.php:1707
+msgid ""
+"If you have personal events in your Google Calendar(s), choose what to do "
+"with a free slot of this service, in case one of them overlaps."
+msgstr ""
+"Se hai eventi personali nel tuo Google Calendar, scegli cosa fare di "
+"eventuali slot liberi nel caso in cui si sovrappongano ad essi."
+
+#: src/TeamBooking/Admin/Service.php:1711
+#: src/TeamBooking/Admin/Service.php:1712
+#: src/TeamBooking/Admin/Service.php:1734
+#: src/TeamBooking/Admin/Service.php:1735
+#: src/TeamBooking/Admin/Service.php:1757
+#: src/TeamBooking/Admin/Service.php:1758
+msgid "Keep the free slot"
+msgstr "Mostra gli slot liberi"
+
+#: src/TeamBooking/Admin/Service.php:1717
+#: src/TeamBooking/Admin/Service.php:1718
+#: src/TeamBooking/Admin/Service.php:1740
+#: src/TeamBooking/Admin/Service.php:1741
+#: src/TeamBooking/Admin/Service.php:1763
+#: src/TeamBooking/Admin/Service.php:1764
+msgid "Discard the free slot"
+msgstr "Nascondi gli slot liberi"
+
+#: src/TeamBooking/Admin/Service.php:1727
+msgid "Overlapping with booked slots of the same service"
+msgstr "Sovrapposizione con slot prenotati per lo stesso servizio"
+
+#: src/TeamBooking/Admin/Service.php:1730
+msgid ""
+"If your availability plan envisages overlapping availabilities, choose what "
+"to do with a free slot of this service when a booked slot of the same "
+"service overlaps."
+msgstr ""
+"Se il tuo piano di disponibilità prevede sovrapposizioni, scegli cosa fare "
+"con uno slot libero di questo servizio quando una prenotazione dello stesso "
+"servizio si sovrappone."
+
+#: src/TeamBooking/Admin/Service.php:1750
+msgid "Overlapping with booked slots of other services"
+msgstr "Sovrapposizione con slot prenotati per differenti servizi"
+
+#: src/TeamBooking/Admin/Service.php:1753
+msgid ""
+"If your availability plan envisages overlapping availabilities, choose what "
+"to do with a free slot of this service when a booked slot of any other "
+"service overlaps."
+msgstr ""
+"Se il tuo piano di disponibilità prevede sovrapposizioni, scegli cosa fare "
+"con gli slot liberi di questo servizio quando una prenotazione di un altro "
+"servizio si sovrappone."
+
+#: src/TeamBooking/Admin/Services.php:57
+msgid "Color"
+msgstr "Colore"
+
+#: src/TeamBooking/Admin/Services.php:60 src/TeamBooking/Admin/Style.php:292
+msgid "Active"
+msgstr "Attivo"
+
+#: src/TeamBooking/Admin/Services.php:62
+msgid "Participate"
+msgstr "Partecipa"
+
+#: src/TeamBooking/Admin/Services.php:94
+msgid "assigned to you"
+msgstr "assegnato a te"
+
+#: src/TeamBooking/Admin/Services.php:100
+msgid "assigned to someone else"
+msgstr "assegnato ad altri"
+
+#: src/TeamBooking/Admin/Services.php:119
+msgid "disabled"
+msgstr "disabilitato"
+
+#: src/TeamBooking/Admin/Services.php:150
+#: src/TeamBooking/Admin/Services.php:238
+msgid "Clone"
+msgstr "Clona"
+
+#: src/TeamBooking/Admin/Services.php:196
+msgid "selected"
+msgstr "selezionati"
+
+#: src/TeamBooking/Admin/Services.php:201
+msgid "delete"
+msgstr "elimina"
+
+#: src/TeamBooking/Admin/Services.php:229
+msgid "all the selected services"
+msgstr "tutti i servizi selezionati"
+
+#: src/TeamBooking/Admin/Services.php:241
+msgid "Clone service?"
+msgstr "Clonare il servizio?"
+
+#: src/TeamBooking/Admin/Services.php:242
+msgid "Please provide a new service id"
+msgstr "Per favore fornisci un nuovo ID servizio"
+
+#: src/TeamBooking/Admin/Services.php:245
+#: src/TeamBooking/Admin/Services.php:276
+msgid "This service id is already in use, please provide a fresh one."
+msgstr "Questo ID servizio è già in uso, per favore forniscine uno nuovo."
+
+#: src/TeamBooking/Admin/Services.php:260
+msgid "New service"
+msgstr "Nuovo servizio"
+
+#: src/TeamBooking/Admin/Services.php:269
+msgid "This service name is already in use, please provide a fresh one."
+msgstr "Questo nome è già in uso, per favore scegline un altro."
+
+#: src/TeamBooking/Admin/Services.php:283 src/TeamBooking/Services/Event.php:44
+msgid "Event"
+msgstr "Evento"
+
+#: src/TeamBooking/Admin/Services.php:284
+msgid ""
+"A conference, a music lesson, hotel rooms, and so on. Everything that "
+"involves tickets and/or attendees, is an Event Class."
+msgstr ""
+"Una conferenza, una lezione di musica, una stanza d'albergo, e così via. "
+"Tutto ciò che prevede ticket e/o ospiti o posti a sedere, è di classe Evento."
+
+#: src/TeamBooking/Admin/Services.php:287
+#: src/TeamBooking/Services/Appointment.php:58
+msgid "Appointment"
+msgstr "Appuntamento"
+
+#: src/TeamBooking/Admin/Services.php:288
+msgid ""
+"Calendar Owners can be techicians, psychologists, medics. This Class is made "
+"for that."
+msgstr ""
+"I Collaboratori possono essere Tecnici, Psicologi, Medici. Questa classe è "
+"fatta per loro."
+
+#: src/TeamBooking/Admin/Services.php:291
+msgid "Unscheduled service"
+msgstr "Servizio non programmato"
+
+#: src/TeamBooking/Admin/Services.php:292
+msgid ""
+"A service with no scheduling needs. Think about support tickets, estimate "
+"request, and so on. Instead of the calendar, just a plain request form will "
+"be shown."
+msgstr ""
+"Un servizio senza necessità di calendarizzazione. Si pensi ai ticked di "
+"assistenza, preventivi e così via. Al posto del calendario, verrà mostrato "
+"un form di prenotazione."
+
+#: src/TeamBooking/Admin/SlotsTable.php:44
+msgid "Slot"
+msgstr "Slot"
+
+#: src/TeamBooking/Admin/SlotsTable.php:134
+msgid "No slots available."
+msgstr "Nessuno slot disponibile."
+
+#: src/TeamBooking/Admin/SlotsTable.php:144
+msgid "Date"
+msgstr "Data"
+
+#: src/TeamBooking/Admin/SlotsTable.php:224
+#: src/TeamBooking/Admin/SlotsTable.php:423
+msgid "Available"
+msgstr "Disponibile"
+
+#: src/TeamBooking/Admin/SlotsTable.php:234
+msgid "Booked/Sold-out"
+msgstr "Prenotato/Esaurito"
+
+#: src/TeamBooking/Admin/SlotsTable.php:244
+msgid "With reservations"
+msgstr "Con prenotazioni"
+
+#: src/TeamBooking/Admin/SlotsTable.php:268
+msgid "A year from now"
+msgstr "Da qui a un anno"
+
+#: src/TeamBooking/Admin/SlotsTable.php:270
+msgid "Two years from now"
+msgstr "Da qui a due anni"
+
+#: src/TeamBooking/Admin/SlotsTable.php:272
+msgid "Three years from now"
+msgstr "Da qui a tre anni"
+
+#: src/TeamBooking/Admin/SlotsTable.php:275
+msgid "All service providers"
+msgstr "Tutti i collaboratori"
+
+#: src/TeamBooking/Admin/SlotsTable.php:282
+msgid "All services"
+msgstr "Tutti i servizi"
+
+#: src/TeamBooking/Admin/SlotsTable.php:289
+msgid "Reset"
+msgstr "Resetta"
+
+#: src/TeamBooking/Admin/SlotsTable.php:412
+#, php-format
+msgid "+ %d more"
+msgstr "+ %d altri"
+
+#: src/TeamBooking/Admin/SlotsTable.php:425
+msgid "Sold-out"
+msgstr "Esaurito"
+
+#: src/TeamBooking/Admin/SlotsTable.php:425
+msgid "Booked"
+msgstr "Prenotato"
+
+#: src/TeamBooking/Admin/SlotsTable.php:431
+#, php-format
+msgid "%1$d of %2$d"
+msgstr "%1$d di %2$d"
+
+#: src/TeamBooking/Admin/SlotsTable.php:497
+#: src/TeamBooking/Admin/SlotsTable.php:506
+msgid "Reservation ID"
+msgstr "ID prenotazione"
+
+#: src/TeamBooking/Admin/SlotsTable.php:525
+#: src/TeamBooking/Shortcodes/Reservations.php:122
+msgid "waiting approval"
+msgstr "in attesa di approvazione"
+
+#: src/TeamBooking/Admin/Style.php:56
+msgid "Frontend calendar"
+msgstr "Interfaccia calendario"
+
+#: src/TeamBooking/Admin/Style.php:59
+msgid "Background color"
+msgstr "Colore di sfondo"
+
+#: src/TeamBooking/Admin/Style.php:65
+msgid "Background pattern overlay"
+msgstr "Background pattern overlay"
+
+#: src/TeamBooking/Admin/Style.php:68 src/TeamBooking/Admin/Style.php:91
+msgid "None"
+msgstr "Nessuno"
+
+#: src/TeamBooking/Admin/Style.php:82
+msgid "Week line color"
+msgstr "Colore della linea dei giorni della settimana"
+
+#: src/TeamBooking/Admin/Style.php:88
+msgid "Week line pattern overlay"
+msgstr "Week line pattern overlay"
+
+#: src/TeamBooking/Admin/Style.php:105
+msgid "Free slot color"
+msgstr "Colore dello slot libero"
+
+#: src/TeamBooking/Admin/Style.php:111
+msgid "Soldout slot color"
+msgstr "Colore dello slot prenotato"
+
+#: src/TeamBooking/Admin/Style.php:117
+msgid "Border color"
+msgstr "Colore bordo"
+
+#: src/TeamBooking/Admin/Style.php:123
+msgid "Border size"
+msgstr "Dimensione bordo"
+
+#: src/TeamBooking/Admin/Style.php:133
+msgid "Border radius"
+msgstr "Curvatura dei bordi"
+
+#: src/TeamBooking/Admin/Style.php:143
+msgid "Numbered dots meaning"
+msgstr "Significato delle etichette numerate"
+
+#: src/TeamBooking/Admin/Style.php:145
+msgid "What do you want the dots to show for each service?"
+msgstr "Cosa vuoi che i pallini mostrino, per ogni servizio?"
+
+#: src/TeamBooking/Admin/Style.php:147 src/TeamBooking/Admin/Style.php:162
+msgid "Total number of slots available"
+msgstr "Numero totale di slot disponibili"
+
+#: src/TeamBooking/Admin/Style.php:152 src/TeamBooking/Admin/Style.php:167
+msgid "Total number of tickets available"
+msgstr "Numero totale di ticket disponibili"
+
+#: src/TeamBooking/Admin/Style.php:157 src/TeamBooking/Admin/Style.php:162
+#: src/TeamBooking/Admin/Style.php:167
+msgid "Name of the service"
+msgstr "Nome del servizio"
+
+#: src/TeamBooking/Admin/Style.php:172
+msgid "Hide the dots"
+msgstr "Nascondi i pallini"
+
+#: src/TeamBooking/Admin/Style.php:179
+msgid "Numbered dots threshold"
+msgstr "Soglia delle etichette numerate"
+
+#: src/TeamBooking/Admin/Style.php:181
+msgid ""
+"Do you want the number inside the dots to disappear under a certain "
+"threshold?"
+msgstr ""
+"Vuoi che il numero nelle etichette sia nascosto al di sotto di un certo "
+"limite?"
+
+#: src/TeamBooking/Admin/Style.php:182
+msgid ""
+"Put here a very big value, if you want to hide the numbers, while keeping "
+"the dots."
+msgstr ""
+"Inserisci un numero molto grande se vuoi nascondere i numeri, ma mantenere "
+"le etichette colorate."
+
+#: src/TeamBooking/Admin/Style.php:200
+msgid "Frontend schedule list"
+msgstr "Lista degli slot"
+
+#: src/TeamBooking/Admin/Style.php:203
+msgid "Sort slots"
+msgstr "Raggruppamento degli slot"
+
+#: src/TeamBooking/Admin/Style.php:206
+msgid "By time"
+msgstr "Per orario"
+
+#: src/TeamBooking/Admin/Style.php:211
+msgid "By coworker"
+msgstr "Per collaboratore"
+
+#: src/TeamBooking/Admin/Style.php:216
+msgid "By service"
+msgstr "Per servizio"
+
+#: src/TeamBooking/Admin/Style.php:223
+msgid "Price label color"
+msgstr "Colore dell'etichetta del prezzo"
+
+#: src/TeamBooking/Admin/Style.php:253
+msgid "Slots style"
+msgstr "Stile degli slot"
+
+#: src/TeamBooking/Admin/Style.php:254
+msgid "Choose a style to display the slots."
+msgstr "Scegli uno stile con cui mostrare gli slot."
+
+#: src/TeamBooking/Admin/Style.php:255
+msgid "This can be overridden by the relative shortcode attribute."
+msgstr ""
+"Questa impostazione può essere scavalcata dal relativo attributo del singolo "
+"shortcode."
+
+#: src/TeamBooking/Admin/Style.php:274
+msgid "Frontend calendar preview"
+msgstr "Anteprima del calendario"
+
+#: src/TeamBooking/Admin/Style.php:278
+msgid ""
+"This is a rough preview. Colors only are updated in real-time. For accurate "
+"results, please save the changes."
+msgstr ""
+"Questa è un'anteprima, soltanto i colori sono aggiornati in tempo reale. Per "
+"risultati accurati, salvare i cambiamenti."
+
+#: src/TeamBooking/Admin/Style.php:290
+msgid "CSS fix for small fonts"
+msgstr "CSS specifico per testi troppo piccoli"
+
+#: src/TeamBooking/Admin/Style.php:295
+msgid ""
+"Remember to empty the cache after activating or deactivating this option, or "
+"you may not be able to see any change"
+msgstr ""
+"Ricorda di svuotare la cache dopo aver attivato o disattivato questa "
+"opzione, o potresti non vedere alcun cambiamento"
+
+#: src/TeamBooking/Admin/Style.php:296
+msgid ""
+"Some of calendar fonts appear too small? This is often due the so-called "
+"62.5% hack used by some themes. If your theme's stylesheet applies a 62.5% "
+"font size to the html element, then you must activate this option."
+msgstr ""
+"Alcuni testi o elementi del calendario appaiono troppo piccoli? Ciò è spesso "
+"dovuto alla cosiddetta soluzione 62.5% adottata da alcuni temi di WordPress. "
+"Se il foglio di stile del tuo tema la applica all'elemento html, prova ad "
+"attivare questa opzione."
+
+#: src/TeamBooking/Admin/Style.php:312
+msgid "Map styles"
+msgstr "Stili della mappa"
+
+#: src/TeamBooking/Admin/Style.php:425
+msgid "Use the default Google Maps style"
+msgstr "Usa lo stile di default di Google Maps"
+
+#: src/TeamBooking/Admin/Style.php:429
+msgid ""
+"Do you want more styles? Do you want to create your own style? Just set this "
+"to YES, and install the free WordPress plugin of Snazzy Maps! TeamBooking is "
+"compatible with it!"
+msgstr ""
+"Vuoi più stili? Vuoi creare il tuo stile personalizzato? Imposta questa "
+"opzione su SI' e installa il plugin gratuito per WordPress di Snazzy Maps! "
+"TeamBooking è compatibile!"
+
+#: src/TeamBooking/Admin/Style.php:432
+msgid "Map zoom level"
+msgstr "Livello zoom"
+
+#: src/TeamBooking/Calendar.php:86
+msgid ""
+"Uh-oh, your authorization was revoked upstream, please press the revoke "
+"button below, and authorize again!"
+msgstr ""
+"Ops, la tua autorizzazione è stata revocata a monte, per favore premi il "
+"pulsante ri revoca qui sotto, e procedi di nuovo!"
+
+#: src/TeamBooking/Coworker.php:255
+#, php-format
+msgid ""
+"You have got a new reservation for %s<br>Date and time: "
+"[start_datetime]<br>Customer name: [first_name]<br>Customer email: [email]"
+msgstr ""
+"Hai ricevuto una nuova prenotazione per %s<br>Giorno e ora: "
+"[start_datetime]<br>Nome cliente: [first_name]<br>Email cliente: [email]"
+
+#: src/TeamBooking/Coworker.php:256
+#, php-format
+msgid "New reservation for %s"
+msgstr "Nuova prenotazione per %s"
+
+#: src/TeamBooking/Database/Forms.php:20
+msgid "Reservation Form"
+msgstr "Form di prenotazione"
+
+#: src/TeamBooking/Database/Forms.php:21
+msgid "TeamBooking reservation form"
+msgstr "TeamBooking form di prenotazione"
+
+#: src/TeamBooking/Database/Services.php:26
+msgid "TeamBooking Service"
+msgstr "TeamBooking Servizio"
+
+#: src/TeamBooking/ErrorLog.php:71
+msgid "No description available"
+msgstr "Descrizione non disponibile"
+
+#: src/TeamBooking/FormElements/Checkbox.php:72
+#: src/TeamBooking/FormElements/TextField.php:84
+#: src/TeamBooking/Legacy/TextField.php:209
+msgid "Please enter a correct value"
+msgstr "Inserisci un valore corretto"
+
+#: src/TeamBooking/FormElements/Factory.php:203
+#: src/TeamBooking/FormElements/Factory.php:251
+msgid "Option one"
+msgstr "Opzione 1"
+
+#: src/TeamBooking/FormElements/Factory.php:207
+#: src/TeamBooking/FormElements/Factory.php:255
+msgid "Option two"
+msgstr "Opzione 2"
+
+#: src/TeamBooking/FormElements/Factory.php:211
+#: src/TeamBooking/FormElements/Factory.php:259
+msgid "Option three"
+msgstr "Opzione tre"
+
+#: src/TeamBooking/FormElements/FileUpload.php:112
+#: src/TeamBooking/Legacy/FileUpload.php:85
+msgid "Allowed file types:"
+msgstr "Estensioni di file ammesse:"
+
+#: src/TeamBooking/FormElements/Select.php:36
+#: src/TeamBooking/Legacy/Select.php:65
+msgid "Select..."
+msgstr "Seleziona..."
+
+#: src/TeamBooking/Frontend/Calendar.php:94
+msgid "calendar controls"
+msgstr "controlli del calendario"
+
+#: src/TeamBooking/Frontend/Calendar.php:96
+msgid "previous month"
+msgstr "mese precedente"
+
+#: src/TeamBooking/Frontend/Calendar.php:119
+msgid "next month"
+msgstr "mese successivo"
+
+#: src/TeamBooking/Frontend/Calendar.php:406
+msgid "service selector"
+msgstr "scegli servizio"
+
+#: src/TeamBooking/Frontend/Calendar.php:409
+msgid "What"
+msgstr "Cosa"
+
+#: src/TeamBooking/Frontend/Calendar.php:467
+msgid "coworker selector"
+msgstr "scegli collaboratore"
+
+#: src/TeamBooking/Frontend/Components/FormHeader.php:21
+msgid "Reservation for"
+msgstr "Prenotazione per"
+
+#: src/TeamBooking/Frontend/Components/FormMap.php:41
+msgid "get directions"
+msgstr "ottieni indicazioni"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:22
+msgid "back"
+msgstr "indietro"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:48
+msgid "back to slots"
+msgstr "torna agli slot"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:74
+msgid "back to form"
+msgstr "torna al form"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:100
+msgid "back to reservation review"
+msgstr "torna alla panoramica"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:126
+msgid "back to payment choice"
+msgstr "torna alla scelta del pagamento"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:151
+msgid "Payment done"
+msgstr "Pagamento eseguito"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:171
+msgid "Thank you"
+msgstr "Grazie"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:191
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:221
+msgid "back to calendar"
+msgstr "indietro al calendario"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:195
+msgid "Error"
+msgstr "Errore"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:235
+msgid "filter by time"
+msgstr "filtra per orario"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:239
+msgid "filter by location"
+msgstr "filtra per luogo"
+
+#: src/TeamBooking/Frontend/Components/NavigationHeader.php:244
+msgid "filter by coworker"
+msgstr "filtra per collaboratore"
+
+#: src/TeamBooking/Frontend/Components/PaymentChoices.php:34
+msgid "or"
+msgstr "o"
+
+#: src/TeamBooking/Frontend/Components/SuccessActions.php:41
+msgid "Save on my calendar"
+msgstr "Salva nel calendario"
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:22
+msgid "Cannot make the reservation!"
+msgstr "Impossibile effettuare la prenotazione!"
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:36
+msgid "Your email is invalid, please check it and retry!"
+msgstr "La tua email non è valida, per favore controlla e riprova!"
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:46
+msgid "You have already booked this..."
+msgstr "Hai già prenotato questo servizio..."
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:56
+msgid ""
+"Sorry, this service is full! Maybe someone booked the last slot right now, "
+"just a moment before you :("
+msgstr ""
+"Questo slot è pieno! Forse qualcuno ha prenotato gli ultimi posti proprio "
+"ora, appena un momento prima di te :("
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:66
+msgid ""
+"Sorry, this slot is not available anymore. Probably it was booked by someone "
+"else or cancelled a while ago, just before you :("
+msgstr ""
+"Questo slot non è più disponibile. Forse è stato prenotato da qualcun altro, "
+"o eliminato poco fa :("
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:76
+msgid "Sorry, you should contact the administrator"
+msgstr "Spiacenti, devi contattare l'amministratore di sistema"
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:88
+msgid ""
+"Sorry, you should contact the administrator providing these informations:"
+msgstr ""
+"Spiacenti, devi contattare l'amministratore di sistema fornendo queste "
+"informazioni:"
+
+#: src/TeamBooking/Frontend/ErrorMessages.php:100
+msgid ""
+"Sorry, you chose a number of tickets that makes you exceed the maximum "
+"allowed per-customer. Please retry with a lower number!"
+msgstr ""
+"Spiacente, hai scelto un numero di biglietti che ti fanno superare il "
+"massimo ammesso per cliente. Per favore, riprova con un numero più basso!"
+
+#: src/TeamBooking/Frontend/Form.php:115
+msgid "Book now"
+msgstr "Prenota"
+
+#: src/TeamBooking/Frontend/Form.php:116
+msgid "Book and pay"
+msgstr "Prenota e paga"
+
+#: src/TeamBooking/Frontend/Form.php:203
+msgid "Selected"
+msgstr "Selezionato"
+
+#: src/TeamBooking/Frontend/Form.php:341
+msgid "each"
+msgstr "ciascuno"
+
+#: src/TeamBooking/Frontend/Form.php:427
+msgid ""
+"You are logged in as Administrator, any limit on tickets number won't be "
+"applied"
+msgstr ""
+"Sei loggato come Amministratore, nessun limite sul numero di ticket sarà "
+"applicato"
+
+#: src/TeamBooking/Frontend/Form.php:481
+msgid "You must be logged-in to book this!"
+msgstr "Devi essere autenticato per prenotare questo servizio!"
+
+#: src/TeamBooking/Frontend/Form.php:485
+msgid "I'm not registered..."
+msgstr "Non sono registrato..."
+
+#: src/TeamBooking/Frontend/Form.php:489
+msgid "Login"
+msgstr "Accedi"
+
+#: src/TeamBooking/Frontend/Form.php:495
+msgid "Go back"
+msgstr "Indietro"
+
+#: src/TeamBooking/Frontend/Form.php:514
+msgid "You've reached the limit for that service!"
+msgstr "Hai raggiunto il limite di prenotazioni per questo servizio!"
+
+#: src/TeamBooking/Frontend/Review.php:38
+msgid "Review your reservation"
+msgstr "Rivedi la tua prenotazione"
+
+#: src/TeamBooking/Frontend/Review.php:102
+msgid "With"
+msgstr "Con"
+
+#: src/TeamBooking/Frontend/Review.php:116
+msgid "Not provided"
+msgstr "Non fornito"
+
+#: src/TeamBooking/Frontend/Review.php:149
+msgid "Coupon?"
+msgstr "Coupon?"
+
+#: src/TeamBooking/Frontend/Review.php:157
+msgid "redeem discount coupon"
+msgstr "riscuoti coupon"
+
+#: src/TeamBooking/Frontend/Review.php:160
+msgid "redeem"
+msgstr "riscuoti"
+
+#: src/TeamBooking/Frontend/Review.php:167
+msgid "Wrong or expired coupon"
+msgstr "Coupon errato o scaduto"
+
+#: src/TeamBooking/Frontend/Review.php:177
+msgid ""
+"You are logged-in as Administrator. You will skip any eventual payment step!"
+msgstr ""
+"Sei loggato come Amministratore. Salterai ogni eventuale step di pagamento!"
+
+#: src/TeamBooking/Frontend/Review.php:192
+msgid "Confirm and pay"
+msgstr "Conferma e paga"
+
+#: src/TeamBooking/Frontend/Schedule.php:67
+msgid "Choose a timeslot"
+msgstr "Scegli una disponibilità"
+
+#: src/TeamBooking/Frontend/Schedule.php:156
+msgid "available"
+msgstr "disponibile"
+
+#: src/TeamBooking/Frontend/Schedule.php:162
+msgid "booked"
+msgstr "prenotato"
+
+#: src/TeamBooking/Frontend/Schedule.php:164
+msgid "sold out"
+msgstr "esaurito"
+
+#: src/TeamBooking/Frontend/Schedule.php:350
+msgid ""
+"This slot is read-only because it was not created by the owner of the "
+"calendar where it resides."
+msgstr ""
+"Lo slot è in sola lettura perché non è stato creato dal proprietario del "
+"calendario dove risiede."
+
+#: src/TeamBooking/Frontend/Schedule.php:351
+msgid "Only admins and coworkers can see this warning."
+msgstr ""
+"Solo gli amministratori e i collaboratori possono vedere questo avviso."
+
+#: src/TeamBooking/Frontend/Schedule.php:463
+msgid "From:"
+msgstr "Da:"
+
+#: src/TeamBooking/Install.php:35
+#, php-format
+msgid ""
+"Team Booking requires PHP > 5.3.3, your server has PHP %s, please upgrade it "
+"before activate the plugin"
+msgstr ""
+"Team Booking richiede PHP > 5.3.3, il tuo server ha PHP %s, per favore "
+"aggiorna la versione di PHP prima di attivare il plugin"
+
+#: src/TeamBooking/Legacy/Service.php:305
+#: src/TeamBooking/Services/Appointment.php:44
+msgid "Don't forget your reservation"
+msgstr "Non dimenticare la tua prenotazione"
+
+#: src/TeamBooking/Legacy/Service.php:306
+msgid "We're getting close!"
+msgstr "Ci siamo quasi!"
+
+#: src/TeamBooking/Legacy/Service.php:307
+msgid "Reservation date and time"
+msgstr "Data e ora della prenotazione"
+
+#: src/TeamBooking/Loader.php:422
+msgid "Install Recommended Plugins"
+msgstr "Installa plugin raccomandati"
+
+#: src/TeamBooking/Loader.php:423
+msgid "Install Plugins"
+msgstr "Installa plugin"
+
+#: src/TeamBooking/Loader.php:424
+#, php-format
+msgid "Installing Plugin: %s"
+msgstr "Installazione del plugin: %s"
+
+#: src/TeamBooking/Loader.php:427
+#, php-format
+msgid "TeamBooking recommends the following plugin: %1$s."
+msgid_plural "TeamBooking recommends the following plugins: %1$s."
+msgstr[0] "TeamBooking consiglia il seguente plugin: %1$s."
+msgstr[1] "TeamBooking consiglia i seguenti plugin: %1$s."
+
+#: src/TeamBooking/Loader.php:433
+#, php-format
+msgid ""
+"The following plugin needs to be updated to its latest version to ensure "
+"maximum compatibility with TeamBooking: %1$s."
+msgid_plural ""
+"The following plugins need to be updated to their latest version to ensure "
+"maximum compatibility with TeamBooking: %1$s."
+msgstr[0] ""
+"Il seguente plugin deve essere aggiornato alla sua ultima versione per "
+"assicurare la massima compatibilità con TeamBooking: %1$s."
+msgstr[1] ""
+"I seguenti plugin devono essere aggiornati alla loro ultima versione per "
+"assicurare la massima compatibilità con TeamBooking: %1$s."
+
+#: src/TeamBooking/Loader.php:439
+#, php-format
+msgid "There is an update available for: %1$s."
+msgid_plural "There are updates available for the following plugins: %1$s."
+msgstr[0] "C'è un aggiornamento disponibile per: %1$s."
+msgstr[1] ""
+"Ci sono degli aggiornamenti disponibili per i seguenti plugin: %1$s."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:46
+msgid ""
+"PayPal Sandbox is active, remember to deactivate it when testing is finished!"
+msgstr ""
+"La Sandbox di PayPal è attiva, ricorda di disattivarla quando hai terminato "
+"i test!"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:223
+msgid "via PayPal"
+msgstr "via PayPal"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:238
+msgid "Pay with PayPal"
+msgstr "Paga con PayPal"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:314
+msgid "PayPal"
+msgstr "PayPal"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:321
+msgid "Use PayPal gateway"
+msgstr "Usa PayPal"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:323
+msgid ""
+"You can't activate the PayPal gateway if the account e-mail field is empty."
+msgstr "Non puoi attivare PayPal se il campo e-mail è vuoto."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:328
+msgid ""
+"be sure that your PayPal account actually holds the selected currency, "
+"otherwise your payments may require manual confirmation, depending on "
+"Payment Receiving Preferences in your PayPal profile."
+msgstr ""
+"verifica che il tuo account PayPal gestisca la valuta selezionata, "
+"altrimenti i tuoi pagamenti richiederanno conferma manuale, in funzione "
+"delle preferenze del tuo account PayPal."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:330
+msgid ""
+"The selected currency is not supported by PayPal. PayPal gateway can't be "
+"activated."
+msgstr ""
+"La valuta selezionata non è supportata da PayPal. PayPal non può essere "
+"attivato."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:337
+msgid "PayPal account e-mail"
+msgstr "E-mail dell'account PayPal"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:339
+msgid "Payments will be addressed to this e-mail."
+msgstr "I pagamenti saranno inviati al seguente indirizzo."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:341
+msgid ""
+"the usage of either a Business or Premium PayPal account is recommended to "
+"avoid possible issues, as you are not supposed to make commercial "
+"transactions with a Personal PayPal account."
+msgstr ""
+"l'utilizzo di un account PayPal Business o Premium è raccomandato per "
+"evitare possibili problemi. Un account personale non è infatti pensato per "
+"transazioni commerciali."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:346
+msgid "PayPal primary e-mail (optional)"
+msgstr "E-mail primaria di PayPal (opzionale)"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:348
+msgid ""
+"Payments received will be checked against this e-mail. Use this setting if "
+"your PayPal account handles multiple e-mail and the payments are not "
+"addressed to your primary one."
+msgstr ""
+"Le conferme di pagamento saranno verificate nei confronti di questo "
+"indirizzo e-mail. Usa questa impostazione se il tuo account PayPal gestisce "
+"più indirizzi e-mail e i pagamenti non sono inviati all'indirizzo e-mail "
+"primario."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:350
+msgid ""
+"ensure your primary PayPal e-mail address is this otherwise payment "
+"notifications will fail."
+msgstr ""
+"assicurati che il tuo indirizzo e-mail primario di PayPal sia questo, "
+"altrimenti le notifiche di pagamento non funzioneranno."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:355
+msgid "Redirect URL"
+msgstr "URL di reindirizzamento"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:357
+msgid "After PayPal payment, the customer will be redirected to this URL."
+msgstr ""
+"Dopo un pagamento con PayPal, il cliente sarà reindirizzato a questo "
+"indirizzo."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:362
+msgid "Checkout logo (optional)"
+msgstr "Logo per il checkout (opzionale)"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:363
+msgid ""
+"Choose an image that will be shown in PayPal checkout page. It must be "
+"150x50px."
+msgstr ""
+"Scegli un'immagine da mostrare al cliente nella pagina di checkout di "
+"PayPal. Deve essere 150x50px."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:369
+msgid "IPN listener method"
+msgstr "Metodo per il listener IPN"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:371
+msgid ""
+"cURL is default, if supported by your server. If you have issues like "
+"reservations kept in pending status, try to change method."
+msgstr ""
+"cURL è il metodo predefinito, se supportato dal tuo server. Se hai dei "
+"problemi, ad esempio prenotazioni che rimangono in attesa di pagamento, "
+"prova a cambiare il metodo."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:373
+msgid "not supported"
+msgstr "non supportato"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:386
+msgid "Use PayPal Sandbox for testing"
+msgstr "Usa la sandbox di PayPal per test"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:388
+msgid ""
+"Fake payments. Activate this option only if you really know what the sandbox "
+"is."
+msgstr ""
+"Pagamenti finti. Attiva questa opzione soltanto se sai cosa è una sandbox."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:390
+msgid ""
+"if you're testing the payments in a localhost environment, the PayPal IPN "
+"won't reach your computer, and the plugin will act as if payment was never "
+"made."
+msgstr ""
+"se stai testando i pagamenti in localhost, le notifiche PayPal IPN non "
+"raggiungeranno il tuo computer, e il plugin si comporterà come se il "
+"pagamento non fosse mai avvenuto."
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:395
+msgid "Debugging IPN errors"
+msgstr "IPN debugging"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:398
+msgid "Activate this option to save the IPN response error logs"
+msgstr "Attiva questa opzione per salvare gli errori di risposta IPN"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:406
+msgid "Activate this option to dump the last raw IPN response"
+msgstr "Attiva questa opzione per salvare l'ultima risposta IPN grezza"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:422
+msgid "IPN response error logs"
+msgstr "Log di errori IPN"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:433
+msgid "Last IPN dump"
+msgstr "Ultimo IPN dump"
+
+#: src/TeamBooking/PaymentGateways/PayPal/Settings.php:706
+msgid ""
+"Done in a currency not held by your PayPal account at the moment of the "
+"transaction."
+msgstr ""
+"Eseguito in una valuta non attiva nel tuo account PayPal al momento della "
+"transazione."
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:134
+msgid "via Stripe"
+msgstr "via Stripe"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:149
+msgid "Pay with credit card"
+msgstr "Paga con carta di credito"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:207
+msgid "Stripe"
+msgstr "Stripe"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:214
+msgid "Use Stripe gateway"
+msgstr "Usa Stripe"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:217
+msgid ""
+"You can't activate the Stripe gateway if the Secret Key and Publishable Key "
+"fields are empty."
+msgstr ""
+"Non puoi attivare Stripe se i campi Secret Key e Publishable Key sono vuoti."
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:221
+msgid "Your server does not have cURL extension active."
+msgstr "Il tuo server non ha l'estensione cURL attiva."
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:225
+msgid ""
+"The selected currency is not supported by Stripe. Stripe gateway can't be "
+"activated."
+msgstr ""
+"La valuta selezionata non è supportata da Stripe. Stripe non può essere "
+"attivato."
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:232
+msgid "Secret Key"
+msgstr "Secret Key"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:236
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:249
+msgid "where?"
+msgstr "dove?"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:241
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:254
+msgid "use the test one for testing, the live one for real payments"
+msgstr ""
+"usa le /\"test/\" per effettuare prove, le /\"live/\" per i pagamenti veri"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:245
+msgid "Publishable Key"
+msgstr "Publishable Key"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:258
+msgid "Send receipt to the customer"
+msgstr "Invia la ricevuta al cliente"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:259
+msgid "The customer email provided in the reservation form will be used"
+msgstr ""
+"Verrà utilizzata la email del cliente fornita al momento della prenotazione"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:265
+msgid "Load Stripe.js library"
+msgstr "Carica la libreria Stripe.js"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:266
+msgid "Remove this option only if another plugin is loading the same library"
+msgstr ""
+"Deseleziona questa opzione solo se un altro plugin carica le stesse librerie"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:295
+msgid "Credit Card number"
+msgstr "Numero di carta"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:301
+msgid "Expiring"
+msgstr "Scadenza"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:305
+msgid "CVC"
+msgstr "CVC"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:310
+#, php-format
+msgid "Powered by <a href=\"%s\" target=\"_blank\">Stripe</a>."
+msgstr "Powered by <a href=\"%s\" target=\"_blank\">Stripe</a>."
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:311
+msgid ""
+"Stripe JavaScript library is used for securely sending your payment "
+"information to Stripe directly from your browser."
+msgstr ""
+"La libreria JavaScript di Stripe è utilizzata da questo sito per inviare in "
+"tutta sicurezza le tue informazioni di pagamento direttamente dal tuo "
+"browser ai sistemi Stripe."
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:312
+msgid ""
+"No sensitive payment data is transmitted to nor collected by this website."
+msgstr ""
+"Nessuna informazione sensibile è trasmessa a, o collezionata da questo sito."
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:315
+msgid "Submit payment"
+msgstr "Procedi col pagamento"
+
+#: src/TeamBooking/PaymentGateways/Stripe/Settings.php:320
+msgid "You've got some errors..."
+msgstr "Si sono verificati alcuni errori..."
+
+#: src/TeamBooking/ProcessReservation.php:25
+#: src/TeamBooking/ProcessReservation.php:215
+msgid "Please refresh the page..."
+msgstr "Per favore ricarica la pagina..."
+
+#: src/TeamBooking/ProcessReservation.php:96
+msgid "Thank you!"
+msgstr "Grazie!"
+
+#: src/TeamBooking/ProcessReservation.php:98
+msgid "Your payment was succesful!"
+msgstr "Il pagamento è avvenuto con successo!"
+
+#: src/TeamBooking/ProcessReservation.php:276
+msgid "Reservation data cannot be read, please retry!"
+msgstr ""
+"I dati della prenotazione non possono essere letti, si prega di riprovare!"
+
+#: src/TeamBooking/ProcessReservation.php:309
+msgid "Reservation already confirmed!"
+msgstr "Prenotazione già confermata!"
+
+#: src/TeamBooking/ProcessReservation.php:432
+#: src/TeamBooking/ProcessReservation.php:489
+msgid "Thank you for your reservation!"
+msgstr "Grazie per la tua prenotazione!"
+
+#: src/TeamBooking/ProcessReservation.php:435
+msgid "We'll send you an email when the reservation gets approved!"
+msgstr "Ti invieremo una email quando la prenotazione sarà approvata!"
+
+#: src/TeamBooking/ProcessReservation.php:492
+msgid "We have sent you an email with details."
+msgstr "Ti abbiamo inviato una email con i dettagli."
+
+#: src/TeamBooking/ProcessReservation.php:504
+msgid "Do you want to pay right now?"
+msgstr "Vuoi pagare adesso?"
+
+#: src/TeamBooking/Reservation.php:220 src/TeamBooking/Reservation.php:504
+#: src/TeamBooking/Reservation.php:669 src/TeamBooking/Reservation.php:680
+#: src/TeamBooking/Reservation.php:830 src/TeamBooking/Reservation.php:853
+#, php-format
+msgid "Date of reservation: %s"
+msgstr "Data della prenotazione: %s"
+
+#: src/TeamBooking/Reservation.php:970
+msgid "Event link"
+msgstr "Link evento"
+
+#: src/TeamBooking/Services/Appointment.php:45
+msgid "We are getting close!"
+msgstr "Ci siamo quasi!"
+
+#: src/TeamBooking/Shortcodes/Calendar.php:64
+#: src/TeamBooking/Shortcodes/Upcoming.php:71
+msgid ""
+"WARNING: service ID(s) not found. Please check the shortcode syntax and "
+"ensure at least one of the specified services is active."
+msgstr ""
+"ATTENZIONE: servizio non trovato. Si prega di controllare la sintassi dello "
+"shortcode e di assicurarsi che almeno uno dei servizi specificati sia attivo."
+
+#: src/TeamBooking/Shortcodes/Calendar.php:77
+#: src/TeamBooking/Shortcodes/Upcoming.php:84
+msgid "No active services"
+msgstr "Nessun servizio attivo"
+
+#: src/TeamBooking/Shortcodes/Reservations.php:146
+msgid "cancel"
+msgstr "cancella"
+
+#: src/TeamBooking/Shortcodes/Reservations.php:162
+msgid "You're going to cancel this reservation, the action is irreversible."
+msgstr "Stai per cancellare questa prenotazione, l'azione è irreversibile."
+
+#: src/TeamBooking/Shortcodes/Reservations.php:168
+msgid "Proceed"
+msgstr "Procedi"
+
+#: src/TeamBooking/Shortcodes/Upcoming.php:128
+msgid "There are no upcoming events"
+msgstr "Non ci sono prossimi eventi"
+
+#: src/TeamBooking/Update.php:79
+msgid "TeamBooking is now updated!"
+msgstr "TeamBooking è aggiornato!"
+
+#: src/TeamBooking/Update.php:80
+msgid ""
+"Since there are major changes under the hood, all the Google Calendars must "
+"be re-synced!"
+msgstr ""
+"Questa versione apporta grandi cambiamenti, tutti i Google Calendar devono "
+"essere sincronizzati di nuovo!"
+
+#: src/TeamBooking/Update.php:81
+msgid "What's new?"
+msgstr "Cosa c'è di nuovo?"
+
+#: src/TeamBooking/Widgets/Calendar.php:22
+msgid "TeamBooking Calendar"
+msgstr "Calendario TeamBooking"
+
+#: src/TeamBooking/Widgets/Calendar.php:24
+msgid "Shows a booking calendar"
+msgstr "Mostra un calendario di prenotazione"
+
+#: src/TeamBooking/Widgets/Calendar.php:84
+#: src/TeamBooking/Widgets/Upcoming.php:81
+msgid "WARNING: no service(s) found. Please add one first."
+msgstr "ATTENZIONE: nessun servizio trovato. Aggiungine uno."
+
+#: src/TeamBooking/Widgets/Calendar.php:90
+msgid "WARNING: no service(s) selected. Please check this widget settings."
+msgstr ""
+"ATTENZIONE: nessun servizio selezionato. Controlla le impostazioni di questa "
+"widget."
+
+#: src/TeamBooking/Widgets/Calendar.php:128
+msgid "Booking calendar"
+msgstr "Calendario delle prenotazioni"
+
+#: src/TeamBooking/Widgets/Calendar.php:136
+#: src/TeamBooking/Widgets/Upcoming.php:139
+msgid "Title:"
+msgstr "Titolo:"
+
+#: src/TeamBooking/Widgets/Calendar.php:140
+#: src/TeamBooking/Widgets/Upcoming.php:143
+msgid "Services:"
+msgstr "Servizi:"
+
+#: src/TeamBooking/Widgets/Calendar.php:162
+#: src/TeamBooking/Widgets/Upcoming.php:175
+msgid "Read-only"
+msgstr "Sola lettura"
+
+#: src/TeamBooking/Widgets/Upcoming.php:22
+msgid "TeamBooking Upcoming list"
+msgstr "Lista prossimi eventi TeamBooking"
+
+#: src/TeamBooking/Widgets/Upcoming.php:24
+msgid "Shows an upcoming events list"
+msgstr "Mostra una lista dei prossimi eventi"
+
+#: src/TeamBooking/Widgets/Upcoming.php:126
+msgid "Upcoming events"
+msgstr "Prossimi eventi"
+
+#: src/TeamBooking/Widgets/Upcoming.php:162
+msgid "Max total number of events, 0 for no limit"
+msgstr "Limite massimo di eventi mostrabili, 0 per nessun limite"
