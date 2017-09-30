@@ -36,7 +36,7 @@ function itro_popup_template()
 		<div id="popup_content"><?php
 			$custom_field = stripslashes(itro_get_field('custom_html')); /* insert custom html code  */
 			$custom_field = str_replace("\r\n",'',$custom_field);
-			_e( do_shortcode( $custom_field) ); /* return the string whitout new line */
+			_e( force_balance_tags(do_shortcode( $custom_field)) ); /* return the string whitout new line */
 			if ( itro_get_option('age_restriction') == 'yes' ) 
 			{?>
 				<p id="age_button_area" style="text-align: center;">
@@ -55,4 +55,3 @@ function itro_popup_template()
 	<div id="itro_opaco" <?php if ( itro_get_option('age_restriction') != 'yes' && itro_get_option('popup_unlockable') != 'yes' ){ ?> onclick="itro_exit_anim();" <?php } ?> ></div>
 <?php
 }
-?>

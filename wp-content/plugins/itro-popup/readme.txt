@@ -3,8 +3,8 @@ Contributors: ITRO
 Donate link: https://www.itroteam.com/leave-a-review/
 Tags: multilingual popup, popup, popup message, popuup optin, popup box, popup ads, popup advertising, popup block, popup content warning, fancy box, fancy popup, advertising popup, pop-up, lightbox popup
 Requires at least: 3.0.1
-Tested up to: 4.7.1
-Stable tag: 5.0.1
+Tested up to: 4.7.3
+Stable tag: 5.0.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -131,6 +131,10 @@ LIVE DEMOS - [CLICK HERE!](https://www.itroteam.com/wordpress-popup-samples-demo
 BACKEND SCREENSHOT - [CLICK HERE!](https://www.itroteam.com/wordpress-popup-samples-demos/#backend)
 
 == Changelog ==
+= 5.0.2 =
+IMPROVED: system info on the popup admin page
+ADDED: force table installation in case something gone wrong during plugin activation
+
 = 5.0.1 =
 ADDED: force_balance_tags used to prevent popup content break the DOM
 
@@ -396,6 +400,10 @@ bug fixed: color table now works in admin pannel.
 First released version.
 
 == Upgrade Notice ==
+= 5.0.2 =
+IMPROVED: system info on the popup admin page
+ADDED: force table installation in case something gone wrong during plugin activation
+
 = 5.0.1 =
 ADDED: force_balance_tags used to prevent popup content break the DOM
 

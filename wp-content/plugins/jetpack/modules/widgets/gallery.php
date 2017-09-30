@@ -3,7 +3,7 @@
 /*
 Plugin Name: Gallery
 Description: Gallery widget
-Author: Automattic, Inc.
+Author: Automattic Inc.
 Version: 1.0
 Author URI: http://automattic.com
 */
@@ -417,11 +417,8 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 			);
 
 			wp_localize_script( 'gallery-widget-admin', '_wpGalleryWidgetAdminSettings', $js_settings );
-			if( is_rtl() ) {
-				wp_enqueue_style( 'gallery-widget-admin', plugins_url( '/gallery/css/rtl/admin-rtl.css', __FILE__ ) );
-			} else {
-				wp_enqueue_style( 'gallery-widget-admin', plugins_url( '/gallery/css/admin.css', __FILE__ ) );
-			}
+			wp_enqueue_style( 'gallery-widget-admin', plugins_url( '/gallery/css/admin.css', __FILE__ ) );
+			wp_style_add_data( 'gallery-widget-admin', 'rtl', 'replace' );
 		}
 	}
 }

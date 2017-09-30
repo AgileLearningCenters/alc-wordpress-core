@@ -79,7 +79,8 @@ class paypal_ipn_handler {
             while($i < $num_cart_items+1)
             {
                 $item_number = $this->ipn_data['item_number' . $i];
-                $item_name = $this->ipn_data['item_name' . $i];
+                $item_name = urldecode($this->ipn_data['item_name' . $i]);
+                $this->ipn_data['item_name' . $i] = $item_name;
                 $quantity = $this->ipn_data['quantity' . $i];
                 $mc_gross = $this->ipn_data['mc_gross_' . $i];
                 $mc_currency = $this->ipn_data['mc_currency'];
@@ -101,7 +102,8 @@ class paypal_ipn_handler {
             $cart_items = array();
             $this->debug_log('Transaction Type: Buy Now',true);
             $item_number = $this->ipn_data['item_number'];
-            $item_name = $this->ipn_data['item_name'];
+            $item_name = urldecode($this->ipn_data['item_name']);
+            $this->ipn_data['item_name'] = $item_name;
             $quantity = $this->ipn_data['quantity'];
             $mc_gross = $this->ipn_data['mc_gross'];
             $mc_currency = $this->ipn_data['mc_currency'];

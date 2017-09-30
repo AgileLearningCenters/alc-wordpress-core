@@ -229,6 +229,11 @@ final class Types_Utils {
 		// Split the $url into two parts with the wp-content directory as the separator.
 		$parsed_url = explode( parse_url( WP_CONTENT_URL, PHP_URL_PATH ), $url );
 
+		// Return null if image is not on domain (WP_CONTENT_URL)
+		if( count( $parsed_url ) === 1 ) {
+			return null;
+		}
+
 		// Get the host of the current site and the host of the $url, ignoring www.
 		$this_host = str_ireplace( 'www.', '', parse_url( home_url(), PHP_URL_HOST ) );
 		$file_host = str_ireplace( 'www.', '', parse_url( $url, PHP_URL_HOST ) );

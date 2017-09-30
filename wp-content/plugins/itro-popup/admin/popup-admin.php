@@ -10,6 +10,15 @@ global $ITRO_VER;
 if ( !current_user_can( 'manage_options' ) )  {
 	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 }
+
+/* force table installation */
+if( isset($_POST['force_tables_installation']) )
+{
+    // wp token check
+    check_admin_referer('ipp_save_data','ipp_cleardb_nonce_fld');
+    itro_db_init();
+}
+
 /* variables for the field and option names */
 if( !isset($submitted_form )) 
 {
@@ -383,7 +392,7 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 							<option value="white_border" <?php if(itro_get_option($opt_name[33])=='white_border') {echo 'selected="select"';} ?> ><?php _e("White with border", 'itro-plugin' ); ?></option>
 							<option value="url" <?php if(itro_get_option($opt_name[33])=='url') {echo 'selected="select"';} ?> ><?php _e("Custom URL", 'itro-plugin' ); ?></option>
 						</select>
-						<!-- background image !-->
+						<!-- custom cross image url !-->
 						<p>
 							<?php _e("Image custom URL",'itro-plugin');?>
 							<a href="<?php if ( $opt_val[37] == NULL ) {echo 'javascript:void(0)';} else { echo $opt_val[37]; }?>"><?php _e('Show image','itro-plugin')?></a>
@@ -501,7 +510,17 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 	</div>
 	<p class="wpstyle" onClick="jQuery('#debug_info').toggle();"><?php _e("System Status", 'itro-plugin' ); ?> </p>
 	<div method="POST" action="" id="debug_info" style="display:none;">
-		<?php echo itro_get_serverinfo(); ?>
+	    <?php echo itro_get_serverinfo(); ?>
+	    <form method="post" style="clear:both;">
+	    <?php wp_nonce_field('ipp_save_data', 'ipp_cleardb_nonce_fld'); ?>
+		    <br>
+		    <hr>
+		    <input type="hidden" name="force_tables_installation" value="Y">
+		    <span><?php _e("FORCE TABLE INSTALLATION", 'itro-plugin' ); ?></span>
+		    <img style="vertical-align:super; cursor:help" src="<?php echo itroImages . 'question_mark.png' ; ?>"title="<?php _e('If in the System Status you see "Plugin DB Status - Installed tables: no tables" click this button to force the installation of our plugin tables','itro-plugin');?>" >
+		    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    <input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('FORCE') ?>" />&nbsp;&nbsp;&nbsp;&nbsp;
+	    </form>
 	</div>
 </div>
 
@@ -517,18 +536,19 @@ if( isset($_POST[ $submitted_form ]) && $_POST[ $submitted_form ] == 'Y' || isse
 	<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />&nbsp;&nbsp;&nbsp;&nbsp;
 </form>
 
+
 <?php 
-				$itro_hide_args = array(
-				$opt_name[24] . '_div',
-				$opt_name[29] . '_div',
-				$opt_name[17] . '_div',
-				$opt_name[20] . '_div',
-				$opt_name[27] . '_div',
-				$opt_name[30] . '_div',
-				$opt_name[31] . '_div',
-				$opt_name[23] . '_div',
-				$opt_name[6] . '_advanced_1',
-				$opt_name[6] . '_advanced_2',
-				);
-				echo itro_show_hide( $itro_hide_args, $opt_name[28], 'table', true, array('yellow',10000)); 
+	$itro_hide_args = array(
+	$opt_name[24] . '_div',
+	$opt_name[29] . '_div',
+	$opt_name[17] . '_div',
+	$opt_name[20] . '_div',
+	$opt_name[27] . '_div',
+	$opt_name[30] . '_div',
+	$opt_name[31] . '_div',
+	$opt_name[23] . '_div',
+	$opt_name[6] . '_advanced_1',
+	$opt_name[6] . '_advanced_2',
+	);
+	echo itro_show_hide( $itro_hide_args, $opt_name[28], 'table', true, array('yellow',10000)); 
 ?>

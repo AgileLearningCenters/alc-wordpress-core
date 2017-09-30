@@ -20,6 +20,9 @@ function wp_cart_init_handler()
             exit;
         }
     }
+    if (is_admin()) {
+        add_action('admin_init','wp_cart_add_tinymce_button');
+    }
 }
 
 function wp_cart_admin_init_handler()
@@ -191,7 +194,7 @@ function wpspc_run_activation()
 function wpspsc_settings_menu_footer()
 {
     ?>
-    <div style="background: none repeat scroll 0 0 #FFF6D5;border: 1px solid #D1B655;color: #3F2502;margin: 10px 0;padding: 5px 5px 5px 10px;text-shadow: 1px 1px #FFFFFF;">	
+    <div class="wspsc_yellow_box">
     <p><?php _e("Need a shopping cart plugin with a lot of features and good support? Check out our ", "wordpress-simple-paypal-shopping-cart"); ?>
     <a href="https://www.tipsandtricks-hq.com/?p=1059" target="_blank"><?php _e("WP eStore Plugin", "wordpress-simple-paypal-shopping-cart"); ?></a></p>
     </div>

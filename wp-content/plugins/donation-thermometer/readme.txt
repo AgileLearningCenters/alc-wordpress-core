@@ -1,10 +1,10 @@
-=== Donation Thermometer ===
+﻿=== Donation Thermometer ===
 Contributors: henryp
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8NVX34E692T34
 Tags: donate, donation, thermometer, progress, meter, red, fundraising, funds, money, charity, non-profit, colour, color, farbtastic
 Requires at least: 2.7
 Tested up to: 4.7
-Stable tag: 1.3.14
+Stable tag: 1.3.15
 License: GPL3
 
 Displays a custom thermometer image charting the amount of donations raised.
@@ -19,7 +19,8 @@ The output thermometers blend seamlessly with your website content on any post o
 
 The 'raised' and 'target' values are linked to independent shortcodes (**[therm_r]** and **[therm_t]**), controlled from the plugin's settings page; useful for keeping multiple instances up-to-date around your site. Also useful if you want to keep a running total in your site footer/sidebar.
 
-NEW FEATURE (v1.3.14): Fill colours can now be independently assigned for each thermometer, rather than relying on the default setting. The new shortcode parameter is **fill=#??????**
+
+NEW FEATURE (v1.3.15): A dashboard widget has been added showing the current "target" and "raised" values. These can also be edited from the widget.
 
 == Installation ==
 
@@ -65,8 +66,13 @@ Visit the [the plugin homepage](http://henrypatton.org/donation-thermometer) and
 
 == Changelog ==
 
+= 1.3.15 =
+* Added new dasboard widget from which raised and target values can be edited. 
+
 = 1.3.14 =
-* Fill colours can now be assigned for individual thermometers using the new shortcode parameter ‘fill=‘
+* Fill colours can now be assigned for individual thermometers using the new shortcode parameter ‘fill=‘.
+
+
 
 = 1.3.13 =
 * Fixed minor bug regarding centre alignment of the thermometer.

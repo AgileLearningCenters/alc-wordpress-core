@@ -21,7 +21,7 @@ class Types_Helper_Twig {
 		$this->filesystem = new Twig_Loader_Filesystem();
 		$this->filesystem->addPath( TYPES_ABSPATH . '/application/views' );
 		$this->twig = new Twig_Environment( $this->filesystem );
-		$this->twig->addFunction( '__', new Twig_SimpleFunction( '__', array( $this, 'translate' ) ) );
+		$this->twig->addFunction( new Twig_SimpleFunction( '__', array( $this, 'translate' ) ) );
 	}
 
 	/**

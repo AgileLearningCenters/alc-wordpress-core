@@ -1,15 +1,15 @@
 <?php
 
-/*
+/**
 Plugin Name: Polylang
 Plugin URI: https://polylang.pro
-Version: 2.1.2
+Version: 2.2.3
 Author: Frédéric Demarle
 Author uri: https://polylang.pro
 Description: Adds multilingual capability to WordPress
 Text Domain: polylang
 Domain Path: /languages
-*/
+ */
 
 /*
  * Copyright 2011-2017 Frédéric Demarle
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // don't access directly
 };
 
-define( 'POLYLANG_VERSION', '2.1.2' );
+define( 'POLYLANG_VERSION', '2.2.3' );
 define( 'PLL_MIN_WP_VERSION', '4.4' );
 
 define( 'POLYLANG_FILE', __FILE__ ); // this file
@@ -49,4 +49,4 @@ define( 'PLL_INSTALL_INC',  POLYLANG_DIR . '/install' );
 define( 'PLL_MODULES_INC',  POLYLANG_DIR . '/modules' );
 define( 'PLL_SETTINGS_INC', POLYLANG_DIR . '/settings' );
 
-require_once( PLL_INC . '/class-polylang.php' );
+require_once PLL_INC . '/class-polylang.php';

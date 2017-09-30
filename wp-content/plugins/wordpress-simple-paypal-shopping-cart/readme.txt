@@ -3,8 +3,8 @@ Contributors: Tips and Tricks HQ, Ruhul Amin, wptipsntricks, mbrsolution, mra13
 Donate link: https://www.tipsandtricks-hq.com
 Tags: cart, shopping cart, WordPress shopping cart, Paypal shopping cart, sell, selling, sell products, online shop, shop, e-commerce, wordpress ecommerce, wordpress store, store, PayPal cart widget, sell digital products, sell service, digital downloads, paypal, paypal cart, e-shop, compact cart, coupon, discount
 Requires at least: 3.0
-Tested up to: 4.7
-Stable tag: 4.3.2
+Tested up to: 4.8
+Stable tag: 4.3.6
 License: GPLv2 or later
 
 Very easy to use Simple WordPress Paypal Shopping Cart Plugin. Great for selling products online in one click from your WordPress site.
@@ -58,6 +58,7 @@ or
 * Ability to show shopping cart with product image thumbnails.
 * Ability to use a custom checkout page style.
 * Ability to open checkout page in a new browser tab/window.
+* Ability to use TinyMCE shortcode inserter to add shortcodes to your posts/pages.
 * Works nicely with responsive WordPress themes.
 * Can be translated into any language.
 * and more...
@@ -151,25 +152,31 @@ example usage: [wp_cart_button name="Test Product" price="29.95" var1="Size|smal
 4. Use the trigger text to add a product to a post or page where you want it to appear.
 
 == Frequently Asked Questions ==
-1. Can this plugin be used to accept paypal payment for a service or a product? Yes
-2. Does this plugin have shopping cart? Yes.
-3. Can the shopping cart be added to a checkout page? Yes.
-4. Does this plugin has multiple currency support? Yes.
-5. Is the 'Add to Cart' button customizable? Yes.
-6. Does this plugin use a return URL to redirect customers to a specified page after Paypal has processed the payment? Yes.
-7. How can I add a buy button on the sidebar widget of my site?
+= Can this plugin be used to accept paypal payment for a service or a product? =
+Yes
+= Does this plugin have shopping cart =
+Yes
+= Can the shopping cart be added to a checkout page? =
+Yes
+= Does this plugin has multiple currency support? =
+Yes
+= Is the 'Add to Cart' button customizable? =
+Yes
+= Does this plugin use a return URL to redirect customers to a specified page after Paypal has processed the payment? =
+Yes
+= How can I add a buy button on the sidebar widget of my site? =
 Check the documentation on [how to add buy buttons to the sidebar](https://www.tipsandtricks-hq.com/ecommerce/wordpress-shopping-cart-additional-resources-322#add_button_in_sidebar)
-8. Can I use this plugin to sell digital downloads? 
-Yes. See the [digital download usage documentation] (https://www.tipsandtricks-hq.com/ecommerce/wp-simple-cart-sell-digital-downloads-2468)
-9. Can I configure discount coupon with this shopping cart plugin?
+= Can I use this plugin to sell digital downloads? =
+Yes. See the [digital download usage documentation](https://www.tipsandtricks-hq.com/ecommerce/wp-simple-cart-sell-digital-downloads-2468)
+= Can I configure discount coupon with this shopping cart plugin? =
 Yes. you can setup discount coupons from the "Coupon/Discount" interface of the plugin.
-10. Can I configure product sale notification so I get notified when a sale is made? 
+= Can I configure product sale notification so I get notified when a sale is made? =
 Yes. You can configure sale notification from the "Email Settings" interface of the plugin.
-11. Can I modify the product box thumbnail image?
+= Can I modify the product box thumbnail image? =
 Yes.
-12. Can I customize the format of the price display?
+= Can I customize the format of the price display? =
 Yes.
-13. Can the customers be sent to a cancel URL when they click "cancel" from the PayPal checkout page?
+= Can the customers be sent to a cancel URL when they click "cancel" from the PayPal checkout page? =
 Yes.
 
 == Screenshots ==
@@ -180,6 +187,23 @@ Visit the plugin site at https://www.tipsandtricks-hq.com/wordpress-simple-paypa
 None
 
 == Changelog ==
+
+= 4.3.6 =
+- There is now a basic shortcode inserter for this plugin in the wp post/page editor.
+- The cart orders search functionality can now search records using customer's email and name.
+- Added CSS classes to the variation drop-downs.
+- CSS optimization in the settings interface of the plugin.
+
+= 4.3.5 =
+- The deprecated page styles field has been replaced with an image URL field in the settings. 
+- The Image URL field can be used to specify an image/logo URL that will be displayed in the paypal checkout page.
+
+= 4.3.4 =
+- All the paypal supported currency codes are shown as a dropdown option in the plugin settings.
+- Currency code value in the settings is automatically converted to uppercase string if the user mistakenly enters a lowercase string.
+
+= 4.3.3 =
+- Fix for paypal adding "+" character between words in the item name parameter.
 
 = 4.3.2 = 
 - Bugfix for the new custom field change.

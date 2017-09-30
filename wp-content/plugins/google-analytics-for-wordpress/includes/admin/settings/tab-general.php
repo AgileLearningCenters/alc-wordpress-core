@@ -41,6 +41,7 @@ function monsterinsights_settings_general_tab() {
     $profile_id                  = monsterinsights_get_option( 'analytics_profile', '' );
     $tracking_mode               = monsterinsights_get_option( 'tracking_mode', 'analytics' );
     $events_mode                 = monsterinsights_get_option( 'events_mode', 'js' );
+    $automatic_updates           = monsterinsights_get_option( 'automatic_updates', false );
     $anon_tracking               = monsterinsights_get_option( 'anonymous_data', false );
     ?>
     <div id="monsterinsights-settings-general">
@@ -155,8 +156,10 @@ function monsterinsights_settings_general_tab() {
                             ?>
                             <label><input type="radio" name="tracking_mode" value="ga" <?php checked( $tracking_mode, 'ga' ); ?> ><?php esc_html_e('GA.js (Deprecated)', 'google-analytics-for-wordpress'); ?> </label>
                             <label><input type="radio" name="tracking_mode" value="analytics" <?php checked( $tracking_mode, 'analytics' ); ?> ><?php esc_html_e( 'Analytics.js (Universal Analytics)', 'google-analytics-for-wordpress'); ?> </label>
+                            <?php if ($tracking_mode === 'ga' ) { ?>
                             <?php echo monsterinsights_get_message( 'error', sprintf( esc_html__( 'Warning: You\'re currently using deprecated ga.js tracking. We recommend switching to analytics.js, as it is significantly more accurate than ga.js, and allows for functionality (like the more accurate Javascript based events tracking we offer). Further Google Analytics has deprecated support for ga.js, and it may stop working at any time when Google decides to disable it from their server. To switch to using the newer Universal Analytics (analytics.js) %1$sclick here%2$s.', 'google-analytics-for-wordpress' ), '<a href="' . $url .'">', '</a>' ) );
-                         ?>
+                            ?>
+                            <?php } ?>
                         </td>
                     </tr>
                     <?php } ?>
@@ -172,6 +175,20 @@ function monsterinsights_settings_general_tab() {
                             ?>
                             <?php echo monsterinsights_get_message( 'error', sprintf( esc_html__( 'Warning: You\'re currently using deprecated PHP based events tracking. We recommend switching to JS events tracking, as it is significantly more accurate than PHP based events tracking and we will eventually discontinue PHP based events tracking. To switch %1$sclick here%2$s.', 'google-analytics-for-wordpress' ), '<a href="' . $url .'">', '</a>' ) );
                          ?>
+                        </td>
+                    </tr>
+                    <?php } ?>
+
+                    <?php if ( $automatic_updates !== 'all' && $automatic_updates !== 'minor' ){  ?>
+                    <?php $automatic_updates = $automatic_updates ? $automatic_updates : 'none'; ?>
+                    <tr id="monsterinsights-automatic-updates-mode">
+                        <th scope="row">
+                            <label for="monsterinsights-tracking-mode"><?php esc_html_e( 'Automatic Updates', 'google-analytics-for-wordpress' ); ?></label>
+                        </th>
+                        <td>
+                            <label><input type="radio" name="automatic_updates" value="all" <?php checked( $automatic_updates, 'all' ); ?> ><?php esc_html_e('Yes (Recommended) - Get the latest features, bugfixes, and security updates as they are released.', 'google-analytics-for-wordpress'); ?> </label>
+                            <label><input type="radio" name="automatic_updates" value="minor" <?php checked( $automatic_updates, 'minor' ); ?> ><?php esc_html_e( 'Minor Only - Only get bugfixes and security updates, but not major features.', 'google-analytics-for-wordpress'); ?> </label>
+                            <label><input type="radio" name="automatic_updates" value="none" <?php checked( $automatic_updates, 'none' ); ?> ><?php esc_html_e( 'None - Manually update everything.', 'google-analytics-for-wordpress'); ?> </label>
                         </td>
                     </tr>
                     <?php } ?>
@@ -222,7 +239,7 @@ function monsterinsights_settings_save_general() {
     if ( $manual_ua_code ) {
         monsterinsights_update_option( 'manual_ua_code', $manual_ua_code );
     } else {
-        if ( empty ( $manual_ua_code ) && isset( $_POST['manual_ua_code'] ) ) {
+        if ( empty ( $manual_ua_code ) && ! empty( $_POST['manual_ua_code'] ) ) {
              $throw_notice = true;
         }
         monsterinsights_update_option( 'manual_ua_code', '' );
@@ -258,6 +275,11 @@ function monsterinsights_settings_save_general() {
             $tracking_mode = apply_filters( 'monsterinsights_settings_save_general_tracking_mode', 'analytics' );
         }
         monsterinsights_update_option( 'tracking_mode', $tracking_mode );
+    }
+
+    $automatic_updates = isset( $_POST['automatic_updates'] ) && in_array( $_POST['automatic_updates'], array( 'all', 'minor', 'none' ) ) ? $_POST['automatic_updates'] : false;
+    if ( $automatic_updates ) {
+        monsterinsights_update_option( 'automatic_updates', $automatic_updates );
     }
 
     $anonymous_data = isset( $_POST['anonymous_data'] ) ? 1 : 0;

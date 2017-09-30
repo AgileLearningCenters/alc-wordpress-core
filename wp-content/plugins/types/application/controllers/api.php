@@ -97,7 +97,26 @@ final class Types_Api {
 		 *
 		 * @since 2.2
 		 */
-		'query_groups' => array( 'args' => 2 )
+		'query_groups' => array( 'args' => 2 ),
+
+
+		/**
+		 * types_filter_get_field_group_ids_by_post_type
+		 *
+		 * Returns all ids of field groups assigned to the given post type.
+		 *
+		 * Note: This is used by CRED (auto complete form).
+		 *
+		 * @param mixed $ignored
+		 * @param string $post_type_slug
+		 *
+		 * @return array Post field group IDs (may come as numeric strings).
+		 *
+		 * @throws InvalidArgumentException when presented with a non-string post type.
+		 *
+		 * @since 2.2.14
+		 */
+		'filter_get_field_group_ids_by_post_type' => array( 'args' => 2 )
 
 	);
 
@@ -117,12 +136,6 @@ final class Types_Api {
 		}
 
 		$this->callbacks_registered = true;
-		
-		/**
-		 * get all field group ids by post type
-		 * @fixme document this, please!
-		 */
-		add_filter( 'types_filter_get_field_group_ids_by_post_type', array( 'Types_Api_Helper', 'get_field_group_ids_by_post_type' ), 10, 2 );
 
 		/**
 		 * types_filter_query_field_definitions

@@ -3,7 +3,7 @@
 Plugin Name: Donation Thermometer
 Plugin URI: http://henrypatton.org/donation-thermometer
 Description: Displays custom thermometers charting the amount of donations raised using the shortcode <code>[thermometer raised=?? target=??]</code>. Shortcodes for raised and target text values are also available for posts/pages/text widgets: <code>[therm_r]</code> and <code>[therm_t]</code>.
-Version: 1.3.14
+Version: 1.3.15
 Author: Henry Patton
 Author URI: http://henrypatton.org
 License: GPL3
@@ -31,7 +31,9 @@ define('THERM_ABSPATH', trailingslashit( str_replace("\\","/", WP_PLUGIN_DIR . '
 // Specify Hooks/Filters
 add_action('admin_init', 'thermometer_init_fn' );
 add_action('admin_menu', 'thermometer_add_page_fn');
-
+add_action( 'wp_dashboard_setup', array('Thermometer_dashboard_widget', 'therm_widget_init'));
+ 
+ 
 function set_plugin_meta_dt($links, $file) {
     $plugin = plugin_basename(__FILE__);
     // create link
@@ -45,7 +47,94 @@ function set_plugin_meta_dt($links, $file) {
     return $links;
 }
 add_filter( 'plugin_row_meta', 'set_plugin_meta_dt', 10, 2 );
-    
+
+class Thermometer_dashboard_widget{
+	/**
+     * The id of this widget.
+     */
+    const wid = 'thermometer_widget';
+
+    /**
+     * Hook to wp_dashboard_setup to add the widget.
+     */
+
+	public static function therm_widget_init() {
+        
+        //Register the widget...
+		
+
+
+        wp_add_dashboard_widget(
+            self::wid,                                  //A unique slug/ID
+            __( 'Donation Thermometer', 'nouveau' ),//Visible name for the widget
+            array('Thermometer_dashboard_widget','therm_widget'),      //Callback for the main widget content
+            array('Thermometer_dashboard_widget','therm_widget_config')       //Optional callback for widget configuration content
+        );
+    }
+
+    /**
+     * Load the widget code
+     */
+    public static function therm_widget() {
+        require_once( 'therm_widget.php' );
+    }
+
+    /**
+     * Load widget config code.
+     *
+     * This is what will display when an admin clicks
+     */
+    public static function therm_widget_config() {
+        require_once( 'therm_widget-config.php' );
+    }
+
+    /**
+     * Gets one specific option for the specified widget.
+     * @param $widget_id
+     * @param $option
+     * @param null $default
+     *
+     * @return string
+     */
+    public static function get_thermometer_widget_option($option, $default=NULL ) {
+		
+		$opts = get_option( 'thermometer_options' );
+        //$opts = self::get_thermometer_widget_options($widget_id);
+
+        //If widget opts dont exist, return false
+        if ( ! $opts )
+            return false;
+
+        //Otherwise fetch the option or use default
+        if ( isset( $opts[$option] ) && ! empty($opts[$option]) )
+            return $opts[$option];
+        /*else
+            return ( isset($default) ) ? $default : false;*/
+
+    }
+
+    /**
+     * Saves an array of options for a single dashboard widget to the database.
+     * Can also be used to define default values for a widget.
+     *
+     * @param string $widget_id The name of the widget being updated
+     * @param array $args An associative array of options being saved.
+     * @param bool $add_only If true, options will not be added if widget options already exist
+     */
+    public static function update_thermometer_widget_options($args=array(), $add_only=false )
+    {
+        //Fetch ALL dashboard widget options from the db...
+        $opts = get_option( 'thermometer_options' );
+
+		//Merge new options with existing ones, and add it back to the widgets array
+		$opts = array_merge($opts,$args);
+
+        //Save the entire widgets array back to the db
+        return update_option('thermometer_options', $opts); //also gets validated below
+    }
+}
+
+
 // Register settings
 function thermometer_init_fn(){
 	wp_register_style( 'thermStylesheet', plugins_url('style.css', __FILE__) );
@@ -77,7 +166,7 @@ function add_thermdefaults_fn() {
     $retrieved_options = array();
 	$all_options = array("colour_picker1", "chkbox1", "colour_picker2", "chkbox2", "colour_picker3", "chkbox3", "colour_picker4", "currency","target_string", "raised_string", "thousands", "trailing");
     $defaults = array('colour_picker1'=>'#FF0000', 'chkbox1'=>1, 'colour_picker2'=>'#000000', 'chkbox2'=>1, 'colour_picker3'=>'#000000', 'chkbox3'=>1, 'colour_picker4'=>'#000000',
-					  'currency'=>'£','target_string'=>'', 'raised_string'=>'', 'thousands'=>', (comma)', 'trailing'=>0);
+					  'currency'=>'£','target_string'=>'500', 'raised_string'=>'', 'thousands'=>', (comma)', 'trailing'=>2);
     $retrieved_options = maybe_unserialize( get_option( 'thermometer_options' ) );
 	$retrieve_old_options = array();
 	$retrieve_old_options = maybe_unserialize( get_option( 'plugin_options' ) );
@@ -171,13 +260,13 @@ function  setting_thousands_fn() {
 // CHECK-BOX - Name: thermometer_options[trailing]
 function setting_trailing_fn() {
 	$options = get_option('thermometer_options');
-	$trailing1 = (isset($options['trailing']) && $options['trailing'] == 1) ? ' checked="checked" ' : '';
+	$trailing1 = (isset($options['trailing']) && $options['trailing'] == true) ? ' checked="checked" ' : '';
 	echo "<input ".$trailing1." id='plugin_trailing' name='thermometer_options[trailing]' type='checkbox' />";
 }    
 // CHECKBOX - Name: plugin_options[chkbox1] percentage
 function setting_chk1_fn() {
 	$options = get_option('thermometer_options');
-	$checked1 = (isset($options['chkbox1']) && $options['chkbox1'] == 1) ? ' checked="checked" ' : '';
+	$checked1 = (isset($options['chkbox1']) && $options['chkbox1'] == true) ? ' checked="checked" ' : '';
 	echo "<input ".$checked1." id='plugin_chk1' name='thermometer_options[chkbox1]' type='checkbox' />";
 }
 // TEXTBOX - Name: plugin_options[text_colour] 
@@ -190,13 +279,13 @@ function text_colour_fn() {
 // CHECKBOX - Name: plugin_options[chkbox2] target
 function setting_chk2_fn() {
 	$options = get_option('thermometer_options');
-	$checked2 = (isset($options['chkbox2']) && $options['chkbox2'] == 1) ? ' checked="checked" ' : '';
+	$checked2 = (isset($options['chkbox2']) && $options['chkbox2'] == true) ? ' checked="checked" ' : '';
 	echo "<input ".$checked2." id='plugin_chk2' name='thermometer_options[chkbox2]' type='checkbox' />";
 }
 // CHECKBOX - Name: plugin_options[chkbox3] raised
 function setting_chk3_fn() {
 	$options = get_option('thermometer_options');
-	$checked3 = (isset($options['chkbox3']) && $options['chkbox3'] == 1) ? ' checked="checked" ' : '';
+	$checked3 = (isset($options['chkbox3']) && $options['chkbox3'] == true) ? ' checked="checked" ' : '';
 	echo "<input ".$checked3." id='plugin_chk3' name='thermometer_options[chkbox3]' type='checkbox' />";
 } 
 // TEXTBOX - Name: plugin_options[target_colour] 
@@ -272,10 +361,10 @@ function thermometer_options_validate($input) {
 	    $input['raised_string'] = '';
 	}
 		
-	$input['chkbox1'] = (isset($input['chkbox1'])) ? 1 : 0;
-	$input['chkbox2'] = (isset($input['chkbox2'])) ? 1 : 0;
-	$input['chkbox3'] = (isset($input['chkbox3'])) ? 1 : 0;
-	$input['trailing'] = (isset($input['trailing'])) ? 1 : 0;
+	$input['chkbox1'] = (isset($input['chkbox1']) && true == $input['chkbox1']) ? true : false;
+	$input['chkbox2'] = (isset($input['chkbox2']) && true == $input['chkbox2']) ? true : false;
+	$input['chkbox3'] = (isset($input['chkbox3']) && true == $input['chkbox3']) ? true : false;
+	$input['trailing'] = (isset($input['trailing']) && true == $input['trailing']) ? true : false;
 
 	return $input; // return validated input
 }
@@ -355,7 +444,7 @@ function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing,$fill)
     imagedestroy($image_3);
     
     // percentage bottom
-    if ($percentck =='1'){
+    if ($percentck == '1'){
 		if ($percent_raised > 999){ // variable percent size
 			$fontsize = 24;}
 		elseif($percent_raised > 99){
@@ -381,7 +470,7 @@ function createtherm($raised,$target,$currency,$therm_name,$sep,$trailing,$fill)
     // raised
     $colour_text3 = HextoRGB($text3_input); 
     $text_color3 = ImageColorAllocate($draft_img, $colour_text3['r'], $colour_text3['g'], $colour_text3['b']); 
-    if ($raisedck =='1'){
+    if ($raisedck == '1'){
 		if ($percent_raised <= 100){ // if less than 100%
 			$triangle_start = (722 - $filled);
 		}
@@ -604,7 +693,7 @@ function thermometer_graphic($atts){
 	elseif(strtolower($atts['trailing']) == 'false'){
 		$trailing = 'false';
 	}
-	elseif(isset($options['trailing']) && $options['trailing'] == 1){
+	elseif(isset($options['trailing']) && $options['trailing'] == "1"){
 		$trailing = 'true';
 	}
 	else{
@@ -691,7 +780,15 @@ add_shortcode( 'therm_r','therm_raised');
 function therm_raised(){
     $options = get_option('thermometer_options');
     $raised = $options['raised_string'];
-    $sep = substr($options['thousands'],0,1);
+    if($options['thousands'] == ' (space)'){
+		$sep = ' ';
+	}
+	elseif($options['thousands'] == '(none)'){
+		$sep = '';
+	}
+	else{
+		$sep = substr($options['thousands'],0,1);
+	}
     if ($raised != ''){
 	return number_format($raised, 0,'.',$sep);
     }
@@ -705,7 +802,15 @@ add_shortcode( 'therm_t','therm_target');
 function therm_target(){
     $options = get_option('thermometer_options');
     $target = $options['target_string'];
-    $sep = substr($options['thousands'],0,1);
+    if($options['thousands'] == ' (space)'){
+		$sep = ' ';
+	}
+	elseif($options['thousands'] == '(none)'){
+		$sep = '';
+	}
+	else{
+		$sep = substr($options['thousands'],0,1);
+	}
     if ($target != ''){
 	return number_format($target, 0,'.',$sep);
 	}

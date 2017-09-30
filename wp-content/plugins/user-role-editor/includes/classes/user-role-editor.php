@@ -107,7 +107,7 @@ class User_Role_Editor {
             // Gravity Forms User Registration Addon does
             add_action( 'wpmu_new_blog', array($this, 'duplicate_roles_for_new_blog'), 10, 2);                        
         }
-        
+                
         // setup additional options hooks for the roles
         add_action('init', array($this, 'set_role_additional_options_hooks'), 9);
         
@@ -145,7 +145,7 @@ class User_Role_Editor {
         return $this->lib->is_pro();
     }
     // end of is_pro()
-    
+        
     
     /**
      * Plugin initialization
@@ -193,7 +193,10 @@ class User_Role_Editor {
             }
         }
 
-        new URE_Grant_Roles();
+        $bulk_grant_roles = apply_filters('ure_bulk_grant_roles', true);
+        if ($bulk_grant_roles) {
+            new URE_Grant_Roles();
+        }
        
         add_action('wp_ajax_ure_ajax', array($this, 'ure_ajax'));
     }
@@ -243,18 +246,12 @@ class User_Role_Editor {
       if (!$this->lib->is_right_admin_path('users.php')) {      
             return;
       }
+      if (!current_user_can('edit_users')) {
+          return;
+      }
       
       $assign_role = $this->lib->get_assign_role();
-      $users_quant = $assign_role->count_users_without_role();      
-      if ($users_quant>0) {
-?>          
-        &nbsp;&nbsp;<input type="button" name="move_from_no_role" id="move_from_no_role" class="button"
-                        value="Without role (<?php echo $users_quant;?>)" onclick="ure_move_users_from_no_role_dialog()">
-        <div id="move_from_no_role_dialog" class="ure-dialog">
-            <div id="move_from_no_role_content" style="padding: 10px;"></div>                
-        </div>
-<?php        
-      }
+      $assign_role->show_html();
       
   }
   // end of move_users_from_no_role()
@@ -285,7 +282,7 @@ class User_Role_Editor {
           return;
       }             
       
-      wp_enqueue_script('jquery-ui-dialog', false, array('jquery-ui-core','jquery-ui-button', 'jquery') );
+      wp_enqueue_script('jquery-ui-dialog', '', array('jquery-ui-core','jquery-ui-button', 'jquery') );
       wp_register_script( 'ure-users-js', plugins_url( '/js/ure-users.js', URE_PLUGIN_FULL_PATH ) );
       wp_enqueue_script ( 'ure-users-js' );      
       wp_localize_script( 'ure-users-js', 'ure_users_data', array(
@@ -509,7 +506,7 @@ class User_Role_Editor {
     public function plugin_row_meta($links, $file) {
 
         if ($file == plugin_basename(dirname(URE_PLUGIN_FULL_PATH) .'/'.URE_PLUGIN_FILE)) {
-            $links[] = '<a target="_blank" href="http://role-editor.com/changelog">' . esc_html__('Changelog', 'user-role-editor') . '</a>';
+            $links[] = '<a target="_blank" href="https://www.role-editor.com/changelog">' . esc_html__('Changelog', 'user-role-editor') . '</a>';
         }
 
         return $links;
@@ -583,7 +580,7 @@ class User_Role_Editor {
                     'settings-' . URE_PLUGIN_FILE, 
                     array($this, 'settings'));
             add_action( 'load-'.$this->settings_page_hook, array($this,'settings_screen_configure') );
-            add_action("admin_print_styles-{$this->settings_page_hook}", array($this, 'admin_css_action'));
+            add_action("admin_print_styles-{$this->settings_page_hook}", array($this, 'settings_css_action'));
         }
     }
     // end of plugin_menu()
@@ -600,7 +597,7 @@ class User_Role_Editor {
                     'settings-' . URE_PLUGIN_FILE, 
                     array(&$this, 'settings'));
             add_action( 'load-'.$this->settings_page_hook, array($this,'settings_screen_configure') );
-            add_action("admin_print_styles-{$this->settings_page_hook}", array($this, 'admin_css_action'));
+            add_action("admin_print_styles-{$this->settings_page_hook}", array($this, 'settings_css_action'));
         }
         
     }
@@ -611,7 +608,12 @@ class User_Role_Editor {
     protected function get_settings_action() {
 
         $action = 'show';
-        $update_buttons = array('ure_settings_update', 'ure_addons_settings_update', 'ure_settings_ms_update', 'ure_default_roles_update');
+        $update_buttons = array(
+            'ure_settings_update', 
+            'ure_addons_settings_update', 
+            'ure_settings_ms_update', 
+            'ure_default_roles_update',
+            'ure_reset_roles_exec');
         foreach($update_buttons as $update_button) {
             if (!isset($_POST[$update_button])) {
                 continue;
@@ -721,6 +723,14 @@ class User_Role_Editor {
         
     }
     // end of update_multisite_options()
+
+
+    protected function reset_roles() {
+        $this->lib->reset_user_roles();
+        $this->lib->put_option('other_default_roles', array(), true);
+        $this->lib->show_message(esc_html__('Tools: Reset: User Roles were initialized', 'user-role-editor'));
+    }
+    // end of reset_roles()
     
 
     public function settings() {
@@ -741,6 +751,10 @@ class User_Role_Editor {
                 break;
             case 'ure_default_roles_update':
                 $this->update_default_roles();
+                break;
+            case 'ure_reset_roles_exec':
+                $this->reset_roles();
+                break;
             case 'show':
             default:                
             ;
@@ -787,14 +801,22 @@ class User_Role_Editor {
 
     public function admin_css_action() {
 
-        wp_enqueue_style('wp-jquery-ui-dialog');
-        wp_enqueue_style('wp-jquery-ui-selectable');
-        if (stripos($_SERVER['REQUEST_URI'], 'settings-user-role-editor')!==false) {
-            wp_enqueue_style('ure-jquery-ui-tabs', URE_PLUGIN_URL . 'css/jquery-ui-1.10.4.custom.min.css', array(), false, 'screen');
-        }
+        wp_enqueue_style('wp-jquery-ui-selectable');        
+        wp_enqueue_style('ure-jquery-ui-general', URE_PLUGIN_URL . 'css/jquery-ui.min.css', array(), false, 'screen');
         wp_enqueue_style('ure-admin-css', URE_PLUGIN_URL . 'css/ure-admin.css', array(), false, 'screen');
     }
     // end of admin_css_action()
+    
+    
+    public function settings_css_action() {
+
+
+        wp_enqueue_style('ure-jquery-ui-tabs', URE_PLUGIN_URL . 'css/jquery-ui.min.css', array(), false, 'screen');
+        wp_enqueue_style('ure-admin-css', URE_PLUGIN_URL . 'css/ure-admin.css', array(), false, 'screen');
+
+    }
+    // end of admin_css_action()
+
     
     
     // call roles editor page
@@ -829,8 +851,8 @@ class User_Role_Editor {
         $confirm_role_update = $this->lib->get_option('ure_confirm_role_update', 1);        
         $page_url = $this->lib->get_ure_page_url();
         
-        wp_enqueue_script('jquery-ui-dialog', false, array('jquery-ui-core', 'jquery-ui-button', 'jquery'));
-        wp_enqueue_script('jquery-ui-selectable', false, array('jquery-ui-core', 'jquery'));
+        wp_enqueue_script('jquery-ui-dialog', '', array('jquery-ui-core', 'jquery-ui-button', 'jquery'));
+        wp_enqueue_script('jquery-ui-selectable', '', array('jquery-ui-core', 'jquery'));
         wp_register_script('ure-js', plugins_url('/js/ure-js.js', URE_PLUGIN_FULL_PATH));
         wp_enqueue_script('ure-js');
         wp_localize_script('ure-js', 'ure_data', array(
@@ -841,10 +863,7 @@ class User_Role_Editor {
             'confirm_role_update' => $confirm_role_update ? 1 : 0,
             'confirm_title' => esc_html__('Confirm', 'user-role-editor'),
             'yes_label' => esc_html__('Yes', 'user-role-editor'),
-            'no_label' => esc_html__('No', 'user-role-editor'),
-            'select_all' => esc_html__('Select All', 'user-role-editor'),
-            'unselect_all' => esc_html__('Unselect All', 'user-role-editor'),
-            'reverse' => esc_html__('Reverse', 'user-role-editor'),
+            'no_label' => esc_html__('No', 'user-role-editor'),            
             'update' => esc_html__('Update', 'user-role-editor'),
             'confirm_submit' => esc_html__('Please confirm permissions update', 'user-role-editor'),
             'add_new_role_title' => esc_html__('Add New Role', 'user-role-editor'),
@@ -858,11 +877,6 @@ class User_Role_Editor {
             'cancel' => esc_html__('Cancel', 'user-role-editor'),
             'add_capability' => esc_html__('Add Capability', 'user-role-editor'),
             'delete_capability' => esc_html__('Delete Capability', 'user-role-editor'),
-            'reset' => esc_html__('Reset', 'user-role-editor'),
-            'reset_warning' => esc_html__('DANGER! Resetting will restore default settings from WordPress Core.', 'user-role-editor') . "\n\n" .
-            esc_html__('If any plugins have changed capabilities in any way upon installation (such as S2Member, WooCommerce, and many more), those capabilities will be DELETED!', 'user-role-editor') . "\n\n" .
-            esc_html__('For more information on how to undo changes and restore plugin capabilities go to', 'user-role-editor') . "\n" .
-            'http://role-editor.com/how-to-restore-deleted-wordpress-user-roles/' . "\n\n" .
             esc_html__('Continue?', 'user-role-editor'),
             'default_role' => esc_html__('Default Role', 'user-role-editor'),
             'set_new_default_role' => esc_html__('Set New Default Role', 'user-role-editor'),
@@ -881,7 +895,31 @@ class User_Role_Editor {
     
     protected function load_settings_js() {
     
-        wp_enqueue_script('jquery-ui-tabs', false, array('jquery-ui-core', 'jquery'));
+        $page_url = $this->lib->get_ure_page_url();
+        
+        wp_enqueue_script('jquery-ui-tabs', '', array('jquery-ui-core', 'jquery'));
+        wp_enqueue_script('jquery-ui-dialog', '', array('jquery-ui-core', 'jquery'));
+        wp_enqueue_script('jquery-ui-button', '', array('jquery-ui-core', 'jquery'));
+        wp_register_script('ure-js', plugins_url('/js/settings.js', URE_PLUGIN_FULL_PATH));
+        wp_enqueue_script('ure-js');
+        
+        wp_localize_script('ure-js', 'ure_data', array(
+            'wp_nonce' => wp_create_nonce('user-role-editor'),
+            'network_admin' => is_network_admin() ? 1 : 0,
+            'page_url' => $page_url,
+            'is_multisite' => is_multisite() ? 1 : 0,
+            'confirm_title' => esc_html__('Confirm', 'user-role-editor'),
+            'yes_label' => esc_html__('Yes', 'user-role-editor'),
+            'no_label' => esc_html__('No', 'user-role-editor'),
+            'reset' => esc_html__('Reset', 'user-role-editor'),
+            'reset_warning' => '<span style="color: red;">'. esc_html__('DANGER!', 'user-role-editor') .'</span>'. 
+            esc_html__(' Resetting will restore default user roles and capabilities from WordPress core.', 'user-role-editor') .'<br><br>'.
+            esc_html__('If any plugins (such as WooCommerce, S2Member and many others) have changed user roles and capabilities during installation, all those changes will be LOST!', 'user-role-editor') .'<br>'.
+            esc_html__('For more information on how to undo undesired changes and restore plugin capabilities go to', 'user-role-editor') .'<br>'.
+            '<a href="http://role-editor.com/how-to-restore-deleted-wordpress-user-roles/">http://role-editor.com/how-to-restore-deleted-wordpress-user-roles/</a>' .'<br><br>'.
+            esc_html__('Continue?', 'user-role-editor')
+        ));
+                
         do_action('ure_load_js_settings');
         
     }

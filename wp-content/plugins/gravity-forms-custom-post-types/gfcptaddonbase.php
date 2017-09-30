@@ -484,8 +484,18 @@ if (!class_exists('GFCPTAddonBase')) {
 
 			switch( $field->get_input_type() ) {
 				case 'multiselect':
-					$terms = array_map( 'intval', explode( ',', $entry[ $field->id ] ) );
+
+					$value = $entry[ $field->id ];
+					$terms = json_decode( $value );
+
+					if( ! is_array( $terms ) ) {
+						$terms = explode( ',', $value );
+					}
+
+					$terms = array_map( 'intval', $terms );
+
 					break;
+
 				case 'checkbox':
 
 					foreach ( $field['inputs'] as $input ) {
@@ -497,7 +507,7 @@ if (!class_exists('GFCPTAddonBase')) {
 
 					break;
 				case 'text':
-					$terms = $entry[ $field->id ];
+					$terms = array_filter( explode( ',', $entry[ $field->id ] ) );
 					break;
 				default:
 					$terms = (int) $entry[ $field->id ];

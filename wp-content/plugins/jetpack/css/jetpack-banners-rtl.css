@@ -37,6 +37,14 @@ https://github.com/thoughtbot/bourbon
   padding: 0.75rem 0 0;
 }
 
+.updated .jp-banner__tos-blurb {
+  display: block;
+  padding: 0.375rem 0;
+  line-height: 1.5;
+  font-size: 0.6875rem;
+  color: #2e4453;
+}
+
 .jp-banner .notice-dismiss {
   text-decoration: none;
 }
@@ -47,6 +55,164 @@ https://github.com/thoughtbot/bourbon
 
 .jp-banner__description-container {
   padding: 1rem;
+}
+
+.jetpack-disconnected .jp-connect-full__container {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(243, 246, 248, 0.95);
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (min-width: 782px) {
+  .jetpack-disconnected .jp-connect-full__container {
+    right: -20px;
+  }
+}
+
+.jp-connect-full__svg-jupiter {
+  position: absolute;
+  left: 0;
+  top: 5rem;
+  opacity: .90;
+}
+
+@media (max-width: 782px) {
+  .jp-connect-full__svg-jupiter {
+    display: none;
+  }
+}
+
+.jp-connect-full__svg-stars {
+  position: absolute;
+  right: 6.25rem;
+  top: 6.25rem;
+  opacity: .90;
+}
+
+@media (max-width: 782px) {
+  .jp-connect-full__svg-stars {
+    display: none;
+  }
+}
+
+.jp-connect-full__svg-dismiss {
+  position: absolute;
+  left: 0;
+  top: 0;
+  fill: #87a6bc;
+  padding: 1rem;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .jp-connect-full__svg-dismiss {
+    top: 3.125rem;
+  }
+}
+
+.jp-connect-full__step-header-logos {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.jp-connect-full__step-header-logos .jp-connect-full__svg-jetpack,
+.jp-connect-full__step-header-logos .jp-connect-full__svg-jetpack {
+  fill: #87a6bc;
+}
+
+.jp-connect-full__step-header-logos .jp-connect-full__svg-sync {
+  fill: #2e4453;
+  margin: 0 1rem;
+}
+
+@media (max-width: 600px) {
+  .jp-connect-full__step-header-logos {
+    padding-top: 2rem;
+  }
+}
+
+.jp-connect-full__step-header-title {
+  padding: 1rem;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: #2e4453;
+  font-weight: 400;
+}
+
+.jp-connect-full__card {
+  padding: 0;
+  margin: 0 auto;
+  box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+  background: white;
+  max-width: 34.375rem;
+}
+
+.jp-connect-full__card-inner {
+  padding: 1rem;
+}
+
+.jp-connect-full__card-description {
+  font-size: 0.875rem;
+  color: #2e4453;
+}
+
+.jp-connect-full__card-footer {
+  background: #f3f6f8;
+  padding: 1rem;
+  box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+}
+
+.jp-connect-full__tos-blurb {
+  font-size: 0.6875rem;
+  margin: 0 auto 1rem;
+  max-width: 24.0625rem;
+  color: #2e4453;
+}
+
+.jp-connect-full__tos-a {
+  text-decoration: none;
+  color: #0087be;
+}
+
+.jp-connect-full__button-container {
+  margin: 0;
+}
+
+.jp-connect-full__help-button {
+  display: inline-block;
+  text-decoration: none;
+  color: #87a6bc;
+  padding: 1rem;
+}
+
+.jp-connect-full__help-button .gridicon {
+  width: 1.125rem;
+  height: 1.125rem;
+  position: relative;
+  top: 4px;
+}
+
+.jp-connect-full__dismiss {
+  cursor: pointer;
 }
 
 .updated.jp-wpcom-connect__container {
@@ -66,6 +232,7 @@ https://github.com/thoughtbot/bourbon
 }
 
 .updated .notice-dismiss {
+  z-index: 1;
   text-decoration: none;
 }
 
@@ -120,7 +287,16 @@ https://github.com/thoughtbot/bourbon
 
 .jp-wpcom-connect__content-icon {
   float: left;
-  margin: 0 2.25rem 2.25rem 0;
+  margin: 0 2.25rem 0 1.5rem;
+}
+
+@media (max-width: 782px) {
+  .jp-wpcom-connect__content-icon.jp-connect-illo {
+    float: none;
+    width: 100%;
+    text-align: center;
+    margin: 2.25rem 0 1.5rem;
+  }
 }
 
 .jp-wpcom-connect__slide {
@@ -134,7 +310,7 @@ https://github.com/thoughtbot/bourbon
 @media (min-width: 782px) {
   .jp-wpcom-connect__content-container .jp-banner__button-container {
     position: absolute;
-    bottom: 1rem;
+    bottom: 0.5rem;
   }
 }
 
@@ -210,6 +386,7 @@ https://github.com/thoughtbot/bourbon
     width: 1.25rem;
     height: 1.25rem;
     padding: 0.25rem;
+    text-align: center;
   }
   .vertical-menu__feature-item svg {
     fill: #86A6BD;

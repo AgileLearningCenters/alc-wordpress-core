@@ -4,7 +4,7 @@
  * WPML interoperability handler.
  *
  * WIP - this stub is to be filled with everything WPML-related.
- * Look into: library/toolset/types/embedded/includes/wpml.php
+ * Look into: vendor/toolset/types/embedded/includes/wpml.php
  *
  * @since 2.2.9
  */

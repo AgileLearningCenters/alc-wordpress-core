@@ -238,7 +238,7 @@ final class Types_Ajax {
 
 
 	/**
-	 * Handles all initialization of except AJAX callbacks itself that is needed when
+	 * Handles all initialization of everything except AJAX callbacks itself that is needed when
 	 * we're DOING_AJAX.
 	 *
 	 * Since this is executed on every AJAX call, make sure it's as lightweight as possible.
@@ -252,6 +252,11 @@ final class Types_Ajax {
 		add_action( 'create_term', array( $this, 'prepare_for_term_creation' ) );
 
 		add_action( 'updated_user_meta', array( $this, 'capture_columnshidden_update' ), 10, 4 );
+
+		// Handle partially refactored AJAX callbacks coming from wpcf_ajax_embedded()
+		// or from wpcf_ajax(). The wp_ajax_wpcf_ajax action will be reached only if the $fallthrough variables
+		// in those functions are set to true (which means that the call was not handled).
+		add_action( 'wp_ajax_wpcf_ajax', array( $this, 'do_legacy_wpcf_ajax' ) );
 	}
 	
 
@@ -318,5 +323,18 @@ final class Types_Ajax {
 				$edit_term_page_extension->maybe_disable_column_autohiding( $taxonomy_name, $_meta_value, $page_name );
 			}
 		}
+	}
+
+
+	/**
+	 * This offers a possibility to handle legacy AJAX wp_ajax_wpcf_ajax calls
+	 * if they're not handled in the legacy code anymore.
+	 *
+	 * Note that the method needs to always finish with die() to keep consistency with the legacy code.
+	 *
+	 * @since 2.2.16
+	 */
+	public function do_legacy_wpcf_ajax() {
+		die();
 	}
 }

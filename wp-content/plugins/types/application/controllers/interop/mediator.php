@@ -57,6 +57,10 @@ class Types_Interop_Mediator {
 			array(
 				'is_needed' => array( $this, 'is_use_any_font_active' ),
 				'class_name' => 'Use_Any_Font'
+			),
+			array(
+				'is_needed' => array( $this, 'is_the7_active' ),
+				'class_name' => 'The7'
 			)
 		);
 
@@ -113,8 +117,34 @@ class Types_Interop_Mediator {
 	}
 
 
+	protected function is_the7_active() {
+		return ( 'the7' === $this->get_theme_slug() );
+	}
+
+
 	protected function is_use_any_font_active() {
 		return function_exists( 'uaf_activate' );
 	}
+
+
+	/**
+	 * Retrieve a "slugized" theme name.
+	 *
+	 * @return string
+	 * @since 2.2.16
+	 */
+	private function get_theme_slug( ){
+		$theme = wp_get_theme();
+		if( is_child_theme() ){
+			$theme_name = $theme->parent()->get('Name');
+		} else {
+			$theme_name = $theme->get('Name');
+		}
+
+		$slug = str_replace('-', '_', sanitize_title( $theme_name ) );
+
+		return $slug;
+	}
+
 
 }

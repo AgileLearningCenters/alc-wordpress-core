@@ -25,7 +25,9 @@ function show_wp_cart_options_page ()
                 wp_die('Error! Nonce Security Check Failed! Go back to settings menu and save the settings again.');
         }
 
-        update_option('cart_payment_currency', sanitize_text_field($_POST["cart_payment_currency"]));
+        $currency_code = sanitize_text_field($_POST["cart_payment_currency"]);
+        $currency_code = trim(strtoupper($currency_code));//Currency code must be uppercase.
+        update_option('cart_payment_currency', $currency_code);
         update_option('cart_currency_symbol', sanitize_text_field($_POST["cart_currency_symbol"]));
         update_option('cart_base_shipping_cost', sanitize_text_field($_POST["cart_base_shipping_cost"]));
         update_option('cart_free_shipping_threshold', sanitize_text_field($_POST["cart_free_shipping_threshold"]));   
@@ -144,9 +146,9 @@ function show_wp_cart_options_page ()
         $wp_shopping_cart_enable_debug = 'checked="checked"';
     }    
 	?>
- 	<h2><?php _e("Simple PayPal Shopping Cart Settings", "wordpress-simple-paypal-shopping-cart"); ?> v <?php echo WP_CART_VERSION; ?></h2>
+ 	<h2><?php _e("Simple PayPal Shopping Cart Settings", "wordpress-simple-paypal-shopping-cart"); ?> v<?php echo WP_CART_VERSION; ?></h2>
  	
- 	<div style="background: none repeat scroll 0 0 #FFF6D5;border: 1px solid #D1B655;color: #3F2502;margin: 10px 0;padding: 5px 5px 5px 10px;text-shadow: 1px 1px #FFFFFF;">	
+ 	<div class="wspsc_yellow_box">
  	<p><?php _e("For more information, updates, detailed documentation and video tutorial, please visit:", "wordpress-simple-paypal-shopping-cart"); ?><br />
     <a href="https://www.tipsandtricks-hq.com/wordpress-simple-paypal-shopping-cart-plugin-768" target="_blank"><?php _e("WP Simple Cart Homepage", "wordpress-simple-paypal-shopping-cart"); ?></a></p>
     </div>
@@ -161,7 +163,7 @@ function show_wp_cart_options_page ()
         <p><?php _e("Example shopping cart shortcode usage:", "wordpress-simple-paypal-shopping-cart");?> <p style="background-color: #DDDDDD; padding: 5px; display: inline;">[show_wp_shopping_cart]</p></p>
     </div></div>
 
-    <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
+    <form method="post" action="">
     <?php wp_nonce_field('wp_simple_cart_settings_update'); ?>
     <input type="hidden" name="info_update" id="info_update" value="true" />    
 <?php
@@ -182,13 +184,50 @@ echo '
 </tr>
 <tr valign="top">
 <th scope="row">'.(__("Text/Image to Show When Cart Empty", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="wp_cart_empty_text" value="'.esc_attr($emptyCartText).'" size="60" /><br />'.(__("You can either enter plain text or the URL of an image that you want to show when the shopping cart is empty", "wordpress-simple-paypal-shopping-cart")).'</td>
-</tr>
+<td><input type="text" name="wp_cart_empty_text" value="'.esc_attr($emptyCartText).'" size="100" /><br />'.(__("You can either enter plain text or the URL of an image that you want to show when the shopping cart is empty", "wordpress-simple-paypal-shopping-cart")).'</td>
+</tr>';
+
+?>
 <tr valign="top">
-<th scope="row">'.(__("Currency", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="cart_payment_currency" value="'.esc_attr($defaultCurrency).'" size="6" /> ('.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' USD, EUR, GBP, AUD)</td>
+    <th scope="row"><?php _e("Currency", "wordpress-simple-paypal-shopping-cart"); ?></th>
+    <td>
+        <select id="cart_payment_currency" name="cart_payment_currency">
+            <option value="USD" <?php echo ($defaultCurrency == 'USD') ? 'selected="selected"' : ''; ?>>US Dollars (USD)</option>
+            <option value="EUR" <?php echo ($defaultCurrency == 'EUR') ? 'selected="selected"' : ''; ?>>Euros (EUR)</option>
+            <option value="GBP" <?php echo ($defaultCurrency == 'GBP') ? 'selected="selected"' : ''; ?>>Pounds Sterling (GBP)</option>
+            <option value="AUD" <?php echo ($defaultCurrency == 'AUD') ? 'selected="selected"' : ''; ?>>Australian Dollars (AUD)</option>
+            <option value="BRL" <?php echo ($defaultCurrency == 'BRL') ? 'selected="selected"' : ''; ?>>Brazilian Real (BRL)</option>
+            <option value="CAD" <?php echo ($defaultCurrency == 'CAD') ? 'selected="selected"' : ''; ?>>Canadian Dollars (CAD)</option>
+            <option value="CNY" <?php echo ($defaultCurrency == 'CNY') ? 'selected="selected"' : ''; ?>>Chinese Yuan (CNY)</option>
+            <option value="CZK" <?php echo ($defaultCurrency == 'CZK') ? 'selected="selected"' : ''; ?>>Czech Koruna (CZK)</option>
+            <option value="DKK" <?php echo ($defaultCurrency == 'DKK') ? 'selected="selected"' : ''; ?>>Danish Krone (DKK)</option>
+            <option value="HKD" <?php echo ($defaultCurrency == 'HKD') ? 'selected="selected"' : ''; ?>>Hong Kong Dollar (HKD)</option>
+            <option value="HUF" <?php echo ($defaultCurrency == 'HUF') ? 'selected="selected"' : ''; ?>>Hungarian Forint (HUF)</option>
+            <option value="INR" <?php echo ($defaultCurrency == 'INR') ? 'selected="selected"' : ''; ?>>Indian Rupee (INR)</option>
+            <option value="IDR" <?php echo ($defaultCurrency == 'IDR') ? 'selected="selected"' : ''; ?>>Indonesia Rupiah (IDR)</option>
+            <option value="ILS" <?php echo ($defaultCurrency == 'ILS') ? 'selected="selected"' : ''; ?>>Israeli Shekel (ILS)</option>
+            <option value="JPY" <?php echo ($defaultCurrency == 'JPY') ? 'selected="selected"' : ''; ?>>Japanese Yen (JPY)</option>
+            <option value="MYR" <?php echo ($defaultCurrency == 'MYR') ? 'selected="selected"' : ''; ?>>Malaysian Ringgits (MYR)</option>
+            <option value="MXN" <?php echo ($defaultCurrency == 'MXN') ? 'selected="selected"' : ''; ?>>Mexican Peso (MXN)</option>
+            <option value="NZD" <?php echo ($defaultCurrency == 'NZD') ? 'selected="selected"' : ''; ?>>New Zealand Dollar (NZD)</option>
+            <option value="NOK" <?php echo ($defaultCurrency == 'NOK') ? 'selected="selected"' : ''; ?>>Norwegian Krone (NOK)</option>
+            <option value="PHP" <?php echo ($defaultCurrency == 'PHP') ? 'selected="selected"' : ''; ?>>Philippine Pesos (PHP)</option>
+            <option value="PLN" <?php echo ($defaultCurrency == 'PLN') ? 'selected="selected"' : ''; ?>>Polish Zloty (PLN)</option>
+            <option value="SGD" <?php echo ($defaultCurrency == 'SGD') ? 'selected="selected"' : ''; ?>>Singapore Dollar (SGD)</option>
+            <option value="ZAR" <?php echo ($defaultCurrency == 'ZAR') ? 'selected="selected"' : ''; ?>>South African Rand (ZAR)</option>
+            <option value="KRW" <?php echo ($defaultCurrency == 'KRW') ? 'selected="selected"' : ''; ?>>South Korean Won (KRW)</option>
+            <option value="SEK" <?php echo ($defaultCurrency == 'SEK') ? 'selected="selected"' : ''; ?>>Swedish Krona (SEK)</option>
+            <option value="CHF" <?php echo ($defaultCurrency == 'CHF') ? 'selected="selected"' : ''; ?>>Swiss Franc (CHF)</option>
+            <option value="TWD" <?php echo ($defaultCurrency == 'TWD') ? 'selected="selected"' : ''; ?>>Taiwan New Dollars (TWD)</option>
+            <option value="THB" <?php echo ($defaultCurrency == 'THB') ? 'selected="selected"' : ''; ?>>Thai Baht (THB)</option>
+            <option value="TRY" <?php echo ($defaultCurrency == 'TRY') ? 'selected="selected"' : ''; ?>>Turkish Lira (TRY)</option>
+            <option value="VND" <?php echo ($defaultCurrency == 'VND') ? 'selected="selected"' : ''; ?>>Vietnamese Dong (VND)</option>
+        </select>
+    </td>
 </tr>
-<tr valign="top">
+<?php
+
+echo '<tr valign="top">
 <th scope="row">'.(__("Currency Symbol", "wordpress-simple-paypal-shopping-cart")).'</th>
 <td><input type="text" name="cart_currency_symbol" value="'.esc_attr($defaultSymbol).'" size="3" style="width: 2em;" /> ('.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' $, &#163;, &#8364;) 
 </td>
@@ -218,7 +257,7 @@ echo '
 <th scope="row">'.(__("Add to Cart button text or Image", "wordpress-simple-paypal-shopping-cart")).'</th>
 <td><input type="text" name="addToCartButtonName" value="'.esc_attr($addcart).'" size="100" />
 <br />'.(__("To use a customized image as the button simply enter the URL of the image file.", "wordpress-simple-paypal-shopping-cart")).' '.(__("e.g.", "wordpress-simple-paypal-shopping-cart")).' http://www.your-domain.com/wp-content/plugins/wordpress-paypal-shopping-cart/images/buy_now_button.png
-<br />You can download nice add to cart button images from <a href="http://www.tipsandtricks-hq.com/ecommerce/add-to-cart-button-images-for-shopping-cart-631" target="_blank">this page</a>.
+<br />You can download nice add to cart button images from <a href="https://www.tipsandtricks-hq.com/ecommerce/add-to-cart-button-images-for-shopping-cart-631" target="_blank">this page</a>.
 </td>
 </tr>
 
@@ -275,9 +314,9 @@ echo '
 
 <table class="form-table">
 <tr valign="top">
-<th scope="row">'.(__("Custom Checkout Page Style Name", "wordpress-simple-paypal-shopping-cart")).'</th>
-<td><input type="text" name="wp_cart_paypal_co_page_style" value="'.esc_attr($wp_cart_paypal_co_page_style).'" size="40" />
-<br />'.(__("Specify the page style name here if you want to customize the paypal checkout page with custom page style otherwise leave this field empty.", "wordpress-simple-paypal-shopping-cart")).'</td>
+<th scope="row">'.(__("Custom Checkout Page Logo Image", "wordpress-simple-paypal-shopping-cart")).'</th>
+<td><input type="text" name="wp_cart_paypal_co_page_style" value="'.esc_attr($wp_cart_paypal_co_page_style).'" size="100" />
+<br />'.(__("Specify an image URL if you want to customize the paypal checkout page with a custom logo/image. The image URL must be a 'https' URL otherwise PayPal will ignore it.", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 </table>
 
@@ -300,7 +339,7 @@ echo '
 <tr valign="top">
 <th scope="row">'.(__("Use WP Affiliate Platform", "wordpress-simple-paypal-shopping-cart")).'</th>
 <td><input type="checkbox" name="wp_use_aff_platform" value="1" '.$wp_use_aff_platform.' />
-<br />'.(__("Check this if using with the", "wordpress-simple-paypal-shopping-cart")).' <a href="https://www.tipsandtricks-hq.com/?p=1474" target="_blank">WP Affiliate Platform plugin</a>. '.(__("This plugin lets you run your own affiliate campaign/program and allows you to reward (pay commission) your affiliates for referred sales", "wordpress-simple-paypal-shopping-cart")).'</td>
+<br />'.(__("Check this if using with the", "wordpress-simple-paypal-shopping-cart")).' <a href="https://www.tipsandtricks-hq.com/wordpress-affiliate-platform-plugin-simple-affiliate-program-for-wordpress-blogsite-1474" target="_blank">WP Affiliate Platform plugin</a>. '.(__("This plugin lets you run your own affiliate campaign/program and allows you to reward (pay commission) your affiliates for referred sales", "wordpress-simple-paypal-shopping-cart")).'</td>
 </tr>
 </table>
 </div></div>

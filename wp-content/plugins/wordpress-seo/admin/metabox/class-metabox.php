@@ -106,7 +106,6 @@ class WPSEO_Metabox extends WPSEO_Meta {
 		self::$meta_fields['advanced']['meta-robots-adv']['description']             = __( 'Advanced <code>meta</code> robots settings for this page.', 'wordpress-seo' );
 		self::$meta_fields['advanced']['meta-robots-adv']['options']['-']            = __( 'Site-wide default: %s', 'wordpress-seo' );
 		self::$meta_fields['advanced']['meta-robots-adv']['options']['none']         = __( 'None', 'wordpress-seo' );
-		self::$meta_fields['advanced']['meta-robots-adv']['options']['noodp']        = __( 'NO ODP', 'wordpress-seo' );
 		self::$meta_fields['advanced']['meta-robots-adv']['options']['noimageindex'] = __( 'No Image Index', 'wordpress-seo' );
 		self::$meta_fields['advanced']['meta-robots-adv']['options']['noarchive']    = __( 'No Archive', 'wordpress-seo' );
 		self::$meta_fields['advanced']['meta-robots-adv']['options']['nosnippet']    = __( 'No Snippet', 'wordpress-seo' );
@@ -312,7 +311,7 @@ class WPSEO_Metabox extends WPSEO_Meta {
 		$content_sections = $this->get_content_sections();
 
 		$helpcenter_tab = new WPSEO_Option_Tab( 'metabox', 'Meta box',
-			array( 'video_url' => 'https://yoa.st/metabox-screencast' ) );
+			array( 'video_url' => WPSEO_Shortlinker::get( 'https://yoa.st/metabox-screencast' ) ) );
 
 		$helpcenter = new WPSEO_Help_Center( 'metabox', $helpcenter_tab );
 		$helpcenter->output_help_center();
@@ -351,7 +350,7 @@ class WPSEO_Metabox extends WPSEO_Meta {
 			$content_sections[] = $this->social_admin->get_meta_section();
 		}
 
-		if ( current_user_can( 'manage_options' ) || $this->options['disableadvanced_meta'] === false ) {
+		if ( WPSEO_Capability_Utils::current_user_can( 'wpseo_edit_advanced_metadata' ) || $this->options['disableadvanced_meta'] === false ) {
 			$content_sections[] = $this->get_advanced_meta_section();
 		}
 
@@ -593,6 +592,12 @@ class WPSEO_Metabox extends WPSEO_Meta {
 				$content .= '<h3 class="yoast-section__heading yoast-section__heading-icon yoast-section__heading-icon-key">' . esc_html( $meta_field_def['title'] ) . '</h3>';
 			    $content .= '<label for="' . $esc_form_key . '" class="screen-reader-text">' . esc_html( $meta_field_def['label'] ) . '</label>';
 				$content .= '<input type="text"' . $placeholder . ' id="' . $esc_form_key . '" autocomplete="off" name="' . $esc_form_key . '" value="' . esc_attr( $meta_value ) . '" class="large-text' . $class . '"/>';
+
+				if ( $this->options['enable_cornerstone_content'] ) {
+					$cornerstone_field = new WPSEO_Cornerstone_Field();
+
+					$content .= $cornerstone_field->get_html( $this->get_metabox_post() );
+				}
 				$content .= '</section>';
 				$content .= '</div>';
 				break;
@@ -614,7 +619,7 @@ class WPSEO_Metabox extends WPSEO_Meta {
 				if ( $placeholder !== '' ) {
 					$placeholder = ' placeholder="' . esc_attr( $placeholder ) . '"';
 				}
-				$content .= '<input type="text"' . $placeholder . 'id="' . $esc_form_key . '" ' . $ac . 'name="' . $esc_form_key . '" value="' . esc_attr( $meta_value ) . '" class="large-text' . $class . '"' . $aria_describedby . '/>';
+				$content .= '<input type="text"' . $placeholder . ' id="' . $esc_form_key . '" ' . $ac . 'name="' . $esc_form_key . '" value="' . esc_attr( $meta_value ) . '" class="large-text' . $class . '"' . $aria_describedby . '/>';
 				break;
 
 			case 'textarea':
@@ -790,9 +795,11 @@ class WPSEO_Metabox extends WPSEO_Meta {
 		 * Determine we're not accidentally updating a different post.
 		 * We can't use filter_input here as the ID isn't available at this point, other than in the $_POST data.
 		 */
+		// @codingStandardsIgnoreStart
 		if ( ! isset( $_POST['ID'] ) || $post_id !== (int) $_POST['ID'] ) {
 			return false;
 		}
+		// @codingStandardsIgnoreEnd
 
 		clean_post_cache( $post_id );
 		$post = get_post( $post_id );
@@ -817,10 +824,13 @@ class WPSEO_Metabox extends WPSEO_Meta {
 
 			$data = null;
 			if ( 'checkbox' === $meta_box['type'] ) {
+				// @codingStandardsIgnoreLine
 				$data = isset( $_POST[ self::$form_prefix . $key ] ) ? 'on' : 'off';
 			}
 			else {
+				// @codingStandardsIgnoreLine
 				if ( isset( $_POST[ self::$form_prefix . $key ] ) ) {
+					// @codingStandardsIgnoreLine
 					$data = $_POST[ self::$form_prefix . $key ];
 				}
 			}
@@ -870,6 +880,7 @@ class WPSEO_Metabox extends WPSEO_Meta {
 
 		if ( self::is_post_overview( $pagenow ) ) {
 			$asset_manager->enqueue_style( 'edit-page' );
+			$asset_manager->enqueue_script( 'edit-page-script' );
 		}
 		else {
 
@@ -1271,6 +1282,7 @@ SVG;
 
 		/** @var WPSEO_Meta_Columns $meta_columns */
 		$meta_columns = $GLOBALS['wpseo_meta_columns'];
+
 		$meta_columns->posts_filter_dropdown();
 	}
 
@@ -1433,13 +1445,13 @@ SVG;
 	/**
 	 * @deprecated 3.0
 	 *
-	 * @param array  $results      The results array used to store results.
-	 * @param int    $scoreValue   The score value.
-	 * @param string $scoreMessage The score message.
-	 * @param string $scoreLabel   The label of the score to use in the results array.
-	 * @param string $rawScore     The raw score, to be used by other filters.
+	 * @param array  $results       The results array used to store results.
+	 * @param int    $score_value   The score value.
+	 * @param string $score_message The score message.
+	 * @param string $score_label   The label of the score to use in the results array.
+	 * @param string $raw_score     The raw score, to be used by other filters.
 	 */
-	public function save_score_result( &$results, $scoreValue, $scoreMessage, $scoreLabel, $rawScore = null ) {
+	public function save_score_result( &$results, $score_value, $score_message, $score_label, $raw_score = null ) {
 
 		_deprecated_function( __METHOD__, 'WPSEO 3.0' );
 	}
@@ -1447,12 +1459,12 @@ SVG;
 	/**
 	 * @deprecated 3.0
 	 *
-	 * @param string $inputString              String to clean up.
-	 * @param bool   $removeOptionalCharacters Whether or not to do a cleanup of optional chars too.
+	 * @param string $input_string               String to clean up.
+	 * @param bool   $remove_optional_characters Whether or not to do a cleanup of optional chars too.
 	 *
 	 * @return string
 	 */
-	public function strip_separators_and_fold( $inputString, $removeOptionalCharacters ) {
+	public function strip_separators_and_fold( $input_string, $remove_optional_characters ) {
 		_deprecated_function( __METHOD__, 'WPSEO 3.0' );
 
 		return '';

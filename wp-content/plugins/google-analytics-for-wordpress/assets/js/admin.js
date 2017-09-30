@@ -106,34 +106,59 @@ jQuery( document ).ready( function( $ ) {
 		});
 	}
 
-	/**
-	* Dismissable Notices
-	* - Sends an AJAX request to mark the notice as dismissed
-	*/
-	$( 'div.monsterinsights-notice' ).on( 'click', '.notice-dismiss', function( e ) {
-		e.preventDefault();
-		$( this ).closest( 'div.monsterinsights-notice' ).fadeOut();
+	function modelMatcher(params, data) {
+			data.parentText = data.parentText || "";
 
-		// If this is a dismissible notice, it means we need to send an AJAX request
-		if ( $( this ).hasClass( 'is-dismissible' ) ) {
-			$.post(
-				monsterinsights_admin.ajax,
-				{
-					action: 'monsterinsights_ajax_dismiss_notice',
-					nonce:  monsterinsights_admin.dismiss_notice_nonce,
-					notice: $( this ).parent().data( 'notice' )
-				},
-				function( response ) {
-				},
-				'json'
-			);
+			// Always return the object if there is nothing to compare
+			if ($.trim(params.term) === '') {
+				return data;
+			}
+
+			// Do a recursive check for options with children
+			if (data.children && data.children.length > 0) {
+				// Clone the data object if there are children
+				// This is required as we modify the object to remove any non-matches
+				var match = $.extend(true, {}, data);
+
+				// Check each child of the option
+				for (var c = data.children.length - 1; c >= 0; c--) {
+					var child = data.children[c];
+					child.parentText += data.parentText + " " + data.text;
+
+					var matches = modelMatcher(params, child);
+
+					// If there wasn't a match, remove the object in the array
+					if (matches == null) {
+						match.children.splice(c, 1);
+					}
+				}
+
+				// If any children matched, return the new object
+				if (match.children.length > 0) {
+					return match;
+				}
+
+				// If there were no matching children, check just the plain object
+				return modelMatcher(params, match);
+			}
+
+			// If the typed-in term matches the text of this term, or the text from any
+			// parent term, then it's a match.
+			var original = (data.parentText + ' ' + data.text).toUpperCase();
+			var term = params.term.toUpperCase();
+
+			// Check if the text contains the term
+			if (original.indexOf(term) > -1) {
+				return data;
+			}
+
+			// If it doesn't contain the term, don't return anything
+			return null;
 		}
 
-	} );
 
 	// Setup Select2
 		$('.monsterinsights-select300').select300();
-
 
 		var fields_changed = false;
 		$(document).on('change', '#monsterinsights-settings :input', function(){
@@ -228,7 +253,7 @@ jQuery( document ).ready( function( $ ) {
 
 				var view = document.getElementById('monsterinsightsview').value;
 				if ( view == 'selectprofile' ) {
-					$('.monsterinsights_select_ga_profile').select300();
+					$('.monsterinsights_select_ga_profile').select300({matcher: modelMatcher});
 					monsterinsights_closepopupwindow();
 				}
 			}).fail( function(xhr, textStatus, errorThrown) {
@@ -822,6 +847,16 @@ jQuery( document ).ready( function( $ ) {
 						 $('.monsterinsights-sub-nav-tabs .monsterinsights-sub-nav-tab  .monsterinsights-subtab-settings-notices .monsterinsights-notice' ).remove();
 					} 
 				}
+				 // Is the window taller than the #adminmenuwrap?
+				  if ($(window).height() > $("#adminmenuwrap").height()) {
+					 // ...if so, make the #adminmenuwrap fixed
+					 $('#adminmenuwrap').css('position', 'fixed'); 
+					
+				  } else {
+					 //...otherwise, leave it relative        
+					 $('#adminmenuwrap').css('position', 'relative'); 
+
+				  }
 			}   
 		}
 });
@@ -831,7 +866,7 @@ function monsterinsights_popupwindow(url, w, h) {
 	monsterinsights_closepopupwindow();
 	var left = (screen.width/2)-(w/2);
 	var top = (screen.height/8);
-	monsterinsights_authwindow = window.open(url, 'monsterinsights_ga_auth_window', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+	monsterinsights_authwindow = window.open(url, 'monsterinsights_ga_auth_window', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
 }
 
 function monsterinsights_closepopupwindow() {
